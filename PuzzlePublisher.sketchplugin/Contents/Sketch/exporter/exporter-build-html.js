@@ -5,7 +5,7 @@ function buildMainHTML(options) {
 
   let s = "";
   s += '<!DOCTYPE html>\n<html>\n<head>\n<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">\n';
-  s += '<meta name="generator" content="Generated using Exporter plugin for Sketch.app - https://github.com/MaxBazarov/exporter">\n';
+  s += '<meta name="generator" content="Generated using Puzzle Publisher plugin for Sketch.app - https://github.com/ingrammicro/puzzle-publisher">\n';
   s += '<title>'+options.docName+'</title>\n';
   s += '<link rel="shortcut icon"  type="image/png?" href="resources/icon.png'+verPostfix+'">\n';
   // s += '<link rel="mask-icon" href="https://sketch.cloud/favicon.svg?v=4" color="rgb(252, 177, 0)">\n';

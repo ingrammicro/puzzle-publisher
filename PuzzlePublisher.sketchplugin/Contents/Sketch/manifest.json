@@ -1,13 +1,13 @@
 {
-  "name": "Exporter",
-  "description": "Generates a HTML clickable prototype",
+  "name": "Puzzle Publisher",
+  "description": "Generates and publishes a HTML clickable prototype",
   "author" : "Maxim Bazarov and Alexey Kalenyuk",
-  "homepage": "https://github.com/MaxBazarov/exporter",  
+  "homepage": "https://github.com/ingrammicro/puzzle-publisher",  
   "identifier" : "com.cloudblue.sketch.exporter",
-  "appcast": "https://raw.githubusercontent.com/MaxBazarov/exporter/master/appcast.xml",
+  "appcast": "https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/appcast.xml",
   "compatibleVersion": 3,
   "bundleVersion": 1,
-  "version" : "8.0.0",
+  "version" : "1.0.0",
   "icon": "icon.png",
   "commands" : [   
     {

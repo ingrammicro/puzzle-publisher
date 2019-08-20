@@ -1,4 +1,4 @@
-# Exporter Plugin Hints
+# Puzzle Publisher plugin Hints
 
 ## [Hint 1](#hint1): Use post-processing to inject your own information in generated HTML
 
@@ -26,7 +26,7 @@ But you can follow the another way.
 - Select this artobard as a overrided target for your hotsport 
 - Run Export to HTML to see a result
 
-[Illustration](https://github.com/MaxBazarov/exporter/raw/master/tests/Pictures/Link-ExternalArtboard.png), [Example file](https://github.com/MaxBazarov/exporter/raw/master/tests/Link-ExternalArtboard.sketch)
+[Illustration](https://github.com/ingrammicro/puzzle-publisher/raw/master/tests/Pictures/Link-ExternalArtboard.png), [Example file](https://github.com/ingrammicro/puzzle-publisher/raw/master/tests/Link-ExternalArtboard.sketch)
 
 
 ## [Hint 3](#hint3): How to set a start/home page for a prototype

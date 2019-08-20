@@ -8,7 +8,7 @@ var Constants = {
   IMAGES_DIRECTORY: "images/",
   VIEWER_DIRECTORY: "viewer/",
   RESOURCES_DIRECTORY: "resources/",
-  PLUGIN_IDENTIFIER: "com.cloudblue.sketch.exporter",  
+  PLUGIN_IDENTIFIER: "com.ingrammicro.puzzle.publisher",  
   SORT_RULE_X:0,    
   SORT_RULE_SKETCH:1,
   SORT_RULE_REVERSIVE_SKETCH:2,
