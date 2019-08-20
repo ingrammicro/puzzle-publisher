@@ -1,0 +1,92 @@
+{
+  "name": "Exporter",
+  "description": "Generates a HTML clickable prototype",
+  "author" : "Maxim Bazarov and Alexey Kalenyuk",
+  "homepage": "https://github.com/MaxBazarov/exporter",  
+  "identifier" : "com.cloudblue.sketch.exporter",
+  "appcast": "https://raw.githubusercontent.com/MaxBazarov/exporter/master/appcast.xml",
+  "compatibleVersion": 3,
+  "bundleVersion": 1,
+  "version" : "8.0.0",
+  "icon": "icon.png",
+  "commands" : [   
+    {
+      "script" : "cmdline-functions.js",
+      "handler" : "cmdRun",
+      "name" : "Run from command line",
+      "identifier" : "cmdRun"
+    },   
+    {
+      "script" : "menu-external-link.js",
+      "handler" : "onRun",
+      "name" : "Set External Link for Layer or Artboard",
+      "identifier" : "externalLink"
+    },  
+    {
+      "script" : "menu-conf-artboard.js",
+      "handler" : "onRun",
+      "name" : "Configure Artboard",
+      "identifier" : "confArtboard"
+    },  
+    {
+      "script" : "menu-conf-layer.js",
+      "handler" : "onRun",
+      "name" : "Configure Layer",
+      "identifier" : "confLayer"
+    }, 
+    {
+      "script" : "menu-conf-document.js",
+      "handler" : "onRun",
+      "name" : "Configure Document",
+      "identifier" : "confDocument"
+    },  
+    {
+      "script" : "menu-conf-plugin.js",
+      "handler" : "onRun",
+      "name" : "Configure Plugin",
+      "identifier" : "confPlugin"
+    },  
+    {
+      "script" : "menu-edit-annotations.js",
+      "handler" : "onRun",
+      "name" : "Edit Annotations",
+      "identifier" : "editAnnotations"      
+    },
+    {
+      "script" : "menu-export-html-adv.js",
+      "handler" : "onRun",      
+      "name" : "✈️ Export selected to HTML",
+      "identifier" : "exportToHTMLAdv"
+    },
+    {
+      "script" : "menu-export-html.js",
+      "handler" : "onRun",
+      "shortcut" : "command alt e", 
+      "name" : "✈️ Export to HTML",
+      "identifier" : "exportToHTML"
+    },
+    {
+      "script" : "menu-cmd-publish.js",
+      "handler" : "onRun",
+      "shortcut" : "command alt p", 
+      "name" : "📡 Publish HTML",
+      "identifier" : "publish"
+    }
+  ],
+  "menu": {
+    "title": "✈️ Exporter",
+    "items": [
+      "exportToHTML",      
+      "exportToHTMLAdv",      
+      "-",
+      "publish",
+      "-",
+      "externalLink",
+      "confLayer",
+      "confArtboard",      
+      "confDocument",
+      "-",
+      "confPlugin"
+    ]
+  }
+}
