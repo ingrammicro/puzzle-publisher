@@ -34,8 +34,6 @@ function buildMainHTML(options) {
   }
   s += '<script type="text/javascript">\n';
   s += '  var viewer = createViewer(story, "images");\n';
-  s += '  jQuery(window).resize(function(){viewer.zoomContent()});\n';
-  s += '  var gallery = createGallery();\n';
   if(options.commentsURL!=''){
     s += '  var comments = createComments();\n';
   }

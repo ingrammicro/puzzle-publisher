@@ -1,6 +1,7 @@
 
 // =============================== PRELOAD IMAGES =========================
 var pagerLoadingTotal=0
+var gallery = undefined
 
 function getQuery(uri,q) {
     return (uri.match(new RegExp('[?&]' + q + '=([^&]+)')) || [, null])[1];
@@ -100,20 +101,25 @@ function createViewer(story, files) {
 		transQueue : [],
 		
 		initialize: function() {
+            gallery = createGallery()
+            
             this.initParseGetParams()
 			this.buildUserStory();            
+            this.initializeHighDensitySupport();                              
+        },
 
+        initializeLast :function(){            
+            gallery.initialize();		
             if(story.layersExist){
                 this.symbolViewer = new SymbolViewer()
             }
-
             this.addHotkeys();
-            this.initializeHighDensitySupport();           
-            
             window.addEventListener('mousemove', function (e) {
                 viewer.onMouseMove(e.x,e.y)
             });
+            jQuery(window).resize(function(){viewer.zoomContent()});
         },
+
         initParseGetParams : function() {
             var s = document.location.search
             if(s.includes('embed')){
@@ -798,9 +804,7 @@ function addRemoveClass(mode, el, cls) {
 
 
 $(document).ready(function() {
-    viewer.initialize();
-    gallery.initialize();		
-	
+    viewer.initialize();	
 	if(!!('ontouchstart' in window) || !!('onmsgesturechange' in window)) {
 		$('body').removeClass('screen');
 	}
@@ -814,6 +818,6 @@ $(document).ready(function() {
             viewer.handleNewLocation(false)       
         viewer.handleURLRefresh = true
 	});
-    //$(window).hashchange();
     viewer.zoomContent()
+    viewer.initializeLast()
 });
