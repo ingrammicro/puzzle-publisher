@@ -7,26 +7,26 @@ function getQuery(uri,q) {
     return (uri.match(new RegExp('[?&]' + q + '=([^&]+)')) || [, null])[1];
 }
 
-function handleDecreaseVersion(){
-    var resp = this
+function checkFolderInfoRequest(resp){
     if(resp.readyState == resp.DONE) {
         if(resp.status == 200 && resp.responseText != null) {
             const data = JSON.parse(resp.responseText)
-            if(data.link_down=='') return
-            window.open(data.link_down,"_self");
+            return data
         }
     }
+    return undefined
+}
+
+function handleDecreaseVersion(){
+    var data  = checkFolderInfoRequest(this)
+    if(undefined==data || ''==data.link_down) return
+    window.open(data.link_down+'#'+encodeURIComponent(this.currentPage.getHash()),"_self");
 }
 
 function handleIncreaseVersion(){
-    var resp = this
-    if(resp.readyState == resp.DONE) {
-        if(resp.status == 200 && resp.responseText != null) {
-            const data = JSON.parse(resp.responseText)
-            if(data.link_up=='') return
-            window.open(data.link_up,"_self");
-        }
-    }
+    var data  = checkFolderInfoRequest(this)
+    if(undefined==data || ''==data.link_up) return
+    window.open(data.link_up+'#'+encodeURIComponent(this.currentPage.getHash()),"_self");
 }
 
 function doTransNext(){
