@@ -7,6 +7,28 @@ function getQuery(uri,q) {
     return (uri.match(new RegExp('[?&]' + q + '=([^&]+)')) || [, null])[1];
 }
 
+function handleDecreaseVersion(){
+    var resp = this
+    if(resp.readyState == resp.DONE) {
+        if(resp.status == 200 && resp.responseText != null) {
+            const data = JSON.parse(resp.responseText)
+            if(data.link_down=='') return
+            window.open(data.link_down,"_self");
+        }
+    }
+}
+
+function handleIncreaseVersion(){
+    var resp = this
+    if(resp.readyState == resp.DONE) {
+        if(resp.status == 200 && resp.responseText != null) {
+            const data = JSON.parse(resp.responseText)
+            if(data.link_up=='') return
+            window.open(data.link_up,"_self");
+        }
+    }
+}
+
 function doTransNext(){
 	// get oldest transition
 	const trans = viewer.transQueue[0]
@@ -102,7 +124,7 @@ function createViewer(story, files) {
 		
 		initialize: function() {
             gallery = createGallery()
-            
+
             this.initParseGetParams()
 			this.buildUserStory();            
             this.initializeHighDensitySupport();                              
@@ -185,6 +207,14 @@ function createViewer(story, files) {
                     v.symbolViewer.toggle()
                 })
             };
+            if(story.serverToolsPath!=''){
+                $(document).bind('keydown', 'shift+up', function() {
+                    v.increaseVersion();
+                 });
+                $(document).bind('keydown', 'shift+down', function() {
+                   v.decreaseVersion();
+                });
+            }
             
 			$(document).bind('keydown', 's', function() {
                 var first = v.getFirstUserPage()
@@ -217,6 +247,20 @@ function createViewer(story, files) {
             this.blinkHotspots()
         },
 
+        _setupFolderinfoRequest: function(func){
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = func;
+            xhr.open("GET",story.serverToolsPath,true);
+            xhr.send(null);
+        },
+
+        decreaseVersion: function() {
+            this._setupFolderinfoRequest(handleDecreaseVersion)
+        },
+
+        increaseVersion: function() {            
+            this._setupFolderinfoRequest(handleIncreaseVersion)
+        },
 
         share: function(){
             var srcHref =  document.location.href

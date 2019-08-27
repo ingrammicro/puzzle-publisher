@@ -78,6 +78,10 @@ class Exporter {
     let backColor = this.Settings.documentSettingForKey(this.doc,SettingKeys.DOC_BACK_COLOR)
     if(undefined==backColor) backColor = ""
     this.backColor = backColor
+
+    let serverTools = this.Settings.settingForKey(SettingKeys.PLUGIN_SERVERTOOLS_PATH)
+    if(serverTools==undefined) serverTools = ''
+    this.serverTools = serverTools    
   }
 
 
@@ -255,6 +259,7 @@ class Exporter {
     '"docPath": "P_P_P",\n'+
     '"docVersion": "'+Constants.DOCUMENT_VERSION_PLACEHOLDER+'",\n'+
     '"hasRetina": '+(this.retinaImages?'true':'false') + ',\n'+
+    '"serverToolsPath":"'+this.serverTools + '",\n'+
     '"disableHotspots": '+(disableHotspots?'true':'false') + ',\n'+
     '"pages": [\n';
   }
@@ -304,7 +309,6 @@ class Exporter {
     if(googleCode==undefined) googleCode = ''
     buildOptions.googleCode = googleCode
 
-    
     if(""==buildOptions.backColor) buildOptions.backColor = Constants.DEF_BACK_COLOR
   
     
