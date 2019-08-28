@@ -7,26 +7,37 @@ function getQuery(uri,q) {
     return (uri.match(new RegExp('[?&]' + q + '=([^&]+)')) || [, null])[1];
 }
 
+function showError(error){
+    alert(error)
+}
+
+function showMessage(message){
+    alert(message)
+}
+
 function checkFolderInfoRequest(resp){
     if(resp.readyState == resp.DONE) {
         if(resp.status == 200 && resp.responseText != null) {
             const data = JSON.parse(resp.responseText)
-            return data
+            if(undefined!=data['project_url'] && ''!=data['project_url']) return data
         }
+        showError("Can't get information about the versions.")
     }
     return undefined
 }
 
 function handleDecreaseVersion(){
     var data  = checkFolderInfoRequest(this)
-    if(undefined==data || ''==data.link_down) return
-    window.open(data.link_down+'#'+encodeURIComponent(this.currentPage.getHash()),"_self");
-}
+    if(undefined==data) return
+    if(''==data.link_down) return showMessage('This is the oldest version.')
+    window.open(data.link_down+'#'+encodeURIComponent(viewer.currentPage.getHash()),"_self");
+}   
 
 function handleIncreaseVersion(){
     var data  = checkFolderInfoRequest(this)
-    if(undefined==data || ''==data.link_up) return
-    window.open(data.link_up+'#'+encodeURIComponent(this.currentPage.getHash()),"_self");
+    if(undefined==data) return
+    if(''==data.link_up) return showMessage('This is the newest version.')
+    window.open(data.link_up+'#'+encodeURIComponent(viewer.currentPage.getHash()),"_self");
 }
 
 function doTransNext(){

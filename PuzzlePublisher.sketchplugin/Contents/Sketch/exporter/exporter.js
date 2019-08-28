@@ -292,6 +292,7 @@ class Exporter {
   createMainHTML(){
     const buildOptions = {
         docName:            this.docName,
+        serverTools:        this.serverTools,
         backColor:          this.backColor,
         centerContent:      this.Settings.settingForKey(SettingKeys.PLUGIN_POSITION) === Constants.POSITION_CENTER,
         loadLayers:         this.enabledJSON

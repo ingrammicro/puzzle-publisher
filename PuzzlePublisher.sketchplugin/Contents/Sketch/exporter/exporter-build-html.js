@@ -177,6 +177,21 @@ if(options.commentsURL!=''){
   s += "                                <\/div>";
 }
 s += "                            <\/div>";
+if(options.serverTools!=''){
+s += "                            <hr>";
+s += "                            <div class=\"groupe\">";
+s += "                                <div class=\"item\" onclick=\"viewer.increaseVersion(); addRemoveClass('class','menu','active'); return false;\">";
+s += "                                    <svg><use xlink:href=\"#icGrid\"><\/use><\/svg>";
+s += "                                    <span>Version Up<\/span>";
+s += "                                    <div class=\"tips\">⇧ ↑<\/div>";
+s += "                                <\/div>";
+s += "                                <div class=\"item\" onclick=\"viewer.decreaseVersion(); addRemoveClass('class','menu','active'); return false;\">";
+s += "                                    <svg><use xlink:href=\"#icGrid\"><\/use><\/svg>";
+s += "                                    <span>Version Down<\/span>";
+s += "                                    <div class=\"tips\">⇧ ↓<\/div>";
+s += "                                <\/div>";
+s += "                            <\/div>";
+}
 s += "                            <hr>";
 s += "                            <div class=\"groupe\">";
 s += "                                <div class=\"item\" onclick=\"gallery.show(); addRemoveClass('class','menu','active'); return false;\">";
