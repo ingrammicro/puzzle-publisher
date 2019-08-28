@@ -472,7 +472,7 @@ class ViewerPage {
                         var nextObjects = document.elementsFromPoint(e.originalEvent.x,e.originalEvent.y);
                         for(var i = 0; i < nextObjects.length; i++) {
                             var obj = nextObjects[i].parentElement
-                            if(obj.nodeName!='A' || obj==this) continue
+                            if(!obj || obj.nodeName!='A' || obj==this) continue
                             $(obj).trigger('click', e);
                             return
                         }

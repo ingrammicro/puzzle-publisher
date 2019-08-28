@@ -148,7 +148,7 @@ function createViewer(story, files) {
             }
             this.addHotkeys();
             window.addEventListener('mousemove', function (e) {
-                viewer.onMouseMove(e.x,e.y)
+                viewer.onMouseMove(e.pageX,e.pageY)
             });
             jQuery(window).resize(function(){viewer.zoomContent()});
         },
