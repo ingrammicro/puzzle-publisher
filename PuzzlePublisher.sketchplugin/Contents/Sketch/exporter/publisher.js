@@ -69,11 +69,11 @@ class Publisher {
                     if (err) {
                         log(" Failed to save a document. Error: "+err)
                     }       
-                })
+                })s
                 // inform server about new version
                 if(this.serverToolsPath!=""){
                     try {
-                        var url = this.siteRoot+this.serverToolsPath+"announce_publishing.php?name="+encodeURI(this.authorName)+"&ver="+encodeURI(this.ver)+"&url="+encodeURI(openURL)
+                        var url = this.siteRoot+this.serverToolsPath+Constants.SERVER_ANNOUNCE_SCRIPT+"?name="+encodeURI(this.authorName)+"&ver="+encodeURI(this.ver)+"&url="+encodeURI(openURL)
                         log(url)
                         var nURL = NSURL.URLWithString(url);
                         var data = NSData.dataWithContentsOfURL(nURL);
