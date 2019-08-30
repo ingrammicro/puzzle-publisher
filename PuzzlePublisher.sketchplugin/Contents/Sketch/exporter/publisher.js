@@ -14,7 +14,9 @@ class Publisher {
 		this.ver = ''
 		this.remoteFolder = ''
 		
-		this.allMockupsdDir = this.Settings.settingForKey(SettingKeys.PLUGIN_EXPORTING_URL)		
+        this.allMockupsdDir = this.Settings.settingForKey(SettingKeys.PLUGIN_EXPORTING_URL)		
+        this.serverToolsPath = this.Settings.settingForKey(SettingKeys.PLUGIN_SERVERTOOLS_PATH)+""
+        this.authorName = this.Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_NAME)+""
 	}
 
 
@@ -56,7 +58,10 @@ class Publisher {
 
         if(!this.context.fromCmd){
             // success
-            if(runResult.result){
+            if(runResult.result){            
+                const openURL = this.siteRoot + destFolder + (version=="-1"?"":("/"+version)) +"/index.html"
+
+                // save changed document
                 log(" SAVING DOCUMENT...")
                 const Dom = require('sketch/dom')
                 const jDoc = Dom.fromNative(this.doc)
@@ -65,11 +70,22 @@ class Publisher {
                         log(" Failed to save a document. Error: "+err)
                     }       
                 })
+                // inform server about new version
+                if(this.serverToolsPath!=""){
+                    try {
+                        var url = this.siteRoot+this.serverToolsPath+"announce_publishing.php?name="+encodeURI(this.authorName)+"&ver="+encodeURI(this.ver)+"&url="+encodeURI(openURL)
+                        log(url)
+                        var nURL = NSURL.URLWithString(url);
+                        var data = NSData.dataWithContentsOfURL(nURL);
+                        //var json = NSJSONSerialization.JSONObjectWithData_options_error(data, 0, nil)
+                        //log(json)
+                    } catch(e) {
+                        log("Exception: " + e);
+                    }
+                }
                 // open browser                
-                if(this.siteRoot!=''){
-                    const openURL = this.siteRoot + destFolder + (version=="-1"?"":("/"+version)) +"/index.html"
-                    const openResult = Utils.runCommand('/usr/bin/open', [openURL])
-                    
+                if(this.siteRoot!=''){                    
+                    const openResult = Utils.runCommand('/usr/bin/open', [openURL])                    
                     if(openResult.result){
                     }else{
                         UI.alert('Can not open HTML in browser', openResult.output)

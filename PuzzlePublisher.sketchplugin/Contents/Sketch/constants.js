@@ -66,6 +66,7 @@ var SettingKeys = {
   PLUGIN_COMMENTS_URL: "commentsURL",
   PLUGIN_GOOGLE_CODE: "googleCode",
   PLUGIN_SERVERTOOLS_PATH: "pluginServerToolsPath",
+  PLUGIN_AUTHOR_NAME: "pluginAuthorName",
   PLUGIN_EXPORT_MODE: "exportMode",
   PLUGIN_HIDE_NAV: "hideNavigation",    
   PLUGIN_SORT_RULE: "pluginSortRule",    

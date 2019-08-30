@@ -47,6 +47,18 @@
       "identifier" : "confPlugin"
     },  
     {
+        "script" : "menu-conf-plugin-export.js",
+        "handler" : "onRun",
+        "name" : "Configure Export",
+        "identifier" : "confPluginExport"
+      }, 
+    {
+        "script" : "menu-conf-plugin-publishing.js",
+        "handler" : "onRun",
+        "name" : "Configure Publishing",
+        "identifier" : "confPluginPublishing"
+    }, 
+    {
       "script" : "menu-edit-annotations.js",
       "handler" : "onRun",
       "name" : "Edit Annotations",
@@ -86,7 +98,8 @@
       "confArtboard",      
       "confDocument",
       "-",
-      "confPlugin"
+      "confPluginExport",
+      "confPluginPublishing"
     ]
   }
 }
