@@ -358,7 +358,7 @@ class Exporter {
         artboardGroups.push.apply(artboardGroups,artBoards);
       },this)
     }else if (this.exportOptions.mode==Constants.EXPORT_MODE_CURRENT_PAGE){      
-      artboardGroups.push.apply(artboardGroups, MyArtboard.getArtboardGroupsInPage(this.exportOptions.currentPage,index, context, false));
+      artboardGroups.push.apply(artboardGroups, MyArtboard.getArtboardGroupsInPage(this.exportOptions.currentPage, context, false));
     }else if (this.exportOptions.mode==Constants.EXPORT_MODE_SELECTED_ARTBOARDS){
       const list = []
       for (var i = 0; i < this.exportOptions.selectedArtboards.length; i++) {
