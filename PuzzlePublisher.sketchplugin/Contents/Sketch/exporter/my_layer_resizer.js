@@ -212,7 +212,7 @@ class MyLayerResizer {
             let targetArtboard = exporter.findArtboardByID(targetArtboardID)
 
             if(!targetArtboard){
-                log("_specifyHotspot() Can't find artboard with ID='"+targetArtboardID+"' for layer='"+l.name+"'")
+                exporter.logWarning("Broken link to missed artboard on layer '"+l.name+"' on artboard '"+l.artboard.name+"'")
                 return false
             }
 
@@ -309,7 +309,7 @@ class MyLayerResizer {
 
                 // handle link to artboard
                 if(!targetArtboard){
-                    log("_specifyHotspot() Can't find artboard with ID='"+targetArtboardID+"'")
+                    exporter.logWarning("Broken link to missed artboard on layer '"+l.name+"' on artboard '"+l.artboard.name+"'")
                     return
                 }
 

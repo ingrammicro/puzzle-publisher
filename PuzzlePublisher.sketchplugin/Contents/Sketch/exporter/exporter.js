@@ -38,6 +38,7 @@ class Exporter {
     this.pagesDict = []
     this.pageIDsDict = []
     this.errors = []
+    this.warnings = []
     this.exportedImages = []
     this.jsLibs = undefined
 
@@ -187,6 +188,10 @@ class Exporter {
     log(msg)
   }
 
+  logWarning(text){
+    log("[ WARNING ] "+text)
+    this.warnings.push(text)
+  }
 
   logError(error){
     log("[ ERROR ] "+error)

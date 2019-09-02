@@ -74,6 +74,8 @@ function exportHTML(currentPath, nDoc, exportOptions, context) {
             // show final message
             if (exporter.errors.length > 0) {
                 UI.alert('Export failed with errors', exporter.errors.join("\n\n"))
+            } else if (exporter.warnings.length > 0) {
+                UI.alert('Export completed with warnings', exporter.warnings.join("\n\n"))
             } else {
                 UI.message('HTML exported.')
             }
