@@ -1,5 +1,20 @@
 <?php
 
+/*
+    To announce published mockups in Telegram channel you need:
+    1. Create a Telegram public channel
+    2. Create a Telegram BOT via BotFather
+    3. Set the bot as administrator in your channel    
+    See details here: https://medium.com/@xabaras/sending-a-message-to-a-telegram-channel-the-easy-way-eb0a0b32968
+    4. Specify parameters in config.js file
+    5. Be sure that your web server can write/read data.raw and config.json files. 
+    I used the following commangs:
+    chcon -R -t httpd_sys_content_t .
+    chcon -R -t httpd_sys_rw_content_t  .
+    chown -R apache:apache config.json
+    chown -R apache:apache data.raw 
+*/
+
 class Worker{
     public $ref = "";
     public $baseurl = "";
