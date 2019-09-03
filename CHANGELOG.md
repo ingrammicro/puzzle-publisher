@@ -1,5 +1,8 @@
 # Change Log
 
+##  Version 10.1.0 (03 Sep 2019)
+- Added Announce Changes feature for mockups published on SFTP (requires server support)
+
 ##  Version 10.0.2 (02 Sep 2019)
 - Fixed "Export selected page artboards" feature
 
