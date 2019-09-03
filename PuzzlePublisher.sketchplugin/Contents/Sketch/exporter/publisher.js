@@ -14,7 +14,11 @@ class Publisher {
 		this.ver = ''
 		this.remoteFolder = ''
 		
-		this.allMockupsdDir = this.Settings.settingForKey(SettingKeys.PLUGIN_EXPORTING_URL)		
+        this.allMockupsdDir = this.Settings.settingForKey(SettingKeys.PLUGIN_EXPORTING_URL)		
+        this.serverToolsPath = this.Settings.settingForKey(SettingKeys.PLUGIN_SERVERTOOLS_PATH)+""
+        this.authorName = this.Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_NAME)+""
+
+        this.message = ""
 	}
 
 
@@ -56,7 +60,11 @@ class Publisher {
 
         if(!this.context.fromCmd){
             // success
-            if(runResult.result){
+            if(runResult.result){            
+                const openURL = this.siteRoot + destFolder + (version=="-1"?"":("/"+version)) +"/index.html"
+                const announceFolder = destFolder + (version=="-1"?"":("/"+version))
+
+                // save changed document
                 log(" SAVING DOCUMENT...")
                 const Dom = require('sketch/dom')
                 const jDoc = Dom.fromNative(this.doc)
@@ -65,11 +73,26 @@ class Publisher {
                         log(" Failed to save a document. Error: "+err)
                     }       
                 })
+                // inform server about new version
+                if(this.serverToolsPath!=""){
+                    try {
+                        var url = this.siteRoot+this.serverToolsPath+Constants.SERVER_ANNOUNCE_SCRIPT
+                        url += "?author="+encodeURI(this.authorName)
+                        url += "&msg="+encodeURI(this.message)
+                        url += "&ver="+encodeURI(this.ver)
+                        url += "&dir="+encodeURI(announceFolder)
+                        log(url)
+                        var nURL = NSURL.URLWithString(url);
+                        var data = NSData.dataWithContentsOfURL(nURL);
+                        //var json = NSJSONSerialization.JSONObjectWithData_options_error(data, 0, nil)
+                        //log(json)
+                    } catch(e) {
+                        log("Exception: " + e);
+                    }
+                }
                 // open browser                
-                if(this.siteRoot!=''){
-                    const openURL = this.siteRoot + destFolder + (version=="-1"?"":("/"+version)) +"/index.html"
-                    const openResult = Utils.runCommand('/usr/bin/open', [openURL])
-                    
+                if(this.siteRoot!=''){                    
+                    const openResult = Utils.runCommand('/usr/bin/open', [openURL])                    
                     if(openResult.result){
                     }else{
                         UI.alert('Can not open HTML in browser', openResult.output)
@@ -132,41 +155,71 @@ class Publisher {
 
 	askOptions(){
         let Settings = this.Settings
+
+        let askLogin = ''==this.login
+        let askSiteRoot = ''==this.siteRoot
+        let askMessage = ''!=this.serverToolsPath
         
         // show dialod        
-		const dialog = new UIDialog("Publish HTML",NSMakeRect(0, 0, 400, 340),"Publish","Generated HTML will be uploaded to external site by SFTP.")
-		
+        const dialog = new UIDialog("Publish HTML",NSMakeRect(0, 0, 400, 
+            180+(askMessage?65:0)+(askLogin?60:0)+(askSiteRoot?60:0)),
+            "Publish","Generated HTML will be uploaded to external site by SFTP.")
+        
+        if(askMessage){
+            dialog.addTextBox("message", "Change Description", this.message, 'Added Remove button',40)
+            dialog.addHint("messageHint","Describe briefly was changed")
+        }
+
 		dialog.addTextInput("version","Version", this.ver,'1')  	  	
 		dialog.addHint("versionHint","Exporter will publish two HTML sets - live and <version>")
 
 		dialog.addTextInput("remoteFolder","Remote Site Folder", this.remoteFolder,'myprojects/project1',350)  
 		dialog.addHint("remoteFolderHint","Relative path on server")
 
-		dialog.addTextInput("login","SFTP Login", this.login,'html@mysite.com:/var/www/html/',350)  
-		dialog.addHint("loginHint","SSH key should be uploaded to the site already")
+        if(askLogin){
+		    dialog.addTextInput("login","SFTP Login", this.login,'html@mysite.com:/var/www/html/',350)  
+            dialog.addHint("loginHint","SSH key should be uploaded to the site already")
+        }   
 
-		dialog.addTextInput("siteRoot","Site Root URL (Optional)", this.siteRoot,'http://mysite.com',350)  
-		dialog.addHint("siteRootHint","Specify to open uploaded HTML in web browser automatically")
+        if(askSiteRoot){
+		    dialog.addTextInput("siteRoot","Site Root URL (Optional)", this.siteRoot,'http://mysite.com',350)  
+            dialog.addHint("siteRootHint","Specify to open uploaded HTML in web browser automatically")
+        }
 
-		
-	  
-		if(dialog.run()){			
-			this.login = dialog.views['login'].stringValue()+""
-			Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_LOGIN,this.login )    
+        
+        while(true){
+            const result = dialog.run()        
+            if(!result) return false
 
-			this.siteRoot = dialog.views['siteRoot'].stringValue()+""
-			Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_SITEROOT,this.siteRoot )    
+            if(askLogin){
+			    this.login = dialog.views['login'].stringValue()+""
+                Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_LOGIN,this.login )    
+            }
+
+            if(askSiteRoot){
+			    this.siteRoot = dialog.views['siteRoot'].stringValue()+""
+                Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_SITEROOT,this.siteRoot )    
+            }
 
 			this.remoteFolder = dialog.views['remoteFolder'].stringValue()+""
-			Settings.setDocumentSettingForKey(this.doc,SettingKeys.DOC_PUBLISH_REMOTE_FOLDER,this.remoteFolder )    
+            Settings.setDocumentSettingForKey(this.doc,SettingKeys.DOC_PUBLISH_REMOTE_FOLDER,this.remoteFolder )    
+            
+            if(askMessage){
+                this.message = dialog.views['message'].stringValue()+""
+            }
 
-			// save new version into document settings
-            let ver =  dialog.views['version'].stringValue()+""
+			let ver =  dialog.views['version'].stringValue()+""
             let verInt =  parseInt(ver)
-			this.ver = ver
-			Settings.setDocumentSettingForKey(this.doc,SettingKeys.DOC_PUBLISH_VERSION, (verInt>=0?verInt+1:verInt)+"")
+            this.ver = ver
 
-		  return true
+            // check data
+            if(''==this.remoteFolder) continue
+            if(''==this.ver) continue
+            if(askMessage && ''==this.message) continue
+            
+            // save new version into document settings            
+			Settings.setDocumentSettingForKey(this.doc,SettingKeys.DOC_PUBLISH_VERSION, (verInt>=0?verInt+1:verInt)+"")
+		    return true
 		}
 		return false
 
