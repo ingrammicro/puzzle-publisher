@@ -25,6 +25,7 @@ Viewer features:
 Publisher features:
 - Increasing of version counter and injecting it into HTML
 - Publishing to external site by SFTP
+- Announce new version changes in Telegram channel
 
 Run from command line:
 - Export HTML from command line / [Hint](https://github.com/ingrammicro/puzzle-publisher/blob/master/Hints.md#hint4)
