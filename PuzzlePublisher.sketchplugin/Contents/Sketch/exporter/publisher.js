@@ -194,17 +194,14 @@ class Publisher {
 
             if(askLogin){
 			    this.login = dialog.views['login'].stringValue()+""
-                Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_LOGIN,this.login )    
             }
 
             if(askSiteRoot){
 			    this.siteRoot = dialog.views['siteRoot'].stringValue()+""
-                Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_SITEROOT,this.siteRoot )    
             }
 
 			this.remoteFolder = dialog.views['remoteFolder'].stringValue()+""
-            Settings.setDocumentSettingForKey(this.doc,SettingKeys.DOC_PUBLISH_REMOTE_FOLDER,this.remoteFolder )    
-            
+           
             if(askMessage){
                 this.message = dialog.views['message'].stringValue()+""
             }
@@ -218,7 +215,11 @@ class Publisher {
             if(''==this.ver) continue
             if(askMessage && ''==this.message) continue
             
-            // save new version into document settings            
+            // save new version into document settings         
+            if(askSiteRoot){
+                Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_SITEROOT,this.siteRoot )    
+            }
+            Settings.setDocumentSettingForKey(this.doc,SettingKeys.DOC_PUBLISH_REMOTE_FOLDER,this.remoteFolder )                        
 			Settings.setDocumentSettingForKey(this.doc,SettingKeys.DOC_PUBLISH_VERSION, (verInt>=0?verInt+1:verInt)+"")
 		    return true
 		}
