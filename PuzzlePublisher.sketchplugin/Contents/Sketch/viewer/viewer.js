@@ -112,7 +112,6 @@ function doBlinkHotspots(){
 function createViewer(story, files) {
 	return {
         highlightLinks: story.highlightLinks,
-        symbolViewer: null,
         showLayout: false,
         isEmbed: false,
 
@@ -129,7 +128,12 @@ function createViewer(story, files) {
         files: files,
         userStoryPages: [],
         zoomEnabled: story.zoomEnabled,
+        
         sidebarVisible: false,
+        sidebarChild: null, // some instance of Viewer
+        symbolViewer: null,
+        versionViewer: null,
+ 
 
 		transQueue : [],
 		
@@ -145,6 +149,12 @@ function createViewer(story, files) {
             gallery.initialize();		
             if(story.layersExist){
                 this.symbolViewer = new SymbolViewer()
+
+            }
+            // Create Version Viewer for published mockups with some version specified
+            if(story.docVersion!='V_V_V'){
+                this.versionViewer = new VersionViewer()
+                $('.menu_version_viewer').show()
             }
             this.addHotkeys();
             window.addEventListener('mousemove', function (e) {
@@ -218,6 +228,11 @@ function createViewer(story, files) {
                     v.symbolViewer.toggle()
                 })
             };
+            if(v.versionViewer){
+                $(document).bind('keydown', 'v', function() {
+                    v.versionViewer.toggle()
+                })
+            };
             if(story.serverToolsPath!=''){
                 $(document).bind('keydown', 'shift+up', function() {
                     v.increaseVersion();
@@ -273,6 +288,32 @@ function createViewer(story, files) {
             this._setupFolderinfoRequest(handleIncreaseVersion)
         },
 
+
+        showSidebar: function(child) {
+            this.sidebarChild = child;
+            this.sidebarVisible=true
+            $('#sidebar').removeClass("hidden")        
+            viewer.zoomContent()    
+        },
+    
+
+        hideSidebar: function() {
+            if(this.sidebarChild){
+                this.sidebarChild.hideSelfOnly();
+                this.sidebarChild = null;
+            }
+
+            this.sidebarVisible=false
+            $('#sidebar').addClass("hidden")
+            this.zoomContent()
+        },
+
+        hideSidebarChild: function() {
+            if(!this.sidebarChild) return;
+            this.sidebarChild.hideSelfOnly();
+            this.sidebarChild = null;            
+        },
+    
         share: function(){
             var srcHref =  document.location.href
             var href = ''            

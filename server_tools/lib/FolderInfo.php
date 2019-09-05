@@ -48,7 +48,7 @@ class FolderInfo{
                 return FALSE;
             }
             // extract local URL to mockups from referrer
-            $this->local_url = substr(ref,strlen($this->baseurl));
+            $this->local_url = substr($ref,strlen($this->baseurl));
         }
 
         $localurl = $this->local_url;
@@ -135,7 +135,7 @@ class FolderInfo{
         }
     }
 
-    public function collectInfo($local_url)
+    public function collectInfo($local_url="")
     {
         if(!$this->_parse_context($local_url)) return FALSE;
         if(!$this->_read_dir()) return FALSE;       

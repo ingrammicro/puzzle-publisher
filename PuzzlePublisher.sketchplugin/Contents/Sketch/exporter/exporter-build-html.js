@@ -27,6 +27,7 @@ function buildMainHTML(options) {
     s += '<script type="text/javascript" src="viewer/LayersData.js'+verPostfix+'" charset="UTF-8"></script>\n';
     s += '<script type="text/javascript" src="viewer/SymbolViewer.js'+verPostfix+'" charset="UTF-8"></script>\n';
   }
+  s += '<script type="text/javascript" src="viewer/VersionViewer.js'+verPostfix+'" charset="UTF-8"></script>\n';
   if(options.commentsURL!=''){
     s += '<link rel="stylesheet" type="text/css" href="'+options.commentsURL+'/EasyPageComments.css'+verPostfix+'"/>\n';
     s += '<script type="text/javascript" src="'+options.commentsURL+'/EasyPageComments.js'+verPostfix+'"></script>\n';
@@ -124,6 +125,16 @@ function buildMainHTML(options) {
                 <div id="symbol_viewer_content">\
                 </div>\
             </div>\
+            <div id="version_viewer" class="hidden">\
+                <p class="title">VERSION INSPECTOR</p>\
+                <p>\
+                </p>\
+                <div id="empty">\
+                    Version information\
+                </div>\
+                <div id="version_viewer_content">\
+                </div>\
+            </div>\
         </div>\
         <div id="content-shadow" class="hidden"  onclick="viewer.onContentClick()"></div>\
         <div id="content-modal" class="contentModal hidden" onclick="viewer.onModalClick()"></div>\
@@ -169,6 +180,11 @@ s += "                                    <span>Toogle Elements Inspector<\/span
 s += "                                    <div class=\"tips\">M<\/div>";
 s += "                                <\/div>";
 }
+s += "                                <div id=\"menu_version_viewer\" class=\"hidden item\" onclick=\"addRemoveClass('class','menu','active'); viewer.versionViewer.toggle();  return false;\">";
+s += "                                    <svg><use xlink:href=\"#icVersion\"><\/use><\/svg>";
+s += "                                    <span>Version Inspector<\/span>";
+s += "                                    <div class=\"tips\">V<\/div>";
+s += "                                <\/div>";
 /*
 s += "                                <div class=\"item disabled\" onclick=\"addRemoveClass('class','annotation','active'); addRemoveClass('class','menu','active');\">";
 s += "                                    <svg><use xlink:href=\"#icAnnotation\"><\/use><\/svg>";

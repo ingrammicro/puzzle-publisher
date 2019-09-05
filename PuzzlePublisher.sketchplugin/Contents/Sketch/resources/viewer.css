@@ -67,7 +67,7 @@
     transition: all 0.3s;
 }
 
-#symbol_viewer {
+#symbol_viewer, #version_viewer {
     margin-left: 20px;
     margin-right: 20px;
     overflow-y: auto;
@@ -78,7 +78,15 @@
     font-weight: 900;
 }
 
+#version_viewer .title {    
+    font-weight: 900;
+}
+
 #symbol_viewer_content .head {
+    font-weight: 900;
+}
+
+#version_viewer .head {
     font-weight: 900;
 }
 

@@ -52,7 +52,7 @@ class SymbolViewer{
         return this.visible ? this.hide(): this.show()        
     }
 
-    hide(){
+    hideSelfOnly(){
         var isModal = viewer.currentPage && viewer.currentPage.isModal
         if(isModal){
             $(".modalSymbolLink").remove()
@@ -64,14 +64,16 @@ class SymbolViewer{
         this.visible = false
         viewer.linksDisabled = false
 
-        // hide sidebar        
-        viewer.sidebarVisible=false
-        $('#sidebar').addClass("hidden")
         $('#symbol_viewer').addClass("hidden")        
-        viewer.zoomContent()
+    }
+
+    hide(){    
+        viewer.hideSidebar();
     }
 
     show(){
+        viewer.hideSidebarChild();   
+        
         if(!this.inited) this.initialize()
         
         viewer.toggleLinks(false)
@@ -83,17 +85,13 @@ class SymbolViewer{
         var isModal = viewer.currentPage && viewer.currentPage.isModal
         const contentDiv = isModal?  $('#content-modal'): $('#content')
         contentDiv.addClass("contentSymbolsVisible")         
-
-        // show sidebar
-        viewer.sidebarVisible=true
         
         this._showEmptyContent()
         
         $('#symbol_viewer').removeClass("hidden")        
-        $('#sidebar').removeClass("hidden")        
-        viewer.zoomContent()
-
+        viewer.showSidebar(this);
         this.visible = true
+
     }
 
     _showEmptyContent(){
