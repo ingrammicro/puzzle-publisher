@@ -58,11 +58,11 @@ class VersionViewer{
         var info = "";
 
         if(data['screens_total_new']){
-            info += "<div>Added screens ("+(data['screens_total_new']+")</div>";
+            info += "<div>Added screens ("+data['screens_total_new']+")</div>";
             info += this._showScreens(data,true);
         }
         if(data['screens_total_changed']){
-            info += "<div>Changed screens ("+(data['screens_total_changed']+")</div>";
+            info += "<div>Changed screens ("+data['screens_total_changed']+")</div>";
             info += this._showScreens(data,false);
         }        
 
