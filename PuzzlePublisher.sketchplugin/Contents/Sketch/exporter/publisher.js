@@ -73,8 +73,7 @@ class Publisher {
                 }       
             })
             // inform server about new version
-            log('serverToolsPath='+this.serverToolsPath)
-            if(this.serverToolsPath!=""){
+            if(this.message!="--" && this.serverToolsPath!=""){
                 try {
                     var url = this.siteRoot+this.serverToolsPath+Constants.SERVER_ANNOUNCE_SCRIPT
                     url += "?author="+encodeURI(this.authorName)

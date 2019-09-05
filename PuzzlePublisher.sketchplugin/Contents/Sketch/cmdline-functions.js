@@ -43,7 +43,7 @@ function publishDocument(context,document){
     context.fromCmd = true
     const publisher = new Publisher(context,document.sketchObject);
     publisher.authorName = "[BOT]";
-    publisher.message = "Just re-publishing";
+    publisher.message = "--";
     publisher.publish();
 }
 
