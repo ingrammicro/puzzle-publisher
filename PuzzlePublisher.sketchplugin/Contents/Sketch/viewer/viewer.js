@@ -154,7 +154,7 @@ function createViewer(story, files) {
             // Create Version Viewer for published mockups with some version specified
             if(story.docVersion!='V_V_V'){
                 this.versionViewer = new VersionViewer()
-                $("#menu_version_viewer").removeClass("hidden");
+                $('.menu_version_viewer').show()
             }
             this.addHotkeys();
             window.addEventListener('mousemove', function (e) {

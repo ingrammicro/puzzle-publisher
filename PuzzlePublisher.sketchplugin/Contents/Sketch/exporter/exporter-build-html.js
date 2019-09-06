@@ -181,7 +181,7 @@ s += "                                    <div class=\"tips\">M<\/div>";
 s += "                                <\/div>";
 }
 s += "                                <div id=\"menu_version_viewer\" class=\"hidden item\" onclick=\"addRemoveClass('class','menu','active'); viewer.versionViewer.toggle();  return false;\">";
-s += "                                    <svg><use xlink:href=\"#icInspector\"><\/use><\/svg>";
+s += "                                    <svg><use xlink:href=\"#icVersion\"><\/use><\/svg>";
 s += "                                    <span>Version Inspector<\/span>";
 s += "                                    <div class=\"tips\">V<\/div>";
 s += "                                <\/div>";
