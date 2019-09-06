@@ -492,7 +492,7 @@ function createViewer(story, files) {
 			// We don't need any waiting page transitions anymore
             this._resetTransQueue()
 
-            if(this.symbolViewer) this.symbolViewer.hide()
+            //if(this.symbolViewer) this.symbolViewer.hide()
             
             var index = this.getPageIndex(page);
             var currentPage = this.currentPage

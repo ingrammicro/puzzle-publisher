@@ -43,12 +43,22 @@ class VersionViewer{
         viewer.hideSidebar();
     }
 
+    goTo(pageIndex){
+        viewer.goToPage(pageIndex)
+    }
+
     _showScreens(data,showNew){
         var info = "";
         for(const screen of data['screens_changed']){
             if(screen['is_new']!=showNew) continue;
+            const pageIndex = viewer.getPageIndex(screen['screen_name'],-1)
+            var pageName = pageIndex>=0?story.pages[pageIndex].title:screen['screen_name'];
+            info += "<div class='version-screen-div' onclick='viewer.versionViewer.goTo("+pageIndex+")'>";
             info += "<div>";
+            info += pageName;
+            info += "</div><div>";
             info += "<img src='"+screen['image_url']+"' border='0'/>";
+            info += "</div>";
             info += "</div>";
         }
         return info;
@@ -58,13 +68,16 @@ class VersionViewer{
         var info = "";
 
         if(data['screens_total_new']){
-            info += "<div>Added screens ("+data['screens_total_new']+")</div>";
+            info+="<p class='head'>Added screens ("+data['screens_total_new']+"):</p>";
             info += this._showScreens(data,true);
         }
         if(data['screens_total_changed']){
-            info += "<div>Changed screens ("+data['screens_total_changed']+")</div>";
+            info += "<p class='head'>Changed screens ("+data['screens_total_changed']+")</p>";
             info += this._showScreens(data,false);
         }        
+        if(!data['screens_total_new'] && !data['screens_total_changed']){
+            info += "No new or changed screens"
+        }
 
         $("#version_viewer_content").html(info)
     }

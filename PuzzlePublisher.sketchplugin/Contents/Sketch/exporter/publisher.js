@@ -80,6 +80,9 @@ class Publisher {
                     url += "&msg="+encodeURI(this.message)
                     url += "&ver="+encodeURI(this.ver)
                     url += "&dir="+encodeURI(announceFolder)
+                    if('--NOTELE'==this.message){
+                        url += "&NOTELE=1"
+                    }
                     log(url)
                     var nURL = NSURL.URLWithString(url);
                     var data = NSData.dataWithContentsOfURL(nURL);

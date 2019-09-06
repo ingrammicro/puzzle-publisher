@@ -129,9 +129,6 @@ function buildMainHTML(options) {
                 <p class="title">VERSION INSPECTOR</p>\
                 <p>\
                 </p>\
-                <div id="empty">\
-                    Version information\
-                </div>\
                 <div id="version_viewer_content">\
                 </div>\
             </div>\
