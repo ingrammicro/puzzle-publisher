@@ -1,8 +1,8 @@
-# Exporter
+# Puzzle Publisher
 
 A Sketch plugin that exports Sketch artboards into clickable HTML file. 
 
-Exporter Features:
+Features:
 - Single HTML file with links highlighting
 - Show artboard as an overlay over a previous artboard / [Pict 1](https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/tests/FixedLayers/Overlay1.png), [Pict 2](https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/tests/FixedLayers/Overlay2.png), [Pict 3](https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/tests/FixedLayers/Overlay3.png) / [Example](https://github.com/ingrammicro/puzzle-publisher/tree/master/tests/FixedLayers)
 - Show artboard as a modal over a previous artboard  / [Picture](https://github.com/ingrammicro/puzzle-publisher/raw/master/tests/Pictures/Link-ModalArtboard.png), [Example](https://github.com/ingrammicro/puzzle-publisher/raw/master/tests/Link-ModalArtboard.sketch)
