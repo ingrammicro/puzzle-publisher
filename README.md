@@ -49,7 +49,7 @@ Viewer - Show symbols (and design tokens):
 
 ## Installation
 
-To install, [download the zip file](https://github.com/ingrammicro/puzzle-publisher/raw/master/Exporter.sketchplugin.zip) and double-click on `Exporter.sketchplugin`. The commands will show up under `Plugins > Exporter`. 
+To install, [download the zip file](https://github.com/ingrammicro/puzzle-publisher/raw/master/PuzzlePublisher.sketchplugin.zip) and double-click on `PuzzlePublisher.sketchplugin`. The commands will show up under `Plugins > Puzzle Publisher`. 
 
 ## Usage
 
