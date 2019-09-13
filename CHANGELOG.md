@@ -1,5 +1,8 @@
 # Change Log
 
+##  Version 10.2.1 (13 Sep 2019)
+- Icon updated
+
 ##  Version 10.2.0 (06 Sep 2019)
 - Added Version Viewer (requires [server tools|https://github.com/ingrammicro/puzzle-publisher/tree/master/server_tools]) installed on your WWW server)
 
