@@ -127,13 +127,15 @@ class Exporter {
     log("_getLibraries: start")
     this.jsLibs = []
 
-    var libraries = require('sketch/dom').getLibraries()    
+    var libraries = require('sketch/dom').getLibraries()
     for(const jsLib of libraries){
-        if(!jsLib.enabled) continue
+        if(!jsLib.valid || !jsLib.enabled) continue        
+        log("_getLibraries: try to load document for library "+jsLib.name+"")
 
         const jsDoc = jsLib.getDocument() 
         if(!jsDoc){
             log("_getLibraries: can't load document for library "+jsDoc.path+"")
+            continue
         }
         this.jsLibs.push({
             jsLib: jsLib,

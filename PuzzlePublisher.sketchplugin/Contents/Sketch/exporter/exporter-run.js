@@ -126,7 +126,7 @@ function runExporter(context, exportOptions = null) {
             textValue: currentPath, 
             inlineHint: 'e.g. ~/HTML', width:450
         })
-        dialog.addCheckbox("compress","Compress images", compress)
+        //dialog.addCheckbox("compress","Compress images", compress)
         dialog.addCheckbox("open", "Open HTML in browser", !dontOpen)
         dialog.addTextInput("customWidth", "Artboard custom width (px)", customWidth+"",'e.g. 1920')
         dialog.addTextInput("customHeight", "Artboard custom height (px)", customHeight+"",'e.g. 1080')
@@ -151,8 +151,8 @@ function runExporter(context, exportOptions = null) {
             currentPath = dialog.views['path'].stringValue() + ""
             if (currentPath == "") continue
 
-            dontOpen =  dialog.views['open'].state() != 1
-            compress =  dialog.views['compress'].state() == 1
+            dontOpen =  dialog.views['open'].state() != 1        
+            compress = false //dialog.views['compress'].state() == 1
             
 
             break

@@ -1,5 +1,9 @@
 # Change Log
 
+##  Version 10.2.2 (14 Sep 2019)
+- Add additional check for valid libraries
+- Disabled unstable image compression
+
 ##  Version 10.2.1 (13 Sep 2019)
 - Icon updated
 
