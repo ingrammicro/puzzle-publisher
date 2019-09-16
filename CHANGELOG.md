@@ -1,5 +1,8 @@
 # Change Log
 
+##  Version 10.3.0 (16 Sep 2019)
+- Redesigned Gallery
+
 ##  Version 10.2.2 (14 Sep 2019)
 - Add additional check for valid libraries
 - Disabled unstable image compression
