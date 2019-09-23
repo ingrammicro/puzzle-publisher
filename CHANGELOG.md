@@ -1,5 +1,8 @@
 # Change Log
 
+##  Version 10.3.1 (23 Sep 2019)
+- Hotspot in fixed panel aligned to bottom opens overlay also aligned to bottom
+
 ##  Version 10.3.0 (16 Sep 2019)
 - Redesigned Gallery
 
