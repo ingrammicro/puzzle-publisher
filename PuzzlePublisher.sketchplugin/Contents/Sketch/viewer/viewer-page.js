@@ -591,10 +591,10 @@ function handleLinkEvent(event){
                 }else if(10==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_LEFT                                                    
                 }else if(11==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_CENTER
                     pageX += parseInt(orgLink.width/2) - parseInt(destPage.width/2)
-                    pageY -= destPage.height                            
+                    //pageY -= destPage.height                            
                 }else if(12==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_RIGHT
                     pageX += orgLink.width  - destPage.width
-                    pageY = pageY - destPage.height                            
+                    //pageY = pageY - destPage.height                            
                 }else if(13==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_RIGHT_ALIGN_RIGHT
                     pageX +=orgLink.width
                 }
