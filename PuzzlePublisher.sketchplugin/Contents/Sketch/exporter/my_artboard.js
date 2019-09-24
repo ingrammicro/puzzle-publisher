@@ -410,7 +410,21 @@ class MyArtboard extends MyLayer {
         
     }
 
+        if (parent instanceof MSDocument) {
+          // MSDocument
+          var res = []
+          for(var page of parent.pages()){
+               res.push(this._col(page))
+          }
+          return res
+        } // assume MSLayerGroup
+      
+        return Array.from(parent.children());
+      }
     _exportImages() {
+
+        //this._getAllLayersMatchingPredicate(Sketch.getSelectedDocument().sketchObject)
+
         log("  exportArtboardImages: running... " + this.name)
         let scales = exporter.retinaImages?[1,2]:[1]    
                 
@@ -420,8 +434,7 @@ class MyArtboard extends MyLayer {
         // hide fixed panels to generate a main page content without fixed panels 
         // and their artefacts (shadows)
         this._hideFixedLayers(true)
-
-        Sketch.getSelectedDocument().sketchObject.documentData().invalidateAffectedSymbolInstances()
+        
         for(var scale of scales){                     
             this._exportImage(scale,this,this.nlayer,'',Constants.ARTBOARD_TYPE_OVERLAY != this.artboardType)
         }
@@ -499,6 +512,8 @@ class MyArtboard extends MyLayer {
                 layer.slayer.style.shadows  = layer.fixedShadows
             }
        }
+       Sketch.getSelectedDocument().sketchObject.documentData().invalidateAffectedSymbolInstances()
+
     }
 
 
