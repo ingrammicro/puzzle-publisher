@@ -1,5 +1,9 @@
 # Change Log
 
+##  Version 10.3.2 (24 Sep 2019)
+- Fixed "Hotspot top center" and "Hotspot top right corner" overlay aligmnent modes
+- Fixed rendering of artboard with fixed layers (on some installations Sketch was too lazy)
+
 ##  Version 10.3.1 (23 Sep 2019)
 - Hotspot in fixed panel aligned to bottom opens overlay also aligned to bottom
 
