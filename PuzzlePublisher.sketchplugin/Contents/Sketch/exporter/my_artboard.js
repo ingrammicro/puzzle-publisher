@@ -413,14 +413,15 @@ class MyArtboard extends MyLayer {
     _exportImages() {
         log("  exportArtboardImages: running... " + this.name)
         let scales = exporter.retinaImages?[1,2]:[1]    
-        
-        // hide fixed panels to generate a main page content without fixed panels 
-        // and their artefacts (shadows)
-        this._hideFixedLayers(true)
-        
+                
         // export fixed panels to their own image files
         this._exportFixedLayersToImages(scales)
 
+        // hide fixed panels to generate a main page content without fixed panels 
+        // and their artefacts (shadows)
+        this._hideFixedLayers(true)
+
+        Sketch.getSelectedDocument().sketchObject.documentData().invalidateAffectedSymbolInstances()
         for(var scale of scales){                     
             this._exportImage(scale,this,this.nlayer,'',Constants.ARTBOARD_TYPE_OVERLAY != this.artboardType)
         }
@@ -465,16 +466,11 @@ class MyArtboard extends MyLayer {
             
             // for div and  float fixed layer we need to generate its own image files
             if(layer.isFloat || layer.isFixedDiv){
-
-                layer.slayer.hidden = false
-
                 //this._exportImage2('1, 2',layer.parent.slayer)         
                 for(var scale of scales){                                       
                     const l = layer.parent.isSymbolInstance?layer:layer
                     this._exportImage(scale,l,l.nlayer,"-"+layer.fixedIndex,false)
                 }                 
-
-                layer.slayer.hidden = true
             }
 
             // restore original fixed panel shadows
@@ -493,7 +489,7 @@ class MyArtboard extends MyLayer {
             }
 
             // temporary remove fixed panel shadows
-            if(hide){
+            if(hide){                
                 layer.fixedShadows = layer.slayer.style.shadows
                 layer.slayer.style.shadows = []  
             }
@@ -502,7 +498,6 @@ class MyArtboard extends MyLayer {
             if(show){
                 layer.slayer.style.shadows  = layer.fixedShadows
             }
-
        }
     }
 
