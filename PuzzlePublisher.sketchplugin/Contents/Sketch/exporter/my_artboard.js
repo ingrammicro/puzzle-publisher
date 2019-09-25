@@ -409,18 +409,7 @@ class MyArtboard extends MyLayer {
         Sketch.export(slayer, options)        
         
     }
-
-        if (parent instanceof MSDocument) {
-          // MSDocument
-          var res = []
-          for(var page of parent.pages()){
-               res.push(this._col(page))
-          }
-          return res
-        } // assume MSLayerGroup
-      
-        return Array.from(parent.children());
-      }
+ 
     _exportImages() {
 
         //this._getAllLayersMatchingPredicate(Sketch.getSelectedDocument().sketchObject)

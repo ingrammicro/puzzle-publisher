@@ -3,6 +3,7 @@
 @import("exporter/exporter-build-html.js")
 @import("exporter/my_layer.js")
 @import("exporter/my_artboard.js")
+@import("exporter/my_page.js")
 @import("exporter/my_layer_resizer.js")
 @import("exporter/publisher.js") // we need it to run resize.sh script
 
@@ -383,7 +384,7 @@ class Exporter {
           }
           break;
       }
-    }
+    }  
 
     return artboardGroups;
   }
@@ -396,6 +397,9 @@ class Exporter {
       const skSymbol = symbol.sketchObject      
       if( sid in symDict) continue
       symDict[ sid ] = skSymbol      
+
+      // save symbol master name
+      exporter.Settings.setLayerSettingForKey(skSymbol, "symbolName",symbol.name)
     }
 
     this.symDict = symDict
@@ -539,12 +543,18 @@ class Exporter {
 
   exportArtboards() {        
     log("exportArtboards: running...")    
+    this.buildSymbolDict()
+
+
+    {
+        var mpage = new MyPage(this.Sketch.fromNative(this.ndoc.pages()[0]))
+        mpage.run()     
+    }
 
     // Collect artboards and prepare caches
     this.artboardGroups = this.getArtboardGroups(this.context);
     
     // Collect all layers
-    this.buildSymbolDict()
     {
       const layerCollector  = new MyLayerCollector()
       layerCollector.collectArtboardsLayers(" ")

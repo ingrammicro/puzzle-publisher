@@ -113,6 +113,7 @@ class MyLayer {
             this.hasHoverOverlay = true
             this.artboard.overlayLayers.push(this)
         }
+
         
     }
 
