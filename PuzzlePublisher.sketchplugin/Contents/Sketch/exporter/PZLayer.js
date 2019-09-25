@@ -1,6 +1,5 @@
 @import("constants.js")
 @import("lib/utils.js")
-@import("exporter/child-finder.js")
 
 var ResizingConstraint = {
     NONE: 0,
@@ -12,23 +11,22 @@ var ResizingConstraint = {
     TOP: 1 << 5
 }
 
-
 var UX1LibraryName = "ux1-ui"
 
 Sketch = require('sketch/dom')
 
-class MyLayer {
+class PZLayer {
 
     // nlayer: ref to native MSLayer Layer
     // myParent: ref to parent MyLayer
-    constructor(nlayer,myParent) {
-        this.nlayer = nlayer
-        this.name = nlayer.name() + ""
+    constructor(sLayer,myParent) {
+        this.nlayer = sLayer.sketchObject
+        this.name = sLayer.name
         this.parent = myParent
-        this.objectID = nlayer.objectID()
+        this.objectID = sLayer.id
         this.originalID = undefined
         this.symbolMaster = undefined
-        this.slayer = Sketch.fromNative(nlayer)
+        this.slayer = sLayer
         this.artboard = myParent ? myParent.artboard : this
         this.isParentFixed = undefined!=myParent && (myParent.isFixed || myParent.isParentFixed)
     
@@ -41,13 +39,15 @@ class MyLayer {
 
         //log('+++++ this.name: ' + this.name + " isParentFixed: "+this.isParentFixed+ " parent:"+(undefined!=myParent?myParent.name:"none"))
 
-        if(nlayer.isKindOfClass(MSLayerGroup)) this.isGroup = true
-        if(nlayer.isKindOfClass(MSSymbolInstance)){
-            this.isSymbolInstance = true
-            this.symbolMaster = nlayer.symbolMaster()
+        if("Group"==sLayer.type || "Artboard"==sLayer.type ) this.isGroup = true
+        const symbolIDPos = this.name.indexOf("{{")
+        if(symbolIDPos>=0){
+            this.isSymbolInstance = true 
+            const symbolID = this.name.substring(symbolIDPos+1)
+            this.symbolMaster = Sketch.fromNative(pzDoc.getLayerWithID(symbolID))
 
             // prepare data for Element Inspector
-            const lib = this.slayer.master.getLibrary()            
+            const lib = this.symbolMaster.getLibrary()            
             if(lib){
                 this.smName = this.symbolMaster.name()+""                
                 this.smLib = lib.name
@@ -64,22 +64,19 @@ class MyLayer {
                 this.text = this.slayer.text+""
             }
         }
-        if(nlayer.isKindOfClass(MSArtboardGroup))  this.isArtboard = true        
+        if("Artboard"==sLayer.type )  this.isArtboard = true        
 
         var comment = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.LAYER_COMMENT)
         if(undefined!=comment && ''!=comment){
             this.comment = comment
         }
 
-
-        
         this.childs = []  
         this.hotspots = [] 
         
         this.frame = undefined
         this.orgFrame = undefined
         if(myParent!=undefined) this.constrains = this._calculateConstrains()
-        this.tempOverrides = undefined        
         
         if(!this.isArtboard && !exporter.disableFixedLayers && !this.isParentFixed){
             var overlayType = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.LAYER_OVERLAY_TYPE)
@@ -235,153 +232,6 @@ class MyLayer {
             formats: 'png' 
         }
         Sketch.export(this.slayer, options)       */
-    }
-
-}
-
-class MyLayerCollector {
-    constructor() {        
-        this.childFinder = new ChildFinder()        
-    }
-    
-    collectArtboardsLayers(prefix){                
-        log( prefix+"collectArtboardsLayers: running...")
-        
-        exporter.artboardGroups.forEach(function (artboardGroup) {
-            const artboard = artboardGroup[0].artboard;
-            this.collectSingleArtboardLayers(prefix + " ",artboard)
-        }, this);
-     
-        log( prefix+"collectArtboardsLayers: done!")
-    }
-
-    collectSingleArtboardLayers(prefix,snArtboard){
-        //log( prefix+"collectSingleArtboardLayers: running...")
-        const artboard = this.getCollectLayer(prefix+" ",snArtboard,undefined,{})
-        exporter.myLayers.push(artboard)
-        //log( prefix+"collectSingleArtboardLayers: done!")
-        return artboard
-    }
-
-
-    getCollectLayer(prefix,nlayerOrg,myParent,symbolOverrides){
-        let nlayer = nlayerOrg
-        
-        let myLayer = undefined
-        if(myParent==undefined)
-            myLayer = new MyArtboard(nlayer)
-        else
-            myLayer = new MyLayer(nlayer,myParent) 
-    
-
-        let newMaster = undefined
-
-        //exporter.logMsg(prefix + nlayer.name()+ " "+nlayer.objectID())
-
-        if(nlayer.isKindOfClass(MSSymbolInstance)){
-            const objectID = nlayer.objectID()
-            while(objectID in symbolOverrides){
-                const over = symbolOverrides[objectID] 
-                //exporter.logMsg("getCollectLayer found override for "+objectID + "  newMaster = "+over['newMaster']   )
-
-                if(over['path']!=undefined){
-                    if(over['path'].length>1){
-                        //("getCollectLayer shifted override path")
-                        over['path'].shift()
-                        const newID =  over['path'][0]
-                        // replace ID in symbolOverrides dictionary
-                        symbolOverrides[newID] = over
-                        delete symbolOverrides[objectID]                        
-                        break
-                    }
-                }
-                newMaster = over['newMaster']               
-                if(newMaster==null){
-                    return null
-                }
-                myLayer.originalID = objectID
-                myLayer.symbolMaster = newMaster      
-                
-                const lib =   Sketch.fromNative(newMaster).getLibrary()            
-                if(lib && UX1LibraryName==lib.name){
-                    myLayer.smName = myLayer.symbolMaster.name()+""
-                }        
-                
-                //log('myLayer.smName:')
-                //log(myLayer.smName)
-                delete symbolOverrides[objectID] 
-                break                                              
-            }                     
-        }
-        
-        //exporter.logMsg(prefix + nlayer.name()+ " "+nlayer.objectID())
-
-        if(myLayer.isSymbolInstance){      
-            var newSymbolOverrides = this._extendSymbolOverrides(myLayer,symbolOverrides)   
-            myLayer.childs =  this.getCollectLayerChilds(prefix+" ", myLayer.symbolMaster.layers(),myLayer,newSymbolOverrides)
-        }else if(myLayer.isGroup){
-            myLayer.childs =  this.getCollectLayerChilds(prefix+" ",nlayer.layers(),myLayer,symbolOverrides)
-        }
-          
-        return myLayer
-    }
-
-    getCollectLayerChilds(prefix,layers, myParent,symbolOverrides){
-        const myLayers = []     
-
-        layers.forEach(function (childLayer) {                      
-            const newLayer = this.getCollectLayer(prefix+" ",childLayer,myParent,symbolOverrides)
-            if(newLayer==null) return
-
-            myLayers.push( newLayer )
-        }, this);
-        return myLayers
-    }
-
-    _extendSymbolOverrides(layer,symbolOverrides){
-        var cloned = false
-        
-        // check if symbol was replaced by another
-        for(var customProperty of layer.slayer.overrides){
-            if( !(customProperty.property==='symbolID' && !customProperty.isDefault && customProperty.value!=undefined) ) continue
-            let oldID = customProperty.path
-            let newID = customProperty.value            
-
-            // check if it was overrided by parents
-            if( oldID in symbolOverrides) continue
-            
-            if(!cloned){
-                symbolOverrides = Utils.cloneDict(symbolOverrides)
-                cloned = true
-            }
-
-            const overStruct = {
-                'newMaster': null,
-                'path': undefined
-            }
-
-            if(oldID.indexOf("/")>0){
-                //xporter.log("_extendSymbolOverrides() found complex override: "+oldID)    
-                overStruct['path'] = oldID.split("/")
-                oldID = overStruct['path'][0]
-            }
-
-            if(newID==""){
-                overStruct['newMaster'] = null            
-            }else{
-                const newNLayer = exporter.symDict[newID]
-                if(newNLayer==undefined || newNLayer==null){
-                    exporter.stopWithError("_extendSymbolOverrides() Can't find symbol with ID:"+newID+" for object:"+layer.name)
-                }
-
-                overStruct['newMaster'] = newNLayer
-            }
-
-            symbolOverrides[oldID] = overStruct
-
-            //exporter.logMsg("_extendSymbolOverrides() overrided old="+oldID+" overStruct="+overStruct)    
-        }        
-        return symbolOverrides
     }
 
 }

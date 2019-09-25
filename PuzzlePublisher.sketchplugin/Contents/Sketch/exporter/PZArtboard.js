@@ -1,32 +1,14 @@
 @import("constants.js")
 @import("lib/utils.js")
-@import("exporter/child-finder.js")
-@import("exporter/my_layer.js")
+@import("exporter/PZLayer.js")
 
 Sketch = require('sketch/dom')
 
-class MyArtboard extends MyLayer {
-
-    static getArtboardGroupsInPage(page, context, includeNone = true) {
-        const artboardsSrc = page.artboards();
-        const artboards = [];
-
-        artboardsSrc.forEach(function(artboard){
-            if( !artboard.isKindOfClass(MSSymbolMaster)){
-              artboards.push(artboard);
-            }
-        });
-      
-        return Utils.getArtboardGroups(artboards, context);  
-      }
-      
-
-    // nlayer: ref to native MSLayer Layer
-    // myParent: ref to parent MyLayer
-    constructor(nlayer) {
+class PZArtboard extends PZyLayer {
+   
+    constructor(slayer) {
 
         // init Artboard own things !!! before object construction !!!
-        let slayer = Sketch.fromNative(nlayer)
         let artboardType = exporter.Settings.layerSettingForKey(slayer, SettingKeys.ARTBOARD_TYPE)
         if(undefined == artboardType || '' == artboardType){
             if(exporter.Settings.layerSettingForKey(slayer, SettingKeys.LEGACY_ARTBOARD_MODAL)==1){
@@ -50,7 +32,7 @@ class MyArtboard extends MyLayer {
                 slayer.frame.height = exporter.customArtboardFrame.height
         }
 
-        super(nlayer, undefined)
+        super(slayer, undefined)
         
         this.oldFrame = needResize?oldframe:undefined
         this.overlayLayers = []

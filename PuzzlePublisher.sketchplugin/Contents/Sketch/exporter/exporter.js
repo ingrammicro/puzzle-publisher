@@ -542,12 +542,8 @@ class Exporter {
     log("exportArtboards: running...")    
     this.buildSymbolDict()
 
-
-    {
-        var mpage = new MyPage(this.Sketch.fromNative(this.ndoc.pages()[0]))
-        mpage.run()     
-    }
-
+    this.mDoc = new MyPages()
+    
     // Collect artboards and prepare caches
     this.artboardGroups = this.getArtboardGroups(this.context);
     
