@@ -397,9 +397,6 @@ class Exporter {
       const skSymbol = symbol.sketchObject      
       if( sid in symDict) continue
       symDict[ sid ] = skSymbol      
-
-      // save symbol master name
-      exporter.Settings.setLayerSettingForKey(skSymbol, "symbolName",symbol.name)
     }
 
     this.symDict = symDict

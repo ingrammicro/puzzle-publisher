@@ -29,9 +29,8 @@ class MyPage{
                 sl = sl.detach({
                     recursively: true
                 })                
-                if(!sl) continue                
-                log(sl)
-                //exporter.Settings.setLayerSettingForKey(skSymbol, "symbolName",symbol.name)
+                if(!sl) continue                                
+                log("++++++++++++++++++ symbolName:"+sl.name)
 
             }else if("Group"==sl.type || "Artboard"==sl.type){
                 this._scanLayersToDetachSymbols(sl.layers)
