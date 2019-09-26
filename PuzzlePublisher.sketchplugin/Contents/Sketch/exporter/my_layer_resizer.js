@@ -27,7 +27,7 @@ class MyLayerResizer {
         layers.forEach(function (layer) {
             if(layer.parent == undefined){
                 // process top layer (artboard)            
-                this.currentArtboard = layer
+                this.artboard  = layer
             }
             this._resizeLayer(layer,topOffset,prefix+" ",lostOverrides)
         }, this);
@@ -116,7 +116,7 @@ class MyLayerResizer {
                 linkType:   'artboard',
                 artboardID: l.hoverOverlayArtboardID
             }
-            this.currentArtboard.hotspots.push(hoverHotsport)
+            this.artboard .hotspots.push(hoverHotsport)
             //log(prefix+"_processLayerLinks: [[[hasHoverOverlay]]]"+l.hoverOverlayArtboardID) //--
         }
         
@@ -152,7 +152,7 @@ class MyLayerResizer {
         hotspots.push(finalHotspot);          
 
         // finalization
-        Array.prototype.push.apply(this.currentArtboard.hotspots, hotspots);        
+        Array.prototype.push.apply(this.artboard .hotspots, hotspots);        
 
         
     }

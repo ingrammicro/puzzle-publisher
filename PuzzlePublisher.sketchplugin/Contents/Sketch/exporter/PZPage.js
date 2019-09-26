@@ -7,26 +7,31 @@ class PZPage{
 
     // spage: ref to Sketch Page
     constructor(sPage) {
-        this.sPageOrg = sPage
-        this.sPageClone = undefined
+        this.sPage = sPage
         this.mArtboards = []
     }
 
-    run(){
-        exporter.logMsg("PZPage.run() name="+this.sPageOrg.name)
+    collectData(){
+        exporter.logMsg("PZPage.run() name="+this.sPage.name)
         // 
 
-        this.sPageClone = this._clonePage(this.sPageOrg)
+        //this.sPage = this._clonePage(this.sPageOrg)
 
         // prepare layers for collecting
-        this._scanLayersToSaveInfo(this.sPageClone.layers)        
-        this._scanLayersToDetachSymbols(this.sPageClone.layers)       
+        this._scanLayersToSaveInfo(this.sPage.layers)        
+        this._scanLayersToDetachSymbols(this.sPage.layers)       
         
         // collect layers
-        this._collectArtboards(this.sPageClone.layers)
+        this._collectArtboards(this.sPage.layers)
 
         // cleanup temporary data
-        //this._cleanUp()
+        //this._cleanUp()        
+    }
+
+    export(){
+        for(const a of this.mArtboards){
+            a.export()
+        }
     }
 
     _clonePage(sPage){
@@ -41,8 +46,8 @@ class PZPage{
                 continue
             }
             if("Artboard"==sl.type){
-                sl.name = sl.name + "}}" + String(sl.id)
-                log("PZPage._scanLayersToSaveInfo() id="+ sl.name)
+                //sl.name = sl.name + "}}" + String(sl.id)
+                //log("PZPage._scanLayersToSaveInfo() id="+ sl.name)
             }
             if("SymbolInstance"==sl.type){
                 const smaster = pzDoc.getSymbolMasterByID(sl.symbolId)
@@ -91,9 +96,9 @@ class PZPage{
         this.mArtboards = mArtboards
     }
 
-    _cleanUp(sPageClone){
-        this.sPageClone.remove()
-        this.sPageClone = undefined
+    _cleanUp(sPage){
+        this.sPage.remove()
+        this.sPage = undefined
     }
 
 

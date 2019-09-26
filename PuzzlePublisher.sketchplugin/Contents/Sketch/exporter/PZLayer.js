@@ -2,6 +2,7 @@
 @import("lib/utils.js")
 @import("exporter/PZDoc.js")
 
+
 var ResizingConstraint = {
     NONE: 0,
     RIGHT: 1 << 0,
@@ -14,7 +15,8 @@ var ResizingConstraint = {
 
 var UX1LibraryName = "ux1-ui"
 
-Sketch = require('sketch/dom')
+var Sketch = require('sketch/dom')
+var Flow = require('sketch/dom').Flow
 
 class PZLayer {
 
@@ -24,7 +26,7 @@ class PZLayer {
         this.nlayer = sLayer.sketchObject
         this.name = sLayer.name
         this.parent = myParent
-        this.objectID = sLayer.id
+        this.objectID = String(sLayer.id)
         this.originalID = undefined
         this.symbolMaster = undefined
         this.slayer = sLayer
@@ -79,8 +81,13 @@ class PZLayer {
         this.childs = []  
         this.hotspots = [] 
         
-        this.frame = slayer.frame
-        this.orgFrame = slayer.frame
+        this.frame = Utils.copyRectToRectangle(this.nlayer.absoluteRect())        
+        log(this.frame)
+        if(!this.isArtboard){
+            this.frame.x -= this.artboard.frame.x
+            this.frame.y -= this.artboard.frame.y
+        }
+
         if(myParent!=undefined) this.constrains = this._calculateConstrains()
         
         if(!this.isArtboard && !exporter.disableFixedLayers && !this.isParentFixed){
@@ -137,7 +144,7 @@ class PZLayer {
         exporter.logMsg(space+"PZLayer.collectAChilds() name="+this.name)
         var aLayers = []
         for(const sl of sLayers){
-            const al = new PZLayer(sl)
+            const al = new PZLayer(sl,this)
             if(al.isGroup) al.childs = al.collectAChilds(sl.layers,space+" ")
             aLayers.push(al)
         }        
@@ -213,6 +220,7 @@ class PZLayer {
             r: this.frame.copy(),
             //l: l,
             linkType: 'undefined',
+            artboardID: null,
             target: null
         }
 
@@ -222,10 +230,10 @@ class PZLayer {
                 linkType:   'artboard',
                 artboardID: l.hoverOverlayArtboardID
             }
-            this.currentArtboard.hotspots.push(hoverHotsport)
+            this.artboard.hotspots.push(hoverHotsport)
         }
         
-        while(true){               
+        while(true){                
 
             // check link to external URL
             const externalLinkHref = exporter.Settings.layerSettingForKey(l.slayer,SettingKeys.LAYER_EXTERNAL_LINK)
@@ -240,28 +248,29 @@ class PZLayer {
             }            
 
             // check native link
-            if(l.flow){
+            if(l.slayer.flow){
                 if( !this._specifyHotspot(prefix+" ",l,finalHotspot)) return
                 break
             }
 
             // No any link on layer
             return
-        }
-        exporter.logMsg(prefix+"_processLayerLinks: finalHotspot type="+finalHotspot.linkType)
+        }        
         hotspots.push(finalHotspot);          
 
         // finalization
-        Array.prototype.push.apply(this.currentArtboard.hotspots, hotspots);            
+        Array.prototype.push.apply(this.artboard.hotspots, hotspots);            
+
+        exporter.logMsg(prefix+"_processLayerLinks")
+        log(this.artboard)
     }
 
 
     _specifyHotspot(prefix,l,finalHotspot){        
-        const layer = l.nlayer
-        const flow = exporter.Sketch.fromNative(layer.flow());
+        const flow = l.slayer.flow
         const targetArtboardID = flow.targetId;
     
-        if(flow.isBackAction()){
+        if(flow.target == Flow.BackTarget){
             // hande Back action
             finalHotspot.linkType = "back";
             exporter.logMsg(prefix+"hotspot: back")        

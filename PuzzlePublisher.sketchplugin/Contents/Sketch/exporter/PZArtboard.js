@@ -1,6 +1,7 @@
 @import("constants.js")
 @import("lib/utils.js")
 @import("exporter/PZLayer.js")
+@import("exporter/PZDoc.js")
 
 Sketch = require('sketch/dom')
 
@@ -33,19 +34,7 @@ class PZArtboard extends PZLayer {
         }
 
         super(slayer, undefined)
-        
-        // extract original artboard ID from clone artboad name
-        this.orgArtboardID = undefined
-        const orgIDPos = this.name.indexOf("}}")
-        if(orgIDPos<0){
-            exporter.logError("Can't find ID in artboard name:"+this.name)
-            return
-        }
-        this.orgArtboardID = this.name.substring(orgIDPos+1)
-        // restore original name
-        this.name = this.name.substring(0,orgIDPos)
-        this.slayer.name = this.name
-        
+                
         this.oldFrame = needResize?oldframe:undefined
         this.overlayLayers = []
         this.fixedLayers = [] // list of layers which are configured as fixed
@@ -64,7 +53,7 @@ class PZArtboard extends PZLayer {
             }            
         }
         pzDoc.pagesDict[this.name] = this
-        pzDoc.pageIDsDict[this.orgArtboardID] = this
+        pzDoc.pageIDsDict[this.objectID] = this
         
         // init Artboard own things
         this.artboardType = artboardType
@@ -321,16 +310,15 @@ class PZArtboard extends PZLayer {
                isParentFixed:isParentFixed,
             }
 
-            //log(' _buildHotspots linkType='+hotspot.linkType+" l.name="+hotspot.l.name+" l.target="+hotspot.target)
 
             if (hotspot.linkType == 'back') {
                 newHotspot.action = 'back'
-            } else if (hotspot.linkType == 'artboard' && exporter.pagesDict[hotspot.artboardID] != undefined 
-                && exporter.pageIDsDict[hotspot.artboardID].externalArtboardURL != undefined
+            } else if (hotspot.linkType == 'artboard' && pzDoc.pagesDict[hotspot.artboardID] != undefined 
+                && pzDoc.pageIDsDict[hotspot.artboardID].externalArtboardURL != undefined
             ) {
-                newHotspot.url = exporter.pageIDsDict[hotspot.artboardID].externalArtboardURL                
+                newHotspot.url = pzDoc.pageIDsDict[hotspot.artboardID].externalArtboardURL                
             } else if (hotspot.linkType == 'artboard') {
-                const targetPage = exporter.pageIDsDict[hotspot.artboardID]
+                const targetPage = pzDoc.pageIDsDict[hotspot.artboardID]
                 if (targetPage == undefined) {
                     exporter.logMsg("undefined artboard: '" + hotspot.artboardName + '"');
                     continue

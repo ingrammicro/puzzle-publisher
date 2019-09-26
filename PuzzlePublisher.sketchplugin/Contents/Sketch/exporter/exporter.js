@@ -338,16 +338,6 @@ class Exporter {
   }
 
 
-  exportArtboardImagesAndDef(){
-    log(" exportImages: running...")
-    this.totalImages = 0
-
-    for(var artboard of this.myLayers){
-      artboard.export();    
-    }
-    log(" exportImages: done!")
-  }
-
   resetCustomArtboardSizes(){
     log(" reset artboard custom sizes: running...")
 
@@ -471,9 +461,7 @@ class Exporter {
 
     // Collect layers information
     this.mDoc = new PZDoc()
-    this.mDoc.run()
-
-    return
+    this.mDoc.collectData()
     
     /*
     // Collect artboards and prepare caches
@@ -496,7 +484,6 @@ class Exporter {
     */
     
 
-
     // Build main HTML file
     if(!this.createMainHTML()) return false
     
@@ -507,7 +494,7 @@ class Exporter {
 
 
     // Export every artboard into PNG image
-    this.exportArtboardImagesAndDef()
+    this.mDoc.export()
     
     if(!this.generateJSStoryEnd()) return false
  
@@ -529,8 +516,26 @@ class Exporter {
 
     log("exportArtboards: done!")
 
+
+    //this.actionWithType("MSUndoAction").doPerformAction(nil);
+
+
     return true
   }  
+
+
+   actionWithType(type) {
+	var controller = exporter.context.document.actionsController();
+
+	if (controller.actionWithName) {
+		return controller.actionWithName(type);
+	} else if (controller.actionWithID) {
+		return controller.actionWithID(type);
+	} else {
+		return controller.actionForID(type);
+	}
+}
+
 
   prepareOutputFolder(selectedPath) {
     let error;

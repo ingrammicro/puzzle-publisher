@@ -12,22 +12,22 @@ class PZDoc{
         this.mPages = []
         this.sSymbols = undefined    
 
-        this.pagesDict = []
-        this.pageIDsDict = []
+        this.pagesDict = {}
+        this.pageIDsDict = {}
         this.jsLibs = undefined
     }
 
-    run(){
+    collectData(){
         // init required data
         this._buildSymbolDict()
 
         // cleanup previous garbage
-        for(var sPage of this.sDoc.pages){
+        /*for(var sPage of this.sDoc.pages){
             if(sPage.name.startsWith(Constants.TEMP_PAGE_PREFIX)){                
                 sPage.remove()
                 continue
             }           
-        }
+        }*/
         
         // build local pages
         const mPages = []
@@ -35,11 +35,22 @@ class PZDoc{
 
             // create new local Page object
             const mPage =  new PZPage(sPage)
-            mPage.run()
+            mPage.collectData()
             mPages.push(mPage)
         }
         this.mPages = mPages
     }
+
+    export(){
+        log(" PZDoc:run running...")
+        this.totalImages = 0
+    
+        for(var page of this.mPages){
+            page.export();    
+        }
+        log(" PZDoc:run done!")
+      }
+    
 
 
     // return Sketch native object
@@ -51,7 +62,7 @@ class PZDoc{
 
     // return Sketch native object
     _findLibraryArtboardByID(artboardID){
-        this.logMsg("findLibraryArtboardByID running...  artboardID:"+artboardID)
+        exporter.logMsg("findLibraryArtboardByID running...  artboardID:"+artboardID)
         // find Sketch Artboard
         var jsArtboard = undefined
         for(const lib of this._getLibraries()){
@@ -59,7 +70,8 @@ class PZDoc{
             if(jsArtboard) break
         }
         if(!jsArtboard){
-            this.logMsg("findLibraryArtboardByID FAILED")
+            log(this.pageIDsDict)
+            exporter.logMsg("findLibraryArtboardByID FAILED")
             return false
         }
 
