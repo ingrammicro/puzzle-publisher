@@ -1,5 +1,8 @@
 # Change Log
 
+##  Version 10.3.3 (26 Sep 2019)
+- Fixed rendering of artboard with fixed layers (on some installations Sketch was too lazy) (part II)
+
 ##  Version 10.3.2 (24 Sep 2019)
 - Fixed "Hotspot top center" and "Hotspot top right corner" overlay aligmnent modes
 - Fixed rendering of artboard with fixed layers (on some installations Sketch was too lazy)
