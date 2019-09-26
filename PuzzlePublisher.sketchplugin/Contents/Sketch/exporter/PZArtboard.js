@@ -4,7 +4,7 @@
 
 Sketch = require('sketch/dom')
 
-class PZArtboard extends PZyLayer {
+class PZArtboard extends PZLayer {
    
     constructor(slayer) {
 
@@ -34,25 +34,37 @@ class PZArtboard extends PZyLayer {
 
         super(slayer, undefined)
         
+        // extract original artboard ID from clone artboad name
+        this.orgArtboardID = undefined
+        const orgIDPos = this.name.indexOf("}}")
+        if(orgIDPos<0){
+            exporter.logError("Can't find ID in artboard name:"+this.name)
+            return
+        }
+        this.orgArtboardID = this.name.substring(orgIDPos+1)
+        // restore original name
+        this.name = this.name.substring(0,orgIDPos)
+        this.slayer.name = this.name
+        
         this.oldFrame = needResize?oldframe:undefined
         this.overlayLayers = []
         this.fixedLayers = [] // list of layers which are configured as fixed
         this.nextLinkIndex = 0 // we need it to generate uniq id of the every link
 
         // check if the page name is unique in document
-        if(this.name in exporter.pagesDict){
+        if(this.name in pzDoc.pagesDict){
             // we need to find a new name                        
             for(let i=1;i<1000;i++){               
                 const newName = this.name+"("+i+")"
-                if( !(newName in exporter.pagesDict)){
+                if( !(newName in pzDoc.pagesDict)){
                     // found new unique name!
                     this.name = newName
                     break
                 }
             }            
         }
-        exporter.pagesDict[this.name] = this
-        exporter.pageIDsDict[this.objectID] = this
+        pzDoc.pagesDict[this.name] = this
+        pzDoc.pageIDsDict[this.orgArtboardID] = this
         
         // init Artboard own things
         this.artboardType = artboardType
@@ -90,6 +102,11 @@ class PZArtboard extends PZyLayer {
         this.overlayAlign = exporter.Settings.layerSettingForKey(this.slayer,SettingKeys.ARTBOARD_OVERLAY_ALIGN)
         if (this.overlayAlign == undefined || this.overlayAlign == "") this.overlayAlign = 0
         
+    }
+
+    collectLayers(space){
+        exporter.logMsg(space+"PZArtboard.collectLayers() name="+this.name)
+        this.childs = this.collectAChilds(this.slayer.layers,space+" ")
     }
 
     export(){        

@@ -1,10 +1,10 @@
 @import("constants.js")
 @import("lib/utils.js")
 @import("exporter/exporter-build-html.js")
-@import("exporter/my_layer.js")
-@import("exporter/my_artboard.js")
-@import("exporter/my_page.js")
-@import("exporter/my_layer_resizer.js")
+@import("exporter/PZLayer.js")
+@import("exporter/PZArtboard.js")
+@import("exporter/PZPage.js")
+@import("exporter/PZDoc.js")
 @import("exporter/publisher.js") // we need it to run resize.sh script
 
 var exporter = undefined
@@ -35,13 +35,10 @@ class Exporter {
     this.customArtboardFrame = undefined
     this.siteIconLayer = undefined
     this.myLayers = []
-    this.jsStory = '';
-    this.pagesDict = []
-    this.pageIDsDict = []
+    this.jsStory = '';    
     this.errors = []
     this.warnings = []
     this.exportedImages = []
-    this.jsLibs = undefined
 
     // workaround for Sketch 52s
     this.docName = this._clearCloudName(this.ndoc.cloudName())
@@ -84,67 +81,6 @@ class Exporter {
     let serverTools = this.Settings.settingForKey(SettingKeys.PLUGIN_SERVERTOOLS_PATH)
     if(serverTools==undefined) serverTools = ''
     this.serverTools = serverTools    
-  }
-
-
-  // return Sketch native object
-  findArtboardByID(artboardID){
-      let artboard = this.pageIDsDict[artboardID]
-      if(artboard) return artboard
-      return this._findLibraryArtboardByID(artboardID)
-  }
-
-  // return Sketch native object
-  _findLibraryArtboardByID(artboardID){
-    //log("findLibraryArtboardByID running...  artboardID:"+artboardID)
-    // find Sketch Artboard
-    var jsArtboard = undefined
-    for(const lib of this._getLibraries()){
-        jsArtboard = lib.jsDoc.getLayerWithID(artboardID)
-        if(jsArtboard) break
-    }
-    if(!jsArtboard){
-        //log("findLibraryArtboardByID FAILED")
-        return false
-    }
-
-    // Process Sketch artboard
-    const layerCollector  = new MyLayerCollector()
-    const artboard = layerCollector.collectSingleArtboardLayers(" ",jsArtboard.sketchObject)
-
-    // Resize internal parts
-    const layerResizer  = new MyLayerResizer()
-    layerResizer._resizeLayers(" ",[artboard])
-
-    //log("findLibraryArtboardByID SUCCESS")
-    return artboard
-  }
- 
-
-
-  _getLibraries(){
-    if(undefined!=this.jsLibs) return this.jsLibs
-    
-    log("_getLibraries: start")
-    this.jsLibs = []
-
-    var libraries = require('sketch/dom').getLibraries()
-    for(const jsLib of libraries){
-        if(!jsLib.valid || !jsLib.enabled) continue        
-        log("_getLibraries: try to load document for library "+jsLib.name+"")
-
-        const jsDoc = jsLib.getDocument() 
-        if(!jsDoc){
-            log("_getLibraries: can't load document for library "+jsDoc.path+"")
-            continue
-        }
-        this.jsLibs.push({
-            jsLib: jsLib,
-            jsDoc: jsDoc
-        })
-    }
-    log("_getLibraries: finish")
-    return this.jsLibs
   }
 
   
@@ -389,18 +325,6 @@ class Exporter {
     return artboardGroups;
   }
 
-  buildSymbolDict() {
-    var symDict = []
-
-    for(var symbol of this.doc.getSymbols()){
-      const sid = symbol.symbolId
-      const skSymbol = symbol.sketchObject      
-      if( sid in symDict) continue
-      symDict[ sid ] = skSymbol      
-    }
-
-    this.symDict = symDict
-  }
 
   filterArtboards(){
     const filtered = []
@@ -515,7 +439,7 @@ class Exporter {
 
     // load library inspector file
     let inspectors = ""
-    const libs = this._getLibraries()
+    const libs = pzDoc._getLibraries()
     for(const lib of libs){
         let pathToSymbolTokens = Utils.cutLastPathFolder(lib.jsDoc.path)+"/"+ lib.jsLib.name +  "-inspector.json"
         //log('pathToSymbolTokens = '+pathToSymbolTokens+" name="+lib.jsLib.name)        
@@ -540,10 +464,18 @@ class Exporter {
 
   exportArtboards() {        
     log("exportArtboards: running...")    
-    this.buildSymbolDict()
 
-    this.mDoc = new MyPages()
+    // Copy static files
+    if(!this.copyStatic("resources")) return false    
+    if(!this.copyStatic("viewer")) return false
+
+    // Collect layers information
+    this.mDoc = new PZDoc()
+    this.mDoc.run()
+
+    return
     
+    /*
     // Collect artboards and prepare caches
     this.artboardGroups = this.getArtboardGroups(this.context);
     
@@ -561,12 +493,9 @@ class Exporter {
 
     // Remove external URLs and other garbage
     this.filterArtboards()
+    */
     
 
-    // Copy static files
-    if(!this.copyStatic("resources")) return false    
-    if(!this.copyStatic("viewer")) return false
- 
 
     // Build main HTML file
     if(!this.createMainHTML()) return false

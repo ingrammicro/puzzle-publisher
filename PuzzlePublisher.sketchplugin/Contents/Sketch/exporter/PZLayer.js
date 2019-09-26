@@ -1,5 +1,6 @@
 @import("constants.js")
 @import("lib/utils.js")
+@import("exporter/PZDoc.js")
 
 var ResizingConstraint = {
     NONE: 0,
@@ -40,11 +41,15 @@ class PZLayer {
         //log('+++++ this.name: ' + this.name + " isParentFixed: "+this.isParentFixed+ " parent:"+(undefined!=myParent?myParent.name:"none"))
 
         if("Group"==sLayer.type || "Artboard"==sLayer.type ) this.isGroup = true
-        const symbolIDPos = this.name.indexOf("{{")
+        const symbolIDPos = this.name.indexOf("{}")
         if(symbolIDPos>=0){
             this.isSymbolInstance = true 
-            const symbolID = this.name.substring(symbolIDPos+1)
-            this.symbolMaster = Sketch.fromNative(pzDoc.getLayerWithID(symbolID))
+            const symbolID = this.name.substring(symbolIDPos+2)
+            this.symbolMaster = pzDoc.getSymbolMasterByID(symbolID)
+
+            // restore original name
+            this.name = this.name.substring(0,symbolIDPos)
+            this.slayer.name = this.name
 
             // prepare data for Element Inspector
             const lib = this.symbolMaster.getLibrary()            
@@ -60,7 +65,7 @@ class PZLayer {
             if(sharedStyle){
                 this.styleName = sharedStyle.name
             }
-            if(nlayer.isKindOfClass(MSTextLayer)){
+            if("Text"==sLayer.type){
                 this.text = this.slayer.text+""
             }
         }
@@ -74,8 +79,8 @@ class PZLayer {
         this.childs = []  
         this.hotspots = [] 
         
-        this.frame = undefined
-        this.orgFrame = undefined
+        this.frame = slayer.frame
+        this.orgFrame = slayer.frame
         if(myParent!=undefined) this.constrains = this._calculateConstrains()
         
         if(!this.isArtboard && !exporter.disableFixedLayers && !this.isParentFixed){
@@ -83,7 +88,7 @@ class PZLayer {
             if(undefined==overlayType || ''==overlayType)
                 overlayType = Constants.LAYER_OVERLAY_DEFAULT
             
-            if(nlayer.isFixedToViewport() || overlayType!=Constants.LAYER_OVERLAY_DEFAULT){
+            if(this.nlayer.isFixedToViewport() || overlayType!=Constants.LAYER_OVERLAY_DEFAULT){
                 this.addSelfAsFixedLayerToArtboad(overlayType)    
             }
         }
@@ -111,7 +116,8 @@ class PZLayer {
             this.artboard.overlayLayers.push(this)
         }
 
-        
+        this._processHotspots(">>")
+
     }
 
     _calculateConstrains(){
@@ -126,6 +132,17 @@ class PZLayer {
         }
         return res        
     }    
+
+    collectAChilds(sLayers,space){
+        exporter.logMsg(space+"PZLayer.collectAChilds() name="+this.name)
+        var aLayers = []
+        for(const sl of sLayers){
+            const al = new PZLayer(sl)
+            if(al.isGroup) al.childs = al.collectAChilds(sl.layers,space+" ")
+            aLayers.push(al)
+        }        
+        return aLayers
+    }
 
     addSelfAsFixedLayerToArtboad(overlayType){         
 
@@ -186,6 +203,99 @@ class PZLayer {
 
         return shadowInfo
     }
+
+
+    _processHotspots(prefix){
+        const l = this
+        const hotspots = []
+
+        let finalHotspot = {
+            r: this.frame.copy(),
+            //l: l,
+            linkType: 'undefined',
+            target: null
+        }
+
+        if(this.hasHoverOverlay){
+            const hoverHotsport = {
+                r:          l.frame.copy(),
+                linkType:   'artboard',
+                artboardID: l.hoverOverlayArtboardID
+            }
+            this.currentArtboard.hotspots.push(hoverHotsport)
+        }
+        
+        while(true){               
+
+            // check link to external URL
+            const externalLinkHref = exporter.Settings.layerSettingForKey(l.slayer,SettingKeys.LAYER_EXTERNAL_LINK)
+            if(externalLinkHref!=null && externalLinkHref!="" && externalLinkHref!="http://"){
+                const externalLink = {
+                    'href' : externalLinkHref,
+                    'openNewWindow': exporter.Settings.layerSettingForKey(l.slayer,SettingKeys.LAYER_EXTERNAL_LINK_BLANKWIN)==1
+
+                }
+                if( !this._specifyExternalURLHotspot(prefix+" ",finalHotspot,externalLink)) return
+                break            
+            }            
+
+            // check native link
+            if(l.flow){
+                if( !this._specifyHotspot(prefix+" ",l,finalHotspot)) return
+                break
+            }
+
+            // No any link on layer
+            return
+        }
+        exporter.logMsg(prefix+"_processLayerLinks: finalHotspot type="+finalHotspot.linkType)
+        hotspots.push(finalHotspot);          
+
+        // finalization
+        Array.prototype.push.apply(this.currentArtboard.hotspots, hotspots);            
+    }
+
+
+    _specifyHotspot(prefix,l,finalHotspot){        
+        const layer = l.nlayer
+        const flow = exporter.Sketch.fromNative(layer.flow());
+        const targetArtboardID = flow.targetId;
+    
+        if(flow.isBackAction()){
+            // hande Back action
+            finalHotspot.linkType = "back";
+            exporter.logMsg(prefix+"hotspot: back")        
+        }else if(targetArtboardID!=null && targetArtboardID!="" && targetArtboardID!="null"){
+            // hande direct link
+            let targetArtboard = pzDoc.findArtboardByID(targetArtboardID)
+
+            if(!targetArtboard){
+                exporter.logWarning("Broken link to missed artboard on layer '"+l.name+"' on artboard '"+l.artboard.name+"'")
+                return false
+            }
+
+            if(targetArtboard.externalArtboardURL!=undefined){                
+                const externalLink = {
+                    'href' : targetArtboard.externalArtboardURL,
+                    'openNewWindow':  exporter.Settings.layerSettingForKey(targetArtboard.slayer,SettingKeys.LAYER_EXTERNAL_LINK_BLANKWIN)==1  
+                }
+                finalHotspot.artboardID = targetArtboard.objectID                
+                this._specifyExternalURLHotspot(prefix+" ",finalHotspot,externalLink)
+            }else{            
+                finalHotspot.linkType = "artboard";
+                finalHotspot.artboardID = targetArtboardID;
+                finalHotspot.href = Utils.toFilename(targetArtboard.name) + ".html";
+            }
+
+            exporter.logMsg(prefix+"hotspot: artboard ")
+            
+        }else{                    
+            exporter.logMsg(prefix+"hotspot: none  l.isSymbolInstance="+l.isSymbolInstance)
+            return false
+        }
+        return true
+    }
+
 
 
     clearRefsBeforeJSON(){
