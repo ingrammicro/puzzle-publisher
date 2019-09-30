@@ -48,9 +48,25 @@ class PZDoc{
         for(var page of this.mPages){
             page.export();    
         }
+
+        this._undoChanges()
+
         log(" PZDoc:run done!")
-      }
-    
+    }
+
+    _undoChanges(){
+        const type = "MSUndoAction"
+  
+	    var controller = exporter.context.document.actionsController();
+
+        if (controller.actionWithName) {
+            return controller.actionWithName(type);
+        } else if (controller.actionWithID) {
+            return controller.actionWithID(type);
+        } else {
+            return controller.actionForID(type);
+        }
+	}
 
 
     // return Sketch native object
