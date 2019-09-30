@@ -54,6 +54,34 @@ class PZDoc{
         log(" PZDoc:run done!")
     }
 
+    saveToJSON(){
+        if( !exporter.enabledJSON ) return true
+    
+        // load library inspector file
+        let inspectors = ""
+        const libs = this._getLibraries()
+        for(const lib of libs){
+            let pathToSymbolTokens = Utils.cutLastPathFolder(lib.jsDoc.path)+"/"+ lib.jsLib.name +  "-inspector.json"
+            //log('pathToSymbolTokens = '+pathToSymbolTokens+" name="+lib.jsLib.name)        
+            const inspectorData =  Utils.readFile(pathToSymbolTokens)
+            if(inspectors!="") inspectors+=","
+            inspectors += "'"+lib.jsLib.name+"':"+(inspectorData?inspectorData:"{}")
+        }
+    
+        let symbolTokens = "var symbolsData = {"+inspectors+"};"
+    
+        log(" SaveToJSON: cleanup before saving...")
+        for(var l of this.myLayers) l.clearRefsBeforeJSON()
+    
+        log(" SaveToJSON: running...")
+        const layersJSON = JSON.stringify(this.myLayers,replacer,null)
+        const pathJSFile = this.createViewerFile('LayersData.js')
+        Utils.writeToFile(symbolTokens+"var layersData = "+layersJSON, pathJSFile)
+        log(" SaveToJSON: done!")
+    
+        return true
+      }
+
     _undoChanges(){
         const type = "MSUndoAction"
   
