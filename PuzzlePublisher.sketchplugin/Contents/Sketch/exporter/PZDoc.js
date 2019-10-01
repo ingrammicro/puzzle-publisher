@@ -50,9 +50,11 @@ class PZDoc{
     }
 
     buildLinks(){
+        log('PZDoc.buildLinks: running')
         for(var mLayer of this.mLinkedLayers){
             mLayer.buildLinks(' ');    
         }
+        log('PZDoc.buildLinks: stop')
     }
     
 
@@ -167,11 +169,14 @@ class PZDoc{
         }
 
         // Create new page
-        const mPage =  new PZPage(jsArtboard.parent)
-        mPage.run()
-        this.mPages.push(mPage)
+        this._addLibraryPage(jsArtboard)       
+        return this.artboardIDsDict[artboardID]
+    }
 
-        return this._findLibraryArtboardByID(artboardID)
+    _addLibraryPage(sArtboard){
+        const mPage = new PZPage(null)
+        this.mPages.push(mPage)
+        mPage.collectData([sArtboard])
     }
 
 

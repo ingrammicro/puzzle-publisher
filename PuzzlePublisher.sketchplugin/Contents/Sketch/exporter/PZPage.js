@@ -11,18 +11,19 @@ class PZPage{
         this.mArtboards = []
     }
 
-    collectData(){
-        exporter.logMsg("PZPage.run() name="+this.sPage.name)
+    collectData(sLayers=null){
+        exporter.logMsg("PZPage.collectData() name="+(this.sPage?this.sPage.name:''))
         // 
+        if(null==sLayers) sLayers = this.sPage.layers
 
         //this.sPage = this._clonePage(this.sPageOrg)
 
         // prepare layers for collecting
-        this._scanLayersToSaveInfo(this.sPage.layers)        
-        this._scanLayersToDetachSymbols(this.sPage.layers)       
+        this._scanLayersToSaveInfo(sLayers)        
+        this._scanLayersToDetachSymbols(sLayers)       
         
         // collect layers
-        this._collectArtboards(this.sPage.layers)
+        this._collectArtboards(sLayers)
 
         // cleanup temporary data
         //this._cleanUp()        
@@ -57,12 +58,12 @@ class PZPage{
 
     //////////////////////// PRIVATE FUNCTIONS //////////////////////////////////////
 
-    _clonePage(sPage){
+    /*_clonePage(sPage){
         const sClone = sPage.duplicate()
         sClone.name = Constants.TEMP_PAGE_PREFIX + sClone.name
         return sClone
-    }
-
+    }  
+    */
     _scanLayersToSaveInfo(sLayers){
         for(var sl of sLayers){
             if("SymbolMaster"==sl.type){
@@ -117,10 +118,12 @@ class PZPage{
         }        
     }
 
+    /*
     _cleanUp(sPage){
         this.sPage.remove()
         this.sPage = undefined
     }
+    */
 
 
 
