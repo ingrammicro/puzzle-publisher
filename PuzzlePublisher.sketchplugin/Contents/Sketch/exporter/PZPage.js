@@ -28,6 +28,13 @@ class PZPage{
         //this._cleanUp()        
     }
 
+    buildLinks(space){
+        for(const a of this.mArtboards){
+            a.buildLinks(space+" ")
+        }
+    } 
+
+
     export(){
         for(const a of this.mArtboards){
             a.export()
@@ -71,7 +78,7 @@ class PZPage{
                 //sl.name = sl.name + "}}" + String(sl.id)
                 //log("PZPage._scanLayersToSaveInfo() id="+ sl.name)
             }
-            if("SymbolInstance"==sl.type){
+            if("SymbolInstance"==sl.type){                
                 const smaster = pzDoc.getSymbolMasterByID(sl.symbolId)
                 if(!smaster){
                     log("Error: can't find master for"+sl.name)
@@ -82,6 +89,7 @@ class PZPage{
                     sl.name = sl.name.substring(0,sl.name.indexOf("{}"))
                 }
                 sl.name = sl.name + "{}" + sl.symbolId
+                //log("PZPage._scanLayersToSaveInfo() name="+ sl.name)
                 this._scanLayersToSaveInfo(smaster.layers)
             }else if("Group"==sl.type || "Artboard"==sl.type){
                 this._scanLayersToSaveInfo(sl.layers)

@@ -45,10 +45,13 @@ class PZDoc{
             mPage.collectData()
             mPages.push(mPage)
         }
+        this.mPages = mPages            
+    }
 
-        // sort pages
-
-        this.mPages = mPages
+    buildLinks(){
+        for(var page of this.mPages){
+            page.buildLinks(' ');    
+        }
     }
     
 
@@ -60,7 +63,6 @@ class PZDoc{
             page.export();    
         }
 
-        this._undoChanges()
 
         log(" PZDoc:run done!")
     }
@@ -84,21 +86,28 @@ class PZDoc{
     
         log(" getJSON: cleanup before saving...")
         for(var l of this.mAllLayers) l.clearRefsBeforeJSON()
-    
+
         log(" getJSON: running...")
         const json =  JSON.stringify(this.mAllLayers,replacer,null)
         log(" getJSON: done!")        
 
         return json
-      }
+    }
+
+    undoChanges(){
+        Utils.actionWithType("MSUndoAction").doPerformAction(nil);      
+    }
+    
+
+
 
     //////////////////////////// PUBLIC HELPERS  ///////////////////////
 
 
     // return index of new artboard
     addArtboard(mArtboard){        
-        this.artboardsDict[this.name] = this
-        this.artboardIDsDict[this.objectID] = this
+        this.artboardsDict[mArtboard.name] = mArtboard
+        this.artboardIDsDict[mArtboard.objectID] = mArtboard
 
         if(mArtboard.nlayer.isFlowHome()){
             this.startArtboardIndex = this.artboardCount
@@ -121,6 +130,10 @@ class PZDoc{
     }
 
     getSymbolMasterByID(id){    
+        if( !(id in this.sSymbols)){
+            log('getSymbolMasterByID can not find symbol by ID='+id)
+            return undefined            
+        }
         return this.sSymbols[id]
     }
 
@@ -137,21 +150,6 @@ class PZDoc{
 
     }
 
-    _undoChanges(){
-        const type = "MSUndoAction"
-  
-	    var controller = exporter.context.document.actionsController();
-
-        if (controller.actionWithName) {
-            return controller.actionWithName(type);
-        } else if (controller.actionWithID) {
-            return controller.actionWithID(type);
-        } else {
-            return controller.actionForID(type);
-        }
-	}
-
-
     // return Sketch native object
     _findLibraryArtboardByID(artboardID){
         exporter.logMsg("findLibraryArtboardByID running...  artboardID:"+artboardID)
@@ -162,8 +160,7 @@ class PZDoc{
             jsArtboard = lib.jsDoc.getLayerWithID(artboardID)
             if(jsArtboard) break
         }
-        if(!jsArtboard){
-            log(this.artboardIDsDict)
+        if(!jsArtboard){            
             exporter.logMsg("findLibraryArtboardByID FAILED")
             return false
         }

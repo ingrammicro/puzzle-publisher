@@ -8,6 +8,7 @@ Sketch = require('sketch/dom')
 class PZArtboard extends PZLayer {
    
     constructor(slayer) {
+        exporter.logMsg("PZArtboard.create id="+slayer.id)
 
         // init Artboard own things !!! before object construction !!!
         let artboardType = exporter.Settings.layerSettingForKey(slayer, SettingKeys.ARTBOARD_TYPE)
@@ -91,7 +92,7 @@ class PZArtboard extends PZLayer {
     }
 
     collectLayers(space){
-        exporter.logMsg(space+"PZArtboard.collectLayers() name="+this.name)
+        //exporter.logMsg(space+"PZArtboard.collectLayers() name="+this.name)
         this.childs = this.collectAChilds(this.slayer.layers,space+" ")
     }
 

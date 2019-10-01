@@ -406,7 +406,7 @@ class Exporter {
      '"resolutions": ['+(this.retinaImages?'2':'1')+'],\n'+
      '"zoomEnabled": '+ (this.Settings.settingForKey(SettingKeys.PLUGIN_DISABLE_ZOOM)!=1?'true':'false')+',\n'+
      '"title": "'+this.docName+'",\n'+
-     '"startPageIndex": '+this.sDoc.startArtboardIndex+',\n'+
+     '"startPageIndex": '+this.mDoc.startArtboardIndex+',\n'+
      '"layersExist": ' + ( this.enabledJSON ? "true":"false") +',\n'+
      '"centerContent":  '+(this.Settings.settingForKey(SettingKeys.PLUGIN_POSITION) === Constants.POSITION_CENTER) +',\n'+
      '"totalImages": '+pzDoc.totalImages+',\n'+
@@ -437,6 +437,7 @@ class Exporter {
     // Collect layers information
     this.mDoc = new PZDoc()
     this.mDoc.collectData()
+    this.mDoc.buildLinks()
     
     /*
     // Collect artboards and prepare caches
@@ -470,6 +471,8 @@ class Exporter {
 
     // Export every artboard into PNG image
     this.mDoc.export()
+
+    
     
     if(!this.generateJSStoryEnd()) return false
  
@@ -487,7 +490,8 @@ class Exporter {
     // Dump document layers to JSON file
     this.saveToJSON()
 
-    this.resetCustomArtboardSizes()
+    this.mDoc.undoChanges()
+    //this.resetCustomArtboardSizes()
 
     log("exportArtboards: done!")
 

@@ -50,13 +50,13 @@ class PZLayer {
             this.symbolMaster = pzDoc.getSymbolMasterByID(symbolID)
 
             // restore original name
-            this.name = this.name.substring(0,symbolIDPos)
-            this.slayer.name = this.name
+            //this.name = this.name.substring(0,symbolIDPos)
+            //this.slayer.name = this.name
 
             // prepare data for Element Inspector
             const lib = this.symbolMaster.getLibrary()            
             if(lib){
-                this.smName = this.symbolMaster.name()+""                
+                this.smName = this.symbolMaster.name+""                
                 this.smLib = lib.name
             }
         }else{
@@ -85,8 +85,7 @@ class PZLayer {
         this.childs = []  
         this.hotspots = [] 
         
-        this.frame = Utils.copyRectToRectangle(this.nlayer.absoluteRect())        
-        log(this.frame)
+        this.frame = Utils.copyRectToRectangle(this.nlayer.absoluteRect())                
         if(!this.isArtboard){
             this.frame.x -= this.artboard.frame.x
             this.frame.y -= this.artboard.frame.y
@@ -127,8 +126,6 @@ class PZLayer {
             this.artboard.overlayLayers.push(this)
         }
 
-        this._processHotspots(">>")
-
     }
 
     _calculateConstrains(){
@@ -145,7 +142,7 @@ class PZLayer {
     }    
 
     collectAChilds(sLayers,space){
-        exporter.logMsg(space+"PZLayer.collectAChilds() name="+this.name)
+        //exporter.logMsg(space+"PZLayer.collectAChilds() name="+this.name)
         var aLayers = []
         for(const sl of sLayers){
             const al = new PZLayer(sl,this)
@@ -190,6 +187,14 @@ class PZLayer {
         this.isFixedDiv = type=='div'
                 
     }
+
+
+    buildLinks(space){
+        this._processHotspots(space)
+        for(const mLayer of this.childs){
+            mLayer.buildLinks(space+" ")
+        }
+    } 
 
     getShadowAsStyle(){
         if(this.slayer.style==undefined ||  this.slayer.style.shadows==undefined || this.slayer.style.length==0) return undefined
@@ -266,7 +271,6 @@ class PZLayer {
         Array.prototype.push.apply(this.artboard.hotspots, hotspots);            
 
         exporter.logMsg(prefix+"_processLayerLinks")
-        log(this.artboard)
     }
 
 
