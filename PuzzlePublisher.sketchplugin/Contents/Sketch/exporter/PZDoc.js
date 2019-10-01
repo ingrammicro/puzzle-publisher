@@ -8,6 +8,7 @@ class PZDoc{
     constructor(){
         pzDoc = this
         var Document = require('sketch/dom').Document
+        this.sOrgLayers = []
         this.sDoc = Document.getSelectedDocument()
         this.mPages = []
         this.mAllLayers = []
@@ -19,19 +20,12 @@ class PZDoc{
         this.artboardsDict = {}
         this.artboardIDsDict = {}
         this.jsLibs = undefined
+
     }
 
     collectData(){
         // init required data
         this._buildSymbolDict()
-
-        // cleanup previous garbage
-        /*for(var sPage of this.sDoc.pages){
-            if(sPage.name.startsWith(Constants.TEMP_PAGE_PREFIX)){                
-                sPage.remove()
-                continue
-            }           
-        }*/
         
         // build local pages
         const mPages = []
@@ -46,8 +40,12 @@ class PZDoc{
             mPage.collectData()
             mPages.push(mPage)
         }
-        this.mPages = mPages            
-    }
+        this.mPages = mPages
+
+        ///
+        this._collectLibArtboards()
+    }    
+
 
     buildLinks(){
         log('PZDoc.buildLinks: running')
@@ -75,7 +73,7 @@ class PZDoc{
         let inspectors = ""
         const libs = this._getLibraries()
         for(const lib of libs){
-            let pathToSymbolTokens = Utils.cutLastPathFolder(lib.jsDoc.path)+"/"+ lib.jsLib.name +  "-inspector.json"
+            let pathToSymbolTokens = Utils.cutLastPathFolder(lib.sDoc.path)+"/"+ lib.jsLib.name +  "-inspector.json"
             //log('pathToSymbolTokens = '+pathToSymbolTokens+" name="+lib.jsLib.name)        
             const inspectorData =  Utils.readFile(pathToSymbolTokens)
             if(inspectors!="") inspectors+=","
@@ -144,6 +142,14 @@ class PZDoc{
     //////////////////////////// PRIVATE ///////////////////////
 
 
+    _collectLibArtboards(){
+        for(const mLayer  of this.mLinkedLayers){
+            if(mLayer.flow && mLayer.flow.targetID && !(mLayer.flow.targetID in this.artboardIDsDict)){
+                const mArtboard =  this._findLibraryArtboardByID(artboardID)
+            }
+        }
+    }
+
     _sortArboards(){
         const exportOptions = exporter.exportOptions
 
@@ -158,9 +164,10 @@ class PZDoc{
         exporter.logMsg("findLibraryArtboardByID running...  artboardID:"+artboardID)
         // find Sketch Artboard
         var jsArtboard = undefined
-        for(const lib of this._getLibraries()){
+        var lib = undefined
+        for(lib of this._getLibraries()){
             exporter.logMsg("findLibraryArtboardByID getLayerWithID for lib "+lib.jsLib.name)
-            jsArtboard = lib.jsDoc.getLayerWithID(artboardID)
+            jsArtboard = lib.sDoc.getLayerWithID(artboardID)
             if(jsArtboard) break
         }
         if(!jsArtboard){            
@@ -169,13 +176,14 @@ class PZDoc{
         }
 
         // Create new page
-        this._addLibraryPage(jsArtboard)       
+        this._addLibraryPage(lib.sDoc,jsArtboard)       
         return this.artboardIDsDict[artboardID]
     }
 
-    _addLibraryPage(sArtboard){
+    _addLibraryPage(sDoc,sArtboard){
+        this._buildSymbolDict(sDoc)
         const mPage = new PZPage(null)
-        this.mPages.push(mPage)
+        this.mPages.push( mPage )
         mPage.collectData([sArtboard])
     }
 
@@ -192,14 +200,14 @@ class PZDoc{
             if(!jsLib.valid || !jsLib.enabled) continue        
             log("_getLibraries: try to load document for library "+jsLib.name+"")
 
-            const jsDoc = jsLib.getDocument() 
-            if(!jsDoc){
-                log("_getLibraries: can't load document for library "+jsDoc.path+"")
+            const sDoc = jsLib.getDocument() 
+            if(!sDoc){
+                log("_getLibraries: can't load document for library "+sDoc.path+"")
                 continue
             }
             this.jsLibs.push({
                 jsLib: jsLib,
-                jsDoc: jsDoc
+                sDoc: sDoc
             })
         }
         log("_getLibraries: finish")
@@ -207,10 +215,12 @@ class PZDoc{
     }
 
 
-    _buildSymbolDict() {
+    _buildSymbolDict(sDoc=null) {
         var sSymbols = []
 
-        for(const sSymbol of this.sDoc.getSymbols()){
+        if(!sDoc) sDoc = this.sDoc
+
+        for(const sSymbol of sDoc.getSymbols()){
             const sid = sSymbol.symbolId
             if( sid in sSymbols) continue                        
             sSymbols[ sid ] = sSymbol      

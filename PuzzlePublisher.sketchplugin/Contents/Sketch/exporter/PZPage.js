@@ -82,8 +82,14 @@ class PZPage{
                 if(sl.name.indexOf("{}")>=0){
                     // remove old garabage
                     sl.name = sl.name.substring(0,sl.name.indexOf("{}"))
-                }
-                sl.name = sl.name + "{}" + sl.symbolId
+                }                
+                // save target artboard ID to restore info about master afte the detach             
+                pzDoc.sOrgLayers.push({
+                    targetId: sl.flow?sl.flow.targetId:null,
+                    symbolId: sl.symbolId
+                })
+                // save symbol ID to restore info about master after the detachs
+                sl.name = sl.name + "{}" + (pzDoc.sOrgLayers.length-1)
                 //log("PZPage._scanLayersToSaveInfo() name="+ sl.name)
                 this._scanLayersToSaveInfo(smaster.layers)
             }else if("Group"==sl.type || "Artboard"==sl.type){

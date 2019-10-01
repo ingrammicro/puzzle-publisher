@@ -47,12 +47,11 @@ class PZLayer {
         const symbolIDPos = this.name.indexOf("{}")
         if(symbolIDPos>=0){
             this.isSymbolInstance = true 
-            const symbolID = this.name.substring(symbolIDPos+2)
-            this.symbolMaster = pzDoc.getSymbolMasterByID(symbolID)
-
-            // restore original name
-            //this.name = this.name.substring(0,symbolIDPos)
-            //this.slayer.name = this.name
+            exporter.logMsg('PZLayer: name='+this.name )
+            const orgIndex = this.name.substring(symbolIDPos+2)
+            const orgInfo = pzDoc.sOrgLayers[ orgIndex  ]
+            this.symbolMaster = pzDoc.getSymbolMasterByID(orgInfo.symbolId)
+            this.targetId = orgInfo.targetId
 
             // prepare data for Element Inspector
             const lib = this.symbolMaster.getLibrary()            
@@ -71,6 +70,8 @@ class PZLayer {
             if("Text"==sLayer.type){
                 this.text = this.slayer.text+""
             }
+
+            this.targetId = this.slayer.flow?this.slayer.flow.targetId:null
         }
         if("Artboard"==sLayer.type )  this.isArtboard = true        
 
@@ -79,8 +80,7 @@ class PZLayer {
 
 
             // Check if this layer has a link
-            const flow = this.slayer.flow
-            if(flow){
+            if(this.targetId){
                 this.isLink = true
             }else{
                 const externalLinkHref = exporter.Settings.layerSettingForKey(this.slayer,SettingKeys.LAYER_EXTERNAL_LINK)
@@ -273,7 +273,7 @@ class PZLayer {
             }            
 
             // check native link
-            if(l.slayer.flow){
+            if(null!=l.targetId){
                 if( !this._specifyHotspot(prefix+" ",l,finalHotspot)) return
                 break
             }
@@ -290,11 +290,10 @@ class PZLayer {
     }
 
 
-    _specifyHotspot(prefix,l,finalHotspot){        
-        const flow = l.slayer.flow
-        const targetArtboardID = flow.targetId;
+    _specifyHotspot(prefix,l,finalHotspot){       
+        const targetArtboardID = l.targetId;
     
-        if(flow.target == Flow.BackTarget){
+        if(targetArtboardID == 'back'){
             // hande Back action
             finalHotspot.linkType = "back";
             exporter.logMsg(prefix+"hotspot: back")        
@@ -303,7 +302,7 @@ class PZLayer {
             let targetArtboard = pzDoc.findArtboardByID(targetArtboardID)
 
             if(!targetArtboard){
-                exporter.logWarning("Broken link to missed artboard on layer '"+l.name+"' on artboard '"+l.artboard.name+"'")
+                exporter.logWarning("Broken link to missed artboard on layer '"+l.name+"' on artboard '"+l.artboard.name+"' target=")
                 return false
             }
 
