@@ -41,20 +41,17 @@ class PZArtboard extends PZLayer {
         this.nextLinkIndex = 0 // we need it to generate uniq id of the every link
 
         // check if the page name is unique in document
-        if(this.name in pzDoc.pagesDict){
+        if(this.name in pzDoc.artboardsDict){
             // we need to find a new name                        
             for(let i=1;i<1000;i++){               
                 const newName = this.name+"("+i+")"
-                if( !(newName in pzDoc.pagesDict)){
+                if( !(newName in pzDoc.artboardsDict)){
                     // found new unique name!
                     this.name = newName
                     break
                 }
             }            
-        }
-        pzDoc.pagesDict[this.name] = this
-        pzDoc.pageIDsDict[this.objectID] = this
-        
+        }        
         // init Artboard own things
         this.artboardType = artboardType
         this.isModal = Constants.ARTBOARD_TYPE_MODAL == this.artboardType
@@ -102,7 +99,7 @@ class PZArtboard extends PZLayer {
         this._exportImages()
         this._findFixedPanelHotspots()
         //this._exportOverlayLayers()
-        this._pushIntoJSStory(this.pageIndex)
+        this._pushIntoJSStory(this.index)
     }
 
     resetCustomArtboardSize(){
@@ -137,7 +134,7 @@ class PZArtboard extends PZLayer {
         const mainName = this.name
 
         exporter.logMsg("process main artboard " + mainName);
-        exporter.totalImages++
+        pzDoc.totalImages++
 
         let js = pageIndex ? ',' : '';
         js +=
@@ -252,7 +249,7 @@ class PZArtboard extends PZLayer {
                         + "' layer='" + l.name + "' layer.frame=" + l.frame + " this.frame=" + this.frame)
                     continue
                 }
-                exporter.totalImages++
+                pzDoc.totalImages++
 
                 if (!l.isFloat && foundPanels[type]) {
                     exporter.logError("pushFixedLayersIntoJSStory: found more than one panel with type '" + type + "' for artboard '" 
@@ -313,17 +310,17 @@ class PZArtboard extends PZLayer {
 
             if (hotspot.linkType == 'back') {
                 newHotspot.action = 'back'
-            } else if (hotspot.linkType == 'artboard' && pzDoc.pagesDict[hotspot.artboardID] != undefined 
-                && pzDoc.pageIDsDict[hotspot.artboardID].externalArtboardURL != undefined
+            } else if (hotspot.linkType == 'artboard' && pzDoc.artboardsDict[hotspot.artboardID] != undefined 
+                && pzDoc.artboardIDsDict[hotspot.artboardID].externalArtboardURL != undefined
             ) {
-                newHotspot.url = pzDoc.pageIDsDict[hotspot.artboardID].externalArtboardURL                
+                newHotspot.url = pzDoc.artboardIDsDict[hotspot.artboardID].externalArtboardURL                
             } else if (hotspot.linkType == 'artboard') {
-                const targetPage = pzDoc.pageIDsDict[hotspot.artboardID]
+                const targetPage = pzDoc.artboardIDsDict[hotspot.artboardID]
                 if (targetPage == undefined) {
                     exporter.logMsg("undefined artboard: '" + hotspot.artboardName + '"');
                     continue
                 }
-                const targetPageIndex = targetPage.pageIndex;
+                const targetPageIndex = targetPage.index;
                 newHotspot.page = targetPageIndex
             } else if (hotspot.linkType == 'href') {
                 newHotspot.url = hotspot.href        

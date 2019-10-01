@@ -33,11 +33,11 @@ class PZLayer {
         this.artboard = myParent ? myParent.artboard : this
         this.isParentFixed = undefined!=myParent && (myParent.isFixed || myParent.isParentFixed)
     
+
         // define type    
         this.isArtboard = false
         this.isGroup = false
         this.isSymbolInstance = false
-
         this.customLink = undefined
 
         //log('+++++ this.name: ' + this.name + " isParentFixed: "+this.isParentFixed+ " parent:"+(undefined!=myParent?myParent.name:"none"))
@@ -72,6 +72,10 @@ class PZLayer {
             }
         }
         if("Artboard"==sLayer.type )  this.isArtboard = true        
+
+        if(!this.isArtboard){
+            pzDoc.mAllLayers.push(this)
+        }
 
         var comment = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.LAYER_COMMENT)
         if(undefined!=comment && ''!=comment){
@@ -316,15 +320,6 @@ class PZLayer {
         //l.nlayer = undefined
         this.customLink = undefined
 
-        //log('---- this.smName:')
-        //log( this.smName )
-        //log('---- this.name:')
-        //log( this.name)
-
-
-        for(var l of this.childs){
-            l.clearRefsBeforeJSON()
-        }
     }
 
     exportSiteIcon(){

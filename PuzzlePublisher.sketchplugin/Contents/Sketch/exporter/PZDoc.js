@@ -10,10 +10,13 @@ class PZDoc{
         var Document = require('sketch/dom').Document
         this.sDoc = Document.getSelectedDocument()
         this.mPages = []
+        this.mAllLayers = []
         this.sSymbols = undefined    
+        this.artboardCount = 0
+        this.startArtboardIndex = 0
 
-        this.pagesDict = {}
-        this.pageIDsDict = {}
+        this.artboardsDict = {}
+        this.artboardIDsDict = {}
         this.jsLibs = undefined
     }
 
@@ -31,15 +34,23 @@ class PZDoc{
         
         // build local pages
         const mPages = []
+        const filterAster = null==exporter.exportOptions || !('mode' in exporter.exportOptions)
+        
         for(var sPage of this.sDoc.pages){
+
+            if(filterAster && sPage.name.indexOf("*")==0) continue
 
             // create new local Page object
             const mPage =  new PZPage(sPage)
             mPage.collectData()
             mPages.push(mPage)
         }
+
+        // sort pages
+
         this.mPages = mPages
     }
+    
 
     export(){
         log(" PZDoc:run running...")
@@ -54,9 +65,7 @@ class PZDoc{
         log(" PZDoc:run done!")
     }
 
-    saveToJSON(){
-        if( !exporter.enabledJSON ) return true
-    
+    getSymbolData(){
         // load library inspector file
         let inspectors = ""
         const libs = this._getLibraries()
@@ -67,20 +76,66 @@ class PZDoc{
             if(inspectors!="") inspectors+=","
             inspectors += "'"+lib.jsLib.name+"':"+(inspectorData?inspectorData:"{}")
         }
+       
+        return "var symbolsData = {"+inspectors+"};"
+    }
+
+    getJSON(){        
     
-        let symbolTokens = "var symbolsData = {"+inspectors+"};"
+        log(" getJSON: cleanup before saving...")
+        for(var l of this.mAllLayers) l.clearRefsBeforeJSON()
     
-        log(" SaveToJSON: cleanup before saving...")
-        for(var l of this.myLayers) l.clearRefsBeforeJSON()
-    
-        log(" SaveToJSON: running...")
-        const layersJSON = JSON.stringify(this.myLayers,replacer,null)
-        const pathJSFile = this.createViewerFile('LayersData.js')
-        Utils.writeToFile(symbolTokens+"var layersData = "+layersJSON, pathJSFile)
-        log(" SaveToJSON: done!")
-    
-        return true
+        log(" getJSON: running...")
+        const json =  JSON.stringify(this.mAllLayers,replacer,null)
+        log(" getJSON: done!")        
+
+        return json
       }
+
+    //////////////////////////// PUBLIC HELPERS  ///////////////////////
+
+
+    // return index of new artboard
+    addArtboard(mArtboard){        
+        this.artboardsDict[this.name] = this
+        this.artboardIDsDict[this.objectID] = this
+
+        if(mArtboard.nlayer.isFlowHome()){
+            this.startArtboardIndex = this.artboardCount
+        }
+
+        return this.artboardCount++
+
+    }
+
+
+    // return Sketch native object
+    findArtboardByID(artboardID){
+        let artboard = this.artboardIDsDict[artboardID]
+        if(artboard) return artboard
+        return this._findLibraryArtboardByID(artboardID)
+    }
+
+    getLayerWithID(id){
+        return this.sDoc.getLayerWithID(id)
+    }
+
+    getSymbolMasterByID(id){    
+        return this.sSymbols[id]
+    }
+
+
+    //////////////////////////// PRIVATE ///////////////////////
+
+
+    _sortArboards(){
+        const exportOptions = exporter.exportOptions
+
+        for(const mPage of this.mPages){
+            mPage.sortArboards()
+        }
+
+    }
 
     _undoChanges(){
         const type = "MSUndoAction"
@@ -98,23 +153,17 @@ class PZDoc{
 
 
     // return Sketch native object
-    findArtboardByID(artboardID){
-        let artboard = this.pageIDsDict[artboardID]
-        if(artboard) return artboard
-        return this._findLibraryArtboardByID(artboardID)
-    }
-
-    // return Sketch native object
     _findLibraryArtboardByID(artboardID){
         exporter.logMsg("findLibraryArtboardByID running...  artboardID:"+artboardID)
         // find Sketch Artboard
         var jsArtboard = undefined
         for(const lib of this._getLibraries()){
+            exporter.logMsg("findLibraryArtboardByID getLayerWithID for lib "+lib.jsLib.name)
             jsArtboard = lib.jsDoc.getLayerWithID(artboardID)
             if(jsArtboard) break
         }
         if(!jsArtboard){
-            log(this.pageIDsDict)
+            log(this.artboardIDsDict)
             exporter.logMsg("findLibraryArtboardByID FAILED")
             return false
         }
@@ -152,15 +201,6 @@ class PZDoc{
         }
         log("_getLibraries: finish")
         return this.jsLibs
-    }
-
-
-    getLayerWithID(id){
-        return this.sDoc.getLayerWithID(id)
-    }
-
-    getSymbolMasterByID(id){    
-        return this.sSymbols[id]
     }
 
 

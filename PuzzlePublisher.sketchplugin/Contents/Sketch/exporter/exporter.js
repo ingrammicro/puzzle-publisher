@@ -406,9 +406,10 @@ class Exporter {
      '"resolutions": ['+(this.retinaImages?'2':'1')+'],\n'+
      '"zoomEnabled": '+ (this.Settings.settingForKey(SettingKeys.PLUGIN_DISABLE_ZOOM)!=1?'true':'false')+',\n'+
      '"title": "'+this.docName+'",\n'+
+     '"startPageIndex": '+this.sDoc.startArtboardIndex+',\n'+
      '"layersExist": ' + ( this.enabledJSON ? "true":"false") +',\n'+
      '"centerContent":  '+(this.Settings.settingForKey(SettingKeys.PLUGIN_POSITION) === Constants.POSITION_CENTER) +',\n'+
-     '"totalImages": '+this.totalImages+',\n'+
+     '"totalImages": '+pzDoc.totalImages+',\n'+
      '"highlightLinks": false\n'
     if(undefined!=iFrameSize){
         this.jsStory += ',"iFrameSizeWidth": "'+iFrameSize.width+'"\n'
@@ -484,7 +485,7 @@ class Exporter {
     }
 
     // Dump document layers to JSON file
-    this.pzDoc.saveToJSON()
+    this.saveToJSON()
 
     this.resetCustomArtboardSizes()
 
@@ -493,7 +494,15 @@ class Exporter {
     return true
   }  
 
-}
+    saveToJSON(){
+        if( !this.enabledJSON ) return true
+
+        const symbolData = this.mDoc.getSymbolData()
+        const json = this.mDoc.getJSON()
+
+        const pathJSFile = this.createViewerFile('LayersData.js')
+        return Utils.writeToFile(symbolData+"var layersData = "+json, pathJSFile)
+    }
 
 
   prepareOutputFolder(selectedPath) {

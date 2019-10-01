@@ -34,6 +34,28 @@ class PZPage{
         }
     }
 
+
+    // return index of new artboard
+    addArtboard(mArtboard){
+        this.mArtboards.push(mArtboard)
+        mArtboard.index = pzDoc.addArtboard(mArtboard)
+    }
+
+    // Resort artboards using configuration settings
+    sortArtboards(){        
+        if(Constants.SORT_RULE_X == exporter.sortRule){
+          this.mArtboards.sort((
+            function(a, b){
+              return a.frame.x - b.frame.x
+          }))
+        }else  if(Constants.SORT_RULE_REVERSIVE_SKETCH == this.sortRule){
+            this.mArtboards = this.mArtboards.reverse()
+        }else{
+        }
+    }
+
+    //////////////////////// PRIVATE FUNCTIONS //////////////////////////////////////
+
     _clonePage(sPage){
         const sClone = sPage.duplicate()
         sClone.name = Constants.TEMP_PAGE_PREFIX + sClone.name
@@ -85,15 +107,12 @@ class PZPage{
     }
 
     _collectArtboards(sArtboards){
-        const mArtboards = []
         for(var sa of sArtboards){
             if("SymbolMaster"==sa.type) continue
             const ma = new PZArtboard(sa)
             ma.collectLayers(' ')
-            mArtboards.push(ma)
-        }
-
-        this.mArtboards = mArtboards
+            this.addArtboard(ma)
+        }        
     }
 
     _cleanUp(sPage){
