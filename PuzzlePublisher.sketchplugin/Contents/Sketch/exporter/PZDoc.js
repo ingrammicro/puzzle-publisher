@@ -11,6 +11,7 @@ class PZDoc{
         this.sDoc = Document.getSelectedDocument()
         this.mPages = []
         this.mAllLayers = []
+        this.mLinkedLayers = []
         this.sSymbols = undefined    
         this.artboardCount = 0
         this.startArtboardIndex = 0
@@ -49,8 +50,8 @@ class PZDoc{
     }
 
     buildLinks(){
-        for(var page of this.mPages){
-            page.buildLinks(' ');    
+        for(var mLayer of this.mLinkedLayers){
+            mLayer.buildLinks(' ');    
         }
     }
     

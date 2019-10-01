@@ -39,6 +39,7 @@ class PZLayer {
         this.isGroup = false
         this.isSymbolInstance = false
         this.customLink = undefined
+        this.isLink = false
 
         //log('+++++ this.name: ' + this.name + " isParentFixed: "+this.isParentFixed+ " parent:"+(undefined!=myParent?myParent.name:"none"))
 
@@ -75,6 +76,24 @@ class PZLayer {
 
         if(!this.isArtboard){
             pzDoc.mAllLayers.push(this)
+
+
+            // Check if this layer has a link
+            const flow = this.slayer.flow
+            if(flow){
+                this.isLink = true
+            }else{
+                const externalLinkHref = exporter.Settings.layerSettingForKey(this.slayer,SettingKeys.LAYER_EXTERNAL_LINK)
+                if(externalLinkHref!=null && externalLinkHref!="" && externalLinkHref!="http://"){
+                    this.externalLinkHref = externalLinkHref
+                    this.isLink = true
+                }
+            }
+            if(this.isLink){
+                pzDoc.mLinkedLayers.push(this)
+
+            }
+
         }
 
         var comment = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.LAYER_COMMENT)
@@ -85,6 +104,7 @@ class PZLayer {
         this.childs = []  
         this.hotspots = [] 
         
+        // Recalculate frame
         this.frame = Utils.copyRectToRectangle(this.nlayer.absoluteRect())                
         if(!this.isArtboard){
             this.frame.x -= this.artboard.frame.x
@@ -190,10 +210,7 @@ class PZLayer {
 
 
     buildLinks(space){
-        this._processHotspots(space)
-        for(const mLayer of this.childs){
-            mLayer.buildLinks(space+" ")
-        }
+        this._processHotspots(space)        
     } 
 
     getShadowAsStyle(){
@@ -245,10 +262,9 @@ class PZLayer {
         while(true){                
 
             // check link to external URL
-            const externalLinkHref = exporter.Settings.layerSettingForKey(l.slayer,SettingKeys.LAYER_EXTERNAL_LINK)
-            if(externalLinkHref!=null && externalLinkHref!="" && externalLinkHref!="http://"){
+            if(this.externalLinkHref!=null){
                 const externalLink = {
-                    'href' : externalLinkHref,
+                    'href' : this.externalLinkHref,
                     'openNewWindow': exporter.Settings.layerSettingForKey(l.slayer,SettingKeys.LAYER_EXTERNAL_LINK_BLANKWIN)==1
 
                 }
@@ -310,6 +326,23 @@ class PZLayer {
             exporter.logMsg(prefix+"hotspot: none  l.isSymbolInstance="+l.isSymbolInstance)
             return false
         }
+        return true
+    }
+
+    _specifyExternalURLHotspot(prefix,finalHotspot,externalLink){           
+        exporter.logMsg(prefix+"_specifyExternalURLHotspothotspot: href")
+        // found external link
+        const regExp = new RegExp("^http(s?)://");
+        var href= externalLink.href
+        if (!regExp.test(href.toLowerCase())) {
+            href = "http://" + href;
+        }
+        const target = externalLink.openNewWindow ? "_blank" : null;
+
+        finalHotspot.linkType = "href"
+        finalHotspot.href = href
+        finalHotspot.target = target        
+
         return true
     }
 

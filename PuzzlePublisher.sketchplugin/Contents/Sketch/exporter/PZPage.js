@@ -28,12 +28,6 @@ class PZPage{
         //this._cleanUp()        
     }
 
-    buildLinks(space){
-        for(const a of this.mArtboards){
-            a.buildLinks(space+" ")
-        }
-    } 
-
 
     export(){
         for(const a of this.mArtboards){
@@ -99,7 +93,7 @@ class PZPage{
 
     _scanLayersToDetachSymbols(sLayers){
         for(var sl of sLayers){
-            log('PZPage._scanLayersToDetachSymbols() sl.type='+sl.type)
+            //log('PZPage._scanLayersToDetachSymbols() sl.type='+sl.type)
             if("SymbolMaster"==sl.type){
                 continue
             }

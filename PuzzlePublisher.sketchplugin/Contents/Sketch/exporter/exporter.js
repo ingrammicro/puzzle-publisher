@@ -122,10 +122,6 @@ class Exporter {
     log(msg)
   }
 
-  logLayer(msg){
-    if(!Constants.LAYER_LOGGING) return
-    log(msg)
-  }
 
   logWarning(text){
     log("[ WARNING ] "+text)
