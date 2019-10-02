@@ -116,21 +116,12 @@ class PZPage{
     }
 
     _collectArtboards(sArtboards){
-        for(var sa of sArtboards){
+        for(var sa of sArtboards){            
             if("SymbolMaster"==sa.type) continue
             const ma = new PZArtboard(sa)
             ma.collectLayers(' ')
             this.addArtboard(ma)
         }        
     }
-
-    /*
-    _cleanUp(sPage){
-        this.sPage.remove()
-        this.sPage = undefined
-    }
-    */
-
-
 
 }

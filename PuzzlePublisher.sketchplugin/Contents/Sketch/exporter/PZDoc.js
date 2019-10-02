@@ -31,14 +31,30 @@ class PZDoc{
         const mPages = []
         const filterAster = null==exporter.exportOptions || !('mode' in exporter.exportOptions)
         
-        for(var sPage of this.sDoc.pages){
 
-            if(filterAster && sPage.name.indexOf("*")==0) continue
 
-            // create new local Page object
-            const mPage =  new PZPage(sPage)
+        if (Constants.EXPORT_MODE_CURRENT_PAGE == exporter.exportOptions.mode){
+            // build only current page 
+            const mPage =  new PZPage( Sketch.fromNative(exporter.exportOptions.currentPage))
             mPage.collectData()
             mPages.push(mPage)
+        }else if (Constants.EXPORT_MODE_SELECTED_ARTBOARDS == exporter.exportOptions.mode){
+            // build only selected artboards on current page         
+            const mPage =  new PZPage( Sketch.fromNative(exporter.exportOptions.currentPage))
+            mPage.collectData(exporter.exportOptions.selectedArtboards)
+            mPages.push(mPage)
+
+        }else {
+            // build all pages and artboards
+            for(var sPage of this.sDoc.pages){
+
+                if(filterAster && sPage.name.indexOf("*")==0) continue
+
+                // create new local Page object
+                const mPage =  new PZPage(sPage)
+                mPage.collectData()
+                mPages.push(mPage)
+            }
         }
         this.mPages = mPages
 

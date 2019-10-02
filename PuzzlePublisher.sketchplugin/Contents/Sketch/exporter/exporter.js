@@ -334,15 +334,6 @@ class Exporter {
   }
 
 
-  resetCustomArtboardSizes(){
-    log(" reset artboard custom sizes: running...")
-
-    for(var artboard of this.myLayers){
-      artboard.resetCustomArtboardSize();    
-    }
-    log(" reset artboard custom sizes: done...")
-  }
-
   
   compressImages(){
     if(!this.exportOptions.compress) return true
@@ -430,64 +421,46 @@ class Exporter {
     if(!this.copyStatic("resources")) return false    
     if(!this.copyStatic("viewer")) return false
 
-    // Collect layers information
     this.mDoc = new PZDoc()
-    this.mDoc.collectData()
-    this.mDoc.buildLinks()
+    try {
+        // Collect layers information
+        this.mDoc.collectData()
+        this.mDoc.buildLinks()
+        
+
+        // Build main HTML file
+        if(!this.createMainHTML()) return false
+        
+        // Build Story.js with hotspots  
+        this.generateJSStoryBegin();
+        let index = 0;
+
+        // Export every artboard into PNG image
+        this.mDoc.export()
+        
+        if(!this.generateJSStoryEnd()) return false
     
-    /*
-    // Collect artboards and prepare caches
-    this.artboardGroups = this.getArtboardGroups(this.context);
-    
-    // Collect all layers
-    {
-      const layerCollector  = new MyLayerCollector()
-      layerCollector.collectArtboardsLayers(" ")
-    }        
+        // Compress Images
+        this.compressImages()
 
-    // Resize layers and build links
-    {
-      const layerResizer  = new MyLayerResizer()
-      layerResizer.resizeLayers(" ")
-    }    
+        // Build image small previews for Gallery
+        this.buildPreviews()
 
-    // Remove external URLs and other garbage
-    this.filterArtboards()
-    */
-    
+        // Save site icon
+        if(this.siteIconLayer!=undefined){        
+            this.siteIconLayer.exportSiteIcon()
+        }
 
-    // Build main HTML file
-    if(!this.createMainHTML()) return false
-    
-
-    // Build Story.js with hotspots  
-    this.generateJSStoryBegin();
-    let index = 0;
-
-
-    // Export every artboard into PNG image
-    this.mDoc.export()
-
-    
-    
-    if(!this.generateJSStoryEnd()) return false
- 
-    // Compress Images
-    this.compressImages()
-
-    // Build image small previews for Gallery
-    this.buildPreviews()
-
-    // Save site icon
-    if(this.siteIconLayer!=undefined){        
-        this.siteIconLayer.exportSiteIcon()
+        // Dump document layers to JSON file
+        this.saveToJSON()
     }
+    catch(error) {
+        this.logError(error)
+    }    
+    finally{
+        this.mDoc.undoChanges()
 
-    // Dump document layers to JSON file
-    this.saveToJSON()
-
-    this.mDoc.undoChanges()
-    //this.resetCustomArtboardSizes()
+    }
 
     log("exportArtboards: done!")
 

@@ -25,9 +25,8 @@ class PZArtboard extends PZLayer {
 
 
         // Resize before exporting
-        const oldframe = slayer.frame.copy()
         const needResize = exporter.customArtboardFrame && Constants.ARTBOARD_TYPE_REGULAR == artboardType && undefined == externalArtboardURL
-        if(needResize){            
+        if(needResize){           
             if(exporter.customArtboardFrame.width > 0 ) 
                 slayer.frame.width = exporter.customArtboardFrame.width
             if(exporter.customArtboardFrame.height > 0)    
@@ -36,7 +35,6 @@ class PZArtboard extends PZLayer {
 
         super(slayer, undefined)
                 
-        this.oldFrame = needResize?oldframe:undefined
         this.overlayLayers = []
         this.fixedLayers = [] // list of layers which are configured as fixed
         this.nextLinkIndex = 0 // we need it to generate uniq id of the every link
@@ -101,15 +99,6 @@ class PZArtboard extends PZLayer {
         this._findFixedPanelHotspots()
         //this._exportOverlayLayers()
         this._pushIntoJSStory(this.index)
-    }
-
-    resetCustomArtboardSize(){
-        if(exporter.customArtboardFrame){
-            if(this.oldFrame!=undefined){
-                const slayer = Sketch.fromNative(this.nlayer)
-                slayer.frame = this.oldFrame.copy()
-            }
-        }
     }
 
     //------------------- FIND HOTSPOTS WHICH LOCATE OVER FIXED HOTPOSTS ----------------------------
