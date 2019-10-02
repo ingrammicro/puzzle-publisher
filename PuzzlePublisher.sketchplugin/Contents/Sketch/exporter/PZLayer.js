@@ -41,7 +41,6 @@ class PZLayer {
         this.customLink = undefined
         this.isLink = false
 
-        //log('+++++ this.name: ' + this.name + " isParentFixed: "+this.isParentFixed+ " parent:"+(undefined!=myParent?myParent.name:"none"))
 
         if("Group"==sLayer.type || "Artboard"==sLayer.type ) this.isGroup = true
         const targetPos = this.name.indexOf("±±")
@@ -52,7 +51,6 @@ class PZLayer {
             const symbolID = data.substring(symbolIDPos+2)
 
             this.isSymbolInstance = true 
-            log('PZLayer: name='+this.name  + " symbolID="+symbolID+" targetID="+targetID)
 
             this.symbolMaster = pzDoc.getSymbolMasterByID(symbolID)
             this.targetId = targetID
@@ -166,7 +164,7 @@ class PZLayer {
     }    
 
     collectAChilds(sLayers,space){
-        //exporter.logMsg(space+"PZLayer.collectAChilds() name="+this.name)
+        exporter.logMsg(space+"PZLayer.collectAChilds() name="+this.name)
         var aLayers = []
         for(const sl of sLayers){
             const al = new PZLayer(sl,this)

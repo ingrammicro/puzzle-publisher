@@ -65,6 +65,7 @@ class PZPage{
     }  
     */
     _scanLayersToSaveInfo(sLayers){
+        exporter.logMsg("PZPage._scanLayersToSaveInfo() running name="+(this.sPage?this.sPage.name:''))
         for(var sl of sLayers){                      
             if("SymbolMaster"==sl.type){
                 continue
@@ -86,19 +87,21 @@ class PZPage{
                 }
                 // save target artboard ID to restore info about master afte the detach      
 
-                log("PZPage._scanLayersToSaveInfo() old name="+ sl.name)
+                //log("PZPage._scanLayersToSaveInfo() old name="+ sl.name)
                 // save symbol ID to restore info about master after the detachs
                 sl.name = sl.name + "±±" + (sl.flow?sl.flow.targetId:"") + "±±" + sl.symbolId
                 //log("name="+sl.name)
-                log("PZPage._scanLayersToSaveInfo() new name="+ sl.name)
+                //log("PZPage._scanLayersToSaveInfo() new name="+ sl.name)
                 this._scanLayersToSaveInfo(smaster.layers)
             }else if("Group"==sl.type || "Artboard"==sl.type){
                 this._scanLayersToSaveInfo(sl.layers)
             }               
         }
+        exporter.logMsg("PZPage._scanLayersToSaveInfo() competed")
     }
 
     _scanLayersToDetachSymbols(sLayers){
+        exporter.logMsg("PZPage._scanLayersToDetachSymbols() runnning...name="+(this.sPage?this.sPage.name:''))
         for(var sl of sLayers){
             //log('PZPage._scanLayersToDetachSymbols() sl.type='+sl.type)
             if("SymbolMaster"==sl.type){
@@ -113,6 +116,7 @@ class PZPage{
                 this._scanLayersToDetachSymbols(sl.layers)
             }               
         }
+        exporter.logMsg("PZPage._scanLayersToDetachSymbols() completed")
     }
 
     _collectArtboards(sArtboards){

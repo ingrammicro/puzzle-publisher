@@ -414,7 +414,7 @@ class PZArtboard extends PZLayer {
         log('_exportOverlayLayers: running')  
         let scales = exporter.retinaImages?[1,2]:[1]  
         for(const layer of this.overlayLayers){         
-            log('_exportOverlayLayers: '+layer.name)               
+           // log('_exportOverlayLayers: '+layer.name)               
             // need 
             const artboard = this._findArtboardByName(layer.name+"@")
             if(!artboard) continue
