@@ -44,18 +44,18 @@ class PZLayer {
         //log('+++++ this.name: ' + this.name + " isParentFixed: "+this.isParentFixed+ " parent:"+(undefined!=myParent?myParent.name:"none"))
 
         if("Group"==sLayer.type || "Artboard"==sLayer.type ) this.isGroup = true
-        const symbolIDPos = this.name.indexOf("{}")
-        if(symbolIDPos>=0){
+        const targetPos = this.name.indexOf("±±")
+        if(targetPos>=0){
+            const data =  this.name.substring(targetPos+2)
+            const symbolIDPos = data.indexOf("±±")
+            const targetID = data.substring(0,symbolIDPos)
+            const symbolID = data.substring(symbolIDPos+2)
+
             this.isSymbolInstance = true 
-            exporter.logMsg('PZLayer: name='+this.name )
-            const orgIndex = this.name.substring(symbolIDPos+2)
-            const orgInfo = pzDoc.sOrgLayers[ orgIndex  ]
-            if(!orgInfo){
-                log("PZLayer.init() orgInfo is empty. Index="+orgIndex+" pzDoc.sOrgLayers.length="+pzDoc.sOrgLayers.length)
-                log(this.name)
-            }
-            this.symbolMaster = pzDoc.getSymbolMasterByID(orgInfo.symbolId)
-            this.targetId = orgInfo.targetId
+            log('PZLayer: name='+this.name  + " symbolID="+symbolID+" targetID="+targetID)
+
+            this.symbolMaster = pzDoc.getSymbolMasterByID(symbolID)
+            this.targetId = targetID
 
             // prepare data for Element Inspector
             const lib = this.symbolMaster.getLibrary()            

@@ -8,7 +8,6 @@ class PZDoc{
     constructor(){
         pzDoc = this
         var Document = require('sketch/dom').Document
-        this.sOrgLayers = []
         this.sDoc = Document.getSelectedDocument()
         this.mPages = []
         this.mAllLayers = []
@@ -30,8 +29,7 @@ class PZDoc{
         // build local pages
         const mPages = []
         const filterAster = null==exporter.exportOptions || !('mode' in exporter.exportOptions)
-        
-
+    
 
         if (Constants.EXPORT_MODE_CURRENT_PAGE == exporter.exportOptions.mode){
             // build only current page 
@@ -112,7 +110,13 @@ class PZDoc{
     }
 
     undoChanges(){
-        Utils.actionWithType(this.sDoc.sketchObject,"MSUndoAction").doPerformAction(nil);
+        //Utils.actionWithType(this.sDoc.sketchObject,"MSUndoAction").doPerformAction(nil);
+        
+        this.jsLibs = []
+        //for(const lib of this._getLibraries()){
+          //  lib.sDoc.sketchObject.dealloc()
+        //}
+    
     }
     
 

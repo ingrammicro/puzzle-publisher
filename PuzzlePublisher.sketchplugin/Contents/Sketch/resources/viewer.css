@@ -27,6 +27,8 @@
     position: absolute;
     opacity: 0;    
     cursor: pointer;
+    transition: opacity 0.5s;
+    background-color: #FFC400;    
     pointer-events: auto;
 }
 
