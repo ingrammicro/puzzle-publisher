@@ -1,6 +1,8 @@
 
 ///
 
+const EVENT_HOVER=1
+
 function inViewport($el) {
     var elH = $el.outerHeight(),
         H   = $(window).height(),
@@ -470,7 +472,7 @@ class ViewerPage {
             }
 
             
-            if(1==eventType){ // for Mouse over event
+            if(EVENT_HOVER==eventType){ // for Mouse over event
                 a.mouseenter(handleLinkEvent)
                 if(10==destPage.overlayAlign){ // for overlay on hotspot top left position
                     
@@ -497,7 +499,7 @@ class ViewerPage {
 
             var style="left: "+ link.rect.x+"px; top:"+link.rect.y+"px; width: "+ link.rect.width+"px; height:"+link.rect.height+"px; "
             var linkDiv = $("<div>",{
-                class:"linkDiv"+(story.disableHotspots?"":" linkDivHighlight"),
+                class:(EVENT_HOVER==eventType?"linkHoverDiv":"linkDiv")+(story.disableHotspots?"":" linkDivHighlight"),
             }).attr('style', style)
             linkDiv.appendTo(a)
 

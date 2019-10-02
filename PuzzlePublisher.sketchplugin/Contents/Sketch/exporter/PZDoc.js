@@ -112,7 +112,7 @@ class PZDoc{
     }
 
     undoChanges(){
-        Utils.actionWithType("MSUndoAction").doPerformAction(nil);      
+        Utils.actionWithType(this.sDoc.sketchObject,"MSUndoAction").doPerformAction(nil);
     }
     
 

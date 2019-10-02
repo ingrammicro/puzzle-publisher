@@ -50,6 +50,10 @@ class PZLayer {
             exporter.logMsg('PZLayer: name='+this.name )
             const orgIndex = this.name.substring(symbolIDPos+2)
             const orgInfo = pzDoc.sOrgLayers[ orgIndex  ]
+            if(!orgInfo){
+                log("PZLayer.init() orgInfo is empty. Index="+orgIndex+" pzDoc.sOrgLayers.length="+pzDoc.sOrgLayers.length)
+                log(this.name)
+            }
             this.symbolMaster = pzDoc.getSymbolMasterByID(orgInfo.symbolId)
             this.targetId = orgInfo.targetId
 

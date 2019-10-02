@@ -23,6 +23,13 @@
     pointer-events: auto;
 }
 
+.linkHoverDiv {
+    position: absolute;
+    opacity: 0;    
+    cursor: pointer;
+    pointer-events: auto;
+}
+
 .linkDivHighlight:hover {
     opacity: 0.2;
     transition: opacity 0.5s;

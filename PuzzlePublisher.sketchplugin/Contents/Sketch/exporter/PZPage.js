@@ -66,6 +66,10 @@ class PZPage{
     */
     _scanLayersToSaveInfo(sLayers){
         for(var sl of sLayers){
+            if(sl.name.indexOf("{}")>=0){
+                // remove old garabage
+                sl.name = sl.name.substring(0,sl.name.indexOf("{}"))
+            }                
             if("SymbolMaster"==sl.type){
                 continue
             }
@@ -79,18 +83,18 @@ class PZPage{
                     log("Error: can't find master for"+sl.name)
                     continue
                 }
-                if(sl.name.indexOf("{}")>=0){
-                    // remove old garabage
-                    sl.name = sl.name.substring(0,sl.name.indexOf("{}"))
-                }                
-                // save target artboard ID to restore info about master afte the detach             
+                // save target artboard ID to restore info about master afte the detach      
+                const newIndex = pzDoc.sOrgLayers.length
                 pzDoc.sOrgLayers.push({
                     targetId: sl.flow?sl.flow.targetId:null,
                     symbolId: sl.symbolId
                 })
+                log("PZPage._scanLayersToSaveInfo() old name="+ sl.name)
+                log("PZDoc._scanLayersToSaveInfo() newIndex="+newIndex+" pzDoc.sOrgLayers.length="+pzDoc.sOrgLayers.length)
                 // save symbol ID to restore info about master after the detachs
-                sl.name = sl.name + "{}" + (pzDoc.sOrgLayers.length-1)
-                //log("PZPage._scanLayersToSaveInfo() name="+ sl.name)
+                sl.name = sl.name + "{}" + newIndex               
+                //log("name="+sl.name)
+                log("PZPage._scanLayersToSaveInfo() new name="+ sl.name)
                 this._scanLayersToSaveInfo(smaster.layers)
             }else if("Group"==sl.type || "Artboard"==sl.type){
                 this._scanLayersToSaveInfo(sl.layers)

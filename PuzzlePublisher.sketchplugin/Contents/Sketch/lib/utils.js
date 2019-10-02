@@ -173,8 +173,8 @@ class Utils {
         }
     }
 
-    static actionWithType(type){
-        var controller = exporter.context.document.actionsController();
+    static actionWithType(nDoc,type){
+        var controller = nDoc.actionsController();
 
         if (controller.actionWithName) {
             return controller.actionWithName(type);
