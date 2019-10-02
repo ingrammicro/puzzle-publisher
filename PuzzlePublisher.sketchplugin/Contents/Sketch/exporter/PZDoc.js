@@ -110,7 +110,7 @@ class PZDoc{
     }
 
     undoChanges(){
-        //Utils.actionWithType(this.sDoc.sketchObject,"MSUndoAction").doPerformAction(nil);
+        Utils.actionWithType(this.sDoc.sketchObject,"MSUndoAction").doPerformAction(nil);
         
         this.jsLibs = []
         //for(const lib of this._getLibraries()){

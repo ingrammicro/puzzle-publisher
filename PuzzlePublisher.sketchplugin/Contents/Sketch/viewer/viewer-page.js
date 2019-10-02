@@ -574,10 +574,10 @@ function handleLinkEvent(event){
                     pageY = 0
                 }else if(4==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_TOP_CENTER
                     pageX = parseInt(orgPage.width / 2) - parseInt(destPage.width / 2)
-                    pageX = 0
+                    pageY = 0
                 }else if(5==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_TOP_RIGHT
                     pageX = orgPage.width - destPage.width
-                    pageX = 0
+                    pageY = 0
                 }else if(6==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_CENTER
                     pageX = parseInt(orgPage.width / 2) - parseInt(destPage.width / 2)
                     pageY = parseInt(orgPage.height / 2) - parseInt(destPage.height / 2)
