@@ -60,8 +60,6 @@ var PublishKeys = {
 }
 
 var SettingKeys = {
-  PLUGIN_INFO_11: "pluginShown11",
-
   PLUGIN_POSITION: "positon",
   PLUGIN_DONT_OPEN_BROWSER: "dontOpenBrowser",
   PLUGIN_COMPRESS: "pluginCompress",  

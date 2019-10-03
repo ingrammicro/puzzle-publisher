@@ -29,7 +29,6 @@ class Publisher {
 	publish(){
 
         this.readOptions()
-        
 
         // Show UI
         if(!this.context.fromCmd){
