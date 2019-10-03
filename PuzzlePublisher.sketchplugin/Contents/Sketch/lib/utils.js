@@ -172,5 +172,17 @@ class Utils {
             output: outputString
         }
     }
+
+    static actionWithType(nDoc,type){
+        var controller = nDoc.actionsController();
+
+        if (controller.actionWithName) {
+            return controller.actionWithName(type);
+        } else if (controller.actionWithID) {
+            return controller.actionWithID(type);
+        } else {
+            return controller.actionForID(type);
+        }
+    }
 }
 

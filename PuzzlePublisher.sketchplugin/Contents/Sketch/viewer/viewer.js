@@ -713,7 +713,7 @@ function createViewer(story, files) {
             var pageIndex = this.getPageIndex(pageName,null);
             if(null==pageIndex){
                 // get the default page
-                pageIndex = 0
+                pageIndex = story.startPageIndex
                 hashInfo.reset_url = true
             }
 

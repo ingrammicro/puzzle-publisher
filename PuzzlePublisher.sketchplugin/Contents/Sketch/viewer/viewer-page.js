@@ -1,6 +1,8 @@
 
 ///
 
+const EVENT_HOVER=1
+
 function inViewport($el) {
     var elH = $el.outerHeight(),
         H   = $(window).height(),
@@ -470,7 +472,7 @@ class ViewerPage {
             }
 
             
-            if(1==eventType){ // for Mouse over event
+            if(EVENT_HOVER==eventType){ // for Mouse over event
                 a.mouseenter(handleLinkEvent)
                 if(10==destPage.overlayAlign){ // for overlay on hotspot top left position
                     
@@ -497,7 +499,7 @@ class ViewerPage {
 
             var style="left: "+ link.rect.x+"px; top:"+link.rect.y+"px; width: "+ link.rect.width+"px; height:"+link.rect.height+"px; "
             var linkDiv = $("<div>",{
-                class:"linkDiv"+(story.disableHotspots?"":" linkDivHighlight"),
+                class:(EVENT_HOVER==eventType?"linkHoverDiv":"linkDiv")+(story.disableHotspots?"":" linkDivHighlight"),
             }).attr('style', style)
             linkDiv.appendTo(a)
 
@@ -572,10 +574,10 @@ function handleLinkEvent(event){
                     pageY = 0
                 }else if(4==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_TOP_CENTER
                     pageX = parseInt(orgPage.width / 2) - parseInt(destPage.width / 2)
-                    pageX = 0
+                    pageY = 0
                 }else if(5==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_TOP_RIGHT
                     pageX = orgPage.width - destPage.width
-                    pageX = 0
+                    pageY = 0
                 }else if(6==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_CENTER
                     pageX = parseInt(orgPage.width / 2) - parseInt(destPage.width / 2)
                     pageY = parseInt(orgPage.height / 2) - parseInt(destPage.height / 2)

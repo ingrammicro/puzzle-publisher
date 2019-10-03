@@ -1,5 +1,8 @@
 # Change Log
 
+##  Version 11.0,0 (2 Oct 2019)
+- Totally changed a way to apply symbol overrides in order to make it compatible with Smart Layouts
+
 ##  Version 10.3.3 (26 Sep 2019)
 - Fixed rendering of artboard with fixed layers (on some installations Sketch was too lazy) (part II)
 

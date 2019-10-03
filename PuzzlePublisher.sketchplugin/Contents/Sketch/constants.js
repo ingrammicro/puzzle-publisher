@@ -3,13 +3,13 @@ var Constants = {
   DOCUMENT_VERSION_PLACEHOLDER : "V_V_V",
   TAB_SIZE: 2,
   HOTSPOT_PADDING: 0,
-  LAYER_LOGGING: false,
   LOGGING: false,
   SERVER_ANNOUNCE_SCRIPT: "announce.php",
   IMAGES_DIRECTORY: "images/",
   VIEWER_DIRECTORY: "viewer/",
   RESOURCES_DIRECTORY: "resources/",
   PLUGIN_IDENTIFIER: "com.cloudblue.sketch.exporter",
+  TEMP_PAGE_PREFIX: "(temp)",
   SORT_RULE_X:0,    
   SORT_RULE_SKETCH:1,
   SORT_RULE_REVERSIVE_SKETCH:2,
@@ -60,6 +60,8 @@ var PublishKeys = {
 }
 
 var SettingKeys = {
+  PLUGIN_INFO_11: "pluginShown11",
+
   PLUGIN_POSITION: "positon",
   PLUGIN_DONT_OPEN_BROWSER: "dontOpenBrowser",
   PLUGIN_COMPRESS: "pluginCompress",  

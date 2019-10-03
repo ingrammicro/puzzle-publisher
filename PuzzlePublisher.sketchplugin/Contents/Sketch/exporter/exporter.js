@@ -1,9 +1,10 @@
 @import("constants.js")
 @import("lib/utils.js")
 @import("exporter/exporter-build-html.js")
-@import("exporter/my_layer.js")
-@import("exporter/my_artboard.js")
-@import("exporter/my_layer_resizer.js")
+@import("exporter/PZLayer.js")
+@import("exporter/PZArtboard.js")
+@import("exporter/PZPage.js")
+@import("exporter/PZDoc.js")
 @import("exporter/publisher.js") // we need it to run resize.sh script
 
 var exporter = undefined
@@ -34,13 +35,10 @@ class Exporter {
     this.customArtboardFrame = undefined
     this.siteIconLayer = undefined
     this.myLayers = []
-    this.jsStory = '';
-    this.pagesDict = []
-    this.pageIDsDict = []
+    this.jsStory = '';    
     this.errors = []
     this.warnings = []
     this.exportedImages = []
-    this.jsLibs = undefined
 
     // workaround for Sketch 52s
     this.docName = this._clearCloudName(this.ndoc.cloudName())
@@ -86,109 +84,11 @@ class Exporter {
   }
 
 
-  // return Sketch native object
-  findArtboardByID(artboardID){
-      let artboard = this.pageIDsDict[artboardID]
-      if(artboard) return artboard
-      return this._findLibraryArtboardByID(artboardID)
-  }
-
-  // return Sketch native object
-  _findLibraryArtboardByID(artboardID){
-    //log("findLibraryArtboardByID running...  artboardID:"+artboardID)
-    // find Sketch Artboard
-    var jsArtboard = undefined
-    for(const lib of this._getLibraries()){
-        jsArtboard = lib.jsDoc.getLayerWithID(artboardID)
-        if(jsArtboard) break
-    }
-    if(!jsArtboard){
-        //log("findLibraryArtboardByID FAILED")
-        return false
-    }
-
-    // Process Sketch artboard
-    const layerCollector  = new MyLayerCollector()
-    const artboard = layerCollector.collectSingleArtboardLayers(" ",jsArtboard.sketchObject)
-
-    // Resize internal parts
-    const layerResizer  = new MyLayerResizer()
-    layerResizer._resizeLayers(" ",[artboard])
-
-    //log("findLibraryArtboardByID SUCCESS")
-    return artboard
-  }
- 
-
-
-  _getLibraries(){
-    if(undefined!=this.jsLibs) return this.jsLibs
-    
-    log("_getLibraries: start")
-    this.jsLibs = []
-
-    var libraries = require('sketch/dom').getLibraries()
-    for(const jsLib of libraries){
-        if(!jsLib.valid || !jsLib.enabled) continue        
-        log("_getLibraries: try to load document for library "+jsLib.name+"")
-
-        const jsDoc = jsLib.getDocument() 
-        if(!jsDoc){
-            log("_getLibraries: can't load document for library "+jsDoc.path+"")
-            continue
-        }
-        this.jsLibs.push({
-            jsLib: jsLib,
-            jsDoc: jsDoc
-        })
-    }
-    log("_getLibraries: finish")
-    return this.jsLibs
-  }
-
-  
-  collectArtboardGroups(){
-    this.myLayers = []
-    this.artboardGroups.forEach(function (artboardGroup) {
-      const artboard = artboardGroup[0].artboard;
-      this.myLayers.push(this.getCollectLayer(artboard,undefined))
-    }, this);
-  }
-
-  getCollectLayer(layer,myParent){
-    const myLayer = new MyLayer(layer,myParent)    
-
-    if(myLayer.isSymbolInstance){      
-      //myLayer.childs.push( this.getCollectLayer(layer.symbolMaster(),myLayer)  )
-      myLayer.childs =  this.getCollectLayerChilds(layer.symbolMaster().layers(),myLayer)
-    }else if(myLayer.isGroup){
-      myLayer.childs =  this.getCollectLayerChilds(layer.layers(),myLayer)
-    }else{
-
-    }
-    return myLayer
-  }
-
-
-  getCollectLayerChilds(layers,myParent){
-    const myLayers = []
-   f
-    layers.forEach(function (childLayer) {
-      myLayers.push( this.getCollectLayer(childLayer,myParent) )
-    }, this);
-   
-    return myLayers
-  }
-
   logMsg(msg){
     if(!Constants.LOGGING) return
     log(msg)
   }
 
-  logLayer(msg){
-    if(!Constants.LAYER_LOGGING) return
-    log(msg)
-  }
 
   logWarning(text){
     log("[ WARNING ] "+text)
@@ -383,23 +283,11 @@ class Exporter {
           }
           break;
       }
-    }
+    }  
 
     return artboardGroups;
   }
 
-  buildSymbolDict() {
-    var symDict = []
-
-    for(var symbol of this.doc.getSymbols()){
-      const sid = symbol.symbolId
-      const skSymbol = symbol.sketchObject      
-      if( sid in symDict) continue
-      symDict[ sid ] = skSymbol      
-    }
-
-    this.symDict = symDict
-  }
 
   filterArtboards(){
     const filtered = []
@@ -412,25 +300,6 @@ class Exporter {
     this.myLayers = filtered
   }
 
-
-  exportArtboardImagesAndDef(){
-    log(" exportImages: running...")
-    this.totalImages = 0
-
-    for(var artboard of this.myLayers){
-      artboard.export();    
-    }
-    log(" exportImages: done!")
-  }
-
-  resetCustomArtboardSizes(){
-    log(" reset artboard custom sizes: running...")
-
-    for(var artboard of this.myLayers){
-      artboard.resetCustomArtboardSize();    
-    }
-    log(" reset artboard custom sizes: done...")
-  }
 
   
   compressImages(){
@@ -491,9 +360,10 @@ class Exporter {
      '"resolutions": ['+(this.retinaImages?'2':'1')+'],\n'+
      '"zoomEnabled": '+ (this.Settings.settingForKey(SettingKeys.PLUGIN_DISABLE_ZOOM)!=1?'true':'false')+',\n'+
      '"title": "'+this.docName+'",\n'+
+     '"startPageIndex": '+this.mDoc.startArtboardIndex+',\n'+
      '"layersExist": ' + ( this.enabledJSON ? "true":"false") +',\n'+
      '"centerContent":  '+(this.Settings.settingForKey(SettingKeys.PLUGIN_POSITION) === Constants.POSITION_CENTER) +',\n'+
-     '"totalImages": '+this.totalImages+',\n'+
+     '"totalImages": '+pzDoc.totalImages+',\n'+
      '"highlightLinks": false\n'
     if(undefined!=iFrameSize){
         this.jsStory += ',"iFrameSizeWidth": "'+iFrameSize.width+'"\n'
@@ -509,96 +379,71 @@ class Exporter {
     return true
   }
 
-  saveToJSON(){
-    if( !this.enabledJSON ) return true
 
-    // load library inspector file
-    let inspectors = ""
-    const libs = this._getLibraries()
-    for(const lib of libs){
-        let pathToSymbolTokens = Utils.cutLastPathFolder(lib.jsDoc.path)+"/"+ lib.jsLib.name +  "-inspector.json"
-        //log('pathToSymbolTokens = '+pathToSymbolTokens+" name="+lib.jsLib.name)        
-        const inspectorData =  Utils.readFile(pathToSymbolTokens)
-        if(inspectors!="") inspectors+=","
-        inspectors += "'"+lib.jsLib.name+"':"+(inspectorData?inspectorData:"{}")
-    }
-
-    let symbolTokens = "var symbolsData = {"+inspectors+"};"
-
-    log(" SaveToJSON: cleanup before saving...")
-    for(var l of this.myLayers) l.clearRefsBeforeJSON()
-
-    log(" SaveToJSON: running...")
-    const layersJSON = JSON.stringify(this.myLayers,replacer,null)
-    const pathJSFile = this.createViewerFile('LayersData.js')
-    Utils.writeToFile(symbolTokens+"var layersData = "+layersJSON, pathJSFile)
-    log(" SaveToJSON: done!")
-
-    return true
-  }
 
   exportArtboards() {        
     log("exportArtboards: running...")    
 
-    // Collect artboards and prepare caches
-    this.artboardGroups = this.getArtboardGroups(this.context);
-    
-    // Collect all layers
-    this.buildSymbolDict()
-    {
-      const layerCollector  = new MyLayerCollector()
-      layerCollector.collectArtboardsLayers(" ")
-    }        
-
-    // Resize layers and build links
-    {
-      const layerResizer  = new MyLayerResizer()
-      layerResizer.resizeLayers(" ")
-    }    
-
-    // Remove external URLs and other garbage
-    this.filterArtboards()
-    
-
     // Copy static files
     if(!this.copyStatic("resources")) return false    
     if(!this.copyStatic("viewer")) return false
- 
 
-    // Build main HTML file
-    if(!this.createMainHTML()) return false
+    this.mDoc = new PZDoc()
+    try {
+        // Collect layers information
+        this.mDoc.collectData()
+        this.mDoc.buildLinks()
+        
+
+        // Build main HTML file
+        if(!this.createMainHTML()) return false
+        
+        // Build Story.js with hotspots  
+        this.generateJSStoryBegin();
+        let index = 0;
+
+        // Export every artboard into PNG image
+        this.mDoc.export()
+        
+        if(!this.generateJSStoryEnd()) return false
     
+        // Compress Images
+        this.compressImages()
 
-    // Build Story.js with hotspots  
-    this.generateJSStoryBegin();
-    let index = 0;
+        // Build image small previews for Gallery
+        this.buildPreviews()
 
+        // Save site icon
+        if(this.siteIconLayer!=undefined){        
+            this.siteIconLayer.exportSiteIcon()
+        }
 
-    // Export every artboard into PNG image
-    this.exportArtboardImagesAndDef()
-    
-    if(!this.generateJSStoryEnd()) return false
- 
-    // Compress Images
-    this.compressImages()
-
-    // Build image small previews for Gallery
-    this.buildPreviews()
-
-    // Save site icon
-    if(this.siteIconLayer!=undefined){        
-        this.siteIconLayer.exportSiteIcon()
+        // Dump document layers to JSON file
+        this.saveToJSON()
     }
+    catch(error) {
+        this.logError(error)
+    }    
+    finally{
+        this.mDoc.undoChanges()
 
-    // Dump document layers to JSON file
-    this.saveToJSON()
-
-    this.resetCustomArtboardSizes()
+    }
 
     log("exportArtboards: done!")
 
     return true
   }  
+
+    saveToJSON(){
+        if( !this.enabledJSON ) return true
+
+        const symbolData = this.mDoc.getSymbolData()
+        const json = this.mDoc.getJSON()
+
+        const pathJSFile = this.createViewerFile('LayersData.js')
+        return Utils.writeToFile(symbolData+"var layersData = "+json, pathJSFile)
+    }
+
 
   prepareOutputFolder(selectedPath) {
     let error;

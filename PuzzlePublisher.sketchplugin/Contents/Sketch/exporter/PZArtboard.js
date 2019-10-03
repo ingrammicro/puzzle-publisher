@@ -1,32 +1,16 @@
 @import("constants.js")
 @import("lib/utils.js")
-@import("exporter/child-finder.js")
-@import("exporter/my_layer.js")
+@import("exporter/PZLayer.js")
+@import("exporter/PZDoc.js")
 
 Sketch = require('sketch/dom')
 
-class MyArtboard extends MyLayer {
-
-    static getArtboardGroupsInPage(page, context, includeNone = true) {
-        const artboardsSrc = page.artboards();
-        const artboards = [];
-
-        artboardsSrc.forEach(function(artboard){
-            if( !artboard.isKindOfClass(MSSymbolMaster)){
-              artboards.push(artboard);
-            }
-        });
-      
-        return Utils.getArtboardGroups(artboards, context);  
-      }
-      
-
-    // nlayer: ref to native MSLayer Layer
-    // myParent: ref to parent MyLayer
-    constructor(nlayer) {
+class PZArtboard extends PZLayer {
+   
+    constructor(slayer) {
+        exporter.logMsg("PZArtboard.create id="+slayer.name)
 
         // init Artboard own things !!! before object construction !!!
-        let slayer = Sketch.fromNative(nlayer)
         let artboardType = exporter.Settings.layerSettingForKey(slayer, SettingKeys.ARTBOARD_TYPE)
         if(undefined == artboardType || '' == artboardType){
             if(exporter.Settings.layerSettingForKey(slayer, SettingKeys.LEGACY_ARTBOARD_MODAL)==1){
@@ -41,37 +25,32 @@ class MyArtboard extends MyLayer {
 
 
         // Resize before exporting
-        const oldframe = slayer.frame.copy()
         const needResize = exporter.customArtboardFrame && Constants.ARTBOARD_TYPE_REGULAR == artboardType && undefined == externalArtboardURL
-        if(needResize){            
+        if(needResize){           
             if(exporter.customArtboardFrame.width > 0 ) 
                 slayer.frame.width = exporter.customArtboardFrame.width
             if(exporter.customArtboardFrame.height > 0)    
                 slayer.frame.height = exporter.customArtboardFrame.height
         }
 
-        super(nlayer, undefined)
-        
-        this.oldFrame = needResize?oldframe:undefined
+        super(slayer, undefined)
+                
         this.overlayLayers = []
         this.fixedLayers = [] // list of layers which are configured as fixed
         this.nextLinkIndex = 0 // we need it to generate uniq id of the every link
 
         // check if the page name is unique in document
-        if(this.name in exporter.pagesDict){
+        if(this.name in pzDoc.artboardsDict){
             // we need to find a new name                        
             for(let i=1;i<1000;i++){               
                 const newName = this.name+"("+i+")"
-                if( !(newName in exporter.pagesDict)){
+                if( !(newName in pzDoc.artboardsDict)){
                     // found new unique name!
                     this.name = newName
                     break
                 }
             }            
-        }
-        exporter.pagesDict[this.name] = this
-        exporter.pageIDsDict[this.objectID] = this
-        
+        }        
         // init Artboard own things
         this.artboardType = artboardType
         this.isModal = Constants.ARTBOARD_TYPE_MODAL == this.artboardType
@@ -110,20 +89,16 @@ class MyArtboard extends MyLayer {
         
     }
 
+    collectLayers(space){
+        //exporter.logMsg(space+"PZArtboard.collectLayers() name="+this.name)
+        this.childs = this.collectAChilds(this.slayer.layers,space+" ")
+    }
+
     export(){        
         this._exportImages()
         this._findFixedPanelHotspots()
         //this._exportOverlayLayers()
-        this._pushIntoJSStory(this.pageIndex)
-    }
-
-    resetCustomArtboardSize(){
-        if(exporter.customArtboardFrame){
-            if(this.oldFrame!=undefined){
-                const slayer = Sketch.fromNative(this.nlayer)
-                slayer.frame = this.oldFrame.copy()
-            }
-        }
+        this._pushIntoJSStory(this.index)
     }
 
     //------------------- FIND HOTSPOTS WHICH LOCATE OVER FIXED HOTPOSTS ----------------------------
@@ -149,7 +124,7 @@ class MyArtboard extends MyLayer {
         const mainName = this.name
 
         exporter.logMsg("process main artboard " + mainName);
-        exporter.totalImages++
+        pzDoc.totalImages++
 
         let js = pageIndex ? ',' : '';
         js +=
@@ -264,7 +239,7 @@ class MyArtboard extends MyLayer {
                         + "' layer='" + l.name + "' layer.frame=" + l.frame + " this.frame=" + this.frame)
                     continue
                 }
-                exporter.totalImages++
+                pzDoc.totalImages++
 
                 if (!l.isFloat && foundPanels[type]) {
                     exporter.logError("pushFixedLayersIntoJSStory: found more than one panel with type '" + type + "' for artboard '" 
@@ -322,21 +297,20 @@ class MyArtboard extends MyLayer {
                isParentFixed:isParentFixed,
             }
 
-            //log(' _buildHotspots linkType='+hotspot.linkType+" l.name="+hotspot.l.name+" l.target="+hotspot.target)
 
             if (hotspot.linkType == 'back') {
                 newHotspot.action = 'back'
-            } else if (hotspot.linkType == 'artboard' && exporter.pagesDict[hotspot.artboardID] != undefined 
-                && exporter.pageIDsDict[hotspot.artboardID].externalArtboardURL != undefined
+            } else if (hotspot.linkType == 'artboard' && pzDoc.artboardsDict[hotspot.artboardID] != undefined 
+                && pzDoc.artboardIDsDict[hotspot.artboardID].externalArtboardURL != undefined
             ) {
-                newHotspot.url = exporter.pageIDsDict[hotspot.artboardID].externalArtboardURL                
+                newHotspot.url = pzDoc.artboardIDsDict[hotspot.artboardID].externalArtboardURL                
             } else if (hotspot.linkType == 'artboard') {
-                const targetPage = exporter.pageIDsDict[hotspot.artboardID]
+                const targetPage = pzDoc.artboardIDsDict[hotspot.artboardID]
                 if (targetPage == undefined) {
                     exporter.logMsg("undefined artboard: '" + hotspot.artboardName + '"');
                     continue
                 }
-                const targetPageIndex = targetPage.pageIndex;
+                const targetPageIndex = targetPage.index;
                 newHotspot.page = targetPageIndex
             } else if (hotspot.linkType == 'href') {
                 newHotspot.url = hotspot.href        
@@ -409,7 +383,6 @@ class MyArtboard extends MyLayer {
         Sketch.export(slayer, options)        
         
     }
-
  
     _exportImages() {
 
@@ -441,7 +414,7 @@ class MyArtboard extends MyLayer {
         log('_exportOverlayLayers: running')  
         let scales = exporter.retinaImages?[1,2]:[1]  
         for(const layer of this.overlayLayers){         
-            log('_exportOverlayLayers: '+layer.name)               
+           // log('_exportOverlayLayers: '+layer.name)               
             // need 
             const artboard = this._findArtboardByName(layer.name+"@")
             if(!artboard) continue

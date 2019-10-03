@@ -7,7 +7,7 @@
   "appcast": "https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/appcast.xml",
   "compatibleVersion": 3,
   "bundleVersion": 1,
-  "version" : "10.3.3",
+  "version" : "11.0.0",
   "icon": "icon.png",
   "commands" : [   
     {
@@ -83,6 +83,13 @@
       "shortcut" : "command alt p", 
       "name" : "📡 Publish HTML",
       "identifier" : "publish"
+    },
+    {
+        "script" : "exporter/exporter-run.js",
+        "handler" : "announce11",
+        "shortcut" : "", 
+        "name" : "ℹ️ Show last announcement",
+        "identifier" : "announce11"
     }
   ],
   "menu": {
@@ -99,7 +106,9 @@
       "confDocument",
       "-",
       "confPluginExport",
-      "confPluginPublishing"
+      "confPluginPublishing",
+      "-",
+      "announce11"
     ]
   }
 }
