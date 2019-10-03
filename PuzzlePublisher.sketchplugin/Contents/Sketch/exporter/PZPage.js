@@ -11,19 +11,19 @@ class PZPage{
         this.mArtboards = []
     }
 
-    collectData(sLayers=null){
+    collectData(sParent=null){
         exporter.logMsg("PZPage.collectData() name="+(this.sPage?this.sPage.name:''))
         // 
-        if(null==sLayers) sLayers = this.sPage.layers
+        if(!sParent) sParent = this.sPage
 
         //this.sPage = this._clonePage(this.sPageOrg)
 
         // prepare layers for collecting
-        this._scanLayersToSaveInfo(sLayers)        
-        this._scanLayersToDetachSymbols(sLayers)       
+        this._scanLayersToSaveInfo(sParent)        
+        this._scanLayersToDetachSymbols(sParent)       
         
         // collect layers
-        this._collectArtboards(sLayers)
+        this._collectArtboards(sParent.layers)
 
         // cleanup temporary data
         //this._cleanUp()        
@@ -64,58 +64,45 @@ class PZPage{
         return sClone
     }  
     */
-    _scanLayersToSaveInfo(sLayers){
+    _scanLayersToSaveInfo(sParent){        
         exporter.logMsg("PZPage._scanLayersToSaveInfo() running name="+(this.sPage?this.sPage.name:''))
-        for(var sl of sLayers){                      
-            if("SymbolMaster"==sl.type){
-                continue
-            }
-            if("Artboard"==sl.type){
-                //sl.name = sl.name + "}}" + String(sl.id)
-                //log("PZPage._scanLayersToSaveInfo() id="+ sl.name)
-            }
-            if("SymbolInstance"==sl.type){                
+        const nParent = sParent.sketchObject
 
-                if(sl.name.indexOf("±±")>=0){
-                    //remove old garabage
-                    sl.name = sl.name.substring(0,sl.name.indexOf("±±"))                
-                }     
-                const smaster = pzDoc.getSymbolMasterByID(sl.symbolId)
-                if(!smaster){
-                    log("Error: can't find master for"+sl.name)
-                    continue
-                }
-                // save target artboard ID to restore info about master afte the detach      
+        nParent.children().forEach(function(nl){
+            if(!(nl instanceof MSSymbolInstance )) return
+         
+            const sl = Sketch.fromNative(nl)
+            if(sl.name.indexOf("±±")>=0){
+                //remove old garabage
+                sl.name = sl.name.substring(0,sl.name.indexOf("±±"))                
+            }     
+            const smaster = pzDoc.getSymbolMasterByID(sl.symbolId)
+            if(!smaster){
+                log("Error: can't find master for"+sl.name)
+                return  
+            }
+            // save target artboard ID to restore info about master afte the detach      
 
-                //log("PZPage._scanLayersToSaveInfo() old name="+ sl.name)
-                // save symbol ID to restore info about master after the detachs
-                sl.name = sl.name + "±±" + (sl.flow?sl.flow.targetId:"") + "±±" + sl.symbolId
-                //log("name="+sl.name)
-                //log("PZPage._scanLayersToSaveInfo() new name="+ sl.name)
-                this._scanLayersToSaveInfo(smaster.layers)
-            }else if("Group"==sl.type || "Artboard"==sl.type){
-                this._scanLayersToSaveInfo(sl.layers)
-            }               
-        }
-        exporter.logMsg("PZPage._scanLayersToSaveInfo() competed")
+            //log("PZPage._scanLayersToSaveInfo() old name="+ sl.name)
+            // save symbol ID to restore info about master after the detachs
+            sl.name = sl.name + "±±" + (sl.flow?sl.flow.targetId:"") + "±±" + sl.symbolId
+        },this)
     }
 
-    _scanLayersToDetachSymbols(sLayers){
+    _scanLayersToDetachSymbols(sParent){
         exporter.logMsg("PZPage._scanLayersToDetachSymbols() runnning...name="+(this.sPage?this.sPage.name:''))
-        for(var sl of sLayers){
-            //log('PZPage._scanLayersToDetachSymbols() sl.type='+sl.type)
-            if("SymbolMaster"==sl.type){
-                continue
-            }
-            if("SymbolInstance"==sl.type){
-                sl = sl.detach({
-                    recursively: true
-                })                
-                if(!sl) continue                                
-            }else if("Group"==sl.type || "Artboard"==sl.type){
-                this._scanLayersToDetachSymbols(sl.layers)
-            }               
-        }
+        const nParent = sParent.sketchObject
+
+        nParent.children().forEach(function(nl){
+            if(!(nl instanceof MSSymbolInstance )) return
+            
+            var sl = Sketch.fromNative(nl)
+            sl = sl.detach({
+                recursively: true
+            })   
+
+        },this)
+      
         exporter.logMsg("PZPage._scanLayersToDetachSymbols() completed")
     }
 

@@ -110,6 +110,7 @@ class PZDoc{
     }
 
     undoChanges(){
+        return
         Utils.actionWithType(this.sDoc.sketchObject,"MSUndoAction").doPerformAction(nil);
         
         this.jsLibs = []
@@ -204,7 +205,7 @@ class PZDoc{
         this._buildSymbolDict(sDoc)
         const mPage = new PZPage(null)
         this.mPages.push( mPage )
-        mPage.collectData([sArtboard])
+        mPage.collectData(sArtboard)
     }
 
 
