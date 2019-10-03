@@ -164,7 +164,6 @@ class PZLayer {
     }    
 
     collectAChilds(sLayers,space){
-        exporter.logMsg(space+"PZLayer.collectAChilds() name="+this.name)
         var aLayers = []
         for(const sl of sLayers){
             const al = new PZLayer(sl,this)
@@ -320,11 +319,8 @@ class PZLayer {
                 finalHotspot.artboardID = targetArtboardID;
                 finalHotspot.href = Utils.toFilename(targetArtboard.name) + ".html";
             }
-
-            exporter.logMsg(prefix+"hotspot: artboard ")
             
         }else{                    
-            exporter.logMsg(prefix+"hotspot: none  l.isSymbolInstance="+l.isSymbolInstance)
             return false
         }
         return true

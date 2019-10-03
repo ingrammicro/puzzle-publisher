@@ -12,7 +12,7 @@ class PZDoc{
         this.mPages = []
         this.mAllLayers = []
         this.mLinkedLayers = []
-        this.sSymbols = undefined    
+        this.sSymbols = {}    
         this.artboardCount = 0
         this.startArtboardIndex = 0
 
@@ -45,6 +45,7 @@ class PZDoc{
         }else {
             // build all pages and artboards
             for(var sPage of this.sDoc.pages){
+                exporter.logMsg("PZDoc:collectData() process page="+sPage.name)
 
                 if(filterAster && sPage.name.indexOf("*")==0) continue
 
@@ -110,7 +111,6 @@ class PZDoc{
     }
 
     undoChanges(){
-        return
         Utils.actionWithType(this.sDoc.sketchObject,"MSUndoAction").doPerformAction(nil);
         
         this.jsLibs = []
@@ -130,7 +130,7 @@ class PZDoc{
     addArtboard(mArtboard){        
         this.artboardsDict[mArtboard.name] = mArtboard
         this.artboardIDsDict[mArtboard.objectID] = mArtboard
-
+        
         if(mArtboard.nlayer.isFlowHome()){
             this.startArtboardIndex = this.artboardCount
         }
@@ -184,31 +184,27 @@ class PZDoc{
     _findLibraryArtboardByID(artboardID){
         exporter.logMsg("findLibraryArtboardByID running...  artboardID:"+artboardID)
         // find Sketch Artboard
-        var jsArtboard = undefined
+        var sArtboard = undefined
         var lib = undefined
         for(lib of this._getLibraries()){
             exporter.logMsg("findLibraryArtboardByID getLayerWithID for lib "+lib.jsLib.name)
-            jsArtboard = lib.sDoc.getLayerWithID(artboardID)
-            if(jsArtboard) break
+            sArtboard = lib.sDoc.getLayerWithID(artboardID)
+            if(sArtboard) break
         }
-        if(!jsArtboard){            
+        // check artboard existing
+        if(!sArtboard){            
             exporter.logMsg("findLibraryArtboardByID FAILED")
             return false
         }
 
         // Create new page
-        this._addLibraryPage(lib.sDoc,jsArtboard)       
+        this._buildSymbolDict(lib.sDoc)
+        const mPage = new PZPage(null)
+        mPage.collectData([sArtboard])
+        this.mPages.push( mPage )
+
         return this.artboardIDsDict[artboardID]
     }
-
-    _addLibraryPage(sDoc,sArtboard){
-        this._buildSymbolDict(sDoc)
-        const mPage = new PZPage(null)
-        this.mPages.push( mPage )
-        mPage.collectData(sArtboard)
-    }
-
-
 
     _getLibraries(){
         if(undefined!=this.jsLibs) return this.jsLibs
@@ -237,17 +233,12 @@ class PZDoc{
 
 
     _buildSymbolDict(sDoc=null) {
-        var sSymbols = []
-
         if(!sDoc) sDoc = this.sDoc
 
         for(const sSymbol of sDoc.getSymbols()){
             const sid = sSymbol.symbolId
-            if( sid in sSymbols) continue                        
-            sSymbols[ sid ] = sSymbol      
-        }
-            
-
-        this.sSymbols = sSymbols
+            if( sid in this.sSymbols) continue                        
+            this.sSymbols[ sid ] = sSymbol      
+        }            
     }
 }

@@ -11,19 +11,21 @@ class PZPage{
         this.mArtboards = []
     }
 
-    collectData(sParent=null){
-        exporter.logMsg("PZPage.collectData() name="+(this.sPage?this.sPage.name:''))
+    collectData(sArtboards=null){
+        exporter.logMsg("PZPage.collectData() starting... name="+(this.sPage?this.sPage.name:''))
         // 
-        if(!sParent) sParent = this.sPage
-
-        //this.sPage = this._clonePage(this.sPageOrg)
+        if(!sArtboards) sArtboards = this.sPage.layers
 
         // prepare layers for collecting
-        this._scanLayersToSaveInfo(sParent)        
-        this._scanLayersToDetachSymbols(sParent)       
+        exporter.logMsg("PZPage.collectData() preparing...")
+        for(const sa of sArtboards){
+            this._scanLayersToSaveInfo(sa)        
+            this._scanLayersToDetachSymbols(sa)       
+        }
         
         // collect layers
-        this._collectArtboards(sParent.layers)
+        exporter.logMsg("PZPage.collectData() collecting...")
+        this._collectArtboards(sArtboards)
 
         // cleanup temporary data
         //this._cleanUp()        

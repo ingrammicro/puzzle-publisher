@@ -3,7 +3,7 @@ var Constants = {
   DOCUMENT_VERSION_PLACEHOLDER : "V_V_V",
   TAB_SIZE: 2,
   HOTSPOT_PADDING: 0,
-  LOGGING: true,
+  LOGGING: false,
   SERVER_ANNOUNCE_SCRIPT: "announce.php",
   IMAGES_DIRECTORY: "images/",
   VIEWER_DIRECTORY: "viewer/",
