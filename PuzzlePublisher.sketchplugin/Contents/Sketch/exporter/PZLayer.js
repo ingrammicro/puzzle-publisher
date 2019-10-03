@@ -53,6 +53,9 @@ class PZLayer {
             this.isSymbolInstance = true 
 
             this.symbolMaster = pzDoc.getSymbolMasterByID(symbolID)
+            if(undefined==this.symbolMaster){
+                log("PZLayer:constructor() can't find symbol master for layer="+this.name)
+            }
             this.targetId = targetID
 
             // prepare data for Element Inspector
@@ -165,6 +168,10 @@ class PZLayer {
 
     collectAChilds(sLayers,space){
         var aLayers = []
+        if(undefined==sLayers){
+            log(this)
+            log("PZLayer:collectAChilds() empty sLayers. this.name="+this.name)
+        }
         for(const sl of sLayers){
             const al = new PZLayer(sl,this)
             if(al.isGroup) al.childs = al.collectAChilds(sl.layers,space+" ")

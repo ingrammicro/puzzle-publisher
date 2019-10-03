@@ -19,6 +19,7 @@ class PZPage{
         // prepare layers for collecting
         exporter.logMsg("PZPage.collectData() preparing...")
         for(const sa of sArtboards){
+            if("Artboard"!=sa.type) continue
             this._scanLayersToSaveInfo(sa)        
             this._scanLayersToDetachSymbols(sa)       
         }
@@ -111,6 +112,7 @@ class PZPage{
     _collectArtboards(sArtboards){
         for(var sa of sArtboards){            
             if("SymbolMaster"==sa.type) continue
+            if("Artboard"!=sa.type) continue
             const ma = new PZArtboard(sa)
             ma.collectLayers(' ')
             this.addArtboard(ma)
