@@ -83,39 +83,6 @@ class Exporter {
     this.serverTools = serverTools    
   }
 
-  
-  collectArtboardGroups(){
-    this.myLayers = []
-    this.artboardGroups.forEach(function (artboardGroup) {
-      const artboard = artboardGroup[0].artboard;
-      this.myLayers.push(this.getCollectLayer(artboard,undefined))
-    }, this);
-  }
-
-  getCollectLayer(layer,myParent){
-    const myLayer = new MyLayer(layer,myParent)    
-
-    if(myLayer.isSymbolInstance){      
-      //myLayer.childs.push( this.getCollectLayer(layer.symbolMaster(),myLayer)  )
-      myLayer.childs =  this.getCollectLayerChilds(layer.symbolMaster().layers(),myLayer)
-    }else if(myLayer.isGroup){
-      myLayer.childs =  this.getCollectLayerChilds(layer.layers(),myLayer)
-    }else{
-
-    }
-    return myLayer
-  }
-
-
-  getCollectLayerChilds(layers,myParent){
-    const myLayers = []
-   f
-    layers.forEach(function (childLayer) {
-      myLayers.push( this.getCollectLayer(childLayer,myParent) )
-    }, this);
-   
-    return myLayers
-  }
 
   logMsg(msg){
     if(!Constants.LOGGING) return
