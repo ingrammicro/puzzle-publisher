@@ -83,6 +83,13 @@
       "shortcut" : "command alt p", 
       "name" : "📡 Publish HTML",
       "identifier" : "publish"
+    },
+    {
+        "script" : "exporter/exporter-run.js",
+        "handler" : "announce11",
+        "shortcut" : "", 
+        "name" : "ℹ️ Show last announcement",
+        "identifier" : "announce11"
     }
   ],
   "menu": {
@@ -99,7 +106,9 @@
       "confDocument",
       "-",
       "confPluginExport",
-      "confPluginPublishing"
+      "confPluginPublishing",
+      "-",
+      "announce11"
     ]
   }
 }
