@@ -9,18 +9,6 @@
 
 var exporter = undefined
 
-const replaceValidKeys = ["frame","x","y","width","height","childs","constrains","smName","styleName","text","comment","smLib"]  
-// smName: symbol master Name
-function replacer(key, value) {
-  // Pass known keys and array indexes
-  if (value!=undefined && (replaceValidKeys.indexOf(key)>=0 ||  !isNaN(key))) {
-    //log("VALID key "+key)
-    //log("VALID value "+value)
-    return value
-  }    
-  //log("INVALID "+key)
-  return undefined
-}
 
 
 class Exporter {

@@ -2,6 +2,16 @@
 @import("lib/utils.js")
 Sketch = require('sketch/dom')
 
+const replaceValidKeys = ["frame","x","y","width","height","name","constrains","childs","smName","styleName","text","comment","smLib"]  
+// smName: symbol master Name
+function replacer(key, value) {
+  // Pass known keys and array indexes
+  if (value!=undefined && (replaceValidKeys.indexOf(key)>=0 ||  !isNaN(key))) {
+    return value
+  }    
+  return undefined
+}
+
 var pzDoc = null
 
 class PZDoc{
@@ -16,6 +26,7 @@ class PZDoc{
         this.artboardCount = 0
         this.startArtboardIndex = 0
 
+        this.mAllArtboards = []
         this.artboardsDict = {}
         this.artboardIDsDict = {}
         this.jsLibs = undefined
@@ -101,10 +112,12 @@ class PZDoc{
     getJSON(){        
     
         log(" getJSON: cleanup before saving...")
-        for(var l of this.mAllLayers) l.clearRefsBeforeJSON()
+        this.mAllLayers.forEach(l => {
+            l.clearRefsBeforeJSON()
+        });
 
         log(" getJSON: running...")
-        const json =  JSON.stringify(this.mAllLayers,replacer,null)
+        const json =  JSON.stringify(this.mAllArtboards,replacer,null)
         log(" getJSON: done!")        
 
         return json
@@ -130,6 +143,7 @@ class PZDoc{
     addArtboard(mArtboard){        
         this.artboardsDict[mArtboard.name] = mArtboard
         this.artboardIDsDict[mArtboard.objectID] = mArtboard
+        this.mAllArtboards.push(mArtboard)
         
         if(mArtboard.nlayer.isFlowHome()){
             this.startArtboardIndex = this.artboardCount
