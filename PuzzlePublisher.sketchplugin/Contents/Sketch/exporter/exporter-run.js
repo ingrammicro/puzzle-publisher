@@ -100,7 +100,7 @@ Positive effects:\n\
 - Export time reduced by 20%\n\
 \n\
 Current limitation:\n\
-Links attached directly to symbol instances will be ignored. If you need linking symbol instances the best solution would be adding a hotspot inside a symbol master and linking it.\n\
+Links attached directly to symbol instances can be ignored some cases. The best solution would be adding a hotspot inside a symbol master and linking it.\n\
 \n\
 Important note:\n\
 In case the export fails and Published displays an execution error undoing detachments would probably fail too. To fix this just manually select Undo from Edit menu of Sketch.\n\

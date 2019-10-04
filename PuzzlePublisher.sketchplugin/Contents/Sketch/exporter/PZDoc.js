@@ -2,7 +2,7 @@
 @import("lib/utils.js")
 Sketch = require('sketch/dom')
 
-const replaceValidKeys = ["frame","x","y","width","height","name","constrains","childs","smName","styleName","text","comment","smLib"]  
+const replaceValidKeys = ["frame","x","y","width","height","constrains","childs","smName","styleName","text","comment","smLib"]  
 // smName: symbol master Name
 function replacer(key, value) {
   // Pass known keys and array indexes
