@@ -90,7 +90,6 @@ class PZDoc{
             page.export();    
         }
 
-
         log(" PZDoc:run done!")
     }
 
@@ -123,13 +122,10 @@ class PZDoc{
         return json
     }
 
-    undoChanges(){
+    undoChanges(){    
         Utils.actionWithType(this.sDoc.sketchObject,"MSUndoAction").doPerformAction(nil);
         
         this.jsLibs = []
-        //for(const lib of this._getLibraries()){
-          //  lib.sDoc.sketchObject.dealloc()
-        //}
     
     }
     

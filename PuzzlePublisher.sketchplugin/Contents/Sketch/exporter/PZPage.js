@@ -2,6 +2,7 @@
 @import("lib/utils.js")
 Sketch = require('sketch/dom')
 
+var PZPage_touched = false
 
 class PZPage{
 
@@ -20,6 +21,13 @@ class PZPage{
         exporter.logMsg("PZPage.collectData() preparing...")
         for(const sa of sArtboards){
             if("Artboard"!=sa.type) continue
+
+            // special trick to add some data change event to Sketch as Undo point
+            if(!PZPage_touched){
+                sa.frame.y+=10
+                PZPage_touched = true
+            }
+
             this._scanLayersToSaveInfo(sa)        
             this._scanLayersToDetachSymbols(sa)       
         }
@@ -46,20 +54,10 @@ class PZPage{
         mArtboard.index = pzDoc.addArtboard(mArtboard)
     }
 
-    // Resort artboards using configuration settings
-    sortArtboards(){        
-        if(Constants.SORT_RULE_X == exporter.sortRule){
-          this.mArtboards.sort((
-            function(a, b){
-              return a.frame.x - b.frame.x
-          }))
-        }else  if(Constants.SORT_RULE_REVERSIVE_SKETCH == this.sortRule){
-            this.mArtboards = this.mArtboards.reverse()
-        }else{
-        }
-    }
+
 
     //////////////////////// PRIVATE FUNCTIONS //////////////////////////////////////
+
 
     /*_clonePage(sPage){
         const sClone = sPage.duplicate()
@@ -110,7 +108,7 @@ class PZPage{
     }
 
     _collectArtboards(sArtboards){
-        for(var sa of sArtboards){            
+        for(var sa of this._sortArtboards(sArtboards)){            
             if("SymbolMaster"==sa.type) continue
             if("Artboard"!=sa.type) continue
             const ma = new PZArtboard(sa)
@@ -118,5 +116,27 @@ class PZPage{
             this.addArtboard(ma)
         }        
     }
+
+
+    // Resort artboards using configuration settings
+    _sortArtboards(sSrcArtboards){        
+        var sArtboards = sSrcArtboards.slice()
+        if(Constants.SORT_RULE_X == exporter.sortRule){
+            sArtboards.sort((
+            function(a, b){
+              return a.frame.x - b.frame.x
+          }))
+        }else if(Constants.SORT_RULE_Y == exporter.sortRule){
+            sArtboards.sort((
+            function(a, b){
+              return a.frame.y - b.frame.y
+          }))
+        }else  if(Constants.SORT_RULE_REVERSIVE_SKETCH == exporter.sortRule){
+            sArtboards = sArtboards.reverse()
+        }else{
+        }
+        return sArtboards
+    }
+
 
 }

@@ -1,5 +1,9 @@
 # Change Log
 
+##  Version 11.0.2 (4 Oct 2019)
+- Fixed undo of changes which a user did beforee exporting
+- Added "Up-to-down" artboard sorting
+
 ##  Version 11.0.1 (2 Oct 2019)
 - Added additional checks to skip wrong page objects
 - Fixed JSON generator
