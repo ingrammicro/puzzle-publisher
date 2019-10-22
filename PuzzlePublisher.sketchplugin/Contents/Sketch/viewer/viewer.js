@@ -161,6 +161,11 @@ function createViewer(story, files) {
                 viewer.onMouseMove(e.pageX,e.pageY)
             });
             jQuery(window).resize(function(){viewer.zoomContent()});
+
+            var s = document.location.search
+            if(s.includes('v') && this.versionViewer){
+                this.versionViewer.toggle()
+            }
         },
 
         initParseGetParams : function() {
