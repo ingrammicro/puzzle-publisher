@@ -1,5 +1,11 @@
 # Change Log
 
+##  Version 11.0.3 (22 Oct 2019)
+- Fixed zoom disabling for very images
+- Fixed *artboard exclusion
+- Link in Telegram post opens a page with Version Info mode enabled by default
+- Added context option currentPath to provide destination path for prototype
+
 ##  Version 11.0.2 (4 Oct 2019)
 - Fixed undo of changes which a user did beforee exporting
 - Added "Up-to-down" artboard sorting
