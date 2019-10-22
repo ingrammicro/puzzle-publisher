@@ -423,7 +423,7 @@ function createViewer(story, files) {
             this.currentZoom  = newZoom
                    
             // Calculate margins
-            this.currentMarginLeft =  Math.round(availableWidth / 2 )  -  Math.round(page.width / 2 * this.currentZoom)
+            this.currentMarginLeft =  this.currentZoom==1?0:Math.round(availableWidth / 2 )  -  Math.round(page.width / 2 * this.currentZoom)
             this.currentMarginTop = 0
 
             // Set content to new left positions
