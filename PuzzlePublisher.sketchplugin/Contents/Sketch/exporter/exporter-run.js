@@ -36,9 +36,9 @@ function exportHTML(currentPath, nDoc, exportOptions, context) {
 
     new Exporter(currentPath, nDoc, nDoc.currentPage(), exportOptions, context);
 
-    if(fromCmd){
+    if (fromCmd) {
         exporter.exportArtboards()
-    }else{
+    } else {
         let panel = new UIPanel("Exporting to HTML")
         exportInfo.panel = panel
         panel.addLabel("", "Please wait...")
@@ -64,7 +64,7 @@ function exportHTML(currentPath, nDoc, exportOptions, context) {
                     }else{
                         UI.alert('Can not open HTML in browser', openResult.output)
                     }*/
-                }            
+                }
             }
 
             // 
@@ -84,9 +84,9 @@ function exportHTML(currentPath, nDoc, exportOptions, context) {
 }
 
 
-function announce11(){  
+function announce11() {
     UI.alert('11.0.0 released',
-    "Hello from Puzzle Publisher plugin creators.\n\
+        "Hello from Puzzle Publisher plugin creators.\n\
 This is a one-time message. You can view it again via \"Show last announcement\" in the plugin menu.\n\
 \n\
 The latest 11.0.0 release brings full support for the Sketch Smart Layouts feature. \n\
@@ -109,12 +109,12 @@ Thanks for your attention\n\
 Puzzle Publisher team.")
 }
 
-function runExporter(context, exportOptions = null) {    
-    if(null==exportOptions){
+function runExporter(context, exportOptions = null) {
+    if (null == exportOptions) {
         exportOptions = {
-            cmd:'exportHTML'
-        }   
-    }   
+            cmd: 'exportHTML'
+        }
+    }
 
     let fromCmd = ('fromCmd' in exportOptions) && exportOptions.fromCmd
 
@@ -124,17 +124,19 @@ function runExporter(context, exportOptions = null) {
     const Settings = require('sketch/settings')
 
 
-    const isCmdExportToHTML =  exportOptions['cmd'] == "exportHTML"
+    const isCmdExportToHTML = exportOptions['cmd'] == "exportHTML"
     var dontOpen = Settings.settingForKey(SettingKeys.PLUGIN_DONT_OPEN_BROWSER) == 1
     var compress = Settings.settingForKey(SettingKeys.PLUGIN_COMPRESS) == 1
 
+
     // ask for output path
-    let currentPath = Settings.settingForKey(SettingKeys.PLUGIN_EXPORTING_URL)
+    let currentPath = context.currentPath ? context.currentPath : Settings.settingForKey(SettingKeys.PLUGIN_EXPORTING_URL)
     if (currentPath == null) {
         // check legacy settings
         currentPath = Settings.documentSettingForKey(doc, SettingKeys.DOC_EXPORTING_URL)
         if (currentPath == null)
             currentPath = ''
+
     }
 
     let customWidth = ''
@@ -145,46 +147,46 @@ function runExporter(context, exportOptions = null) {
         UIDialog.setUp(context);
 
         // show special message about 11 version
-        if(Settings.settingForKey(SettingKeys.PLUGIN_INFO_11) != 1){
+        if (Settings.settingForKey(SettingKeys.PLUGIN_INFO_11) != 1) {
             announce11()
             Settings.setSettingForKey(SettingKeys.PLUGIN_INFO_11, 1)
-        }        
+        }
 
         const dialog = new UIDialog("Export to HTML", NSMakeRect(0, 0, 500, 200), "Export")
 
         dialog.addPathInput({
-            id:"path",label: "Destination folder", labelSelect:"Select Folder", 
-            textValue: currentPath, 
-            inlineHint: 'e.g. ~/HTML', width:450
+            id: "path", label: "Destination folder", labelSelect: "Select Folder",
+            textValue: currentPath,
+            inlineHint: 'e.g. ~/HTML', width: 450
         })
         //dialog.addCheckbox("compress","Compress images", compress)
         dialog.addCheckbox("open", "Open HTML in browser", !dontOpen)
-        dialog.addTextInput("customWidth", "Artboard custom width (px)", customWidth+"",'e.g. 1920')
-        dialog.addTextInput("customHeight", "Artboard custom height (px)", customHeight+"",'e.g. 1080')
+        dialog.addTextInput("customWidth", "Artboard custom width (px)", customWidth + "", 'e.g. 1920')
+        dialog.addTextInput("customHeight", "Artboard custom height (px)", customHeight + "", 'e.g. 1080')
 
 
         while (true) {
             const result = dialog.run()
             if (!result) return
 
-            customWidth =  dialog.views['customWidth'].stringValue()
-            if(customWidth!=''){
-                if(isNaN(customWidth)) continue
-            }else
+            customWidth = dialog.views['customWidth'].stringValue()
+            if (customWidth != '') {
+                if (isNaN(customWidth)) continue
+            } else
                 customWidth = ''
 
-            customHeight =  dialog.views['customHeight'].stringValue()
-                if(customHeight!=''){
-                    if(isNaN(customHeight)) continue
-                }else
+            customHeight = dialog.views['customHeight'].stringValue()
+            if (customHeight != '') {
+                if (isNaN(customHeight)) continue
+            } else
                 customHeight = ''
 
             currentPath = dialog.views['path'].stringValue() + ""
             if (currentPath == "") continue
 
-            dontOpen =  dialog.views['open'].state() != 1        
+            dontOpen = dialog.views['open'].state() != 1
             compress = false //dialog.views['compress'].state() == 1
-            
+
 
             break
         }
