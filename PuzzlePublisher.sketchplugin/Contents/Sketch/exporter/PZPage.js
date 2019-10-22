@@ -21,6 +21,8 @@ class PZPage{
         exporter.logMsg("PZPage.collectData() preparing...")
         for(const sa of sArtboards){
             if("Artboard"!=sa.type) continue
+            if(exporter.filterAster && sa.name.indexOf("*")==0) continue
+            log("PZPage.collectData for "+sa.name)
 
             // special trick to add some data change event to Sketch as Undo point
             if(!PZPage_touched){
@@ -111,6 +113,7 @@ class PZPage{
         for(var sa of this._sortArtboards(sArtboards)){            
             if("SymbolMaster"==sa.type) continue
             if("Artboard"!=sa.type) continue
+            if(exporter.filterAster && sa.name.indexOf("*")==0) continue
             const ma = new PZArtboard(sa)
             ma.collectLayers(' ')
             this.addArtboard(ma)

@@ -39,7 +39,6 @@ class PZDoc{
         
         // build local pages
         const mPages = []
-        const filterAster = null==exporter.exportOptions || !('mode' in exporter.exportOptions)
     
 
         if (Constants.EXPORT_MODE_CURRENT_PAGE == exporter.exportOptions.mode){
@@ -58,7 +57,7 @@ class PZDoc{
             for(var sPage of this.sDoc.pages){
                 exporter.logMsg("PZDoc:collectData() process page="+sPage.name)
 
-                if(filterAster && sPage.name.indexOf("*")==0) continue
+                if(exporter.filterAster && sPage.name.indexOf("*")==0) continue
 
                 // create new local Page object
                 const mPage =  new PZPage(sPage)

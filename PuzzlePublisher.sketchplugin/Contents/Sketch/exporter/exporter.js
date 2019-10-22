@@ -41,6 +41,9 @@ class Exporter {
     this.exportOptions = exportOptions
     this._readSettings()
 
+
+    this.filterAster = null==this.exportOptions || !('mode' in this.exportOptions) || Constants.EXPORT_MODE_SELECTED_ARTBOARDS!=this.exportOptions.mode
+
     // init global variable
     exporter = this
   }
