@@ -143,6 +143,11 @@ class Worker{
                 'screen_url' =>  $screen_base_url.$screen_name,
                 'image_url' =>  $image_base_url.$image_name
             ];
+
+            // compare images
+            {
+                //exec("compare $file1 $file2 $file3 2>/dev/null >/dev/null &");
+            }
         }
     }
 
