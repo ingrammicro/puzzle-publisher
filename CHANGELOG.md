@@ -1,7 +1,10 @@
 # Change Log
 
+##  Version 11.0.4 (23 Oct 2019)
+-- Fixed zoom disabling for wide artboards (PART II) 
+
 ##  Version 11.0.3 (22 Oct 2019)
-- Fixed zoom disabling for very images
+- Fixed zoom disabling for wide artboards
 - Fixed *artboard exclusion
 - Link in Telegram post opens a page with Version Info mode enabled by default
 - Added context option currentPath to provide destination path for prototype
