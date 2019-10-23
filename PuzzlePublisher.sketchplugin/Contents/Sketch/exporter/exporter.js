@@ -310,7 +310,7 @@ class Exporter {
 
     for (var file of this.exportedImages) {
 
-      var fileName = this.imagesPath + file
+      var fileName = this.imagesPath + "/" + file
 
       let args = ["-Z", "300", fileName, "--out", this.imagesPath + "previews/"]
       let res = pub.runToolWithArgs("/usr/bin/sips", args)
