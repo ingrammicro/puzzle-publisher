@@ -70,7 +70,6 @@ function closeDocument(document) {
 
 var cmdRun = function (context) {
     let Document = require('sketch/dom').Document
-    //var document = new Document()    
 
     // Parse command line arguments    
     let path = context.file + ""
