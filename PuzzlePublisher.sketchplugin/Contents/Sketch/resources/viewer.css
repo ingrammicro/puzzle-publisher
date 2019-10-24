@@ -25,10 +25,10 @@
 
 .linkHoverDiv {
     position: absolute;
-    opacity: 0;    
+    opacity: 0;
     cursor: pointer;
     transition: opacity 0.5s;
-    background-color: #FFC400;    
+    background-color: #FFC400;
     pointer-events: auto;
 }
 
@@ -218,11 +218,40 @@
     opacity: .7;
 }
 
+#search {
+  display: flex;
+  height: 32px;
+  margin-right: 32px;
+  padding: 0 16px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+#searchInput {
+  width: 200px;
+  height: 30px;
+  font-size: 14px;
+  font-weight: 300;
+  letter-spacing: 0.2px;
+  color: white;
+  border: none;
+  background: none;
+}
+
+#searchInput:focus {
+  outline: none;
+}
+
+::placeholder {
+  color: white;
+  opacity: .5;
+}
+
 #gallery-header-container #closebtn {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 48px;
+    min-width: 48px;
     height: 48px;
     margin-right: -16px;
     cursor: pointer;
@@ -605,7 +634,7 @@ area {
 	color: #f1f1f1;
 	overflow: hidden;
 	text-align: center;
-	margin: 0 auto;		
+	margin: 0 auto;
 }
 
 #fixed_left_back{
@@ -613,7 +642,7 @@ area {
 	background: rgba(100,100,100,255);
 	color: #f1f1f1;
 	text-align: center;
-	margin: 0 auto;	
+	margin: 0 auto;
 	position: absolute;
 }
 **/

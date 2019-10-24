@@ -161,6 +161,11 @@ function createViewer(story, files) {
                 viewer.onMouseMove(e.pageX,e.pageY)
             });
             jQuery(window).resize(function(){viewer.zoomContent()});
+
+            var s = document.location.search
+            if(s.includes('v') && this.versionViewer){
+                this.versionViewer.toggle()
+            }
         },
 
         initParseGetParams : function() {
@@ -418,8 +423,10 @@ function createViewer(story, files) {
             this.currentZoom  = newZoom
                    
             // Calculate margins
-            this.currentMarginLeft =  Math.round(availableWidth / 2 )  -  Math.round(page.width / 2 * this.currentZoom)
+            this.currentMarginLeft = Math.round(availableWidth / 2 )  -  Math.round(page.width / 2 * this.currentZoom)
             this.currentMarginTop = 0
+
+            if(this.currentMarginLeft<0) this.currentMarginLeft = 0
 
             // Set content to new left positions
             content.css("margin-left",this.currentMarginLeft+"px")

@@ -1,5 +1,5 @@
 function buildMainHTML(options) {
-  
+
     const verPostfix = "?"+Constants.DOCUMENT_VERSION_PLACEHOLDER
 
   let s = "";
@@ -146,12 +146,13 @@ function buildMainHTML(options) {
     s += '    <h2>Leave a comment</h2>\n';
     s += '  <div id="CommentForm"></div>\n';
     s += ' </div>\n';
-    }    
+    }
 
 s += '        <div id="gallery-modal" class="hidden">\n';
 s += '          <div id="gallery-header">\n';
 s += '            <div id="gallery-header-container">\n';
 s += '              <div id="title"><div>' + options.docName + '</div><div id="screensamount"></div></div>\n';
+s += '              <div id="search"><input type="text" placeholder="Search screen..." id="searchInput" onkeyup="searchScreen()"></div>\n';
 s += '              <div id="closebtn" onclick="gallery.hide(); return false;"><svg><use xlink:href="#icCloseBtn"></use></svg></div>\n';
 s += '            </div>\n';
 s += '          </div>\n';
@@ -270,4 +271,3 @@ s += "        <\/div>";
 
   return s;
 };
-
