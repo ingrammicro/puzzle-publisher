@@ -7,7 +7,7 @@
   "appcast": "https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/appcast.xml",
   "compatibleVersion": 3,
   "bundleVersion": 1,
-  "version" : "11.0.4",
+  "version" : "11.2.0",
   "icon": "icon.png",
   "commands" : [   
     {

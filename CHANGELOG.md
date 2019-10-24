@@ -1,7 +1,11 @@
 # Change Log
 
+##  Version 11.2.0 (24 Oct 2019)
+- Added Search in Gallery
+- Show changed screen differences
+
 ##  Version 11.0.4 (23 Oct 2019)
--- Fixed zoom disabling for wide artboards (PART II) 
+- Fixed zoom disabling for wide artboards (PART II) 
 
 ##  Version 11.0.3 (22 Oct 2019)
 - Fixed zoom disabling for wide artboards
