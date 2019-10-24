@@ -110,6 +110,7 @@ class Worker{
         if(NULL==$res) return TRUE;
 
         $this->data['screens_changed'] = [];
+        $cmd_diff = "";
         
         $lines = explode("\n",$res);
         foreach($lines as $line){           
@@ -119,16 +120,39 @@ class Worker{
             
             $is_new = FALSE;
             $file_info = NULL;
+            $path_diff = '';
+
             if('Files'==$info[0]){
                 // Checking this format:             
                 // Files /var/www/html/test/101/support_1@2x.png and /var/www/html/test/102/support_1@2x.png differ
                 $file_info =  pathinfo($info[3]);
+
+                // compare images               
+                {
+                    $path_new = $info[3];
+                    $path_prev = str_replace("/".$this->data['ver']."/","/".$this->data['down_ver']."/",$info[3]);
+                    $dir_diff = 'journals/'.$this->data['dir']."/diffs";                    
+
+                    if(!file_exists($dir_diff) && !mkdir($dir_diff,0777,TRUE)){
+                        print("Error: can not create folder ".$dir_diff);
+                        return FALSE;
+                    }                
+                    //preg_replace("/\.{1}png$/",".diff.png",$info[3]);
+                    var_dump($dir_diff); 
+                    
+                    $path_diff = $dir_diff."/".$file_info['basename'];
+
+                    $cmd_diff =  "compare $path_prev $path_new $path_diff";
+                    exec($cmd_diff);
+                    //$cmd_diff =  ($cmd_diff!=''?'; ':'')."compare $path_prev $path_new $path_diff 2>/dev/null >/dev/null";
+                }
             }else if('Only'==$info[0]){
                 // Checking this format:             
                 // Only in /var/www/html/test/101/images: support_1@2x.png
                 $file_info =  pathinfo($info[3]);
                 $is_new = TRUE;
             }
+
 
             if(NULL==$file_info) continue;
 
@@ -140,14 +164,15 @@ class Worker{
 
             $this->data['screens_changed'][] = [
                 'is_new'      => $is_new,
+                'is_diff'     => !$is_new,
                 'screen_url' =>  $screen_base_url.$screen_name,
                 'image_url' =>  $image_base_url.$image_name
             ];
+        }
 
-            // compare images
-            {
-                //exec("compare $file1 $file2 $file3 2>/dev/null >/dev/null &");
-            }
+        // Generate images with differences
+        if($cmd_diff!=''){
+            //var_dump($cmd_diff);            
         }
     }
 
@@ -266,7 +291,7 @@ class Worker{
         $new_data_text = preg_replace("/^\[{1}/","",$new_data_text);
         $new_data_text = preg_replace("/\]{1}$/",",\n",$new_data_text);
 
-        file_put_contents("journals/journals.txt", $new_data_text);
+        //UNCOMMENT file_put_contents("journals/journals.txt", $new_data_text);
     }
 
     public function run()
@@ -282,10 +307,10 @@ class Worker{
         $this->_compareVers();
         
         // SAVE DATA TO DISK
-        if(!$this->_saveData()) return FALSE;
+        //UNCOMMENT if(!$this->_saveData()) return FALSE;
         
         // INFORM SUBSCRIBERS
-        $this->_postToTelegram();
+        //UNCOMMENT $this->_postToTelegram();
 
         return TRUE;
     }

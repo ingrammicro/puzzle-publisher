@@ -140,7 +140,7 @@ class Worker{
 }
 
 $parser = new Worker();
-if($parser->collectInfo("https://uxteam.int.zone/cb-rp/support/live/")){
+if($parser->collectInfo()){
     $parser->dump_json();
 }else{
     print("[]"); 
