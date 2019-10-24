@@ -53,6 +53,12 @@ class VersionViewer{
             if(screen['is_new']!=showNew) continue;
             const pageIndex = viewer.getPageIndex(screen['screen_name'],-1)
             var pageName = pageIndex>=0?story.pages[pageIndex].title:screen['screen_name'];
+
+            
+            if( pageIndex>=0 && screen['is_diff']){
+                this._setDiffImageForScreen(data,pageIndex,screen)                
+            }
+
             info += "<div class='version-screen-div' onclick='viewer.versionViewer.goTo("+pageIndex+")'>";
             info += "<div>";
             info += pageName;
@@ -64,8 +70,19 @@ class VersionViewer{
         return info;
     }
 
+    _setDiffImageForScreen(data,pageIndex,screen){
+        var page = story.pages[pageIndex];
+        if(null==page) return false
+
+        var newSrc = data['journals_path'] + '/' + data['dir'] + "/diffs/" + screen['screen_name'] +  (story.hasRetina && viewer.isHighDensityDisplay() ?"@2x":"")  + ".png"
+
+        page.srcImageObjSrc = page.imageObj.attr("src")
+        page.imageObj.attr("src",newSrc)
+    }
+
     _showData(data){
-        var info = "";
+        var info = ""
+        this.data = data
 
         if(data['screens_total_new']){
             info+="<p class='head'>Added screens ("+data['screens_total_new']+"):</p>";
