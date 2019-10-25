@@ -110,6 +110,8 @@ class Worker{
         if(NULL==$res) return TRUE;
 
         $this->data['screens_changed'] = [];
+        $this->data['journals_path'] = str_replace("//","/",$this->local_url)."journals";
+
         $cmd_diff = "";
         
         $lines = explode("\n",$res);
@@ -136,14 +138,10 @@ class Worker{
                     if(!file_exists($dir_diff) && !mkdir($dir_diff,0777,TRUE)){
                         print("Error: can not create folder ".$dir_diff);
                         return FALSE;
-                    }                
-                    //preg_replace("/\.{1}png$/",".diff.png",$info[3]);
-                    var_dump($dir_diff); 
-                    
+                    }                                    
                     $path_diff = $dir_diff."/".$file_info['basename'];
 
-                    $cmd_diff =  "compare $path_prev $path_new $path_diff";
-                    exec($cmd_diff);
+                    $cmd_diff .=  ($cmd_diff!=''?'; ':'')."compare $path_prev $path_new $path_diff 2>/dev/null >/dev/null";
                     //$cmd_diff =  ($cmd_diff!=''?'; ':'')."compare $path_prev $path_new $path_diff 2>/dev/null >/dev/null";
                 }
             }else if('Only'==$info[0]){
@@ -172,7 +170,8 @@ class Worker{
 
         // Generate images with differences
         if($cmd_diff!=''){
-            //var_dump($cmd_diff);            
+            $cmd_diff .= " &";
+            shell_exec($cmd_diff);
         }
     }
 
@@ -196,7 +195,7 @@ class Worker{
         
         $summary_rec = [
             'time' => $this->data['time'],
-            'dir' => $dir_path
+            'dir' => $dir_path,
         ];
         file_put_contents("journals/journals.txt", json_encode($summary_rec,JSON_UNESCAPED_SLASHES).",\n",FILE_APPEND);
 
@@ -274,7 +273,7 @@ class Worker{
             // 
             $new_data[] = [
                 'time' => $old_rec['time'],
-                'dir' => $dir
+                'dir' => $dir 
             ];
 
             // 
@@ -291,7 +290,7 @@ class Worker{
         $new_data_text = preg_replace("/^\[{1}/","",$new_data_text);
         $new_data_text = preg_replace("/\]{1}$/",",\n",$new_data_text);
 
-        //UNCOMMENT file_put_contents("journals/journals.txt", $new_data_text);
+        file_put_contents("journals/journals.txt", $new_data_text);
     }
 
     public function run()
@@ -307,10 +306,10 @@ class Worker{
         $this->_compareVers();
         
         // SAVE DATA TO DISK
-        //UNCOMMENT if(!$this->_saveData()) return FALSE;
+        if(!$this->_saveData()) return FALSE;
         
         // INFORM SUBSCRIBERS
-        //UNCOMMENT $this->_postToTelegram();
+        $this->_postToTelegram();
 
         return TRUE;
     }
