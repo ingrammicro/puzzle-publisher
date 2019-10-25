@@ -352,10 +352,11 @@ class PZArtboard extends PZLayer {
         if (nlayer.isKindOfClass(MSArtboardGroup)) {
             slice = MSExportRequest.exportRequestsFromExportableLayer(nlayer).firstObject();
         } else if (layer && layer.isFixed) {
-            let frame = layer.frame.copy()
+            /*let frame = layer.frame.copy()
             frame.x += layer.artboard.slayer.frame.x
             frame.y += layer.artboard.slayer.frame.y
-            slice = MSExportRequest.exportRequestsFromExportableLayer_inRect_useIDForName(layer.artboard.nlayer,frame.copyToRect(),false).firstObject()
+            slice = MSExportRequest.exportRequestsFromExportableLayer_inRect_useIDForName(layer.artboard.nlayer,frame.copyToRect(),false).firstObject()          */
+            slice = MSExportRequest.exportRequestsFromExportableLayer(nlayer).firstObject();            
         } else {            
             slice = MSExportRequest.exportRequestsFromExportableLayer(nlayer).firstObject();
             //slice = MSExportRequest.exportRequestsFromExportableLayer_inRect_useIDForName(nlayer, nlayer.absoluteInfluenceRect(), false).firstObject();
