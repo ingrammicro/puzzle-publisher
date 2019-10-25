@@ -5,6 +5,8 @@
 
 Sketch = require('sketch/dom')
 
+
+
 class PZArtboard extends PZLayer {
    
     constructor(slayer) {
@@ -346,21 +348,10 @@ class PZArtboard extends PZLayer {
         const imageName = this._getImageName(scale,panelPostix)
         const imagePath = exporter.imagesPath + imageName
         let slice = null
-
+        
         if(addToExported) exporter.exportedImages.push(imageName)
 
-        if (nlayer.isKindOfClass(MSArtboardGroup)) {
-            slice = MSExportRequest.exportRequestsFromExportableLayer(nlayer).firstObject();
-        } else if (layer && layer.isFixed) {
-            /*let frame = layer.frame.copy()
-            frame.x += layer.artboard.slayer.frame.x
-            frame.y += layer.artboard.slayer.frame.y
-            slice = MSExportRequest.exportRequestsFromExportableLayer_inRect_useIDForName(layer.artboard.nlayer,frame.copyToRect(),false).firstObject()          */
-            slice = MSExportRequest.exportRequestsFromExportableLayer(nlayer).firstObject();            
-        } else {            
-            slice = MSExportRequest.exportRequestsFromExportableLayer(nlayer).firstObject();
-            //slice = MSExportRequest.exportRequestsFromExportableLayer_inRect_useIDForName(nlayer, nlayer.absoluteInfluenceRect(), false).firstObject();
-        }
+        slice = MSExportRequest.exportRequestsFromExportableLayer(nlayer).firstObject();       
         slice.scale = scale;
         slice.saveForWeb = false;
         slice.format = "png";
