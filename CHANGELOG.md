@@ -1,5 +1,11 @@
 # Change Log
 
+##  Version 11.3.0 (28 Oct 2019)
+- Render fixed layers as standlanone layer, not as a part of artboard image (to support non-rectangle layers )
+- Improved image diffs
+- Fixed: Empty Sketch document opening in background when run via Sketchtool (by Arek Talun)
+- Improved token inspector
+
 ##  Version 11.2.0 (24 Oct 2019)
 - Added Search in Gallery
 - Show changed screen differences
