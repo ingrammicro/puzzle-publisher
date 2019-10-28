@@ -4,6 +4,7 @@ class SymbolViewer{
         this.createdPages = {}
         this.inited = false
         this.currentLib = ""
+        this.showSymbols = false
     }
 
     initialize(force=false){
@@ -26,8 +27,21 @@ class SymbolViewer{
             viewer.symbolViewer._selectLib(libName)
 
         })
+        //  
+        const symCheck =  $('#symbol_viewer_symbols')
+        symCheck.click(function(){
+            viewer.symbolViewer._setSymCheck( $(this).is(':checked') )
+
+        })
 
         this.inited = true
+    }
+
+
+    _setSymCheck(showSymbols){
+        this.showSymbols = showSymbols
+        this._reShowContent()
+
     }
 
     _selectLib(libName){
@@ -38,6 +52,11 @@ class SymbolViewer{
         for(const panel of this.page.fixedPanels){
             panel.linksDiv.children(".modalSymbolLink,.symbolLink").remove()
         }
+       
+        this._reShowContent()
+    }
+
+    _reShowContent(){
         delete this.createdPages[viewer.currentPage.index]
 
         // redraw inspector
@@ -139,11 +158,11 @@ class SymbolViewer{
                     continue
                 }
             }else{
-                if(l.smName!=undefined || (!isParentSymbol && l.styleName!=undefined)){
+                if( (this.showSymbols && l.smName!=undefined) || (!isParentSymbol && l.styleName!=undefined)){
                     this._showElement(l)
                 }
             }
-            this._processLayerList(l.childs,l.smName!=undefined)
+            this._processLayerList(l.childs,this.showSymbols && l.smName!=undefined)
         }
     }
 
@@ -176,7 +195,7 @@ class SymbolViewer{
             const layerIndex =  $( this ).attr("li")
             const layer = viewer.symbolViewer.createdPages[pageIndex].layerArray[layerIndex]
             
-            var symName = layer.smName
+            var symName = this.showSymbols?layer.smName:null
             var styleName = layer.styleName
             var comment = layer.comment
             var frameX = layer.frame.x
@@ -231,7 +250,8 @@ class SymbolViewer{
 
         a.appendTo(currentPanel.linksDiv)
 
-        var style="left: "+ l.frame.x+"px; top:"+l.frame.y+"px; width: " + l.frame.width + "px; height:"+l.frame.height+"px; "
+        var style="left: "+ Math.round(l.frame.x)+"px; top:"+ Math.round(l.frame.y)+"px; "
+        style += "width: " +  Math.round(l.frame.width) + "px; height:"+Math.round(l.frame.height)+"px; "
         var symbolDiv = $("<div>",{
             class:"symbolDiv",
         }).attr('style', style)

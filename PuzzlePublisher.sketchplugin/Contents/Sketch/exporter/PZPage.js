@@ -60,13 +60,6 @@ class PZPage{
 
     //////////////////////// PRIVATE FUNCTIONS //////////////////////////////////////
 
-
-    /*_clonePage(sPage){
-        const sClone = sPage.duplicate()
-        sClone.name = Constants.TEMP_PAGE_PREFIX + sClone.name
-        return sClone
-    }  
-    */
     _scanLayersToSaveInfo(sParent){        
         exporter.logMsg("PZPage._scanLayersToSaveInfo() running name="+(this.sPage?this.sPage.name:''))
         const nParent = sParent.sketchObject

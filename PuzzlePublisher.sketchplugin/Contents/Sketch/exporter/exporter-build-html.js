@@ -121,6 +121,10 @@ function buildMainHTML(options) {
                 <p>\
                     <select id="lib_selector"></select>\
                 </p>\
+                <p>\
+                  <input type="checkbox" id="symbol_viewer_symbols"/>\
+                    <label for="symbol_viewer_symbols">Show Symbols</label></select>\
+                </p>\
                 <div id="empty">\
                     Click any element to inspect\
                 </div>\
