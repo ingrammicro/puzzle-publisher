@@ -8,7 +8,7 @@ class SymbolViewer{
     }
 
     initialize(force=false){
-        if(!force && this.inited) return
+        if(!force && this.inited)return        
                 
         // populate library select
         const libSelect =  $('#symbol_viewer #lib_selector')
@@ -45,19 +45,18 @@ class SymbolViewer{
     }
 
     _selectLib(libName){
-        this.currentLib = libName
+        this.currentLib = libName               
+        this._reShowContent()
+    }
+
+    _reShowContent(){
+        delete this.createdPages[viewer.currentPage.index]
 
         // remove existing symbol links        
         this.page.linksDiv.children(".modalSymbolLink,.symbolLink").remove()
         for(const panel of this.page.fixedPanels){
             panel.linksDiv.children(".modalSymbolLink,.symbolLink").remove()
         }
-       
-        this._reShowContent()
-    }
-
-    _reShowContent(){
-        delete this.createdPages[viewer.currentPage.index]
 
         // redraw inspector
         this._showEmptyContent()
@@ -191,11 +190,12 @@ class SymbolViewer{
         })        
 
         a.click(function () {
+            const sv = viewer.symbolViewer
             const pageIndex =  $( this ).attr("pi")
             const layerIndex =  $( this ).attr("li")
-            const layer = viewer.symbolViewer.createdPages[pageIndex].layerArray[layerIndex]
+            const layer = sv.createdPages[pageIndex].layerArray[layerIndex]
             
-            var symName = this.showSymbols?layer.smName:null
+            var symName = sv.showSymbols?layer.smName:null
             var styleName = layer.styleName
             var comment = layer.comment
             var frameX = layer.frame.x
@@ -209,8 +209,8 @@ class SymbolViewer{
             
             if(comment!=undefined) info += "<p class='head'>Comment</p> "+comment
 
-            info += "<p class='head'>Position (left x top)</p>" + frameX + " x " + frameY
-            info += "<p class='head'>Size (width x height)</p>" + frameWidth + " x " + frameHeight
+            info += "<p class='head'>Position (left x top)</p>" + Math.round(frameX) + " x " + Math.round(frameY)
+            info += "<p class='head'>Size (width x height)</p>" + Math.round(frameWidth) + " x " + Math.round(frameHeight)  
 
             if(layer.text!=undefined && layer.text!=''){
                 info+="<p class='head'>Text</p> "+layer.text
@@ -250,8 +250,8 @@ class SymbolViewer{
 
         a.appendTo(currentPanel.linksDiv)
 
-        var style="left: "+ Math.round(l.frame.x)+"px; top:"+ Math.round(l.frame.y)+"px; "
-        style += "width: " +  Math.round(l.frame.width) + "px; height:"+Math.round(l.frame.height)+"px; "
+        var style="left: "+ l.frame.x+"px; top:"+ l.frame.y+"px; "
+        style += "width: " +  l.frame.width + "px; height:"+l.frame.height+"px; "
         var symbolDiv = $("<div>",{
             class:"symbolDiv",
         }).attr('style', style)
