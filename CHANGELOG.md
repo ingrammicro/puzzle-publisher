@@ -1,5 +1,9 @@
 # Change Log
 
+##  Version 11.4.0 (29 Oct 2019)
+- Completed image difff viewer (added Shift+Left and Shift+Right to switch diff mode from keyboard)
+- Click inside an overlay outside of any hotspots should not close it
+
 ##  Version 11.3.0 (28 Oct 2019)
 - Render fixed layers as standlanone layer, not as a part of artboard image (to support non-rectangle layers )
 - Improved image diffs
