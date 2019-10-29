@@ -37,10 +37,14 @@ class SymbolViewer{
         this.inited = true
     }
 
-
     _setSymCheck(showSymbols){
         this.showSymbols = showSymbols
         this._reShowContent()
+
+    }
+
+    // called by Viewer
+    pageChanged(){
 
     }
 

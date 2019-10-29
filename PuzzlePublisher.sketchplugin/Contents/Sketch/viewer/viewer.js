@@ -541,10 +541,11 @@ function createViewer(story, files) {
 
             this.refresh_adjust_content_layer(newPage);	              
             this.refresh_hide_last_image(newPage)                       
-			this.refresh_switch_modal_layer(newPage);	
-			this.refresh_update_navbar(newPage);			
-			if(refreshURL)this.refresh_url(newPage)			
-
+            this.refresh_switch_modal_layer(newPage);				
+			if(refreshURL){
+                this.refresh_url(newPage)			
+                this.refresh_update_navbar(newPage);			
+            }
 
             this.currentPage = newPage;
 			if(!newPage.isModal){
@@ -567,6 +568,10 @@ function createViewer(story, files) {
             if(!newPage.disableAutoScroll){
                window.scrollTo(0,0)       
             }                 
+
+            if(refreshURL){
+                if(this.sidebarChild) this.sidebarChild.pageChanged()
+            }
 								
         },
 		_setupTransNext: function(msecs){	
