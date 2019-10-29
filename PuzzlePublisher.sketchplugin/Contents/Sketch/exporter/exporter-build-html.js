@@ -130,6 +130,10 @@ function buildMainHTML(options) {
             <div id="version_viewer" class="hidden">\
                 <p class="title">VERSION INSPECTOR</p>\
                 <p>\
+                Mode:<br/>\
+                <input type="radio" name="version_viewer_mode" id="version_viewer_mode_diff" value="diff" checked onclick="viewer.versionViewer.pageChanged()"/><label for="version_viewer_mode_diff">Differences</label><br/>\
+                <input type="radio" name="version_viewer_mode" id="version_viewer_mode_prev" value="prev" onclick="viewer.versionViewer.pageChanged()"><label for="version_viewer_mode_prev">Prev version</label><br/>\
+                <input type="radio" name="version_viewer_mode" id="version_viewer_mode_new" value="new" onclick="viewer.versionViewer.pageChanged()"><label for="version_viewer_mode_new">New version</label><br/>\
                 </p>\
                 <div id="version_viewer_content">\
                 </div>\

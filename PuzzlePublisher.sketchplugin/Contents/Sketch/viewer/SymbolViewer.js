@@ -30,6 +30,11 @@ class SymbolViewer{
         this.inited = true
     }
 
+    // called by Viewer
+    pageChanged(){
+
+    }
+
     _selectLib(libName){
         this.currentLib = libName
 
