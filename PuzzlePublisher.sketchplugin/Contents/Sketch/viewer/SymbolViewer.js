@@ -93,6 +93,10 @@ class SymbolViewer{
         viewer.hideSidebar();
     }
 
+    handleKeyDown(jevent){
+        return false
+    }
+
     show(){
         viewer.hideSidebarChild();   
         

@@ -19,6 +19,7 @@ class VersionViewer {
         this.visible = false
         this.inited = false
         this.screenDiffs = []
+        this.mode = 'diff'
     }
 
     initialize(force = false) {
@@ -31,16 +32,7 @@ class VersionViewer {
         this.inited = true
     }
 
-    toggle() {
-        return this.visible ? this.hide() : this.show()
-    }
-
-    hideSelfOnly() {
-        this.visible = false
-        $('#version_viewer').addClass("hidden")
-    }
-
-    hide() {
+    hide() {        
         viewer.hideSidebar();
     }
 
@@ -48,7 +40,35 @@ class VersionViewer {
         viewer.goToPage(pageIndex)
     }
 
-    // called by Viewer
+    // delta = -1 or +1
+    switchMode(delta){
+        const modes = ['diff','prev','new']
+        var posMode = modes.indexOf( this.mode )
+        if(undefined==posMode) return
+
+        posMode += delta
+        if (posMode < 0 ) posMode = modes.length -1
+        if (posMode >= modes.length ) posMode = 0
+
+        modes.forEach(function(mode,pos){
+            var radio = $("#version_viewer_mode_"+mode)
+            radio.prop('checked', pos==posMode)
+        },this)
+
+        this.pageChanged()
+
+    }
+
+    ///////////////////////////////////////////////// called by Viewer
+
+
+    hideSelfOnly() {
+        this._restoreNewImages()
+        this.visible = false
+        $('#version_viewer').addClass("hidden")        
+        
+    }
+
     pageChanged() {
 
         var disabled = !this.screenDiffs[viewer.currentPage.getHash()]
@@ -59,6 +79,36 @@ class VersionViewer {
         if (disabled) return
 
         this._showCurrentPageDiffs()
+    }
+
+
+    handleKeyDown(jevent){
+        var disabled = !this.screenDiffs[viewer.currentPage.getHash()]
+
+        if( !disabled && 37 == event.which && event.shiftKey){   // left + shift
+            this.switchMode(-1)
+        }else if( !disabled &&  39 == event.which && event.shiftKey){   // right + shift
+            this.switchMode(1)
+        }else if( event.shiftKey ){   // left + shift
+        }else{
+            return false            
+        }
+
+        jevent.preventDefault()
+        return true 
+    }
+
+    toggle() {
+        return this.visible ? this.hide() : this.show()
+    }
+
+    /////////////////////////////////////////////////
+
+    _restoreNewImages(){
+        story.pages.forEach(function(page){
+            if(page.srcImageObjSrc) page.imageObj.attr("src",page.srcImageObjSrc)
+        })
+        
     }
 
     _showScreens(data, showNew) {
@@ -82,6 +132,7 @@ class VersionViewer {
         }
         return info;
     }
+    
 
     _showCurrentPageDiffs() {
         const data = this.data
@@ -91,15 +142,15 @@ class VersionViewer {
         const screen = this.screenDiffs[page.getHash()]
         if (!screen) return false
 
-        var mode = $("#version_viewer_mode_diff").prop('checked') ? 'diff' : ($("#version_viewer_mode_prev").prop('checked') ? 'prev' : 'new')
+        this.mode = $("#version_viewer_mode_diff").prop('checked') ? 'diff' : ($("#version_viewer_mode_prev").prop('checked') ? 'prev' : 'new')
         var newSrc = ''
 
         // save original image srcs
         if (!page.srcImageObjSrc) page.srcImageObjSrc = page.imageObj.attr("src")
 
-        if ('diff' == mode) {
+        if ('diff' ==  this.mode ) {
             newSrc = data['journals_path'] + '/' + data['dir'] + "/diffs/" + screen['screen_name'] + (story.hasRetina && viewer.isHighDensityDisplay() ? "@2x" : "") + ".png"
-        } else if ('new' == mode) {
+        } else if ('new' ==  this.mode ) {
             if (page.imageObj.attr("src") != page.srcImageObjSrc) {
                 newSrc = page.srcImageObjSrc
             }
@@ -129,7 +180,7 @@ class VersionViewer {
             info += "No new or changed screens"
         }
 
-        this._showCurrentPageDiffs()
+        this.pageChanged()
 
         $("#version_viewer_content").html(info)
     }
@@ -143,12 +194,10 @@ class VersionViewer {
 
     show() {
         viewer.hideSidebarChild();
-
         if (!this.inited) this.initialize()
-
         $('#version_viewer').removeClass("hidden")
         viewer.showSidebar(this)
-        this.visible = true
+        this.visible = true       
     }
 
     _showLoadingMessage() {

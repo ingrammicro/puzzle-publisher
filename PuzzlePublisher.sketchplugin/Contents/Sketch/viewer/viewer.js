@@ -156,7 +156,10 @@ function createViewer(story, files) {
                 this.versionViewer = new VersionViewer()
                 $("#menu_version_viewer").removeClass("hidden");
             }
-            this.addHotkeys();
+            
+            $( "body" ).keydown(function(event){
+                viewer.handleKeyDown(event)
+            })
             window.addEventListener('mousemove', function (e) {
                 viewer.onMouseMove(e.pageX,e.pageY)
             });
@@ -204,61 +207,53 @@ function createViewer(story, files) {
                     page.userIndex = -1
                 }
             }	
-		},
-		addHotkeys: function() {
-			var v = this;
-			$(document).bind('keydown', 'right return', function() {
-				v.next();
-			});
-			$(document).bind('keydown', 'left backspace', function() {
-				v.previous();
-			});
-			$(document).bind('keydown', 'shift', function() {
-				v.toggleLinks();
-            });
-            $(document).bind('keydown', 'z', function() {
-				v.toggleZoom();
-            });
-            $(document).bind('keydown', 'e', function() {
-				v.share();
-			});
-			$(document).bind('keydown', 'g', function() {
-				gallery.toogle();
-            });
-            $(document).bind('keydown', 'l', function() {
-				v.toogleLayout();
-            });
-            if(v.symbolViewer){
-                $(document).bind('keydown', 'm', function() {
+		},	
+
+        handleKeyDown: function(jevent) {
+            const v = viewer
+            const event = jevent.originalEvent
+
+            if(this.sidebarChild && this.sidebarChild.handleKeyDown(jevent)) return true
+             
+            if( story.serverToolsPath!='' && 38 == event.which && event.shiftKey){   // shift + up
+                v.increaseVersion()
+            }else if( story.serverToolsPath!='' && 40 == event.which && event.shiftKey){   // shift + down
+                v.decreaseVersion()
+            }else if(13 == event.which || 39 == event.which){ // enter OR right
+                v.next()
+            }else if( 8 == event.which || 37 == event.which){ // backspace OR left
+                v.previous()
+            }else if( 16 == event.which){ // shift
+                v.toggleLinks()
+            }else if( 90 == event.which){ // z
+               v.toggleZoom()
+            }else if( 69 == event.which){ // e
+                v.share()
+            }else if( 71 == event.which){ // g
+                gallery.toogle();
+            }else if( 76 == event.which){ // l
+    		    v.toogleLayout();
+            }else if( 77 == event.which){ // m
+                if(v.symbolViewer){
                     v.symbolViewer.toggle()
-                })
-            };
-            if(v.versionViewer){
-                $(document).bind('keydown', 'v', function() {
+                }
+            }else if( 86 == event.which){ // v
+                if(v.versionViewer){
                     v.versionViewer.toggle()
-                })
-            };
-            if(story.serverToolsPath!=''){
-                $(document).bind('keydown', 'shift+up', function() {
-                    v.increaseVersion();
-                 });
-                $(document).bind('keydown', 'shift+down', function() {
-                   v.decreaseVersion();
-                });
-            }
-            
-			$(document).bind('keydown', 's', function() {
+                }
+            }else if( 83 == event.which){ // s
                 var first = v.getFirstUserPage()
-                if(first && first.index!=v.currentPage.index) v.goToPage( first.index );
-			});			
-			$(document).keydown(function(event) {
-				var ch = event.which
-				if (ch == 27) {
-					v.onKeyEscape()
-					return false
-				}	
-			})						
+                if(first && first.index!=v.currentPage.index) 
+                    v.goToPage( first.index )
+			}else if( 27 == event.which ){ // esc	
+    			v.onKeyEscape()			
+            }else{
+                return false
+            }
+            jevent.preventDefault()
+            return true
         },
+        
         
         blinkHotspots: function(){
             if(this.symbolViewer && this.symbolViewer.visible) return
