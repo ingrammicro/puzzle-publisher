@@ -228,6 +228,11 @@ class ViewerPage {
                 div.addClass('divPanel')
             }
 
+            // click on overlay outside of any hotspots should not close it
+            div.click(function(){
+                return false
+            })
+
             if(link.fixedBottomPanel){
                 // show new overlay aligned to bottom
                 const panel = link.fixedBottomPanel;
