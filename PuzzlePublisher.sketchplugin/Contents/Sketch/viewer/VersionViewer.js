@@ -66,7 +66,7 @@ class VersionViewer {
         this._restoreNewImages()
         this.visible = false
         $('#version_viewer').addClass("hidden")        
-        
+        document.location.search = "" // remove ?v
     }
 
     pageChanged() {
