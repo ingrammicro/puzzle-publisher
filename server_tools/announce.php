@@ -109,6 +109,10 @@ class Worker{
         $res = shell_exec($cmd);
         if(NULL==$res) return TRUE;
 
+		var_dump($cmd);
+		print("<br/>");
+		var_dump($res);
+
         $this->data['screens_changed'] = [];
         $this->data['journals_path'] = str_replace("//","/",$this->local_url)."journals";
 
@@ -129,6 +133,11 @@ class Worker{
                 // Files /var/www/html/test/101/support_1@2x.png and /var/www/html/test/102/support_1@2x.png differ
                 $file_info =  pathinfo($info[3]);
 
+print("file_info<br/>");
+var_dump($file_info);
+print("<br/>");
+
+
                 // compare images               
                 {
                     $path_new = $info[3];
@@ -141,8 +150,7 @@ class Worker{
                     }                                    
                     $path_diff = $dir_diff."/".$file_info['basename'];
 
-                    $cmd_diff .=  ($cmd_diff!=''?'; ':'')."compare $path_prev $path_new $path_diff 2>/dev/null >/dev/null";
-                    //$cmd_diff =  ($cmd_diff!=''?'; ':'')."compare $path_prev $path_new $path_diff 2>/dev/null >/dev/null";
+                    $cmd_diff .=  ($cmd_diff!=''?'; ':'')."convert $path_prev $path_new  \( -clone 0 -clone 1 -compose difference -composite \) \( -clone 1 -fill blue -colorize 10% \) -delete 1 +swap -compose over -composite  $path_diff 2>/dev/null >/dev/null";
                 }
             }else if('Only'==$info[0]){
                 // Checking this format:             
@@ -150,6 +158,12 @@ class Worker{
                 $file_info =  pathinfo($info[3]);
                 $is_new = TRUE;
             }
+
+
+print("cmd_diff<br/>");
+var_dump($cmd_diff);
+print("<br/>");
+
 
 
             if(NULL==$file_info) continue;
@@ -169,6 +183,11 @@ class Worker{
         }
 
         // Generate images with differences
+
+print("FINAL md_diff<br/>");
+var_dump($cmd_diff);
+print("<br/>");
+
         if($cmd_diff!=''){
             $cmd_diff .= " &";
             shell_exec($cmd_diff);
@@ -306,10 +325,10 @@ class Worker{
         $this->_compareVers();
         
         // SAVE DATA TO DISK
-        if(!$this->_saveData()) return FALSE;
+        //if(!$this->_saveData()) return FALSE;
         
         // INFORM SUBSCRIBERS
-        $this->_postToTelegram();
+        //$this->_postToTelegram();
 
         return TRUE;
     }
