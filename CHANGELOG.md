@@ -1,5 +1,8 @@
 # Change Log
 
+##  Version 11.4.1 (30 Oct 2019)
+- Several fixed and improvements for Version Viewer
+
 ##  Version 11.4.0 (29 Oct 2019)
 - Completed image difff viewer (added Shift+Left and Shift+Right to switch diff mode from keyboard)
 - Click inside an overlay outside of any hotspots should not close it
