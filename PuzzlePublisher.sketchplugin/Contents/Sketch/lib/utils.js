@@ -118,20 +118,6 @@ class Utils {
     }
 
 
-    static getArtboardGroups(artboards, context) {
-        const artboardGroups = [];
-
-        artboards.forEach(function (artboard) {
-            // skip marked by '*'
-            if (artboard.name().indexOf("*") == 0) {
-                return
-            }
-            artboardGroups.push([{ artboard: artboard, baseName: artboard.name() }]);
-        });
-        return artboardGroups;
-    }
-
-
 
     static isSymbolsPage(page) {
         return page.artboards()[0].isKindOfClass(MSSymbolMaster);
