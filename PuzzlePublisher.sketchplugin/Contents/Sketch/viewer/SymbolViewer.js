@@ -97,6 +97,19 @@ class SymbolViewer{
         return false
     }
 
+    handleKeyDownWhileActive(jevent){
+        const event = jevent.originalEvent
+
+        if( 77 == event.which){ // m
+            this.toggle()
+        }else{          
+            return false
+        }
+
+        jevent.preventDefault()
+        return true
+    }
+
     show(){
         viewer.hideSidebarChild();   
         

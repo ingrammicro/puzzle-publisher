@@ -82,7 +82,26 @@ class VersionViewer {
     }
 
 
-    handleKeyDown(jevent){
+    handleKeyDownWhileActive(jevent){
+        const event = jevent.originalEvent
+
+        if( 38 == event.which && event.shiftKey){   // shift + up
+            v.increaseVersion()
+        }else if(  40 == event.which && event.shiftKey){   // shift + down
+            v.decreaseVersion()
+        }else if( 86 == event.which){ // v
+            this.toggle()
+        }else{
+            return false
+        }
+
+        jevent.preventDefault()
+        return true
+    }
+
+
+    handleKeyDown(jevent){        
+        const event = jevent.originalEvent
         var disabled = !this.screenDiffs[viewer.currentPage.getHash()]
 
         if( !disabled && 37 == event.which && event.shiftKey){   // left + shift

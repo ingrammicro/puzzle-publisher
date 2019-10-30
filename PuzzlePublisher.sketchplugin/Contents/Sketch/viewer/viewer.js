@@ -131,6 +131,7 @@ function createViewer(story, files) {
         
         sidebarVisible: false,
         sidebarChild: null, // some instance of Viewer
+        allSidebarChilds: [], // list of all inited instances of Viewer
         symbolViewer: null,
         versionViewer: null,
  
@@ -149,12 +150,14 @@ function createViewer(story, files) {
             gallery.initialize();		
             if(story.layersExist){
                 this.symbolViewer = new SymbolViewer()
+                this.allSidebarChilds.push(this.symbolViewer)
 
             }
             // Create Version Viewer for published mockups with some version specified
             if(story.docVersion!='V_V_V'){
                 this.versionViewer = new VersionViewer()
                 $("#menu_version_viewer").removeClass("hidden");
+                this.allSidebarChilds.push(this.versionViewer)
             }
             
             $( "body" ).keydown(function(event){
@@ -213,13 +216,15 @@ function createViewer(story, files) {
             const v = viewer
             const event = jevent.originalEvent
 
+            // allow all childs to handle global keys
+            for(const child of this.allSidebarChilds){
+                if(child.handleKeyDownWhileActive(jevent)) return true
+            }
+            
+            // allow currently active childs to handle global keys
             if(this.sidebarChild && this.sidebarChild.handleKeyDown(jevent)) return true
              
-            if( story.serverToolsPath!='' && 38 == event.which && event.shiftKey){   // shift + up
-                v.increaseVersion()
-            }else if( story.serverToolsPath!='' && 40 == event.which && event.shiftKey){   // shift + down
-                v.decreaseVersion()
-            }else if(13 == event.which || 39 == event.which){ // enter OR right
+            if(13 == event.which || 39 == event.which){ // enter OR right
                 v.next()
             }else if( 8 == event.which || 37 == event.which){ // backspace OR left
                 v.previous()
@@ -233,14 +238,6 @@ function createViewer(story, files) {
                 gallery.toogle();
             }else if( 76 == event.which){ // l
     		    v.toogleLayout();
-            }else if( 77 == event.which){ // m
-                if(v.symbolViewer){
-                    v.symbolViewer.toggle()
-                }
-            }else if( 86 == event.which){ // v
-                if(v.versionViewer){
-                    v.versionViewer.toggle()
-                }
             }else if( 83 == event.which){ // s
                 var first = v.getFirstUserPage()
                 if(first && first.index!=v.currentPage.index) 
