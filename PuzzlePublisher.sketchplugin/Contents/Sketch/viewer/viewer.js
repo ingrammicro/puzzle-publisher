@@ -546,9 +546,8 @@ function createViewer(story, files) {
             
             // zoom content if the new page dimensions differ from the previous
             if(!newPage.isModal){
-                if(prevRegularPage){
-                    if(newPage.width!=prevRegularPage.width || newPage.height!=prevRegularPage.height)
-                        this.zoomContent()
+                if(!prevRegularPage || newPage.width!=prevRegularPage.width || newPage.height!=prevRegularPage.height){
+                    this.zoomContent()
                 }
             }
 
