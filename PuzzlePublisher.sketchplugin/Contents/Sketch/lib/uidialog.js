@@ -1,4 +1,5 @@
 var UIDialog_iconImage = null
+const TAB_HEIGHT = 55
 
  function Class(className, BaseClass, selectorHandlerDict) {
     var uniqueClassName = className + NSUUID.UUID().UUIDString();
@@ -55,12 +56,14 @@ class UIAbstractWindow {
         this.tabView = tabView  
         this.container = this.tabs[0].container        
         this.topContainer = tabView
+
+        this.y = NSHeight(this.rect) - TAB_HEIGHT
     }
 
     setTabForViewsCreating(tabIndex){
         this.container = this.tabs[tabIndex].container  
 
-        this.y = NSHeight(this.rect)
+        this.y = NSHeight(this.rect) - TAB_HEIGHT
     }
 
 

@@ -32,8 +32,9 @@ function enableTypeRelated(){
 }
 
 function handleOverlayPin(){
-    var selectedPinIndex =  dialog.views['overlayPin'].indexOfSelectedItem()
-    
+    var selectedTypeIndex =  dialog.views['artboardType'].indexOfSelectedItem()
+    var selectedPinIndex =  dialog.views['overlayPin'].indexOfSelectedItem()    
+    const enabled = Constants.ARTBOARD_TYPE_OVERLAY == selectedTypeIndex
 
     dialog.overlayPositions.forEach(function(positions,pinIndex){
         const hidden = pinIndex != selectedPinIndex
@@ -42,6 +43,7 @@ function handleOverlayPin(){
         positions.forEach(function(label,index){
             const radioControl = dialog.views[ "overlayAlignRadio-"+pinIndex+"-"+index ]
             radioControl.hidden = hidden
+            radioControl.enabled = enabled
         })
     })
     
@@ -106,7 +108,7 @@ var onRun = function (context) {
     let overlayPin = 0
 
     ///////////////// CREATE DIALOG ///////////////////////
-    dialog = new UIDialog("Artboard Settings", NSMakeRect(0, 0, 430, 400), "Save", "Configure exporting options for the selected artboard. ")
+    dialog = new UIDialog("Artboard Settings", NSMakeRect(0, 0, 430, 450), "Save", "Configure exporting options for the selected artboard. ")
     dialog.initTabs(["General","Overlay"])
 
     /////////////////////////// PAGE 1
@@ -172,6 +174,7 @@ var onRun = function (context) {
         //
         positions.forEach(function(label,index){
             const radioControl = dialog.addRadioButton("overlayAlignRadio-"+pinIndex+"-"+index," ",index, false,frame)
+            radioControl.toolTip = label
             overlayAlignControlRadios.push(radioControl)
             frame.origin.x += radioWidth
             radioControl.hidden = true
