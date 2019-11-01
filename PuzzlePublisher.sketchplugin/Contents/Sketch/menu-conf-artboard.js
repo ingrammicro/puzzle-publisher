@@ -13,7 +13,7 @@ function enableTypeRelated(){
     dialog.enableControlByID('overlayByEvent',
         Constants.ARTBOARD_TYPE_OVERLAY ==selectedIndex
     )    
-    dialog.enableControlByID('overlayAlign',
+    dialog.enableControlByID('overlayPin',
         Constants.ARTBOARD_TYPE_OVERLAY ==selectedIndex
     )
     dialog.enableControlByID('overlayOverFixed',
@@ -28,8 +28,25 @@ function enableTypeRelated(){
     dialog.enableControlByID('transNextSecs',
         Constants.ARTBOARD_TYPE_EXTERNAL_URL != selectedIndex
     )
+    handleOverlayPin()
+}
+
+function handleOverlayPin(){
+    var selectedPinIndex =  dialog.views['overlayPin'].indexOfSelectedItem()
+    
+
+    dialog.overlayPositions.forEach(function(positions,pinIndex){
+        const hidden = pinIndex != selectedPinIndex
+        const imageView = dialog.views[ "overlayAlignImage-"+pinIndex ]
+        imageView.hidden = hidden           
+        positions.forEach(function(label,index){
+            const radioControl = dialog.views[ "overlayAlignRadio-"+pinIndex+"-"+index ]
+            radioControl.hidden = hidden
+        })
+    })
     
 }
+
 
 var onRun = function (context) {
     const sketch = require('sketch')
@@ -86,8 +103,13 @@ var onRun = function (context) {
     let overlayAlign = Settings.layerSettingForKey(artboard,SettingKeys.ARTBOARD_OVERLAY_ALIGN)
     if (overlayAlign == undefined)  overlayAlign = 0
 
+    let overlayPin = 0
+
     ///////////////// CREATE DIALOG ///////////////////////
-    dialog = new UIDialog("Artboard Settings", NSMakeRect(0, 0, 370, 450), "Save", "Configure exporting options for the selected artboard. ")
+    dialog = new UIDialog("Artboard Settings", NSMakeRect(0, 0, 430, 400), "Save", "Configure exporting options for the selected artboard. ")
+    dialog.initTabs(["General","Overlay"])
+
+    /////////////////////////// PAGE 1
 
     const types = ["Regular page","Modal Dialog","External URL Page","Overlay"]
     const typeControl = dialog.addComboBox("artboardType","Artboard Type", artboardType,types,250)
@@ -96,21 +118,6 @@ var onRun = function (context) {
     const enableShadowControl = dialog.addCheckbox("enableShadow", "Show modal dialog or overlay shadow", enableShadow)
     dialog.addHint("enableShadowHint","Dim a previous artboard to set visual focus on an modal.")
     
-    const overlayByEventControl = dialog.addComboBox("overlayByEvent","Show Overlay On", overlayByEvent,["Click","Mouse Over"],250)
-    dialog.addHint("overlayByEventHint","Setup how links to this overlay will be executed") 
-
-    const positions = [
-        "Under hotspot from left corner to right","Under hostpot on center","Under hotspot from right corner to left",
-        "Page top left corner","Page top center","Page top right corner",
-        "Page center",
-        "Page bottom left","Page bottom center","Page bottom right",
-        "Hotspot top left corner","Hotspot top center","Hotspot top right corner",
-        "To the right of the top right corner of hotspot"
-    ]
-    const overlayAlignControl = dialog.addComboBox("overlayAlign","Overlay Position", overlayAlign,positions,250)
-    const overlayOverFixedControl = dialog.addCheckbox("overlayOverFixed", "Show overlay over fixed panels", overlayOverFixed)
-    const overlayAlsoFixedControl = dialog.addCheckbox("overlayAlsoFixed", "Show overlay as fixed panel if called from fixed panel", overlayAlsoFixed)
-
     dialog.addSpace()
 
     const enableAutoScrollControl = dialog.addCheckbox("enableAutoScroll", "Scroll browser page to top", enableAutoScroll)
@@ -119,7 +126,74 @@ var onRun = function (context) {
     const transNextSecsControl = dialog.addTextInput("transNextSecs", "Delay for autotranstion to next screen (Secs)", transNextSecs, '', 60)
     dialog.addHint("transNextSecsHint","Go to the next page auto the delay (0.001 - 60 secs)")
 
-    enableTypeRelated()
+    /////////////////////////// PAGE 2
+
+    dialog.setTabForViewsCreating(1)
+
+    const overlayByEventControl = dialog.addComboBox("overlayByEvent","Show Overlay On", overlayByEvent,["Click","Mouse Over"],250)
+    ///
+    const overlayPins = [
+        "Hotspot","Page"
+    ]
+    const overlayPinControl = dialog.addComboBox("overlayPin","Pin Overlay To", overlayPin,overlayPins,250)
+    overlayPinControl.setCOSJSTargetFunction(handleOverlayPin)
+
+    ////
+    dialog.overlayPositions = [
+        ["Under hotspot from left corner to right","Under hostpot on center","Under hotspot from right corner to left",
+        "From hotspot top left corner","From hotspot top center","From hotspot top right corner",
+        "To the right of the top right corner of hotspot"],
+        ["Page top left","Page top center","Page top right",        
+        "Page bottom left","Page bottom center","Page bottom right",
+        "Page center","TEST"]
+    ]
+    dialog.addLabel("overlayAlignLabel","Overlay Position")
+    var overlayAlignControlRadios = []
+    const imageWidth = 342
+    const imageHeight = 164
+    const radioWidth = 20
+    const radioHeight = 18
+    const xDelta = 100
+    const yDelta = 65
+    const hSpace = 10
+    var orgFrame = dialog.getNewFrame(radioHeight,radioWidth)
+
+    dialog.overlayPositions.forEach(function(positions,pinIndex){
+        var frame = Utils.copyRect(orgFrame)
+        //
+        const imageName  = "artboard_layerposition_"+pinIndex + "@2x.png"
+        var image = NSImage.alloc().initByReferencingFile(context.plugin.urlForResourceNamed(imageName).path())
+        const imageFrame = Utils.copyRect(orgFrame)
+        imageFrame.origin.y -= imageHeight - radioHeight
+        imageFrame.size.width = imageWidth
+        imageFrame.size.height = imageHeight
+        const imageView = dialog.addImage("overlayAlignImage-"+pinIndex,image,imageFrame)
+        imageView.hidden = true
+        //
+        positions.forEach(function(label,index){
+            const radioControl = dialog.addRadioButton("overlayAlignRadio-"+pinIndex+"-"+index," ",index, false,frame)
+            overlayAlignControlRadios.push(radioControl)
+            frame.origin.x += radioWidth
+            radioControl.hidden = true
+            //
+            if((index+1)%3 === 0){
+                frame.origin.x = 0
+                frame.origin.y -= yDelta
+            }else{
+                frame.origin.x += xDelta
+            }
+
+        },context)
+    },context)
+
+    dialog.y -= imageHeight
+    ///
+    const overlayOverFixedControl = dialog.addCheckbox("overlayOverFixed", "Show overlay over fixed panels", overlayOverFixed)
+    const overlayAlsoFixedControl = dialog.addCheckbox("overlayAlsoFixed", "Show overlay as fixed panel if called from fixed panel", overlayAlsoFixed)
+
+    enableTypeRelated()    
+    //var image = NSImage.alloc().initByReferencingFile(context.plugin.urlForResourceNamed("icon.png").path())
+    //dialog.addImage(image, NSMakeRect(50, 50, 100, 100))
     
      ///////////////// RUN EVENT LOOP ///////////////////////
     while (true) {

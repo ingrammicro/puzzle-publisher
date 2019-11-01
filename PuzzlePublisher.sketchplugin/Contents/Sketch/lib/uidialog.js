@@ -17,11 +17,52 @@ class UIAbstractWindow {
 
         var container = NSView.alloc().initWithFrame(intRect)
         this.container = container
+        this.topContainer = container
         this.views = []
 
-        this.y = NSHeight(intRect)
         this.rect = intRect
+        this.y = NSHeight(this.rect)
     }
+
+    initTabs(tabs){
+        const intRect = this.rect
+
+        this.tabs = tabs.map(function(tab){return {label:tab}})
+        log(this.tabs)
+
+        var tabView = NSTabView.alloc().initWithFrame(intRect)
+        
+        this.tabs.forEach(function(tab,index){
+
+            let viewController = NSViewController.alloc().init()
+            viewController.originalSize = intRect
+
+            var view = NSView.alloc().initWithFrame(intRect)        
+            view.wantsLayer = false        
+            viewController.view = view           
+                
+            let tabViewIem = NSTabViewItem.alloc().init()
+            tabViewIem.viewController = viewController
+            tabViewIem.label = tab.label
+            tabViewIem.initialFirstResponder = view
+            
+            tabView.addTabViewItem(tabViewIem)
+            
+            tab.container = view
+        
+        },this)
+
+        this.tabView = tabView  
+        this.container = this.tabs[0].container        
+        this.topContainer = tabView
+    }
+
+    setTabForViewsCreating(tabIndex){
+        this.container = this.tabs[tabIndex].container  
+
+        this.y = NSHeight(this.rect)
+    }
+
 
     enableTextByID(id, enabled) {
         if (!(id in dialog.views)) return
@@ -201,6 +242,21 @@ class UIAbstractWindow {
         this.views[id] = group
         return group
     }
+    addRadioButton(id, title, index, selected, frame) {
+
+        const btn = NSButton.alloc().initWithFrame(frame)
+        btn.setButtonType(NSRadioButton)
+        if(title!='') btn.setTitle(title)
+        btn.setState(!selected ? NSOffState : NSOnState)
+        btn.myIndex = index
+        //btn.setCOSJSTargetFunction(sender => radioTargetFunction(sender));
+
+        this.container.addSubview(btn)
+        //group.btns.push(btn)
+
+        this.views[id] = btn
+        return btn
+    }
 
     addButton(id, label, func, width = 100, frame = undefined) {
         // create OK button
@@ -234,6 +290,17 @@ class UIAbstractWindow {
     }
 
 
+    // image: NSImage
+
+    addImage(id,image,frame){
+        var nImageView = NSImageView.alloc().initWithFrame(frame)
+        nImageView.setImage(image)
+        this.container.addSubview(nImageView)    
+        this.views[id] = nImageView
+        return nImageView  
+    }
+
+
     finish() {
         this.window = null
     }
@@ -258,14 +325,14 @@ class UIDialog extends UIAbstractWindow {
         }
         window.addButtonWithTitle("Cancel")
 
-        super(window, rect)
-
-        window.setAccessoryView(this.container)
-        this.userClickedOK = false
+        super(window, rect)                
     }
 
 
+
     run() {
+        this.userClickedOK = false
+        this.window.setAccessoryView(this.topContainer)
         return this.window.runModal() == '1000'
     }
 
