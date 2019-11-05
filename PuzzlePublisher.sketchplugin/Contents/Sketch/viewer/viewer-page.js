@@ -249,7 +249,7 @@ class ViewerPage {
                 div.css('margin-left',posX+"px")
             }else{
                 // 
-                if(!positionCloned && undefined!=this.overlayShadowX && 10==this.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_LEFT
+                if(!positionCloned && undefined!=this.overlayShadowX && 10==this.overlayAlign){// OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_LEFT
                     posX -= this.overlayShadowX
                 }
 
@@ -574,40 +574,40 @@ function handleLinkEvent(event){
                 }else if(2==destPage.overlayAlign){// align on hotpost right
                     pageX += orgLink.width  - destPage.width
                     pageY += link.rect.height
-                }else if(3==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_TOP_LEFT
+                }else if(3==destPage.overlayAlign){// OLD_ARTBOARD_OVERLAY_ALIGN_TOP_LEFT
                     pageX = 0
                     pageY = 0
-                }else if(4==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_TOP_CENTER
+                }else if(4==destPage.overlayAlign){// OLD_ARTBOARD_OVERLAY_ALIGN_TOP_CENTER
                     pageX = parseInt(orgPage.width / 2) - parseInt(destPage.width / 2)
                     pageY = 0
-                }else if(5==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_TOP_RIGHT
+                }else if(5==destPage.overlayAlign){// OLD_ARTBOARD_OVERLAY_ALIGN_TOP_RIGHT
                     pageX = orgPage.width - destPage.width
                     pageY = 0
-                }else if(6==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_CENTER
+                }else if(6==destPage.overlayAlign){// OLD_ARTBOARD_OVERLAY_ALIGN_CENTER
                     pageX = parseInt(orgPage.width / 2) - parseInt(destPage.width / 2)
                     pageY = parseInt(orgPage.height / 2) - parseInt(destPage.height / 2)
-                }else if(7==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_BOTTOM_LEFT
+                }else if(7==destPage.overlayAlign){// OLD_ARTBOARD_OVERLAY_ALIGN_BOTTOM_LEFT
                     pageX = 0
                     pageY = orgPage.height - destPage.height
-                }else if(8==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_BOTTOM_CENTER
+                }else if(8==destPage.overlayAlign){// OLD_ARTBOARD_OVERLAY_ALIGN_BOTTOM_CENTER
                     pageX = parseInt(orgPage.width / 2) - parseInt(destPage.width / 2)
                     pageY = orgPage.height - destPage.height
-                }else if(9==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_TOP_RIGHT
+                }else if(9==destPage.overlayAlign){// OLD_ARTBOARD_OVERLAY_ALIGN_TOP_RIGHT
                     pageX = orgPage.width - destPage.width
                     pageY = orgPage.height - destPage.height
-                }else if(10==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_LEFT                                                    
-                }else if(11==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_CENTER
+                }else if(10==destPage.overlayAlign){// OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_LEFT                                                    
+                }else if(11==destPage.overlayAlign){// OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_CENTER
                     pageX += parseInt(orgLink.width/2) - parseInt(destPage.width/2)
                     //pageY -= destPage.height                            
-                }else if(12==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_RIGHT
+                }else if(12==destPage.overlayAlign){// OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_RIGHT
                     pageX += orgLink.width  - destPage.width
                     //pageY = pageY - destPage.height                            
-                }else if(13==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_RIGHT_ALIGN_RIGHT
+                }else if(13==destPage.overlayAlign){// OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_RIGHT_ALIGN_RIGHT
                     pageX +=orgLink.width
                 }
 
                 // check page right side
-                if(10!=destPage.overlayAlign){// NOT ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_LEFT
+                if(10!=destPage.overlayAlign){// NOT OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_LEFT
                     const fullWidth = destPage.width + offsetX // + (('overlayShadowX' in destPage)?destPage.overlayShadowX:0)
                     if( (pageX+fullWidth)>currentPage.width )
                         pageX = currentPage.width - fullWidth

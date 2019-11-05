@@ -20,6 +20,7 @@ class UIAbstractWindow {
         this.container = container
         this.topContainer = container
         this.views = []
+        this.leftOffset = 0
 
         this.rect = intRect
         this.y = NSHeight(this.rect)
@@ -37,8 +38,8 @@ class UIAbstractWindow {
 
             let viewController = NSViewController.alloc().init()
             viewController.originalSize = intRect
-
-            var view = NSView.alloc().initWithFrame(intRect)        
+     
+            var view = NSView.alloc().initWithFrame(intRect)                    
             view.wantsLayer = false        
             viewController.view = view           
                 
@@ -56,7 +57,8 @@ class UIAbstractWindow {
         this.tabView = tabView  
         this.container = this.tabs[0].container        
         this.topContainer = tabView
-
+        
+        this.leftOffset = 20
         this.y = NSHeight(this.rect) - TAB_HEIGHT
     }
 
@@ -99,7 +101,7 @@ class UIAbstractWindow {
     }
 
     getNewFrame(height = 25, width = -1, yinc = -1) {
-        var frame = NSMakeRect(0, this.y - height, width == -1 ? NSWidth(this.rect) - 10 : width, height)
+        var frame = NSMakeRect(this.leftOffset, this.y - height, width == -1 ? NSWidth(this.rect) - 10 : width, height)
         this.y -= height + (yinc >= 0 ? yinc : 10)
         return frame
     }
@@ -223,10 +225,9 @@ class UIAbstractWindow {
             sender.myGroup.selectedIndex = sender.myIndex
         };
 
-        let group = {
-            btns: [],
-            selectedIndex: selectItem
-        }
+
+        let group = this.startRadioButtions(id,selectItem)
+  
         for (var item of options) {
             const index = group.btns.length
 
@@ -241,23 +242,34 @@ class UIAbstractWindow {
             this.container.addSubview(btn)
             group.btns.push(btn)
         }
-
-        this.views[id] = group
+        
         return group
     }
-    addRadioButton(id, title, index, selected, frame) {
+    
+    startRadioButtions(id,selectItem){
+        this._buttonsGroups = {
+            btns: [],
+            id: id,
+            selectedIndex: selectItem
+        }
+        this.views[id] = this._buttonsGroups
+        return this._buttonsGroups 
+    } 
+
+    addRadioButton( title, index, frame) {
+        const selected =  this._buttonsGroups.selectedIndex==index
 
         const btn = NSButton.alloc().initWithFrame(frame)
         btn.setButtonType(NSRadioButton)
-        if(title!='') btn.setTitle(title)
+        if(title!='') btn.setTitle(title)        
         btn.setState(!selected ? NSOffState : NSOnState)
+        btn.myGroup =  this._buttonsGroups
         btn.myIndex = index
-        //btn.setCOSJSTargetFunction(sender => radioTargetFunction(sender));
+        btn.setCOSJSTargetFunction(sender => radioTargetFunction(sender));
 
         this.container.addSubview(btn)
-        //group.btns.push(btn)
+        this._buttonsGroups.btns.push(btn)
 
-        this.views[id] = btn
         return btn
     }
 

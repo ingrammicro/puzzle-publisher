@@ -102,8 +102,18 @@ var onRun = function (context) {
     if (overlayByEvent == undefined || overlayByEvent == "") {
         overlayByEvent = 0
     }
-    let overlayAlign = Settings.layerSettingForKey(artboard,SettingKeys.ARTBOARD_OVERLAY_ALIGN)
-    if (overlayAlign == undefined)  overlayAlign = 0
+
+    let oldOverlayAlign = Settings.layerSettingForKey(artboard,SettingKeys.OLD_ARTBOARD_OVERLAY_ALIGN)
+    let overlayPin = Settings.layerSettingForKey(artboard,SettingKeys.ARTBOARD_OVERLAY_PIN)
+    let overlayPinHotspot = Settings.layerSettingForKey(artboard,SettingKeys.ARTBOARD_OVERLAY_PIN_HOTSPOT)
+    let overlayPinPage = Settings.layerSettingForKey(artboard,SettingKeys.ARTBOARD_OVERLAY_PIN_PAGE)
+    if(undefined==overlayPin){
+        const newValues = Utils.upgradeArtboardOverlayPosition(oldOverlayAlign)
+        overlayPin = newValues.pintTo
+        overlayPinHotspot = newValues.hopspotTo
+        overlayPinPage = newValues.pageTo     
+    }
+    
 
     let overlayPin = 0
 
@@ -135,16 +145,17 @@ var onRun = function (context) {
     const overlayByEventControl = dialog.addComboBox("overlayByEvent","Show Overlay On", overlayByEvent,["Click","Mouse Over"],250)
     ///
     const overlayPins = [
-        "Hotspot","Page"
+        {name:"Hotspot",id: "overlay_pin_hotspot_position",selectedIndex: overlayPinHotspot},
+        {name:"Page",id: "overlay_pin_page_position",selectedIndex: overlayPinPage}
     ]
-    const overlayPinControl = dialog.addComboBox("overlayPin","Pin Overlay To", overlayPin,overlayPins,250)
+    const overlayPinControl = dialog.addComboBox("overlayPin","Pin Overlay To", overlayPin,overlayPins.map(value=>value.name),250)
     overlayPinControl.setCOSJSTargetFunction(handleOverlayPin)
 
     ////
     dialog.overlayPositions = [
         ["Under hotspot from left corner to right","Under hostpot on center","Under hotspot from right corner to left",
         "From hotspot top left corner","From hotspot top center","From hotspot top right corner",
-        "To the right of the top right corner of hotspot"],
+        "To the right of the bottom right corner of hotspot"],
         ["Page top left","Page top center","Page top right",        
         "Page bottom left","Page bottom center","Page bottom right",
         "Page center","TEST"]
@@ -162,6 +173,7 @@ var onRun = function (context) {
 
     dialog.overlayPositions.forEach(function(positions,pinIndex){
         var frame = Utils.copyRect(orgFrame)
+        const pin = overlayPins[pinIndex]
         //
         const imageName  = "artboard_layerposition_"+pinIndex + "@2x.png"
         var image = NSImage.alloc().initByReferencingFile(context.plugin.urlForResourceNamed(imageName).path())
@@ -171,16 +183,18 @@ var onRun = function (context) {
         imageFrame.size.height = imageHeight
         const imageView = dialog.addImage("overlayAlignImage-"+pinIndex,image,imageFrame)
         imageView.hidden = true
+        //        
+        dialog.startRadioButtions(pin.id,pint.selectedIndex)
         //
         positions.forEach(function(label,index){
-            const radioControl = dialog.addRadioButton("overlayAlignRadio-"+pinIndex+"-"+index," ",index, false,frame)
+            const radioControl = dialog.addRadioButton(" ",index, false,frame)
             radioControl.toolTip = label
             overlayAlignControlRadios.push(radioControl)
             frame.origin.x += radioWidth
             radioControl.hidden = true
             //
             if((index+1)%3 === 0){
-                frame.origin.x = 0
+                frame.origin.x = dialog.leftOffset
                 frame.origin.y -= yDelta
             }else{
                 frame.origin.x += xDelta
@@ -219,7 +233,7 @@ var onRun = function (context) {
         if(overlayByEventControl.isEnabled)
             Settings.setLayerSettingForKey(artboard,SettingKeys.ARTBOARD_OVERLAY_BY_EVENT, overlayByEventControl.indexOfSelectedItem())    
         if(overlayAlignControl.isEnabled)
-            Settings.setLayerSettingForKey(artboard,SettingKeys.ARTBOARD_OVERLAY_ALIGN, overlayAlignControl.indexOfSelectedItem())    
+            Settings.setLayerSettingForKey(artboard,SettingKeys.OLD_ARTBOARD_OVERLAY_ALIGN, overlayAlignControl.indexOfSelectedItem())    
         if(enableShadowControl.isEnabled) 
             Settings.setLayerSettingForKey(artboard, SettingKeys.ARTBOARD_SHADOW, enableShadowControl.state() == 1)
         if(overlayOverFixedControl.isEnabled)

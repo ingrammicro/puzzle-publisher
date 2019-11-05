@@ -86,7 +86,7 @@ class PZArtboard extends PZLayer {
         this.overlayByEvent = exporter.Settings.layerSettingForKey(this.slayer,SettingKeys.ARTBOARD_OVERLAY_BY_EVENT)
         if (this.overlayByEvent == undefined || this.overlayByEvent == "") this.overlayByEvent = 0
 
-        this.overlayAlign = exporter.Settings.layerSettingForKey(this.slayer,SettingKeys.ARTBOARD_OVERLAY_ALIGN)
+        this.overlayAlign = exporter.Settings.layerSettingForKey(this.slayer,SettingKeys.OLD_ARTBOARD_OVERLAY_ALIGN)
         if (this.overlayAlign == undefined || this.overlayAlign == "") this.overlayAlign = 0
         
     }
@@ -180,7 +180,7 @@ class PZArtboard extends PZLayer {
                     js += "'overlayShadow':'"+shadowInfo.style+"',\n"
                     js += "'overlayShadowX':"+shadowInfo.x+",\n"
                 }
-            }else if(Constants.ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_LEFT == this.overlayAlign) {
+            }else if(Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_LEFT == this.overlayAlign) {
                 const layerWithShadow = this._getOverlayShadowLayer()                
                 if(layerWithShadow){
                     const shadowInfo = layerWithShadow.getShadowAsStyle()                    
