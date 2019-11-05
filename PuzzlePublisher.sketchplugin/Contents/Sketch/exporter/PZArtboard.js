@@ -95,8 +95,11 @@ class PZArtboard extends PZLayer {
             this.overlayPin = newValues.pinTo
             this.overlayPinHotspot = newValues.hotspotTo
             this.overlayPinPage = newValues.pageTo     
+        }else{
+            this.overlayPinHotspot = exporter.Settings.layerSettingForKey(this.slayer,SettingKeys.ARTBOARD_OVERLAY_PIN_HOTSPOT)
+            this.overlayPinPage = exporter.Settings.layerSettingForKey(this.slayer,SettingKeys.ARTBOARD_OVERLAY_PIN_PAGE)
         }
-        
+
     }
 
     collectLayers(space){
