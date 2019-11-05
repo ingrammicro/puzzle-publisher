@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"  xmlns:dc="http://purl.org/dc/elements/1.1/">
     <channel>
-        <title>Exporter</title>
+        <title>Puzzle Publisher</title>
         <link>https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/appcast.xml</link>
         <description>Generates and publish HTML clickable prototype</description>
         <language>en</language>
