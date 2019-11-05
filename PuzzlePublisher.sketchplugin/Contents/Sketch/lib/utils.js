@@ -39,15 +39,21 @@ class Utils {
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_CENTER:
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_RIGHT:
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_RIGHT_ALIGN_RIGHT:
-                newValues.pintTo = Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT;
+                newValues.pinTo = Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT;
+                log("ARTBOARD_OVERLAY_PIN_HOTSPOT")
+                break
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_TOP_LEFT:
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_TOP_CENTER:
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_TOP_RIGHT:
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_BOTTOM_LEFT:
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_BOTTOM_CENTER:
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_BOTTOM_RIGHT:
-                newValues.pintTo = Constants.ARTBOARD_OVERLAY_PIN_PAGE;
+                newValues.pinTo = Constants.ARTBOARD_OVERLAY_PIN_PAGE;
+                log("ARTBOARD_OVERLAY_PIN_PAGE")
+                break
             ///
+        }
+        switch(oldValue){
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_LEFT:
                 newValues.hotspotTo =Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_LEFT; break;
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_CENTER:
@@ -81,6 +87,8 @@ class Utils {
                 break;
         }
         //
+        log(oldValue)
+        log(newValues)
         return newValues
     }
 

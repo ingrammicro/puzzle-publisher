@@ -109,8 +109,8 @@ var onRun = function (context) {
     let overlayPinPage = Settings.layerSettingForKey(artboard,SettingKeys.ARTBOARD_OVERLAY_PIN_PAGE)
     if(undefined==overlayPin){
         const newValues = Utils.upgradeArtboardOverlayPosition(oldOverlayAlign)
-        overlayPin = newValues.pintTo
-        overlayPinHotspot = newValues.hopspotTo
+        overlayPin = newValues.pinTo
+        overlayPinHotspot = newValues.hotspotTo
         overlayPinPage = newValues.pageTo     
     }
     
@@ -133,7 +133,7 @@ var onRun = function (context) {
     dialog.addHint("enableAutoScrollHint","The artboard will be scrolled on top after showing")
 
     const transNextSecsControl = dialog.addTextInput("transNextSecs", "Delay for autotranstion to next screen (Secs)", transNextSecs, '', 60)
-    dialog.addHint("transNextSecsHint","Go to the next page auto the delay (0.001 - 60 secs)")
+    dialog.addHint("transNextSecsHint", "Go to the next page auto the delay (0.001 - 60 secs)")
 
     /////////////////////////// PAGE 2
 
@@ -229,8 +229,11 @@ var onRun = function (context) {
         Settings.setLayerSettingForKey(artboard,SettingKeys.ARTBOARD_TYPE, artboardType)    
         if(overlayByEventControl.isEnabled)
             Settings.setLayerSettingForKey(artboard,SettingKeys.ARTBOARD_OVERLAY_BY_EVENT, overlayByEventControl.indexOfSelectedItem())    
-        if(overlayAlignControl.isEnabled)
-            Settings.setLayerSettingForKey(artboard,SettingKeys.OLD_ARTBOARD_OVERLAY_ALIGN, overlayAlignControl.indexOfSelectedItem())    
+        if(overlayPinControl.isEnabled){
+            Settings.setLayerSettingForKey(artboard,SettingKeys.ARTBOARD_OVERLAY_PIN, overlayPinControl.indexOfSelectedItem())    
+            Settings.setLayerSettingForKey(artboard,SettingKeys.ARTBOARD_OVERLAY_PIN_HOTSPOT, dialog.views['overlay_pin_hotspot_position'].selectedIndex)    
+            Settings.setLayerSettingForKey(artboard,SettingKeys.ARTBOARD_OVERLAY_PIN_PAGE, dialog.views['overlay_pin_page_position'].selectedIndex)    
+        }
         if(enableShadowControl.isEnabled) 
             Settings.setLayerSettingForKey(artboard, SettingKeys.ARTBOARD_SHADOW, enableShadowControl.state() == 1)
         if(overlayOverFixedControl.isEnabled)

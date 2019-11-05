@@ -221,11 +221,6 @@ class UIAbstractWindow {
         // pre-select the first item
         if (selectItem < 0) selectItem = 0
 
-        let radioTargetFunction = (sender) => {
-            sender.myGroup.selectedIndex = sender.myIndex
-        };
-
-
         let group = this.startRadioButtions(id,selectItem)
   
         for (var item of options) {
@@ -237,7 +232,7 @@ class UIAbstractWindow {
             btn.setState(index != selectItem ? NSOffState : NSOnState)
             btn.myGroup = group
             btn.myIndex = index
-            btn.setCOSJSTargetFunction(sender => radioTargetFunction(sender));
+            btn.setCOSJSTargetFunction(group.radioTargetFunction)
 
             this.container.addSubview(btn)
             group.btns.push(btn)
@@ -246,11 +241,15 @@ class UIAbstractWindow {
         return group
     }
     
-    startRadioButtions(idGroup,selectItem){
+    startRadioButtions(idGroup,selectedIndex){
         const groups = {
             id:idGroup,
             btns:[],
-            selectedIndex: selectItem
+            selectedIndex: selectedIndex,
+            radioTargetFunction : (sender) => {
+                sender.myGroup.selectedIndex = sender.myIndex
+            }
+    
         }
         this._buttonsGroups = groups
         this.views[idGroup] = this._buttonsGroups
@@ -259,6 +258,7 @@ class UIAbstractWindow {
 
     addRadioButton( id, title, index, frame) {
         const selected =  this._buttonsGroups.selectedIndex==index
+        log(' this._buttonsGroups.selectedIndex='+ this._buttonsGroups.selectedIndex+" index="+index)
 
         const btn = NSButton.alloc().initWithFrame(frame)
         btn.setButtonType(NSRadioButton)
@@ -266,7 +266,7 @@ class UIAbstractWindow {
         btn.setState(!selected ? NSOffState : NSOnState)
         btn.myGroup =  this._buttonsGroups
         btn.myIndex = index
-        btn.setCOSJSTargetFunction(sender => radioTargetFunction(sender));
+        btn.setCOSJSTargetFunction(this._buttonsGroups.radioTargetFunction)
 
         this.views[id] = btn
         this.container.addSubview(btn)

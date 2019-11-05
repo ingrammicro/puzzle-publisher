@@ -86,8 +86,16 @@ class PZArtboard extends PZLayer {
         this.overlayByEvent = exporter.Settings.layerSettingForKey(this.slayer,SettingKeys.ARTBOARD_OVERLAY_BY_EVENT)
         if (this.overlayByEvent == undefined || this.overlayByEvent == "") this.overlayByEvent = 0
 
-        this.overlayAlign = exporter.Settings.layerSettingForKey(this.slayer,SettingKeys.OLD_ARTBOARD_OVERLAY_ALIGN)
-        if (this.overlayAlign == undefined || this.overlayAlign == "") this.overlayAlign = 0
+        this.oldOverlayAlign = exporter.Settings.layerSettingForKey(this.slayer,SettingKeys.OLD_ARTBOARD_OVERLAY_ALIGN)
+        if (this.oldOverlayAlign == undefined || this.oldOverlayAlign == "") this.oldOverlayAlign = 0
+
+        this.oldOverlayPin = exporter.Settings.layerSettingForKey(this.slayer,SettingKeys.ARTBOARD_OVERLAY_PIN)    
+        if (this.oldOverlayPin == undefined){
+            const newValues = Utils.upgradeArtboardOverlayPosition(this.oldOverlayAlign)
+            this.overlayPin = newValues.pinTo
+            this.overlayPinHotspot = newValues.hotspotTo
+            this.overlayPinPage = newValues.pageTo     
+        }
         
     }
 
@@ -180,7 +188,7 @@ class PZArtboard extends PZLayer {
                     js += "'overlayShadow':'"+shadowInfo.style+"',\n"
                     js += "'overlayShadowX':"+shadowInfo.x+",\n"
                 }
-            }else if(Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_LEFT == this.overlayAlign) {
+            }else if((Constants. ARTBOARD_OVERLAY_PIN_HOTSPOT == this.oldOverlayPin) && (Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_LEFT == this.overlayPinHotspot)) {
                 const layerWithShadow = this._getOverlayShadowLayer()                
                 if(layerWithShadow){
                     const shadowInfo = layerWithShadow.getShadowAsStyle()                    
@@ -188,7 +196,9 @@ class PZArtboard extends PZLayer {
                 }
             }
             js += "'overlayByEvent': "+this.overlayByEvent+",\n";
-            js += "'overlayAlign': "+this.overlayAlign+",\n";
+            js += "'overlayPin': "+this.oldOverlayPin+",\n";
+            js += "'overlayPinHotspot': "+this.overlayPinHotspot+",\n";
+            js += "'overlayPinPage': "+this.overlayPinPage+",\n";
             js += "overlayOverFixed:"+(this.overlayOverFixed?"true":"false")+",\n"
             js += "overlayAlsoFixed:"+(this.overlayAlsoFixed?"true":"false")+",\n"
         } else {
