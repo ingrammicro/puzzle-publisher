@@ -246,17 +246,18 @@ class UIAbstractWindow {
         return group
     }
     
-    startRadioButtions(id,selectItem){
-        this._buttonsGroups = {
-            btns: [],
-            id: id,
+    startRadioButtions(idGroup,selectItem){
+        const groups = {
+            id:idGroup,
+            btns:[],
             selectedIndex: selectItem
         }
-        this.views[id] = this._buttonsGroups
+        this._buttonsGroups = groups
+        this.views[idGroup] = this._buttonsGroups
         return this._buttonsGroups 
     } 
 
-    addRadioButton( title, index, frame) {
+    addRadioButton( id, title, index, frame) {
         const selected =  this._buttonsGroups.selectedIndex==index
 
         const btn = NSButton.alloc().initWithFrame(frame)
@@ -267,6 +268,7 @@ class UIAbstractWindow {
         btn.myIndex = index
         btn.setCOSJSTargetFunction(sender => radioTargetFunction(sender));
 
+        this.views[id] = btn
         this.container.addSubview(btn)
         this._buttonsGroups.btns.push(btn)
 

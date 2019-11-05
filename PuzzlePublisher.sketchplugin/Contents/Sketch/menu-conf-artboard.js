@@ -114,9 +114,6 @@ var onRun = function (context) {
         overlayPinPage = newValues.pageTo     
     }
     
-
-    let overlayPin = 0
-
     ///////////////// CREATE DIALOG ///////////////////////
     dialog = new UIDialog("Artboard Settings", NSMakeRect(0, 0, 430, 450), "Save", "Configure exporting options for the selected artboard. ")
     dialog.initTabs(["General","Overlay"])
@@ -184,10 +181,10 @@ var onRun = function (context) {
         const imageView = dialog.addImage("overlayAlignImage-"+pinIndex,image,imageFrame)
         imageView.hidden = true
         //        
-        dialog.startRadioButtions(pin.id,pint.selectedIndex)
+        dialog.startRadioButtions(pin.id,pin.selectedIndex)
         //
         positions.forEach(function(label,index){
-            const radioControl = dialog.addRadioButton(" ",index, false,frame)
+            const radioControl = dialog.addRadioButton( "overlayAlignRadio-"+pinIndex+"-"+index," ",index,frame)
             radioControl.toolTip = label
             overlayAlignControlRadios.push(radioControl)
             frame.origin.x += radioWidth
