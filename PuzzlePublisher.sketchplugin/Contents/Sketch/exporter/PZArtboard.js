@@ -89,8 +89,8 @@ class PZArtboard extends PZLayer {
         this.oldOverlayAlign = exporter.Settings.layerSettingForKey(this.slayer,SettingKeys.OLD_ARTBOARD_OVERLAY_ALIGN)
         if (this.oldOverlayAlign == undefined || this.oldOverlayAlign == "") this.oldOverlayAlign = 0
 
-        this.oldOverlayPin = exporter.Settings.layerSettingForKey(this.slayer,SettingKeys.ARTBOARD_OVERLAY_PIN)    
-        if (this.oldOverlayPin == undefined){
+        this.overlayPin = exporter.Settings.layerSettingForKey(this.slayer,SettingKeys.ARTBOARD_OVERLAY_PIN)    
+        if (this.overlayPin == undefined){
             const newValues = Utils.upgradeArtboardOverlayPosition(this.oldOverlayAlign)
             this.overlayPin = newValues.pinTo
             this.overlayPinHotspot = newValues.hotspotTo
@@ -188,7 +188,7 @@ class PZArtboard extends PZLayer {
                     js += "'overlayShadow':'"+shadowInfo.style+"',\n"
                     js += "'overlayShadowX':"+shadowInfo.x+",\n"
                 }
-            }else if((Constants. ARTBOARD_OVERLAY_PIN_HOTSPOT == this.oldOverlayPin) && (Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_LEFT == this.overlayPinHotspot)) {
+            }else if((Constants. ARTBOARD_OVERLAY_PIN_HOTSPOT == this.overlayPin) && (Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_LEFT == this.overlayPinHotspot)) {
                 const layerWithShadow = this._getOverlayShadowLayer()                
                 if(layerWithShadow){
                     const shadowInfo = layerWithShadow.getShadowAsStyle()                    
@@ -196,7 +196,7 @@ class PZArtboard extends PZLayer {
                 }
             }
             js += "'overlayByEvent': "+this.overlayByEvent+",\n";
-            js += "'overlayPin': "+this.oldOverlayPin+",\n";
+            js += "'overlayPin': "+this.overlayPin+",\n";
             js += "'overlayPinHotspot': "+this.overlayPinHotspot+",\n";
             js += "'overlayPinPage': "+this.overlayPinPage+",\n";
             js += "overlayOverFixed:"+(this.overlayOverFixed?"true":"false")+",\n"

@@ -155,7 +155,7 @@ var onRun = function (context) {
         "To the right of the bottom right corner of hotspot"],
         ["Page top left","Page top center","Page top right",        
         "Page bottom left","Page bottom center","Page bottom right",
-        "Page center","TEST"]
+        "Page center"]
     ]
     dialog.addLabel("overlayAlignLabel","Overlay Position")
     var overlayAlignControlRadios = []

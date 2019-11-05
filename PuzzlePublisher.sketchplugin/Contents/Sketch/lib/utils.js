@@ -48,6 +48,7 @@ class Utils {
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_BOTTOM_LEFT:
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_BOTTOM_CENTER:
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_BOTTOM_RIGHT:
+            case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_CENTER:
                 newValues.pinTo = Constants.ARTBOARD_OVERLAY_PIN_PAGE;
                 log("ARTBOARD_OVERLAY_PIN_PAGE")
                 break
@@ -82,9 +83,10 @@ class Utils {
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_BOTTOM_RIGHT:
                 newValues.pageTo =Constants.ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_RIGHT; 
                 break;
-            case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_RIGHT_ALIGN_RIGHT:
-                newValues.pageTo =Constants.ARTBOARD_OVERLAY_PIN_PAGE_CENTERs; 
+            case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_CENTER:
+                newValues.pageTo =Constants.ARTBOARD_OVERLAY_PIN_PAGE_CENTER; 
                 break;
+                
         }
         //
         log(oldValue)
