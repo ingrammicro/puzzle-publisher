@@ -258,7 +258,6 @@ class UIAbstractWindow {
 
     addRadioButton( id, title, index, frame) {
         const selected =  this._buttonsGroups.selectedIndex==index
-        log(' this._buttonsGroups.selectedIndex='+ this._buttonsGroups.selectedIndex+" index="+index)
 
         const btn = NSButton.alloc().initWithFrame(frame)
         btn.setButtonType(NSRadioButton)

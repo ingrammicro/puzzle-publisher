@@ -89,8 +89,6 @@ class Utils {
                 
         }
         //
-        log(oldValue)
-        log(newValues)
         return newValues
     }
 
