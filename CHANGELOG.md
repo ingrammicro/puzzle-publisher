@@ -1,5 +1,8 @@
 # Change Log
 
+##  Version 11.5.1 (5 Nov 2019)
+- test Sketch update system
+
 ##  Version 11.5.0 (5 Nov 2019)
 - Improved Configure Artboard dialog (added tabs and images)
 
