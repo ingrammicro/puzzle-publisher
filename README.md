@@ -41,7 +41,7 @@ Commands:
 
 Settings: 
 
-<img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/tests/Pictures/Layer-Dialog.png"/><img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/tests/Pictures/Artboard-Dialog.png"/><img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/tests/Pictures/Document-Dialog.png"/><img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/tests/Pictures/Plugin-Dialog.png"/>
+<img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/tests/Pictures/Layer-Dialog.png"/><img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/tests/Pictures/Artboard-Dialog1.png"/><img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/tests/Pictures/Artboard-Dialog2.png"/><img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/tests/Pictures/Document-Dialog.png"/><img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/tests/Pictures/Plugin-Dialog.png"/>
 
 Viewer - Show symbols (and design tokens):
 
