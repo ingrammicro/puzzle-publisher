@@ -121,7 +121,7 @@ var onRun = function (context) {
     /////////////////////////// PAGE 1
 
     const types = ["Regular page","Modal Dialog","External URL Page","Overlay"]
-    const typeControl = dialog.addComboBox("artboardType","Artboard Type", artboardType,types,250)
+    const typeControl = dialog.addSelect("artboardType","Artboard Type", artboardType,types,250)
     typeControl.setCOSJSTargetFunction(enableTypeRelated)
 
     const enableShadowControl = dialog.addCheckbox("enableShadow", "Show modal dialog or overlay shadow", enableShadow)
@@ -139,13 +139,13 @@ var onRun = function (context) {
 
     dialog.setTabForViewsCreating(1)
 
-    const overlayByEventControl = dialog.addComboBox("overlayByEvent","Show Overlay On", overlayByEvent,["Click","Mouse Over"],250)
+    const overlayByEventControl = dialog.addSelect("overlayByEvent","Show Overlay On", overlayByEvent,["Click","Mouse Over"],250)
     ///
     const overlayPins = [
         {name:"Hotspot",id: "overlay_pin_hotspot_position",selectedIndex: overlayPinHotspot},
         {name:"Page",id: "overlay_pin_page_position",selectedIndex: overlayPinPage}
     ]
-    const overlayPinControl = dialog.addComboBox("overlayPin","Pin Overlay To", overlayPin,overlayPins.map(value=>value.name),250)
+    const overlayPinControl = dialog.addSelect("overlayPin","Pin Overlay To", overlayPin,overlayPins.map(value=>value.name),250)
     overlayPinControl.setCOSJSTargetFunction(handleOverlayPin)
 
     ////

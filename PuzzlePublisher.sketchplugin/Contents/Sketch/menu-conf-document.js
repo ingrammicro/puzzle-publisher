@@ -26,11 +26,11 @@ var onRun = function(context) {
   //
   const dialog = new UIDialog("Document Settings",NSMakeRect(0, 0, 300, 260),"Save","Configure settings common for all document artboards. ")
 
-  dialog.addComboBox("customHideNavigation","Navigation", customHideNavigation,["(Use plugin setting)","Visible","Hidden"],250)
+  dialog.addSelect("customHideNavigation","Navigation", customHideNavigation,["(Use plugin setting)","Visible","Hidden"],250)
 
   const sortOptions = Constants.SORT_RULE_OPTIONS.slice()
   sortOptions.splice(0,0,"(Use plugin settings)")
-  dialog.addComboBox("customSortRule","Artboards Sort Order", customSortRule,sortOptions,250)
+  dialog.addSelect("customSortRule","Artboards Sort Order", customSortRule,sortOptions,250)
   dialog.addHint("","Specify how artboards will sorted in HTML story.")
   
   dialog.addTextInput("backColor","Custom Background Color", backColor,'e.g. #FFFFFF')
