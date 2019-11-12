@@ -150,7 +150,7 @@ print("<br/>");
                     }                                    
                     $path_diff = $dir_diff."/".$file_info['basename'];
 
-                    $cmd_diff .=  ($cmd_diff!=''?'; ':'')."convert $path_prev $path_new  \( -clone 0 -clone 1 -compose difference -composite \) \( -clone 1 -fill blue -colorize 10% \) -delete 1 +swap -compose over -composite  $path_diff 2>/dev/null >/dev/null";
+                    $cmd_diff .=  ($cmd_diff!=''?'; ':'')."convert $path_prev $path_new  \( -clone 0 -clone 1 -compose difference -composite \) \( -clone 1 -fill red -colorize 10% \) -delete 1 +swap -compose over -composite  $path_diff 2>/dev/null >/dev/null";
                 }
             }else if('Only'==$info[0]){
                 // Checking this format:             
@@ -255,7 +255,7 @@ print("<br/>");
         
         $data = [
             'chat_id' =>  $channelID,
-            'text' => $this->data['author'].' published '. $this->data['url']. "?v \n- ". $this->data['message']
+            'text' => $this->data['author'].' published '. $this->data['url']. " \n- ". $this->data['message']
         ];
 
         $response = file_get_contents("https://api.telegram.org/bot$apiToken/sendMessage?" . http_build_query($data) );
@@ -325,10 +325,10 @@ print("<br/>");
         $this->_compareVers();
         
         // SAVE DATA TO DISK
-        //if(!$this->_saveData()) return FALSE;
+        if(!$this->_saveData()) return FALSE;
         
         // INFORM SUBSCRIBERS
-        //$this->_postToTelegram();
+        $this->_postToTelegram();
 
         return TRUE;
     }
