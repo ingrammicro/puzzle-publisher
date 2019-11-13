@@ -1,5 +1,8 @@
 # Change Log
 
+##  Version 11.5.3 (13 Nov 2019)
+- fixed crash on broken symbols
+
 ##  Version 11.5.2 (5 Nov 2019)
 - test Sketch update system
 

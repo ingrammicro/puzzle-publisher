@@ -1,114 +1,114 @@
 {
-  "name": "Puzzle Publisher",
-  "description": "Generates and publishes a HTML clickable prototype",
-  "author" : "Maxim Bazarov and Alexey Kalenyuk",
-  "authorEmail" : "max@bazarov.ru",
-  "homepage": "https://github.com/ingrammicro/puzzle-publisher",  
-  "identifier" : "com.cloudblue.sketch.exporter",
-  "appcast": "https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/appcast.xml",
-  "compatibleVersion": "52",
-  "version" : "11.5.2",
-  "icon": "icon.png",
-  "commands" : [   
-    {
-      "script" : "cmdline-functions.js",
-      "handler" : "cmdRun",
-      "name" : "Run from command line",
-      "identifier" : "cmdRun"
-    },   
-    {
-      "script" : "menu-external-link.js",
-      "handler" : "onRun",
-      "name" : "Set External Link for Layer or Artboard",
-      "identifier" : "externalLink"
-    },  
-    {
-      "script" : "menu-conf-artboard.js",
-      "handler" : "onRun",
-      "name" : "Configure Artboard",
-      "identifier" : "confArtboard"
-    },  
-    {
-      "script" : "menu-conf-layer.js",
-      "handler" : "onRun",
-      "name" : "Configure Layer",
-      "identifier" : "confLayer"
-    }, 
-    {
-      "script" : "menu-conf-document.js",
-      "handler" : "onRun",
-      "name" : "Configure Document",
-      "identifier" : "confDocument"
-    },  
-    {
-      "script" : "menu-conf-plugin.js",
-      "handler" : "onRun",
-      "name" : "Configure Plugin",
-      "identifier" : "confPlugin"
-    },  
-    {
-        "script" : "menu-conf-plugin-export.js",
-        "handler" : "onRun",
-        "name" : "Configure Export",
-        "identifier" : "confPluginExport"
-      }, 
-    {
-        "script" : "menu-conf-plugin-publishing.js",
-        "handler" : "onRun",
-        "name" : "Configure Publishing",
-        "identifier" : "confPluginPublishing"
-    }, 
-    {
-      "script" : "menu-edit-annotations.js",
-      "handler" : "onRun",
-      "name" : "Edit Annotations",
-      "identifier" : "editAnnotations"      
-    },
-    {
-      "script" : "menu-export-html-adv.js",
-      "handler" : "onRun",      
-      "name" : "✈️ Export selected to HTML",
-      "identifier" : "exportToHTMLAdv"
-    },
-    {
-      "script" : "menu-export-html.js",
-      "handler" : "onRun",
-      "shortcut" : "command alt e", 
-      "name" : "✈️ Export to HTML",
-      "identifier" : "exportToHTML"
-    },
-    {
-      "script" : "menu-cmd-publish.js",
-      "handler" : "onRun",
-      "shortcut" : "command alt p", 
-      "name" : "📡 Publish HTML",
-      "identifier" : "publish"
-    },
-    {
-        "script" : "exporter/exporter-run.js",
-        "handler" : "announce11",
-        "shortcut" : "", 
-        "name" : "ℹ️ Show last announcement",
-        "identifier" : "announce11"
+    "name": "Puzzle Publisher",
+    "description": "Generates and publishes a HTML clickable prototype",
+    "author": "Maxim Bazarov and Alexey Kalenyuk",
+    "authorEmail": "max@bazarov.ru",
+    "homepage": "https://github.com/ingrammicro/puzzle-publisher",
+    "identifier": "com.cloudblue.sketch.exporter",
+    "appcast": "https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/appcast.xml",
+    "compatibleVersion": "52",
+    "version": "11.5.3",
+    "icon": "icon.png",
+    "commands": [
+        {
+            "script": "cmdline-functions.js",
+            "handler": "cmdRun",
+            "name": "Run from command line",
+            "identifier": "cmdRun"
+        },
+        {
+            "script": "menu-external-link.js",
+            "handler": "onRun",
+            "name": "Set External Link for Layer or Artboard",
+            "identifier": "externalLink"
+        },
+        {
+            "script": "menu-conf-artboard.js",
+            "handler": "onRun",
+            "name": "Configure Artboard",
+            "identifier": "confArtboard"
+        },
+        {
+            "script": "menu-conf-layer.js",
+            "handler": "onRun",
+            "name": "Configure Layer",
+            "identifier": "confLayer"
+        },
+        {
+            "script": "menu-conf-document.js",
+            "handler": "onRun",
+            "name": "Configure Document",
+            "identifier": "confDocument"
+        },
+        {
+            "script": "menu-conf-plugin.js",
+            "handler": "onRun",
+            "name": "Configure Plugin",
+            "identifier": "confPlugin"
+        },
+        {
+            "script": "menu-conf-plugin-export.js",
+            "handler": "onRun",
+            "name": "Configure Export",
+            "identifier": "confPluginExport"
+        },
+        {
+            "script": "menu-conf-plugin-publishing.js",
+            "handler": "onRun",
+            "name": "Configure Publishing",
+            "identifier": "confPluginPublishing"
+        },
+        {
+            "script": "menu-edit-annotations.js",
+            "handler": "onRun",
+            "name": "Edit Annotations",
+            "identifier": "editAnnotations"
+        },
+        {
+            "script": "menu-export-html-adv.js",
+            "handler": "onRun",
+            "name": "✈️ Export selected to HTML",
+            "identifier": "exportToHTMLAdv"
+        },
+        {
+            "script": "menu-export-html.js",
+            "handler": "onRun",
+            "shortcut": "command alt e",
+            "name": "✈️ Export to HTML",
+            "identifier": "exportToHTML"
+        },
+        {
+            "script": "menu-cmd-publish.js",
+            "handler": "onRun",
+            "shortcut": "command alt p",
+            "name": "📡 Publish HTML",
+            "identifier": "publish"
+        },
+        {
+            "script": "exporter/exporter-run.js",
+            "handler": "announce11",
+            "shortcut": "",
+            "name": "ℹ️ Show last announcement",
+            "identifier": "announce11"
+        }
+    ],
+    "menu": {
+        "title": "✈️ Puzzle Publisher",
+        "items": [
+            "exportToHTML",
+            "exportToHTMLAdv",
+            "-",
+            "publish",
+            "-",
+            "externalLink",
+            "confLayer",
+            "confArtboard",
+            "confDocument",
+            "-",
+            "confPluginExport",
+            "confPluginPublishing",
+            "-",
+            "announce11"
+        ]
     }
-  ],
-  "menu": {
-    "title": "✈️ Puzzle Publisher",
-    "items": [
-      "exportToHTML",      
-      "exportToHTMLAdv",      
-      "-",
-      "publish",
-      "-",
-      "externalLink",
-      "confLayer",
-      "confArtboard",      
-      "confDocument",
-      "-",
-      "confPluginExport",
-      "confPluginPublishing",
-      "-",
-      "announce11"
-    ]
-  }
 }
