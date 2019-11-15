@@ -20,7 +20,7 @@ var onRun = function (context) {
     }
 
     var layer = layers[0]
-    if('Artboard'==layer.type){
+    if ('Artboard' == layer.type) {
         UI.alert("alert", "Select some single layer.")
         return
     }
@@ -37,12 +37,13 @@ var onRun = function (context) {
         overlayType = SettingKeys.LAYER_OVERLAY_DEFAULT
 
     // create dialog
-    const dialog = new UIDialog("Layer Settings", NSMakeRect(0, 0, 400, 200), "Save", "Configure selected layer options ")
+    const dialog = new UIDialog("Layer Settings", NSMakeRect(0, 0, 400, 220), "Save", "Configure selected layer options ")
+    dialog.removeLeftColumn()
 
-    dialog.addSelect("overlayType","Overlay Mode", overlayType,["Default (using \"Fix position\" setting)","Trasparent overlay with fixed position (TOP)","Trasparent overlay with fixed position (LEFT)","Standalone DIV inside a page"],300)
+    dialog.addSelect("overlayType", "Overlay Mode", overlayType, ["Default (using \"Fix position\" setting)", "Trasparent overlay with fixed position (TOP)", "Trasparent overlay with fixed position (LEFT)", "Standalone DIV inside a page"], 300)
 
     dialog.addTextInput("layerDivID", "Layer <div> ID", layerDivID, 'MyLayer1')
-    dialog.addHint("","This layer will be presented by standalone <div> with specified ID")
+    dialog.addHint("", "This layer will be presented by standalone <div> with specified ID")
 
     dialog.addTextBox("layerComment", "Comments", layerComment, '')
 
@@ -57,7 +58,7 @@ var onRun = function (context) {
         // read data
         layerDivID = dialog.views['layerDivID'].stringValue() + ""
         layerComment = dialog.views['layerComment'].stringValue() + ""
-        overlayType =  dialog.views['overlayType'].indexOfSelectedItem()
+        overlayType = dialog.views['overlayType'].indexOfSelectedItem()
 
         // check data
         if (false) {

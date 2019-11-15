@@ -153,6 +153,8 @@ function runExporter(context, exportOptions = null) {
         }
 
         const dialog = new UIDialog("Export to HTML", NSMakeRect(0, 0, 500, 200), "Export")
+        dialog.removeLeftColumn()
+
 
         dialog.addPathInput({
             id: "path", label: "Destination folder", labelSelect: "Select Folder",
