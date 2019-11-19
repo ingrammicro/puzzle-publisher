@@ -214,7 +214,7 @@ class ViewerPage {
 
         // 
         this.inFixedPanel = linkParentFixed && this.overlayAlsoFixed
-        if (div.parent().attr('id') != newParentPage.imageDiv.attr('id') || div.hasClass('hidden')) {
+        if (!this.parentPage || this.parentPage.id != newParentPage.id || div.hasClass('hidden')) {
 
             if (this.inFixedPanel) {
                 div.removeClass('divPanel')
