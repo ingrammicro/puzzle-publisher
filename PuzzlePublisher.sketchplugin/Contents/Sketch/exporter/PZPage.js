@@ -4,7 +4,7 @@ Sketch = require('sketch/dom')
 
 var PZPage_touched = false
 
-class PZPage{
+class PZPage {
 
     // spage: ref to Sketch Page
     constructor(sPage) {
@@ -12,28 +12,27 @@ class PZPage{
         this.mArtboards = []
     }
 
-    collectData(sArtboards=null){
-        exporter.logMsg("PZPage.collectData() starting... name="+(this.sPage?this.sPage.name:''))
+    collectData(sArtboards = null) {
+        exporter.logMsg("PZPage.collectData() starting... name=" + (this.sPage ? this.sPage.name : ''))
         // 
-        if(!sArtboards) sArtboards = this.sPage.layers
+        if (!sArtboards) sArtboards = this.sPage.layers
 
         // prepare layers for collecting
         exporter.logMsg("PZPage.collectData() preparing...")
-        for(const sa of sArtboards){
-            if("Artboard"!=sa.type) continue
-            if(exporter.filterAster && sa.name.indexOf("*")==0) continue
-            log("PZPage.collectData for "+sa.name)
+        for (const sa of sArtboards) {
+            if ("Artboard" != sa.type) continue
+            if (exporter.filterAster && sa.name.indexOf("*") == 0) continue
 
             // special trick to add some data change event to Sketch as Undo point
-            if(!PZPage_touched){
-                sa.frame.y+=10
+            if (!PZPage_touched) {
+                sa.frame.y += 10
                 PZPage_touched = true
             }
 
-            this._scanLayersToSaveInfo(sa)        
-            this._scanLayersToDetachSymbols(sa)       
+            this._scanLayersToSaveInfo(sa)
+            this._scanLayersToDetachSymbols(sa)
         }
-        
+
         // collect layers
         exporter.logMsg("PZPage.collectData() collecting...")
         this._collectArtboards(sArtboards)
@@ -43,15 +42,15 @@ class PZPage{
     }
 
 
-    export(){
-        for(const a of this.mArtboards){
+    export() {
+        for (const a of this.mArtboards) {
             a.export()
         }
     }
 
 
     // return index of new artboard
-    addArtboard(mArtboard){
+    addArtboard(mArtboard) {
         this.mArtboards.push(mArtboard)
         mArtboard.index = pzDoc.addArtboard(mArtboard)
     }
@@ -60,76 +59,76 @@ class PZPage{
 
     //////////////////////// PRIVATE FUNCTIONS //////////////////////////////////////
 
-    _scanLayersToSaveInfo(sParent){        
-        exporter.logMsg("PZPage._scanLayersToSaveInfo() running name="+(this.sPage?this.sPage.name:''))
+    _scanLayersToSaveInfo(sParent) {
+        exporter.logMsg("PZPage._scanLayersToSaveInfo() running name=" + (this.sPage ? this.sPage.name : ''))
         const nParent = sParent.sketchObject
 
-        nParent.children().forEach(function(nl){
-            if(!(nl instanceof MSSymbolInstance )) return
-         
+        nParent.children().forEach(function (nl) {
+            if (!(nl instanceof MSSymbolInstance)) return
+
             const sl = Sketch.fromNative(nl)
-            if(sl.name.indexOf("±±")>=0){
+            if (sl.name.indexOf("±±") >= 0) {
                 //remove old garabage
-                sl.name = sl.name.substring(0,sl.name.indexOf("±±"))                
-            }     
+                sl.name = sl.name.substring(0, sl.name.indexOf("±±"))
+            }
             const smaster = pzDoc.getSymbolMasterByID(sl.symbolId)
-            if(!smaster){
-                log("Error: can't find master for"+sl.name)
-                return  
+            if (!smaster) {
+                log("Error: can't find master for" + sl.name)
+                return
             }
             // save target artboard ID to restore info about master afte the detach      
 
             //log("PZPage._scanLayersToSaveInfo() old name="+ sl.name)
             // save symbol ID to restore info about master after the detachs
-            sl.name = sl.name + "±±" + (sl.flow?sl.flow.targetId:"") + "±±" + sl.symbolId
-        },this)
+            sl.name = sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + sl.symbolId
+        }, this)
     }
 
-    _scanLayersToDetachSymbols(sParent){
-        exporter.logMsg("PZPage._scanLayersToDetachSymbols() runnning...name="+(this.sPage?this.sPage.name:''))
+    _scanLayersToDetachSymbols(sParent) {
+        exporter.logMsg("PZPage._scanLayersToDetachSymbols() runnning...name=" + (this.sPage ? this.sPage.name : ''))
         const nParent = sParent.sketchObject
 
-        nParent.children().forEach(function(nl){
-            if(!(nl instanceof MSSymbolInstance )) return
-            
+        nParent.children().forEach(function (nl) {
+            if (!(nl instanceof MSSymbolInstance)) return
+
             var sl = Sketch.fromNative(nl)
             sl = sl.detach({
                 recursively: true
-            })   
+            })
 
-        },this)
-      
+        }, this)
+
         exporter.logMsg("PZPage._scanLayersToDetachSymbols() completed")
     }
 
-    _collectArtboards(sArtboards){
-        for(var sa of this._sortArtboards(sArtboards)){            
-            if("SymbolMaster"==sa.type) continue
-            if("Artboard"!=sa.type) continue
-            if(exporter.filterAster && sa.name.indexOf("*")==0) continue
+    _collectArtboards(sArtboards) {
+        for (var sa of this._sortArtboards(sArtboards)) {
+            if ("SymbolMaster" == sa.type) continue
+            if ("Artboard" != sa.type) continue
+            if (exporter.filterAster && sa.name.indexOf("*") == 0) continue
             const ma = new PZArtboard(sa)
             ma.collectLayers(' ')
             this.addArtboard(ma)
-        }        
+        }
     }
 
 
     // Resort artboards using configuration settings
-    _sortArtboards(sSrcArtboards){        
+    _sortArtboards(sSrcArtboards) {
         var sArtboards = sSrcArtboards.slice()
-        if(Constants.SORT_RULE_X == exporter.sortRule){
+        if (Constants.SORT_RULE_X == exporter.sortRule) {
             sArtboards.sort((
-            function(a, b){
-              return a.frame.x - b.frame.x
-          }))
-        }else if(Constants.SORT_RULE_Y == exporter.sortRule){
+                function (a, b) {
+                    return a.frame.x - b.frame.x
+                }))
+        } else if (Constants.SORT_RULE_Y == exporter.sortRule) {
             sArtboards.sort((
-            function(a, b){
-              return a.frame.y - b.frame.y
-          }))
-        }else  if(Constants.SORT_RULE_REVERSIVE_SKETCH == exporter.sortRule){
+                function (a, b) {
+                    return a.frame.y - b.frame.y
+                }))
+        } else if (Constants.SORT_RULE_REVERSIVE_SKETCH == exporter.sortRule) {
             sArtboards = sArtboards.reverse()
-        }else{
+        } else {
         }
         return sArtboards
     }

@@ -23,15 +23,15 @@ Rectangle.prototype.copyToRect = function () {
 
 class Utils {
 
-    static upgradeArtboardOverlayPosition(oldValue){
+    static upgradeArtboardOverlayPosition(oldValue) {
         const newValues = {
-            pinTo:0,
-            hotspotTo:0,
-            pageTo:0
+            pinTo: 0,
+            hotspotTo: 0,
+            pageTo: 0
         }
-        if(undefined==oldValue) return newValues
+        if (undefined == oldValue) return newValues
         //
-        switch(oldValue){
+        switch (oldValue) {
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_LEFT:
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_CENTER:
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_RIGHT:
@@ -40,7 +40,6 @@ class Utils {
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_RIGHT:
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_RIGHT_ALIGN_RIGHT:
                 newValues.pinTo = Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT;
-                log("ARTBOARD_OVERLAY_PIN_HOTSPOT")
                 break
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_TOP_LEFT:
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_TOP_CENTER:
@@ -50,43 +49,42 @@ class Utils {
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_BOTTOM_RIGHT:
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_CENTER:
                 newValues.pinTo = Constants.ARTBOARD_OVERLAY_PIN_PAGE;
-                log("ARTBOARD_OVERLAY_PIN_PAGE")
                 break
             ///
         }
-        switch(oldValue){
+        switch (oldValue) {
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_LEFT:
-                newValues.hotspotTo =Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_LEFT; break;
+                newValues.hotspotTo = Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_LEFT; break;
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_CENTER:
-                newValues.hotspotTo =Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_CENTER; break;
+                newValues.hotspotTo = Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_CENTER; break;
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_RIGHT:
-                newValues.hotspotTo =Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_RIGHT; break;
+                newValues.hotspotTo = Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_RIGHT; break;
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_LEFT:
-                newValues.hotspotTo =Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_LEFT; break;
+                newValues.hotspotTo = Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_LEFT; break;
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_CENTER:
-                newValues.hotspotTo =Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_CENTER; break;
+                newValues.hotspotTo = Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_CENTER; break;
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_RIGHT:
-                newValues.hotspotTo =Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_RIGHT; break;
+                newValues.hotspotTo = Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_RIGHT; break;
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_RIGHT_ALIGN_RIGHT:
-                newValues.hotspotTo =Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_BOTTOM_RIGHT; break;
+                newValues.hotspotTo = Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_BOTTOM_RIGHT; break;
             //
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_TOP_LEFT:
-                newValues.pageTo =Constants.ARTBOARD_OVERLAY_PIN_PAGE_TOP_LEFT; break;
+                newValues.pageTo = Constants.ARTBOARD_OVERLAY_PIN_PAGE_TOP_LEFT; break;
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_TOP_CENTER:
-                newValues.pageTo =Constants.ARTBOARD_OVERLAY_PIN_PAGE_TOP_CENTER; break;
+                newValues.pageTo = Constants.ARTBOARD_OVERLAY_PIN_PAGE_TOP_CENTER; break;
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_TOP_RIGHT:
-                newValues.pageTo =Constants.ARTBOARD_OVERLAY_PIN_PAGE_TOP_RIGHT; break;
+                newValues.pageTo = Constants.ARTBOARD_OVERLAY_PIN_PAGE_TOP_RIGHT; break;
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_BOTTOM_LEFT:
-                newValues.pageTo =Constants.ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_LEFT; break;
+                newValues.pageTo = Constants.ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_LEFT; break;
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_BOTTOM_CENTER:
-                newValues.pageTo =Constants.ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_CENTER;break;
+                newValues.pageTo = Constants.ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_CENTER; break;
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_BOTTOM_RIGHT:
-                newValues.pageTo =Constants.ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_RIGHT; 
+                newValues.pageTo = Constants.ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_RIGHT;
                 break;
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_CENTER:
-                newValues.pageTo =Constants.ARTBOARD_OVERLAY_PIN_PAGE_CENTER; 
+                newValues.pageTo = Constants.ARTBOARD_OVERLAY_PIN_PAGE_CENTER;
                 break;
-                
+
         }
         //
         return newValues
@@ -230,7 +228,7 @@ class Utils {
         }
     }
 
-    static actionWithType(nDoc,type){
+    static actionWithType(nDoc, type) {
         var controller = nDoc.actionsController();
 
         if (controller.actionWithName) {
