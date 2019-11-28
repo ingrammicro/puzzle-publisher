@@ -240,20 +240,20 @@ class SymbolViewer {
             var info = ""
             if (symName != undefined) {
                 info = "<p class='head'>Symbol</p>" + symName
-                info += "<p class='head'>Library</p>"
+                info += "<p class='head'>Symbol Source</p>"
                 if (symInfo && undefined != symInfo.libName)
-                    info += symInfo.libName
+                    info += symInfo.libName + " (external)"
                 else
-                    info += "Local Symbol"
+                    info += "Document"
 
             }
             if (styleName != undefined) {
                 info = "<p class='head'>Style</p> " + styleName
-                info += "<p class='head'>Library</p>"
+                info += "<p class='head'>Style Source</p>"
                 if (styleInfo && undefined != styleInfo.libName)
-                    info += styleInfo.libName
+                    info += styleInfo.libName + " (external)"
                 else
-                    info += "Local Style"
+                    info += "Document"
             }
 
 
