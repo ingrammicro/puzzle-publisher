@@ -234,9 +234,19 @@ class SymbolViewer {
             var frameHeight = layer.frame.height
 
             const styleInfo = styleName != undefined ? viewer.symbolViewer._findStyleAndLibByStyleName(styleName) : undefined
+            const symInfo = symName != undefined ? viewer.symbolViewer._findSymbolAndLibBySymbolName(symName) : undefined
+
 
             var info = ""
-            if (symName != undefined) info = "<p class='head'>Symbol</p>" + symName
+            if (symName != undefined) {
+                info = "<p class='head'>Symbol</p>" + symName
+                info += "<p class='head'>Library</p>"
+                if (symInfo && undefined != symInfo.libName)
+                    info += symInfo.libName
+                else
+                    info += "Local Symbol"
+
+            }
             if (styleName != undefined) {
                 info = "<p class='head'>Style</p> " + styleName
                 info += "<p class='head'>Library</p>"
@@ -257,22 +267,20 @@ class SymbolViewer {
             }
 
 
-            if (symName != undefined) {
-                const symInfo = viewer.symbolViewer._findSymbolByName(symName)
-                if (symInfo != undefined) {
-                    info += "<p class='head'>Symbol layers and Tokens</p>"
-                    var layerCounter = 0
-                    for (const layerName of Object.keys(symInfo.layers)) {
-                        if (layerCounter)
-                            info += "<br/>"
-                        info += layerName + "<br/>"
-                        for (const tokenName of Object.keys(symInfo.layers[layerName].tokens)) {
-                            info += tokenName + "<br/>"
-                        }
-                        layerCounter++
+            if (symInfo != undefined) {
+                info += "<p class='head'>Symbol layers and Tokens</p>"
+                var layerCounter = 0
+                for (const layerName of Object.keys(symInfo.symbol.layers)) {
+                    if (layerCounter)
+                        info += "<br/>"
+                    info += layerName + "<br/>"
+                    for (const tokenName of Object.keys(symInfo.symbol.layers[layerName].tokens)) {
+                        info += tokenName + "<br/>"
                     }
+                    layerCounter++
                 }
             }
+
             if (styleInfo != undefined) {
                 info += "<p class='head'>Style Tokens</p>"
                 for (const tokenName of Object.keys(styleInfo.style.tokens)) {
@@ -297,10 +305,15 @@ class SymbolViewer {
 
     }
 
-    _findSymbolByName(symName) {
-        for (const lib of Object.values(symbolsData)) {
+    _findSymbolAndLibBySymbolName(symName) {
+        for (const libName of Object.keys(symbolsData)) {
+            const lib = symbolsData[libName]
             if (!(symName in lib)) continue
-            return lib[symName]
+            return {
+                lib: lib,
+                libName: libName,
+                symbol: lib[symName]
+            }
         }
         return undefined
     }
