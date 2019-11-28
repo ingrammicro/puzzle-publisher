@@ -32,7 +32,7 @@ class VersionViewer {
         this.inited = true
     }
 
-    hide() {        
+    hide() {
         viewer.hideSidebar();
     }
 
@@ -41,19 +41,19 @@ class VersionViewer {
     }
 
     // delta = -1 or +1
-    switchMode(delta){
-        const modes = ['diff','prev','new']
-        var posMode = modes.indexOf( this.mode )
-        if(undefined==posMode) return
+    switchMode(delta) {
+        const modes = ['diff', 'prev', 'new']
+        var posMode = modes.indexOf(this.mode)
+        if (undefined == posMode) return
 
         posMode += delta
-        if (posMode < 0 ) posMode = modes.length -1
-        if (posMode >= modes.length ) posMode = 0
+        if (posMode < 0) posMode = modes.length - 1
+        if (posMode >= modes.length) posMode = 0
 
-        modes.forEach(function(mode,pos){
-            var radio = $("#version_viewer_mode_"+mode)
-            radio.prop('checked', pos==posMode)
-        },this)
+        modes.forEach(function (mode, pos) {
+            var radio = $("#version_viewer_mode_" + mode)
+            radio.prop('checked', pos == posMode)
+        }, this)
 
         this.pageChanged()
 
@@ -65,7 +65,7 @@ class VersionViewer {
     hideSelfOnly() {
         this._restoreNewImages()
         this.visible = false
-        $('#version_viewer').addClass("hidden")        
+        $('#version_viewer').addClass("hidden")
         document.location.search = "" // remove ?v
     }
 
@@ -82,16 +82,16 @@ class VersionViewer {
     }
 
 
-    handleKeyDownWhileActive(jevent){
+    handleKeyDownWhileActive(jevent) {
         const event = jevent.originalEvent
 
-        if( 38 == event.which && event.shiftKey){   // shift + up
+        if (38 == event.which && event.shiftKey) {   // shift + up
             v.increaseVersion()
-        }else if(  40 == event.which && event.shiftKey){   // shift + down
+        } else if (40 == event.which && event.shiftKey) {   // shift + down
             v.decreaseVersion()
-        }else if( 86 == event.which){ // v
+        } else if (86 == event.which) { // v
             this.toggle()
-        }else{
+        } else {
             return false
         }
 
@@ -100,21 +100,21 @@ class VersionViewer {
     }
 
 
-    handleKeyDown(jevent){        
+    handleKeyDown(jevent) {
         const event = jevent.originalEvent
         var disabled = !this.screenDiffs[viewer.currentPage.getHash()]
 
-        if( !disabled && 37 == event.which && event.shiftKey){   // left + shift
+        if (!disabled && 37 == event.which && event.shiftKey) {   // left + shift
             this.switchMode(-1)
-        }else if( !disabled &&  39 == event.which && event.shiftKey){   // right + shift
+        } else if (!disabled && 39 == event.which && event.shiftKey) {   // right + shift
             this.switchMode(1)
-        }else if( event.shiftKey ){   // left + shift
-        }else{
-            return false            
+        } else if (event.shiftKey) {   // left + shift
+        } else {
+            return false
         }
 
         jevent.preventDefault()
-        return true 
+        return true
     }
 
     toggle() {
@@ -123,11 +123,11 @@ class VersionViewer {
 
     /////////////////////////////////////////////////
 
-    _restoreNewImages(){
-        story.pages.forEach(function(page){
-            if(page.srcImageObjSrc) page.imageObj.attr("src",page.srcImageObjSrc)
+    _restoreNewImages() {
+        story.pages.forEach(function (page) {
+            if (page.srcImageObjSrc) page.imageObj.attr("src", page.srcImageObjSrc)
         })
-        
+
     }
 
     _showScreens(data, showNew) {
@@ -151,7 +151,7 @@ class VersionViewer {
         }
         return info;
     }
-    
+
 
     _showCurrentPageDiffs() {
         const data = this.data
@@ -167,9 +167,9 @@ class VersionViewer {
         // save original image srcs
         if (!page.srcImageObjSrc) page.srcImageObjSrc = page.imageObj.attr("src")
 
-        if ('diff' ==  this.mode ) {
+        if ('diff' == this.mode) {
             newSrc = data['journals_path'] + '/' + data['dir'] + "/diffs/" + screen['screen_name'] + (story.hasRetina && viewer.isHighDensityDisplay() ? "@2x" : "") + ".png"
-        } else if ('new' ==  this.mode ) {
+        } else if ('new' == this.mode) {
             if (page.imageObj.attr("src") != page.srcImageObjSrc) {
                 newSrc = page.srcImageObjSrc
             }
@@ -216,7 +216,7 @@ class VersionViewer {
         if (!this.inited) this.initialize()
         $('#version_viewer').removeClass("hidden")
         viewer.showSidebar(this)
-        this.visible = true       
+        this.visible = true
     }
 
     _showLoadingMessage() {

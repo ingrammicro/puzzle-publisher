@@ -8,106 +8,106 @@ Sketch = require('sketch/dom')
 
 
 class PZArtboard extends PZLayer {
-   
+
     constructor(slayer) {
-        exporter.logMsg("PZArtboard.create id="+slayer.name)
+        exporter.logMsg("PZArtboard.create id=" + slayer.name)
 
         // init Artboard own things !!! before object construction !!!
         let artboardType = exporter.Settings.layerSettingForKey(slayer, SettingKeys.ARTBOARD_TYPE)
-        if(undefined == artboardType || '' == artboardType){
-            if(exporter.Settings.layerSettingForKey(slayer, SettingKeys.LEGACY_ARTBOARD_MODAL)==1){
+        if (undefined == artboardType || '' == artboardType) {
+            if (exporter.Settings.layerSettingForKey(slayer, SettingKeys.LEGACY_ARTBOARD_MODAL) == 1) {
                 artboardType = Constants.ARTBOARD_TYPE_MODAL // use legacy setting
-            }else
+            } else
                 artboardType = Constants.ARTBOARD_TYPE_REGULAR // set default 0 value
         }
         let externalArtboardURL =
             exporter.Settings.layerSettingForKey(slayer, SettingKeys.LAYER_EXTERNAL_LINK)
-        if(externalArtboardURL!=undefined && (''==externalArtboardURL || 'http://'==externalArtboardURL)) 
+        if (externalArtboardURL != undefined && ('' == externalArtboardURL || 'http://' == externalArtboardURL))
             externalArtboardURL = undefined
 
 
         // Resize before exporting
         const needResize = exporter.customArtboardFrame && Constants.ARTBOARD_TYPE_REGULAR == artboardType && undefined == externalArtboardURL
-        if(needResize){           
-            if(exporter.customArtboardFrame.width > 0 ) 
+        if (needResize) {
+            if (exporter.customArtboardFrame.width > 0)
                 slayer.frame.width = exporter.customArtboardFrame.width
-            if(exporter.customArtboardFrame.height > 0)    
+            if (exporter.customArtboardFrame.height > 0)
                 slayer.frame.height = exporter.customArtboardFrame.height
         }
 
         super(slayer, undefined)
-                
+
         this.overlayLayers = []
         this.fixedLayers = [] // list of layers which are configured as fixed
         this.nextLinkIndex = 0 // we need it to generate uniq id of the every link
 
         // check if the page name is unique in document
-        if(this.name in pzDoc.artboardsDict){
+        if (this.name in pzDoc.artboardsDict) {
             // we need to find a new name                        
-            for(let i=1;i<1000;i++){               
-                const newName = this.name+"("+i+")"
-                if( !(newName in pzDoc.artboardsDict)){
+            for (let i = 1; i < 1000; i++) {
+                const newName = this.name + "(" + i + ")"
+                if (!(newName in pzDoc.artboardsDict)) {
                     // found new unique name!
                     this.name = newName
                     break
                 }
-            }            
-        }        
+            }
+        }
         // init Artboard own things
         this.artboardType = artboardType
         this.isModal = Constants.ARTBOARD_TYPE_MODAL == this.artboardType
         this.externalArtboardURL = externalArtboardURL
-        
+
         this.showShadow = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_SHADOW)
-        if(undefined!=this.showShadow)
+        if (undefined != this.showShadow)
             this.showShadow = this.showShadow == 1
-        else{
+        else {
             const legacyShadow = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.LEGACY_ARTBOARD_MODAL_SHADOW)
-            if(undefined!=legacyShadow &&  Constants.ARTBOARD_TYPE_MODAL == this.artboardType){
+            if (undefined != legacyShadow && Constants.ARTBOARD_TYPE_MODAL == this.artboardType) {
                 this.showShadow = legacyShadow
-            }else{
+            } else {
                 this.showShadow = true
             }
         }
-        
+
         this.overlayOverFixed = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_OVERLAY_OVERFIXED) == 1
         {
             var overlayAlsoFixed = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_OVERLAY_ALSOFIXED)
-            this.overlayAlsoFixed = overlayAlsoFixed!=undefined?overlayAlsoFixed:true
+            this.overlayAlsoFixed = overlayAlsoFixed != undefined ? overlayAlsoFixed : true
         }
 
         this.disableAutoScroll =
             exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_DISABLE_AUTOSCROLL)
-        this.transNextSecs = 
+        this.transNextSecs =
             exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_TRANS_TO_NEXT_SECS)
-        if(undefined != this.transNextSecs && '' == this.transNextSecs)
+        if (undefined != this.transNextSecs && '' == this.transNextSecs)
             this.transNextSecs = undefined
 
-        this.overlayByEvent = exporter.Settings.layerSettingForKey(this.slayer,SettingKeys.ARTBOARD_OVERLAY_BY_EVENT)
+        this.overlayByEvent = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_OVERLAY_BY_EVENT)
         if (this.overlayByEvent == undefined || this.overlayByEvent == "") this.overlayByEvent = 0
 
-        this.oldOverlayAlign = exporter.Settings.layerSettingForKey(this.slayer,SettingKeys.OLD_ARTBOARD_OVERLAY_ALIGN)
+        this.oldOverlayAlign = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.OLD_ARTBOARD_OVERLAY_ALIGN)
         if (this.oldOverlayAlign == undefined || this.oldOverlayAlign == "") this.oldOverlayAlign = 0
 
-        this.overlayPin = exporter.Settings.layerSettingForKey(this.slayer,SettingKeys.ARTBOARD_OVERLAY_PIN)    
-        if (this.overlayPin == undefined){
+        this.overlayPin = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_OVERLAY_PIN)
+        if (this.overlayPin == undefined) {
             const newValues = Utils.upgradeArtboardOverlayPosition(this.oldOverlayAlign)
             this.overlayPin = newValues.pinTo
             this.overlayPinHotspot = newValues.hotspotTo
-            this.overlayPinPage = newValues.pageTo     
-        }else{
-            this.overlayPinHotspot = exporter.Settings.layerSettingForKey(this.slayer,SettingKeys.ARTBOARD_OVERLAY_PIN_HOTSPOT)
-            this.overlayPinPage = exporter.Settings.layerSettingForKey(this.slayer,SettingKeys.ARTBOARD_OVERLAY_PIN_PAGE)
+            this.overlayPinPage = newValues.pageTo
+        } else {
+            this.overlayPinHotspot = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_OVERLAY_PIN_HOTSPOT)
+            this.overlayPinPage = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_OVERLAY_PIN_PAGE)
         }
 
     }
 
-    collectLayers(space){
+    collectLayers(space) {
         //exporter.logMsg(space+"PZArtboard.collectLayers() name="+this.name)
-        this.childs = this.collectAChilds(this.slayer.layers,space+" ")
+        this.childs = this.collectAChilds(this.slayer.layers, space + " ")
     }
 
-    export(){        
+    export() {
         this._exportImages()
         this._findFixedPanelHotspots()
         //this._exportOverlayLayers()
@@ -116,19 +116,19 @@ class PZArtboard extends PZLayer {
 
     //------------------- FIND HOTSPOTS WHICH LOCATE OVER FIXED HOTPOSTS ----------------------------
     //------------------- AND MOVE THEM INTO FIXED LAYER SPECIAL HOTSPOTS ---------------------------
-    _findFixedPanelHotspots(){
-        for (var l of this.fixedLayers){
-            for (let hIndex=0;hIndex<this.hotspots.length;hIndex++){
+    _findFixedPanelHotspots() {
+        for (var l of this.fixedLayers) {
+            for (let hIndex = 0; hIndex < this.hotspots.length; hIndex++) {
                 let hotspot = this.hotspots[hIndex]
                 // move hotspot from artboard hotspots to fixed layer hotspots
-                if(hotspot.r.insideRectangle(l.frame)){
-                    this.hotspots.splice(hIndex--,1)                                        
-                    hotspot.r.x-=l.frame.x
-                    hotspot.r.y-=l.frame.y
-                    l.hotspots.push(hotspot)                    
+                if (hotspot.r.insideRectangle(l.frame)) {
+                    this.hotspots.splice(hIndex--, 1)
+                    hotspot.r.x -= l.frame.x
+                    hotspot.r.y -= l.frame.y
+                    l.hotspots.push(hotspot)
                 }
             }
-            
+
         }
     }
 
@@ -141,7 +141,7 @@ class PZArtboard extends PZLayer {
 
         let js = pageIndex ? ',' : '';
         js +=
-            '$.extend(new ViewerPage(),{\n' + 
+            '$.extend(new ViewerPage(),{\n' +
             '"index": ' + parseInt(pageIndex) + ',\n' +
             '"image": "' + Utils.quoteString(Utils.toFilename(mainName + '.png', false)) + '",\n'
         if (exporter.retinaImages)
@@ -152,8 +152,8 @@ class PZArtboard extends PZLayer {
             '"height": ' + parseInt(this.frame.height) + ',\n' +
             '"title": "' + Utils.quoteString(mainName) + '",\n';
 
-        if( this.transNextSecs!=undefined ){
-            js += "'transNextMsecs': " + parseFloat(this.transNextSecs)*1000 + ",\n";
+        if (this.transNextSecs != undefined) {
+            js += "'transNextMsecs': " + parseFloat(this.transNextSecs) * 1000 + ",\n";
         }
 
         if (this.disableAutoScroll) {
@@ -162,48 +162,48 @@ class PZArtboard extends PZLayer {
 
         {
             var layoutGrid = this.nlayer.layout() // class: MSLayoutGrid
-            if(!layoutGrid) layoutGrid = MSDefaultLayoutGrid.defaultLayout();
-            if(layoutGrid){
+            if (!layoutGrid) layoutGrid = MSDefaultLayoutGrid.defaultLayout();
+            if (layoutGrid) {
                 var data = {
-                    offset:             layoutGrid.horizontalOffset(),
-                    totalWidth:         layoutGrid.totalWidth(),
-                    numberOfColumns:    layoutGrid.numberOfColumns(),
-                    columnWidth:        layoutGrid.columnWidth(),
-                    gutterWidth:        layoutGrid.gutterWidth()
+                    offset: layoutGrid.horizontalOffset(),
+                    totalWidth: layoutGrid.totalWidth(),
+                    numberOfColumns: layoutGrid.numberOfColumns(),
+                    columnWidth: layoutGrid.columnWidth(),
+                    gutterWidth: layoutGrid.gutterWidth()
                 }
-                js += "'layout' : " +JSON.stringify(data,null,"\t") +",\n"
-            } 
+                js += "'layout' : " + JSON.stringify(data, null, "\t") + ",\n"
+            }
         }
 
         if (this.isModal) {
             js += "'type': 'modal',\n";
             js += "'isModal': true,\n";
             js += "'showShadow': " + (this.showShadow ? 1 : 0) + ",\n";
-        } else if (this.externalArtboardURL!=undefined && this.externalArtboardURL!=''){
+        } else if (this.externalArtboardURL != undefined && this.externalArtboardURL != '') {
             js += "'type': 'external',\n";
-        } else if (Constants.ARTBOARD_TYPE_OVERLAY == this.artboardType){
+        } else if (Constants.ARTBOARD_TYPE_OVERLAY == this.artboardType) {
             js += "'type': 'overlay',\n";
             // try to find a shadow
-            if(this.showShadow){
-                const layerWithShadow = this._getOverlayShadowLayer()                
-                if(layerWithShadow){
-                    const shadowInfo = layerWithShadow.getShadowAsStyle()                    
-                    js += "'overlayShadow':'"+shadowInfo.style+"',\n"
-                    js += "'overlayShadowX':"+shadowInfo.x+",\n"
+            if (this.showShadow) {
+                const layerWithShadow = this._getOverlayShadowLayer()
+                if (layerWithShadow) {
+                    const shadowInfo = layerWithShadow.getShadowAsStyle()
+                    js += "'overlayShadow':'" + shadowInfo.style + "',\n"
+                    js += "'overlayShadowX':" + shadowInfo.x + ",\n"
                 }
-            }else if((Constants. ARTBOARD_OVERLAY_PIN_HOTSPOT == this.overlayPin) && (Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_LEFT == this.overlayPinHotspot)) {
-                const layerWithShadow = this._getOverlayShadowLayer()                
-                if(layerWithShadow){
-                    const shadowInfo = layerWithShadow.getShadowAsStyle()                    
-                    js += "'overlayShadowX':"+shadowInfo.x+",\n"
+            } else if ((Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT == this.overlayPin) && (Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_LEFT == this.overlayPinHotspot)) {
+                const layerWithShadow = this._getOverlayShadowLayer()
+                if (layerWithShadow) {
+                    const shadowInfo = layerWithShadow.getShadowAsStyle()
+                    js += "'overlayShadowX':" + shadowInfo.x + ",\n"
                 }
             }
-            js += "'overlayByEvent': "+this.overlayByEvent+",\n";
-            js += "'overlayPin': "+this.overlayPin+",\n";
-            js += "'overlayPinHotspot': "+this.overlayPinHotspot+",\n";
-            js += "'overlayPinPage': "+this.overlayPinPage+",\n";
-            js += "overlayOverFixed:"+(this.overlayOverFixed?"true":"false")+",\n"
-            js += "overlayAlsoFixed:"+(this.overlayAlsoFixed?"true":"false")+",\n"
+            js += "'overlayByEvent': " + this.overlayByEvent + ",\n";
+            js += "'overlayPin': " + this.overlayPin + ",\n";
+            js += "'overlayPinHotspot': " + this.overlayPinHotspot + ",\n";
+            js += "'overlayPinPage': " + this.overlayPinPage + ",\n";
+            js += "overlayOverFixed:" + (this.overlayOverFixed ? "true" : "false") + ",\n"
+            js += "overlayAlsoFixed:" + (this.overlayAlsoFixed ? "true" : "false") + ",\n"
         } else {
             js += "'type': 'regular',\n";
         }
@@ -212,34 +212,34 @@ class PZArtboard extends PZLayer {
         js += this._pushFixedLayersIntoJSStory()
 
         // add hotspots 
-        js += "'links' : " +JSON.stringify(this._buildHotspots(this.hotspots),null,"\t") +",\n" 
-            
+        js += "'links' : " + JSON.stringify(this._buildHotspots(this.hotspots), null, "\t") + ",\n"
 
-        js+="})\n"
+
+        js += "})\n"
 
         exporter.jsStory += js;
     }
 
 
-    _getOverlayShadowLayer(){
+    _getOverlayShadowLayer() {
         return this._findLayersShadow(this.childs)
-    }   
+    }
 
-    _findLayersShadow(layers){
-        for(var l of layers){            
+    _findLayersShadow(layers) {
+        for (var l of layers) {
             let layerWithShadow = this._findLayerShadow(l)
-            if(layerWithShadow) return layerWithShadow
+            if (layerWithShadow) return layerWithShadow
         }
         return undefined
     }
 
-    _findLayerShadow(l){
+    _findLayerShadow(l) {
         let shadowsStyle = l.getShadowAsStyle()
-        if(shadowsStyle!==undefined) return l
+        if (shadowsStyle !== undefined) return l
 
         return this._findLayersShadow(l.childs)
     }
-    
+
 
     _pushFixedLayersIntoJSStory() {
         let recs = []
@@ -249,76 +249,76 @@ class PZArtboard extends PZLayer {
             const foundPanels = []
             for (var l of this.fixedLayers) {
                 let type = l.fixedType
-                if(type == "") {
-                    exporter.logError("pushFixedLayersIntoJSStory: can't understand fixed panel type for artboard '" + this.name 
+                if (type == "") {
+                    exporter.logError("pushFixedLayersIntoJSStory: can't understand fixed panel type for artboard '" + this.name
                         + "' layer='" + l.name + "' layer.frame=" + l.frame + " this.frame=" + this.frame)
                     continue
                 }
                 pzDoc.totalImages++
 
                 if (!l.isFloat && foundPanels[type]) {
-                    exporter.logError("pushFixedLayersIntoJSStory: found more than one panel with type '" + type + "' for artboard '" 
+                    exporter.logError("pushFixedLayersIntoJSStory: found more than one panel with type '" + type + "' for artboard '"
                         + this.name + "' layer='" + l.name + "' layer.frame=" + l.frame + " this.frame=" + this.frame)
                     const existedPanelLayer = foundPanels[type]
-                    exporter.logError("pushFixedLayersIntoJSStory: already exists panel layer='" + existedPanelLayer.name 
+                    exporter.logError("pushFixedLayersIntoJSStory: already exists panel layer='" + existedPanelLayer.name
                         + "' layer.frame=" + existedPanelLayer.frame)
                     continue
                 }
                 foundPanels[type] = l
 
-                const fileNamePostfix = !(l.isFloat||l.isFixedDiv)?"":('-'+l.fixedIndex)            
-                               
+                const fileNamePostfix = !(l.isFloat || l.isFixedDiv) ? "" : ('-' + l.fixedIndex)
+
 
                 const rec = {
-                    constrains:l.constrains,
-                    x:l.frame.x,
-                    y:l.frame.y,
-                    width:l.frame.width,
-                    height:l.frame.height,
-                    type:type,
-                    index:l.fixedIndex,
+                    constrains: l.constrains,
+                    x: l.frame.x,
+                    y: l.frame.y,
+                    width: l.frame.width,
+                    height: l.frame.height,
+                    type: type,
+                    index: l.fixedIndex,
                     isFloat: l.isFloat,
                     isFixedDiv: l.isFixedDiv,
-                    divID: l.layerDivID!=undefined?l.layerDivID:"",
-                    links: this._buildHotspots(l.hotspots,true),                    
-                    image:Utils.quoteString(Utils.toFilename(mainName,false) + fileNamePostfix+'.png')
-                }                
+                    divID: l.layerDivID != undefined ? l.layerDivID : "",
+                    links: this._buildHotspots(l.hotspots, true),
+                    image: Utils.quoteString(Utils.toFilename(mainName, false) + fileNamePostfix + '.png')
+                }
                 if (exporter.retinaImages)
-                    rec.image2x = Utils.quoteString(Utils.toFilename(mainName,false) + fileNamePostfix +'@2x.png', false)
-                
+                    rec.image2x = Utils.quoteString(Utils.toFilename(mainName, false) + fileNamePostfix + '@2x.png', false)
+
                 // setup shadow
-                const layerWithShadow = this._findLayerShadow(l)                
-                if(layerWithShadow){
+                const layerWithShadow = this._findLayerShadow(l)
+                if (layerWithShadow) {
                     const shadowsStyle = layerWithShadow.getShadowAsStyle()
-                    rec.shadow = shadowsStyle.style        
-                    rec.shadowX = shadowsStyle.x                    
+                    rec.shadow = shadowsStyle.style
+                    rec.shadowX = shadowsStyle.x
                 }
                 recs.push(rec)
             }
         }
 
-        let js = "'fixedPanels': " + JSON.stringify(recs,null,"\t")+",\n";
+        let js = "'fixedPanels': " + JSON.stringify(recs, null, "\t") + ",\n";
 
         return js
     }
 
 
 
-    _buildHotspots(srcHotspots,isParentFixed=false) {        
+    _buildHotspots(srcHotspots, isParentFixed = false) {
         let newHotspots = []
-        for(var hotspot of srcHotspots){
+        for (var hotspot of srcHotspots) {
             const newHotspot = {
-               rect: hotspot.r,
-               isParentFixed:isParentFixed,
+                rect: hotspot.r,
+                isParentFixed: isParentFixed,
             }
 
 
             if (hotspot.linkType == 'back') {
                 newHotspot.action = 'back'
-            } else if (hotspot.linkType == 'artboard' && pzDoc.artboardsDict[hotspot.artboardID] != undefined 
+            } else if (hotspot.linkType == 'artboard' && pzDoc.artboardsDict[hotspot.artboardID] != undefined
                 && pzDoc.artboardIDsDict[hotspot.artboardID].externalArtboardURL != undefined
             ) {
-                newHotspot.url = pzDoc.artboardIDsDict[hotspot.artboardID].externalArtboardURL                
+                newHotspot.url = pzDoc.artboardIDsDict[hotspot.artboardID].externalArtboardURL
             } else if (hotspot.linkType == 'artboard') {
                 const targetPage = pzDoc.artboardIDsDict[hotspot.artboardID]
                 if (targetPage == undefined) {
@@ -328,7 +328,7 @@ class PZArtboard extends PZLayer {
                 const targetPageIndex = targetPage.index;
                 newHotspot.page = targetPageIndex
             } else if (hotspot.linkType == 'href') {
-                newHotspot.url = hotspot.href        
+                newHotspot.url = hotspot.href
             } else if (hotspot.target != undefined) {
                 newHotspot.target = hotspot.target
             } else {
@@ -350,21 +350,21 @@ class PZArtboard extends PZLayer {
     //------------------ GENERATE IMAGES  ------------------
 
 
-    _getImageName(scale,panelPostix="") {
+    _getImageName(scale, panelPostix = "") {
         const suffix = scale == 2 ? "@2x" : "";
-        return Utils.toFilename(this.name, false) + panelPostix +  suffix + ".png";
-      }
+        return Utils.toFilename(this.name, false) + panelPostix + suffix + ".png";
+    }
 
-    _exportImage(scale,layer,nlayer,panelPostix="",addToExported = true) {
-        exporter.logMsg("   exportImage() for "+nlayer.name())
-        
-        const imageName = this._getImageName(scale,panelPostix)
+    _exportImage(scale, layer, nlayer, panelPostix = "", addToExported = true) {
+        exporter.logMsg("   exportImage() for " + nlayer.name())
+
+        const imageName = this._getImageName(scale, panelPostix)
         const imagePath = exporter.imagesPath + imageName
         let slice = null
-        
-        if(addToExported) exporter.exportedImages.push(imageName)
 
-        slice = MSExportRequest.exportRequestsFromExportableLayer(nlayer).firstObject();       
+        if (addToExported) exporter.exportedImages.push(imageName)
+
+        slice = MSExportRequest.exportRequestsFromExportableLayer(nlayer).firstObject();
         slice.scale = scale;
         slice.saveForWeb = false;
         slice.format = "png";
@@ -373,40 +373,40 @@ class PZArtboard extends PZLayer {
 
     // new experimental code to export images
     // we don't use it because it doesn't allow to set a file name
-    _exportImage2(scales,slayer) {
+    _exportImage2(scales, slayer) {
         exporter.logMsg("exportImage()");
-        
+
         const imagePath = exporter.imagesPath // + this._getImageName(scales)
-        log('_exportImage2 name='+slayer.name)
-        const options = { 
+        log('_exportImage2 name=' + slayer.name)
+        const options = {
             scales: scales,
             output: exporter.imagesPath,
             overwriting: true,
-            'save-for-web': true, 
-            formats: 'png' 
+            'save-for-web': true,
+            formats: 'png'
         }
-        Sketch.export(slayer, options)        
-        
+        Sketch.export(slayer, options)
+
     }
- 
+
     _exportImages() {
 
         //this._getAllLayersMatchingPredicate(Sketch.getSelectedDocument().sketchObject)
 
         log("  exportArtboardImages: running... " + this.name)
-        let scales = exporter.retinaImages?[1,2]:[1]    
-                
+        let scales = exporter.retinaImages ? [1, 2] : [1]
+
         // export fixed panels to their own image files
         this._exportFixedLayersToImages(scales)
 
         // hide fixed panels to generate a main page content without fixed panels 
         // and their artefacts (shadows)
         this._hideFixedLayers(true)
-        
-        for(var scale of scales){                     
-            this._exportImage(scale,this,this.nlayer,'',Constants.ARTBOARD_TYPE_OVERLAY != this.artboardType)
+
+        for (var scale of scales) {
+            this._exportImage(scale, this, this.nlayer, '', Constants.ARTBOARD_TYPE_OVERLAY != this.artboardType)
         }
-        
+
         // show fixed panels back
         // ! temporary disabled because an exported image still shows hidden layers
         this._hideFixedLayers(false)
@@ -415,72 +415,72 @@ class PZArtboard extends PZLayer {
     }
 
 
-    _exportOverlayLayers(){
-        log('_exportOverlayLayers: running')  
-        let scales = exporter.retinaImages?[1,2]:[1]  
-        for(const layer of this.overlayLayers){         
-           // log('_exportOverlayLayers: '+layer.name)               
+    _exportOverlayLayers() {
+        log('_exportOverlayLayers: running')
+        let scales = exporter.retinaImages ? [1, 2] : [1]
+        for (const layer of this.overlayLayers) {
+            // log('_exportOverlayLayers: '+layer.name)               
             // need 
-            const artboard = this._findArtboardByName(layer.name+"@")
-            if(!artboard) continue
+            const artboard = this._findArtboardByName(layer.name + "@")
+            if (!artboard) continue
             //
-            for(var scale of scales){                     
-                this._exportImage(scale,undefined,artboard.sketchObject,"-"+layer.name,false)
-            }            
+            for (var scale of scales) {
+                this._exportImage(scale, undefined, artboard.sketchObject, "-" + layer.name, false)
+            }
             //
         }
-        log('_exportOverlayLayers: done!')  
+        log('_exportOverlayLayers: done!')
     }
 
 
-    _exportFixedLayersToImages(scales){
-        for(var layer of this.fixedLayers){               
-            layer.calculateFixedType()         
+    _exportFixedLayersToImages(scales) {
+        for (var layer of this.fixedLayers) {
+            layer.calculateFixedType()
 
             // temporary disable fixed panel shadows
             let orgShadows = undefined
-            let layerWithShadow = this._findLayerShadow(layer)            
-            if(layerWithShadow){
+            let layerWithShadow = this._findLayerShadow(layer)
+            if (layerWithShadow) {
                 orgShadows = layerWithShadow.slayer.style.shadows
-                layerWithShadow.slayer.style.shadows = []            
+                layerWithShadow.slayer.style.shadows = []
             }
-            
+
             // for div and  float fixed layer we need to generate its own image files
-            if(layer.isFloat || layer.isFixedDiv){
+            if (layer.isFloat || layer.isFixedDiv) {
                 //this._exportImage2('1, 2',layer.parent.slayer)         
-                for(var scale of scales){                                       
-                    const l = layer.parent.isSymbolInstance?layer:layer
-                    this._exportImage(scale,l,l.nlayer,"-"+layer.fixedIndex,false)
-                }                 
+                for (var scale of scales) {
+                    const l = layer.parent.isSymbolInstance ? layer : layer
+                    this._exportImage(scale, l, l.nlayer, "-" + layer.fixedIndex, false)
+                }
             }
 
             // restore original fixed panel shadows
-            if(layerWithShadow){
-                layerWithShadow.slayer.style.shadows  = orgShadows
+            if (layerWithShadow) {
+                layerWithShadow.slayer.style.shadows = orgShadows
             }
         }
     }
 
-    _hideFixedLayers(hide){         
+    _hideFixedLayers(hide) {
         const show = !hide
-        for(var layer of this.fixedLayers){
+        for (var layer of this.fixedLayers) {
             // we need to hide/show only div and  float panels
-            if(layer.isFloat || layer.isFixedDiv){
+            if (layer.isFloat || layer.isFixedDiv) {
                 layer.slayer.hidden = hide
             }
 
             // temporary remove fixed panel shadows
-            if(hide){                
+            if (hide) {
                 layer.fixedShadows = layer.slayer.style.shadows
-                layer.slayer.style.shadows = []  
+                layer.slayer.style.shadows = []
             }
 
             // restore original fixed panel shadows
-            if(show){
-                layer.slayer.style.shadows  = layer.fixedShadows
+            if (show) {
+                layer.slayer.style.shadows = layer.fixedShadows
             }
-       }
-       Sketch.getSelectedDocument().sketchObject.documentData().invalidateAffectedSymbolInstances()
+        }
+        Sketch.getSelectedDocument().sketchObject.documentData().invalidateAffectedSymbolInstances()
 
     }
 
