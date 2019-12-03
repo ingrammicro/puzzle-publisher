@@ -10,6 +10,19 @@ function inViewport($el) {
     return Math.max(0, t > 0 ? Math.min(elH, H - t) : Math.min(b, H));
 }
 
+function handleAnimationEndOnHide(el){
+    el.target.removeEventListener("animationend",handleAnimationEndOnHide)
+    el.target.classList.remove("slideOutRight")
+    el.target.classList.add("hidden")
+}
+
+function handleAnimationEndOnShow(el){
+    el.target.removeEventListener("animationend",handleAnimationEndOnShow)
+    el.target.classList.remove("slideInRight")
+}
+
+
+
 class ViewerPage {
 
     constructor() {
@@ -36,7 +49,13 @@ class ViewerPage {
     }
 
     hide(hideChilds = false) {
-        this.imageDiv.addClass("hidden")
+        if ("overlay" == this.type) {
+            const el = this.imageDiv.get(0)
+            el.classList.add("slideOutRight")
+            el.addEventListener("animationend",handleAnimationEndOnHide)
+        }else{
+            this.imageDiv.addClass("hidden")
+        }
 
         if (undefined != this.parentPage) { // current page is overlay      
 
@@ -75,7 +94,14 @@ class ViewerPage {
 
         this.updatePosition()
 
-        this.imageDiv.removeClass("hidden")
+        if ("overlay" == this.type) {
+            const el = this.imageDiv.get(0)
+            this.imageDiv.addClass("animated")
+            this.imageDiv.addClass("slideInRight")
+            el.addEventListener("animationend",handleAnimationEndOnShow)
+        }else{         
+        }        
+        this.imageDiv.removeClass("hidden")            
     }
 
     updatePosition() {
@@ -223,7 +249,7 @@ class ViewerPage {
                 //div.removeClass('divPanel')
                 //div.removeClass('fixedPanelFloat')        
             } else {
-                div.removeClass('fixedPanelFloat')
+                div.removeClass('fixedPanelFloat') // clear after inFixedPanel
                 div.addClass('divPanel')
             }
 
