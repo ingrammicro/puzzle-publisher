@@ -202,7 +202,7 @@ class ViewerPage {
         const currentOverlays = newParentPage.currentOverlays
 
         if (!currentOverlays[this.index]) {
-            if ('overlay' !== link.orgPage.type) {
+            if ('overlay' !== link.orgPage.type || this.overlayClosePrevOverlay) {
                 for (let [index, overlay] of Object.entries(currentOverlays)) {
                     overlay.hide()
                 }

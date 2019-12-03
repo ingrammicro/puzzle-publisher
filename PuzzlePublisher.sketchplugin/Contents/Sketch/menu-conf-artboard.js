@@ -18,6 +18,7 @@ function enableTypeRelated() {
     dialog.enableControlByID('overlayPin', isOverlay)
     dialog.enableControlByID('overlayOverFixed', isOverlay)
     dialog.enableControlByID('overlayAlsoFixed', isOverlay)
+    dialog.enableControlByID('overlayClosePrevOverlay', isOverlay)
     dialog.enableControlByID('enableAutoScroll',
         Constants.ARTBOARD_TYPE_REGULAR == selectedIndex || Constants.ARTBOARD_TYPE_MODAL == selectedIndex
     )
@@ -83,9 +84,9 @@ var onRun = function (context) {
     }
 
     const overlayOverFixed = Settings.layerSettingForKey(artboard, SettingKeys.ARTBOARD_OVERLAY_OVERFIXED) == 1
-
     let overlayAlsoFixed = Settings.layerSettingForKey(artboard, SettingKeys.ARTBOARD_OVERLAY_ALSOFIXED)
     overlayAlsoFixed = (overlayAlsoFixed != undefined) ? overlayAlsoFixed == 1 : true
+    const overlayClosePrevOverlay = Settings.layerSettingForKey(artboard, SettingKeys.ARTBOARD_OVERLAY_CLOSE_PREVOVERLAY) == 1
 
     const enableAutoScroll = Settings.layerSettingForKey(artboard, SettingKeys.ARTBOARD_DISABLE_AUTOSCROLL) != 1
 
@@ -206,6 +207,7 @@ var onRun = function (context) {
     dialog.addLeftLabel("overlayFixedLabel", "Fixed Panels")
     const overlayOverFixedControl = dialog.addCheckbox("overlayOverFixed", "Show overlay over fixed panels", overlayOverFixed)
     const overlayAlsoFixedControl = dialog.addCheckbox("overlayAlsoFixed", "Show overlay as fixed panel if called from fixed panel", overlayAlsoFixed)
+    const overlayClosePrevOverlayControl = dialog.addCheckbox("overlayClosePrevOverlay", "Close the previous overlay if called from overlay", overlayClosePrevOverlay)
 
     enableTypeRelated()
 
@@ -240,8 +242,11 @@ var onRun = function (context) {
             Settings.setLayerSettingForKey(artboard, SettingKeys.ARTBOARD_OVERLAY_OVERFIXED, overlayOverFixedControl.state() == 1)
         if (overlayAlsoFixedControl.isEnabled)
             Settings.setLayerSettingForKey(artboard, SettingKeys.ARTBOARD_OVERLAY_ALSOFIXED, overlayAlsoFixedControl.state() == 1)
-        if (enableAutoScrollControl.isEnabled)
-            Settings.setLayerSettingForKey(artboard, SettingKeys.ARTBOARD_DISABLE_AUTOSCROLL, enableAutoScrollControl.state() != 1)
+        if (overlayOverFixedControl.isEnabled)
+            Settings.setLayerSettingForKey(artboard, SettingKeys.ARTBOARD_OVERLAY_CLOSE_PREVOVERLAY, overlayClosePrevOverlayControl.state() == 1)
+        if (overlayAlsoFixedControl.isEnabled)
+            if (enableAutoScrollControl.isEnabled)
+                Settings.setLayerSettingForKey(artboard, SettingKeys.ARTBOARD_DISABLE_AUTOSCROLL, enableAutoScrollControl.state() != 1)
         if (transNextSecsControl.isEnabled)
             Settings.setLayerSettingForKey(artboard, SettingKeys.ARTBOARD_TRANS_TO_NEXT_SECS, transNextSecs)
 
