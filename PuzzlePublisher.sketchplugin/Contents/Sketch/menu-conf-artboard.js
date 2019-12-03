@@ -207,7 +207,7 @@ var onRun = function (context) {
     dialog.addLeftLabel("overlayFixedLabel", "Fixed Panels")
     const overlayOverFixedControl = dialog.addCheckbox("overlayOverFixed", "Show overlay over fixed panels", overlayOverFixed)
     const overlayAlsoFixedControl = dialog.addCheckbox("overlayAlsoFixed", "Show overlay as fixed panel if called from fixed panel", overlayAlsoFixed)
-    const overlayClosePrevOverlayControl = dialog.addCheckbox("overlayClosePrevOverlay", "Close the previous overlay if called from overlay", overlayClosePrevOverlay)
+    const overlayClosePrevOverlayControl = dialog.addCheckbox("overlayClosePrevOverlay", "Replace the previous overlay if called from overlay", overlayClosePrevOverlay)
 
     enableTypeRelated()
 
