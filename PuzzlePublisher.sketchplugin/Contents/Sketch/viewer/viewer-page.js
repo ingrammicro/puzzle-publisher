@@ -202,7 +202,7 @@ class ViewerPage {
         const currentOverlays = newParentPage.currentOverlays
 
         if (!currentOverlays[this.index]) {
-            if ('overlay' !== link.orgPage.type) {
+            if ('overlay' !== link.orgPage.type || this.overlayClosePrevOverlay) {
                 for (let [index, overlay] of Object.entries(currentOverlays)) {
                     overlay.hide()
                 }
@@ -248,7 +248,7 @@ class ViewerPage {
                 div.css('margin-left', posX + "px")
             } else {
                 // 
-                if (!positionCloned && undefined != this.overlayShadowX &&
+                if (!this.overlayClosePrevOverlay && !positionCloned && undefined != this.overlayShadowX &&
                     (
                         (0 == this.overlayPin) // ARTBOARD_OVERLAY_PIN_HOTSPOT
                         && (3 == this.overlayPinHotspot) //ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_LEFT
@@ -582,8 +582,10 @@ function handleLinkEvent(event) {
 
 
 
-                // if(0==destPage.overlayAlign){ // align on hotspot left  
-                if (pinHotspot && 0 == destPage.overlayPinHotspot) { // ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_LEFT
+                if (destPage.overlayClosePrevOverlay && ('overlay' == orgPage.type)) {
+                    pageX = orgPage.currentX
+                    pageY = orgPage.currentY
+                } else if (pinHotspot && 0 == destPage.overlayPinHotspot) { // ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_LEFT
                     pageY += link.rect.height
                     //}else if(1==destPage.overlayAlign){ // align on hotspot center       
                 } else if (pinHotspot && 1 == destPage.overlayPinHotspot) { // ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_CENTER                                           

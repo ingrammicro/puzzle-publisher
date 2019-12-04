@@ -1,5 +1,8 @@
 # Change Log
 
+##  Version 11.6.0 (3 Dec 2019)
+- Added "Replace the previous overlay if called from overlay" option to Artboard Overlay setttings
+
 ##  Version 11.5.4 (28 Nov 2019)
 - Improved hotspot highlighting key logic to allow users to make screenshots on macOS without highlighted hotposts
 - Element Insprector now shows style library names

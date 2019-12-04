@@ -75,6 +75,8 @@ class PZArtboard extends PZLayer {
             var overlayAlsoFixed = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_OVERLAY_ALSOFIXED)
             this.overlayAlsoFixed = overlayAlsoFixed != undefined ? overlayAlsoFixed : true
         }
+        this.overlayClosePrevOverlay = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_OVERLAY_CLOSE_PREVOVERLAY) == 1
+
 
         this.disableAutoScroll =
             exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_DISABLE_AUTOSCROLL)
@@ -204,6 +206,7 @@ class PZArtboard extends PZLayer {
             js += "'overlayPinPage': " + this.overlayPinPage + ",\n";
             js += "overlayOverFixed:" + (this.overlayOverFixed ? "true" : "false") + ",\n"
             js += "overlayAlsoFixed:" + (this.overlayAlsoFixed ? "true" : "false") + ",\n"
+            js += "overlayClosePrevOverlay:" + (this.overlayClosePrevOverlay ? "true" : "false") + ",\n"
         } else {
             js += "'type': 'regular',\n";
         }

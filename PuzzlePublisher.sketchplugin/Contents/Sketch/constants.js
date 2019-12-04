@@ -117,6 +117,7 @@ var SettingKeys = {
     ARTBOARD_OVERLAY_PIN_PAGE: "artboardOverlayPinPage",
     ARTBOARD_OVERLAY_OVERFIXED: "artboardOverFixed",
     ARTBOARD_OVERLAY_ALSOFIXED: "artboardAlsoFixed",
+    ARTBOARD_OVERLAY_CLOSE_PREVOVERLAY: "artboardClosePrevOverlay",
 
     DOC_EXPORTING_URL: "docExportingURL", // legacy, replaced by PLUGIN_EXPORTING_URL
     DOC_PUBLISH_COMPRESS: "docPublishCompress",
