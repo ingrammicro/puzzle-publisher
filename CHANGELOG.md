@@ -1,5 +1,10 @@
 # Change Log
 
+##  Version 11.6.1 (5 Dec 2019)
+- Fixed Element Inspector (Issue #11)
+- Fixed overlays in modal
+- Removed modal scroller (Issue #12)
+
 ##  Version 11.6.0 (3 Dec 2019)
 - Added "Replace the previous overlay if called from overlay" option to Artboard Overlay setttings
 
