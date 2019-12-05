@@ -86,13 +86,20 @@ class ViewerPage {
             var regPage = viewer.lastRegularPage
 
             this.currentLeft += Math.round(regPage.width / 2) - Math.round(this.width / 2)
-            this.currentTop += Math.round(inViewport(regPage.imageDiv) / 2) - Math.round(this.height / 2 * viewer.currentZoom)
+            const visibleHeight = inViewport(regPage.imageDiv)
+            this.currentTop += Math.round(visibleHeight / 2) - Math.round(this.height / 2 * viewer.currentZoom)
             if (this.currentTop < 0) this.currentTop = 0
             if (this.currentLeft < 0) this.currentLeft = 0
 
             var contentModal = $('#content-modal');
             contentModal.css("margin-left", this.currentLeft + "px")
             contentModal.css("margin-top", this.currentTop + "px")
+            if (this.height >= visibleHeight)
+                contentModal.css("overflow-y", "scroll")
+            else
+                contentModal.css("overflow-y", "")
+
+
         } else if ("overlay" == this.type) {
             this.currentLeft = viewer.currentPage.currentLeft
             this.currentTop = viewer.currentPage.currentTop
