@@ -267,7 +267,7 @@ class ViewerPage {
                 this.currentX = posX
                 this.currentY = posY
 
-                //newParentPage.imageDiv.append(div)
+                if ("modal" == orgPage.type) newParentPage.imageDiv.append(div)
                 div.css('top', posY + "px")
                 div.css('margin-left', posX + "px")
             }
