@@ -59,9 +59,11 @@ class PZLayer {
 
                 // prepare data for Element Inspector
                 const lib = sSymbolMaster.getLibrary()
+                this.smName = sSymbolMaster.name + ""
                 if (lib) {
-                    this.smName = sSymbolMaster.name + ""
                     this.smLib = lib.name
+                } else {
+
                 }
             }
         } else {
@@ -72,6 +74,10 @@ class PZLayer {
             var sharedStyle = this.slayer.sharedStyle
             if (sharedStyle) {
                 this.styleName = sharedStyle.name
+                const lib = sharedStyle.getLibrary()
+                if (lib) {
+                    this.smLib = lib.name
+                }
             }
             if ("Text" == sLayer.type) {
                 this.text = this.slayer.text + ""

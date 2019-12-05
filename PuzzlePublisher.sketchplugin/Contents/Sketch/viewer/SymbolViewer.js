@@ -179,7 +179,7 @@ class SymbolViewer {
                         continue
                     }
                 }
-                if (undefined != l.styleName) {
+                if (!this.showSymbols && undefined != l.styleName) {
                     const styleInfo = this._findStyleAndLibByStyleName(l.styleName)
                     if (styleInfo && styleInfo.libName == this.currentLib) {
                         this._showElement(l)
@@ -187,7 +187,7 @@ class SymbolViewer {
                     }
                 }
             } else {
-                if ((this.showSymbols && l.smName != undefined) || (!isParentSymbol && l.styleName != undefined)) {
+                if ((this.showSymbols && l.smName != undefined) || (!this.showSymbols && !isParentSymbol && l.styleName != undefined)) {
                     this._showElement(l)
                 }
             }
@@ -241,19 +241,21 @@ class SymbolViewer {
             if (symName != undefined) {
                 info = "<p class='head'>Symbol</p>" + symName
                 info += "<p class='head'>Symbol Source</p>"
-                if (symInfo && undefined != symInfo.libName)
-                    info += symInfo.libName + " (external)"
-                else
+                if (layer.smLib != undefined) {
+                    info += layer.smLib + " (external)"
+                } else {
                     info += "Document"
+                }
 
             }
             if (styleName != undefined) {
                 info = "<p class='head'>Style</p> " + styleName
                 info += "<p class='head'>Style Source</p>"
-                if (styleInfo && undefined != styleInfo.libName)
-                    info += styleInfo.libName + " (external)"
-                else
+                if (layer.smLib != undefined) {
+                    info += layer.smLib + " (external)"
+                } else {
                     info += "Document"
+                }
             }
 
 
