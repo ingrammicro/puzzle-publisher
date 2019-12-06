@@ -66,7 +66,9 @@ class VersionViewer {
         this._restoreNewImages()
         this.visible = false
         $('#version_viewer').addClass("hidden")
-        document.location.search = "" // remove ?v
+        if (document.location.search.includes('v')) {
+            document.location.search = "" // remove ?v
+        }
     }
 
     pageChanged() {
@@ -86,10 +88,10 @@ class VersionViewer {
         const event = jevent.originalEvent
 
         if (38 == event.which && event.shiftKey) {   // shift + up
-            v.increaseVersion()
+            viewer.increaseVersion()
         } else if (40 == event.which && event.shiftKey) {   // shift + down
-            v.decreaseVersion()
-        } else if (86 == event.which) { // v
+            viewer.decreaseVersion()
+        } else if (86 == event.which) { // "v" key
             this.toggle()
         } else {
             return false
@@ -135,9 +137,14 @@ class VersionViewer {
         for (const screen of data['screens_changed']) {
             if (screen['is_new'] != showNew) continue;
             const pageIndex = viewer.getPageIndex(screen['screen_name'], -1)
-            var pageName = pageIndex >= 0 ? story.pages[pageIndex].title : screen['screen_name'];
+            const page = pageIndex >= 0 ? story.pages[pageIndex] : undefined
 
-            if (pageIndex >= 0 && screen['is_diff']) {
+            // We don't need to show external artboards here
+            if (page && ("external" == page.type)) continue
+
+            var pageName = page ? page.title : screen['screen_name'];
+
+            if (page && screen['is_diff']) {
                 this.screenDiffs[screen['screen_name']] = screen
             }
 
