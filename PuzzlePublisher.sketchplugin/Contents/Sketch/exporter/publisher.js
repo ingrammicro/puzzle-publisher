@@ -76,10 +76,10 @@ class Publisher {
             if (this.message != "--" && this.serverToolsPath != "") {
                 try {
                     var url = this.siteRoot + this.serverToolsPath + Constants.SERVER_ANNOUNCE_SCRIPT
-                    url += "?author=" + encodeURI(this.authorName)
-                    url += "&msg=" + encodeURI(this.message)
-                    url += "&ver=" + encodeURI(this.ver)
-                    url += "&dir=" + encodeURI(announceFolder)
+                    url += "?author=" + encodeURI(this.authorName).replace(/[#]/g, '')
+                    url += "&msg=" + encodeURI(this.message).replace(/[#]/g, '')
+                    url += "&ver=" + encodeURI(this.ver).replace(/[#]/g, '')
+                    url += "&dir=" + encodeURI(announceFolder).replace(/[#]/g, '')
                     if ('--NOTELE' == this.message) {
                         url += "&NOTELE=1"
                     }
