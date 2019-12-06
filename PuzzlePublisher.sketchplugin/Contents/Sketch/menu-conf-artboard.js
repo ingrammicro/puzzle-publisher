@@ -112,7 +112,7 @@ var onRun = function (context) {
 
     ///////////////// CREATE DIALOG ///////////////////////
     dialog = new UIDialog("Artboard Settings", NSMakeRect(0, 0, 480, 450), "Save", "Configure exporting options for the selected artboard. ")
-    dialog.initTabs(["General", "Overlay"])
+    dialog.initTabs(["General", "Overlay", "Transition"])
 
     /////////////////////////// PAGE 1
     dialog.addLeftLabel("", "Artboard Type")
@@ -122,15 +122,6 @@ var onRun = function (context) {
 
     const enableShadowControl = dialog.addCheckbox("enableShadow", "Show modal dialog or overlay shadow", enableShadow)
     dialog.addHint("enableShadowHint", "Dim a previous artboard to set visual focus on an modal.")
-
-    dialog.addDivider()
-    dialog.addLeftLabel("", "Navigation")
-
-    const enableAutoScrollControl = dialog.addCheckbox("enableAutoScroll", "Scroll browser page to top", enableAutoScroll)
-    dialog.addHint("enableAutoScrollHint", "The artboard will be scrolled on top after showing")
-
-    const transNextSecsControl = dialog.addTextInput("transNextSecs", "Delay for autotranstion to next screen (Secs)", transNextSecs, '', 60)
-    dialog.addHint("transNextSecsHint", "Go to the next page auto the delay (0.001 - 60 secs)")
 
     /////////////////////////// PAGE 2
 
@@ -206,6 +197,18 @@ var onRun = function (context) {
     dialog.addLeftLabel("overlayFixedLabel", "Fixed Panels")
     const overlayOverFixedControl = dialog.addCheckbox("overlayOverFixed", "Show overlay over fixed panels", overlayOverFixed)
     const overlayAlsoFixedControl = dialog.addCheckbox("overlayAlsoFixed", "Show overlay as fixed panel if called from fixed panel", overlayAlsoFixed)
+
+    // PAGE "TRANSITION"
+    dialog.setTabForViewsCreating(2)
+
+    dialog.addLeftLabel("", "Transition")
+
+    const enableAutoScrollControl = dialog.addCheckbox("enableAutoScroll", "Scroll browser page to top", enableAutoScroll)
+    dialog.addHint("enableAutoScrollHint", "The artboard will be scrolled on top after showing")
+
+    const transNextSecsControl = dialog.addTextInput("transNextSecs", "Delay for autotranstion to next screen (Secs)", transNextSecs, '', 60)
+    dialog.addHint("transNextSecsHint", "Go to the next page auto the delay (0.001 - 60 secs)")
+
 
     enableTypeRelated()
 
