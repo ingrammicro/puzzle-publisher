@@ -83,6 +83,9 @@ class PZArtboard extends PZLayer {
         if (undefined != this.transNextSecs && '' == this.transNextSecs)
             this.transNextSecs = undefined
 
+        this.transAnimType = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_TRANS_ANIM_TYPE)
+        if (undefined == this.transAnimType) this.transAnimType = 0 // None by default
+
         this.overlayByEvent = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_OVERLAY_BY_EVENT)
         if (this.overlayByEvent == undefined || this.overlayByEvent == "") this.overlayByEvent = 0
 
@@ -155,6 +158,8 @@ class PZArtboard extends PZLayer {
         if (this.transNextSecs != undefined) {
             js += "'transNextMsecs': " + parseFloat(this.transNextSecs) * 1000 + ",\n";
         }
+
+        js += "'transAnimType': " + this.transAnimType + ",\n";
 
         if (this.disableAutoScroll) {
             js += "'disableAutoScroll': " + (this.disableAutoScroll ? 'true' : 'false') + ",\n";

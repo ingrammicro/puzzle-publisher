@@ -2,6 +2,14 @@
 ///
 
 const EVENT_HOVER = 1
+const TRANS_ANIM_NONE = 0
+const TRANS_ANIMATIONS = [
+    [], { in: "slideInDown", out: "slideOutUp" },
+    { in: "slideInLeft", out: "slideOutLeft" }, { in: "fadeIn", out: "fadeOut" }, { in: "slideInRight", out: "slideOutRight" },
+    { in: "slideInUp", out: "slideOutDown" }
+]
+
+
 
 function inViewport($el) {
     var elH = $el.outerHeight(),
@@ -10,15 +18,15 @@ function inViewport($el) {
     return Math.max(0, t > 0 ? Math.min(elH, H - t) : Math.min(b, H));
 }
 
-function handleAnimationEndOnHide(el){
-    el.target.removeEventListener("animationend",handleAnimationEndOnHide)
-    el.target.classList.remove("slideOutRight")
+function handleAnimationEndOnHide(el) {
+    el.target.removeEventListener("animationend", handleAnimationEndOnHide)
+    el.target.classList.remove(el.target.getAttribute("_tch"))
     el.target.classList.add("hidden")
 }
 
-function handleAnimationEndOnShow(el){
-    el.target.removeEventListener("animationend",handleAnimationEndOnShow)
-    el.target.classList.remove("slideInRight")
+function handleAnimationEndOnShow(el) {
+    el.target.removeEventListener("animationend", handleAnimationEndOnShow)
+    el.target.classList.remove(el.target.getAttribute("_tcs"))
 }
 
 
@@ -49,11 +57,13 @@ class ViewerPage {
     }
 
     hide(hideChilds = false) {
-        if ("overlay" == this.type) {
+        if (TRANS_ANIM_NONE != this.transAnimType) {
+            const transInfo = TRANS_ANIMATIONS[this.transAnimType]
             const el = this.imageDiv.get(0)
-            el.classList.add("slideOutRight")
-            el.addEventListener("animationend",handleAnimationEndOnHide)
-        }else{
+            el.setAttribute("_tch", transInfo.out)
+            el.classList.add(transInfo.out)
+            el.addEventListener("animationend", handleAnimationEndOnHide)
+        } else {
             this.imageDiv.addClass("hidden")
         }
 
@@ -94,14 +104,16 @@ class ViewerPage {
 
         this.updatePosition()
 
-        if ("overlay" == this.type) {
+        if (TRANS_ANIM_NONE != this.transAnimType) {
+            const transInfo = TRANS_ANIMATIONS[this.transAnimType]
             const el = this.imageDiv.get(0)
+            el.setAttribute("_tcs", transInfo.in)
             this.imageDiv.addClass("animated")
-            this.imageDiv.addClass("slideInRight")
-            el.addEventListener("animationend",handleAnimationEndOnShow)
-        }else{         
-        }        
-        this.imageDiv.removeClass("hidden")            
+            this.imageDiv.addClass(transInfo.in)
+            el.addEventListener("animationend", handleAnimationEndOnShow)
+        } else {
+        }
+        this.imageDiv.removeClass("hidden")
     }
 
     updatePosition() {
