@@ -106,7 +106,7 @@ class PZDoc {
             inspectors += "'" + Utils.toFilename(lib.jsLib.name) + "':" + (inspectorData ? inspectorData : "{}")
             //
             const pathToVars = libPath + Constants.VARSFILE_POSTFIX
-            const varsData = Utils.readFile(pathToSymbolTokens)
+            const varsData = Utils.readFile(pathToVars)
             if (vars != "") vars += ","
             vars += "'" + Utils.toFilename(lib.jsLib.name) + "':" + (varsData ? varsData : "{}")
         }

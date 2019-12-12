@@ -107,6 +107,11 @@ function doBlinkHotspots() {
 }
 
 
+// str: .transit .slideInDown"
+function splitStylesStr(str) {
+    return str.split(" ").map(s => s.replace(".", ""))
+}
+
 // ============================ VIEWER ====================================
 
 function createViewer(story, files) {
@@ -144,6 +149,19 @@ function createViewer(story, files) {
             this.initParseGetParams()
             this.buildUserStory();
             this.initializeHighDensitySupport();
+            this.initAnimations()
+        },
+
+        initAnimations: function () {
+            if (story.layersExist) {
+                // TODO
+            }
+            // transform ".transit .slideInDown" strings into class name arrays
+            TRANS_ANIMATIONS.forEach(function (t, index) {
+                if (0 == index) return
+                t.in_classes = splitStylesStr(t.in_str_classes)
+                t.out_classes = splitStylesStr(t.out_str_classes)
+            }, this)
         },
 
         initializeLast: function () {

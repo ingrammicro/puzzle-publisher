@@ -3,10 +3,13 @@
 
 const EVENT_HOVER = 1
 const TRANS_ANIM_NONE = 0
-const TRANS_ANIMATIONS = [
-    [], { in: "slideInDown", out: "slideOutUp" },
-    { in: "slideInLeft", out: "slideOutLeft" }, { in: "fadeIn", out: "fadeOut" }, { in: "slideInRight", out: "slideOutRight" },
-    { in: "slideInUp", out: "slideOutDown" }
+let TRANS_ANIMATIONS = [
+    {},
+    { in_str_classes: ".transit .slideInDown", out_str_classes: ".transit .slideOutDown", in_token: "transition-slidein-down", out_token: "transition-slideout-down" },
+    { in_str_classes: ".transit .slideInLeft", out_str_classes: ".transit .slideOutLeft", in_token: "transition-slidein-left", out_token: "transition-slideout-left" },
+    { in_str_classes: ".transit .fadeIn", out_str_classes: ".transit .fadeOut", in_token: "transition-fadein_str_classes:", out_token: "transition-fadeout" },
+    { in_str_classes: ".transit .slideInRight", out_str_classes: ".transit .slideOutRigh", in_token: "transition-slidein-right", out_token: "transition-slideout-right" },
+    { in_str_classes: ".transit .slideInUp", out_str_classes: ".transit .slideOutUp", in_token: "transition-slidein-up", out_token: "transition-slideout-up" },
 ]
 
 
@@ -20,13 +23,20 @@ function inViewport($el) {
 
 function handleAnimationEndOnHide(el) {
     el.target.removeEventListener("animationend", handleAnimationEndOnHide)
-    el.target.classList.remove(el.target.getAttribute("_tch"))
+    const t = TRANS_ANIMATIONS[el.target.getAttribute("_tch")]
+    t.out_classes.forEach(function (className) {
+        el.target.classList.remove(className)
+    })
     el.target.classList.add("hidden")
 }
 
 function handleAnimationEndOnShow(el) {
     el.target.removeEventListener("animationend", handleAnimationEndOnShow)
-    el.target.classList.remove(el.target.getAttribute("_tcs"))
+    const t = TRANS_ANIMATIONS[el.target.getAttribute("_tcs")]
+    t.out_classes.forEach(function (className) {
+        el.target.classList.remove(className)
+    })
+
 }
 
 
@@ -60,8 +70,10 @@ class ViewerPage {
         if (TRANS_ANIM_NONE != this.transAnimType) {
             const transInfo = TRANS_ANIMATIONS[this.transAnimType]
             const el = this.imageDiv.get(0)
-            el.setAttribute("_tch", transInfo.out)
-            el.classList.add(transInfo.out)
+            el.setAttribute("_tch", this.transAnimType)
+            transInfo.out_classes.forEach(function (className) {
+                this.imageDiv.addClass(className)
+            }, this)
             el.addEventListener("animationend", handleAnimationEndOnHide)
         } else {
             this.imageDiv.addClass("hidden")
@@ -107,9 +119,10 @@ class ViewerPage {
         if (TRANS_ANIM_NONE != this.transAnimType) {
             const transInfo = TRANS_ANIMATIONS[this.transAnimType]
             const el = this.imageDiv.get(0)
-            el.setAttribute("_tcs", transInfo.in)
-            this.imageDiv.addClass("animated")
-            this.imageDiv.addClass(transInfo.in)
+            el.setAttribute("_tcs", this.transAnimType)
+            transInfo.in_classes.forEach(function (className, index) {
+                this.imageDiv.addClass(className)
+            }, this)
             el.addEventListener("animationend", handleAnimationEndOnShow)
         } else {
         }

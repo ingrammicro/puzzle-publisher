@@ -21,6 +21,7 @@ class Exporter {
         this.page = page;
         this.context = context;
         this.customArtboardFrame = undefined
+        this.enableTransitionAnimation = false
         this.siteIconLayer = undefined
         this.myLayers = []
         this.jsStory = '';
@@ -174,7 +175,8 @@ class Exporter {
             backColor: this.backColor,
             centerContent: this.Settings.settingForKey(SettingKeys.PLUGIN_POSITION) === Constants.POSITION_CENTER,
             loadLayers: this.enabledJSON,
-            cssFileNames: this.enabledJSON ? this.mDoc.getCSSIncludes() : undefined
+            cssFileNames: this.enabledJSON ? this.mDoc.getCSSIncludes() : undefined,
+            enableAnimations: this.enableTransitionAnimation,
         }
 
 
