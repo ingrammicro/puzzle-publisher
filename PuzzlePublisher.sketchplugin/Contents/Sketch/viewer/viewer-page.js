@@ -5,11 +5,11 @@ const EVENT_HOVER = 1
 const TRANS_ANIM_NONE = 0
 let TRANS_ANIMATIONS = [
     {},
-    { in_str_classes: ".transit .slideInDown", out_str_classes: ".transit .slideOutDown", in_token: "transition-slidein-down", out_token: "transition-slideout-down" },
+    { in_str_classes: ".transit .slideInUp", out_str_classes: ".transit .slideOutUp", in_token: "transition-slidein-up", out_token: "transition-slideout-up" },
     { in_str_classes: ".transit .slideInLeft", out_str_classes: ".transit .slideOutLeft", in_token: "transition-slidein-left", out_token: "transition-slideout-left" },
     { in_str_classes: ".transit .fadeIn", out_str_classes: ".transit .fadeOut", in_token: "transition-fadein_str_classes:", out_token: "transition-fadeout" },
-    { in_str_classes: ".transit .slideInRight", out_str_classes: ".transit .slideOutRigh", in_token: "transition-slidein-right", out_token: "transition-slideout-right" },
-    { in_str_classes: ".transit .slideInUp", out_str_classes: ".transit .slideOutUp", in_token: "transition-slidein-up", out_token: "transition-slideout-up" },
+    { in_str_classes: ".transit .slideInRight", out_str_classes: ".transit .slideOutRight", in_token: "transition-slidein-right", out_token: "transition-slideout-right" },
+    { in_str_classes: ".transit .slideInDown", out_str_classes: ".transit .slideOutDown", in_token: "transition-slidein-down", out_token: "transition-slideout-down" },
 ]
 
 
