@@ -1,57 +1,6 @@
-function buildMainHTML(options) {
 
-    const verPostfix = "?" + Constants.DOCUMENT_VERSION_PLACEHOLDER
-
-    let s = "";
-    s += '<!DOCTYPE html>\n<html>\n<head>\n<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">\n';
-    s += '<meta name="generator" content="Generated using Puzzle Publisher plugin for Sketch.app - https://github.com/ingrammicro/puzzle-publisher">\n';
-    s += '<title>' + options.docName + '</title>\n';
-    s += '<link rel="shortcut icon"  type="image/png?" href="resources/icon.png' + verPostfix + '">\n';
-    // s += '<link rel="mask-icon" href="https://sketch.cloud/favicon.svg?v=4" color="rgb(252, 177, 0)">\n';
-    s += '<link rel="stylesheet" type="text/css" href="resources/viewer.css' + verPostfix + '">\n';
-    if (options.centerContent) {
-        s += '<link rel="stylesheet" type="text/css" href="resources/viewer-center.css' + verPostfix + '">\n';
-    } else {
-        s += '<link rel="stylesheet" type="text/css" href="resources/viewer-top.css' + verPostfix + '">\n';
-    }
-    s += '<script type="text/javascript" src="resources/jquery-3.3.1.min.js" charset="UTF-8"></script>\n';
-    //  s += '<script type="text/javascript" src="resources/jquery-migrate-1.4.1.min.js" charset="UTF-8"></script>\n';
-    s += '<script type="text/javascript" src="resources/jquery.hotkeys.js" charset="UTF-8"></script>\n';
-    s += '<script type="text/javascript" src="resources/jquery.ba-hashchange.min.js" charset="UTF-8"></script>\n';
-    s += '<script type="text/javascript" src="viewer/viewer-page.js' + verPostfix + '" charset="UTF-8"></script>\n';
-    s += '<script type="text/javascript" src="viewer/story.js' + verPostfix + '" charset="UTF-8"></script>\n';
-    s += '<script type="text/javascript" src="viewer/gallery.js' + verPostfix + '" charset="UTF-8"></script>\n';
-    s += '<script type="text/javascript" src="viewer/viewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
-    if (options.loadLayers) {
-        s += '<script type="text/javascript" src="viewer/LayersData.js' + verPostfix + '" charset="UTF-8"></script>\n';
-        s += '<script type="text/javascript" src="viewer/SymbolViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
-    }
-    s += '<script type="text/javascript" src="viewer/VersionViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
-    if (options.commentsURL != '') {
-        s += '<link rel="stylesheet" type="text/css" href="' + options.commentsURL + '/EasyPageComments.css' + verPostfix + '"/>\n';
-        s += '<script type="text/javascript" src="' + options.commentsURL + '/EasyPageComments.js' + verPostfix + '"></script>\n';
-        s += '<script type="text/javascript" src="' + options.commentsURL + '/comments.js' + verPostfix + '" charset="UTF-8"></script>\n';
-    }
-    s += '<script type="text/javascript">\n';
-    s += '  var viewer = createViewer(story, "images");\n';
-    if (options.commentsURL != '') {
-        s += '  var comments = createComments();\n';
-    }
-    s += '</script>\n';
-    if (options.googleCode != '') {
-        s += "<!-- Global site tag (gtag.js) - Google Analytics -->\n"
-        s += "<script async src='https://www.googletagmanager.com/gtag/js?id=" + options.googleCode + "'></script>\n"
-        s += "<script>\n"
-        s += " window.dataLayer = window.dataLayer || [];\n"
-        s += " function gtag(){dataLayer.push(arguments);}\n"
-        s += " gtag('js', new Date());\n"
-        s += "gtag('config', '" + options.googleCode + "');\n"
-        s += "</script>\n"
-    }
-    s += '<!--HEAD_INJECT-->\n';
-    s += '</head>\n';
-    s += '<body class="screen" style="background:' + options.backColor + '">\n';
-    s += '<div class="containerSVG"> <svg> \
+function buildMainHTML_NavigationIcons(options) {
+    return '<div class="containerSVG"> <svg> \
     <symbol id="icMenu" viewBox="0 0 24 24"> \
         <path fill="#404B58" d="M4,14 C2.8954305,14 2,13.1045695 2,12 C2,10.8954305 2.8954305,10 4,10 C5.1045695,10 6,10.8954305 6,12 C6,13.1045695 5.1045695,14 4,14 Z M12,14 C10.8954305,14 10,13.1045695 10,12 C10,10.8954305 10.8954305,10 12,10 C13.1045695,10 14,10.8954305 14,12 C14,13.1045695 13.1045695,14 12,14 Z M20,14 C18.8954305,14 18,13.1045695 18,12 C18,10.8954305 18.8954305,10 20,10 C21.1045695,10 22,10.8954305 22,12 C22,13.1045695 21.1045695,14 20,14 Z"/> \
     </symbol> \
@@ -105,6 +54,67 @@ function buildMainHTML(options) {
       <path fill="#FFFFFF" d="M4.29289322,4.29289322 C4.68341751,3.90236893 5.31658249,3.90236893 5.70710678,4.29289322 L5.70710678,4.29289322 L12,10.585 L18.2928932,4.29289322 C18.6533772,3.93240926 19.2206082,3.90467972 19.6128994,4.20970461 L19.7071068,4.29289322 C20.0976311,4.68341751 20.0976311,5.31658249 19.7071068,5.70710678 L19.7071068,5.70710678 L13.415,12 L19.7071068,18.2928932 C20.0675907,18.6533772 20.0953203,19.2206082 19.7902954,19.6128994 L19.7071068,19.7071068 C19.3165825,20.0976311 18.6834175,20.0976311 18.2928932,19.7071068 L18.2928932,19.7071068 L12,13.415 L5.70710678,19.7071068 C5.34662282,20.0675907 4.77939176,20.0953203 4.38710056,19.7902954 L4.29289322,19.7071068 C3.90236893,19.3165825 3.90236893,18.6834175 4.29289322,18.2928932 L4.29289322,18.2928932 L10.585,12 L4.29289322,5.70710678 C3.93240926,5.34662282 3.90467972,4.77939176 4.20970461,4.38710056 Z" /> \
     </symbol>\
     </svg> </div>\n';
+}
+
+function buildMainHTML(options) {
+
+    const verPostfix = "?" + Constants.DOCUMENT_VERSION_PLACEHOLDER
+
+    let s = "";
+    s += '<!DOCTYPE html>\n<html>\n<head>\n<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">\n';
+    s += '<meta name="generator" content="Generated using Puzzle Publisher plugin for Sketch.app - https://github.com/ingrammicro/puzzle-publisher">\n';
+    s += '<title>' + options.docName + '</title>\n';
+    s += '<link rel="shortcut icon"  type="image/png?" href="resources/icon.png' + verPostfix + '">\n';
+    // s += '<link rel="mask-icon" href="https://sketch.cloud/favicon.svg?v=4" color="rgb(252, 177, 0)">\n';
+    s += '<link rel="stylesheet" type="text/css" href="resources/viewer.css' + verPostfix + '">\n';
+    if (options.centerContent) {
+        s += '<link rel="stylesheet" type="text/css" href="resources/viewer-center.css' + verPostfix + '">\n';
+    } else {
+        s += '<link rel="stylesheet" type="text/css" href="resources/viewer-top.css' + verPostfix + '">\n';
+    }
+    if (undefined != options.cssFileNames) {
+        options.cssFileNames.forEach(function (cssFile) {
+            s += '<link rel="stylesheet" type="text/css" href="resources/' + cssFile + verPostfix + '">\n';
+        })
+    }
+    s += '<script type="text/javascript" src="resources/jquery-3.3.1.min.js" charset="UTF-8"></script>\n';
+    //  s += '<script type="text/javascript" src="resources/jquery-migrate-1.4.1.min.js" charset="UTF-8"></script>\n';
+    s += '<script type="text/javascript" src="resources/jquery.hotkeys.js" charset="UTF-8"></script>\n';
+    s += '<script type="text/javascript" src="resources/jquery.ba-hashchange.min.js" charset="UTF-8"></script>\n';
+    s += '<script type="text/javascript" src="viewer/viewer-page.js' + verPostfix + '" charset="UTF-8"></script>\n';
+    s += '<script type="text/javascript" src="viewer/story.js' + verPostfix + '" charset="UTF-8"></script>\n';
+    s += '<script type="text/javascript" src="viewer/gallery.js' + verPostfix + '" charset="UTF-8"></script>\n';
+    s += '<script type="text/javascript" src="viewer/viewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
+    if (options.loadLayers) {
+        s += '<script type="text/javascript" src="viewer/LayersData.js' + verPostfix + '" charset="UTF-8"></script>\n';
+        s += '<script type="text/javascript" src="viewer/SymbolViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
+    }
+    s += '<script type="text/javascript" src="viewer/VersionViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
+    if (options.commentsURL != '') {
+        s += '<link rel="stylesheet" type="text/css" href="' + options.commentsURL + '/EasyPageComments.css' + verPostfix + '"/>\n';
+        s += '<script type="text/javascript" src="' + options.commentsURL + '/EasyPageComments.js' + verPostfix + '"></script>\n';
+        s += '<script type="text/javascript" src="' + options.commentsURL + '/comments.js' + verPostfix + '" charset="UTF-8"></script>\n';
+    }
+    s += '<script type="text/javascript">\n';
+    s += '  var viewer = createViewer(story, "images");\n';
+    if (options.commentsURL != '') {
+        s += '  var comments = createComments();\n';
+    }
+    s += '</script>\n';
+    if (options.googleCode != '') {
+        s += "<!-- Global site tag (gtag.js) - Google Analytics -->\n"
+        s += "<script async src='https://www.googletagmanager.com/gtag/js?id=" + options.googleCode + "'></script>\n"
+        s += "<script>\n"
+        s += " window.dataLayer = window.dataLayer || [];\n"
+        s += " function gtag(){dataLayer.push(arguments);}\n"
+        s += " gtag('js', new Date());\n"
+        s += "gtag('config', '" + options.googleCode + "');\n"
+        s += "</script>\n"
+    }
+    s += '<!--HEAD_INJECT-->\n';
+    s += '</head>\n';
+    s += '<body class="screen" style="background:' + options.backColor + '">\n';
+    s += buildMainHTML_NavigationIcons(options)
     s += '<!-- load indicator -->\n';
     s += '<div id="loading" >\n';
     s += '\

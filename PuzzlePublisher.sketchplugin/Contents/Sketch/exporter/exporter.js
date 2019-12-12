@@ -173,7 +173,8 @@ class Exporter {
             serverTools: this.serverTools,
             backColor: this.backColor,
             centerContent: this.Settings.settingForKey(SettingKeys.PLUGIN_POSITION) === Constants.POSITION_CENTER,
-            loadLayers: this.enabledJSON
+            loadLayers: this.enabledJSON,
+            cssFileNames: this.enabledJSON ? this.mDoc.getCSSIncludes() : undefined
         }
 
 
@@ -238,8 +239,8 @@ class Exporter {
         log(" buildPreviews: done!!!!!")
     }
 
-    createViewerFile(fileName) {
-        return this.prepareFilePath(this._outputPath + "/" + Constants.VIEWER_DIRECTORY, fileName);
+    createViewerFile(fileName, folder = Constants.VIEWER_DIRECTORY) {
+        return this.prepareFilePath(this._outputPath + "/" + folder, fileName);
     }
 
     // result: true OR false
@@ -342,7 +343,8 @@ class Exporter {
         const json = this.mDoc.getJSON()
 
         const pathJSFile = this.createViewerFile('LayersData.js')
-        return Utils.writeToFile(symbolData + "var layersData = " + json, pathJSFile)
+        if (!Utils.writeToFile(symbolData + "var layersData = " + json, pathJSFile)) return false
+
     }
 
 

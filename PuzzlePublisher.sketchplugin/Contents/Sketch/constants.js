@@ -21,6 +21,11 @@ var Constants = {
     EXPORT_MODE_SELECTED_ARTBOARDS: 0,
     EXPORT_MODE_CURRENT_PAGE: 1,
     DEF_BACK_COLOR: "#646464",
+    //
+    SYMBOLTOKENFILE_POSTFIX: "-inspector.json",
+    CSSFILE_POSTFIX: "-viewer.css",
+    VARSFILE_POSTFIX: "-vars.json",
+    ///
     INT_LAYER_NAME_BACKCOLOR: "@MainBackground@",
     INT_LAYER_NAME_SITEICON: "@SiteIcon@",
     INT_LAYER_NAME_OVERLAYONHOVER: "@OverlayOnhover@",

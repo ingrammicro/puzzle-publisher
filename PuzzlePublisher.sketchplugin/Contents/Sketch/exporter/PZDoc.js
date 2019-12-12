@@ -95,17 +95,49 @@ class PZDoc {
     getSymbolData() {
         // load library inspector file
         let inspectors = ""
+        let vars = ""
         const libs = this._getLibraries()
         for (const lib of libs) {
-            let pathToSymbolTokens = Utils.cutLastPathFolder(lib.sDoc.path) + "/" + lib.jsLib.name + "-inspector.json"
-            //log('pathToSymbolTokens = '+pathToSymbolTokens+" name="+lib.jsLib.name)        
+            const libPath = Utils.cutLastPathFolder(lib.sDoc.path) + "/" + lib.jsLib.name
+            const pathToSymbolTokens = libPath + Constants.SYMBOLTOKENFILE_POSTFIX
+            log('pathToSymbolTokens = ' + pathToSymbolTokens + " name=" + lib.jsLib.name)
             const inspectorData = Utils.readFile(pathToSymbolTokens)
             if (inspectors != "") inspectors += ","
-            inspectors += "'" + lib.jsLib.name + "':" + (inspectorData ? inspectorData : "{}")
+            inspectors += "'" + Utils.toFilename(lib.jsLib.name) + "':" + (inspectorData ? inspectorData : "{}")
+            //
+            const pathToVars = libPath + Constants.VARSFILE_POSTFIX
+            const varsData = Utils.readFile(pathToSymbolTokens)
+            if (vars != "") vars += ","
+            vars += "'" + Utils.toFilename(lib.jsLib.name) + "':" + (varsData ? varsData : "{}")
         }
-
-        return "var symbolsData = {" + inspectors + "};"
+        return "var symbolsData = {" + inspectors + "};" +
+            "var varsData = {" + vars + "};"
     }
+
+
+    getCSSIncludes() {
+        const cssIncludes = []
+        const libs = this._getLibraries()
+        for (const lib of libs) {
+            const libPath = Utils.cutLastPathFolder(lib.sDoc.path) + "/" + lib.jsLib.name
+            // Copy library CSS to Resources folder
+            {
+                const pathSrcCSS = libPath + Constants.CSSFILE_POSTFIX
+                const cssFileName = Utils.toFilename(lib.jsLib.name + ".css")
+                const css = Utils.readFile(pathSrcCSS)
+                if (undefined != css) {
+                    const pathResultCSS = exporter.createViewerFile(cssFileName, Constants.RESOURCES_DIRECTORY)
+                    if (!Utils.writeToFile(css, pathResultCSS)) {
+                        exporter.logError("getSymbolData: can't library save CSS to " + pathResultCSS)
+                    }
+                    cssIncludes.push(cssFileName)
+                }
+            }
+            //
+        }
+        return cssIncludes
+    }
+
 
     getJSON() {
 
