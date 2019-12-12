@@ -90,9 +90,11 @@ var onRun = function (context) {
 
     const enableAutoScroll = Settings.layerSettingForKey(artboard, SettingKeys.ARTBOARD_DISABLE_AUTOSCROLL) != 1
 
-
     let transNextSecs = Settings.layerSettingForKey(artboard, SettingKeys.ARTBOARD_TRANS_TO_NEXT_SECS)
     if (undefined == transNextSecs) transNextSecs = ""
+
+    let transAnimType = Settings.layerSettingForKey(artboard, SettingKeys.ARTBOARD_TRANS_ANIM_TYPE)
+    if (undefined == transAnimType) transAnimType = 0
 
 
     let overlayByEvent = Settings.layerSettingForKey(artboard, SettingKeys.ARTBOARD_OVERLAY_BY_EVENT)
@@ -113,7 +115,7 @@ var onRun = function (context) {
 
     ///////////////// CREATE DIALOG ///////////////////////
     dialog = new UIDialog("Artboard Settings", NSMakeRect(0, 0, 480, 450), "Save", "Configure exporting options for the selected artboard. ")
-    dialog.initTabs(["General", "Overlay"])
+    dialog.initTabs(["General", "Overlay", "Transitions"])
 
     /////////////////////////// PAGE 1
     dialog.addLeftLabel("", "Artboard Type")
@@ -123,15 +125,6 @@ var onRun = function (context) {
 
     const enableShadowControl = dialog.addCheckbox("enableShadow", "Show modal dialog or overlay shadow", enableShadow)
     dialog.addHint("enableShadowHint", "Dim a previous artboard to set visual focus on an modal.")
-
-    dialog.addDivider()
-    dialog.addLeftLabel("", "Navigation")
-
-    const enableAutoScrollControl = dialog.addCheckbox("enableAutoScroll", "Scroll browser page to top", enableAutoScroll)
-    dialog.addHint("enableAutoScrollHint", "The artboard will be scrolled on top after showing")
-
-    const transNextSecsControl = dialog.addTextInput("transNextSecs", "Delay for autotranstion to next screen (Secs)", transNextSecs, '', 60)
-    dialog.addHint("transNextSecsHint", "Go to the next page auto the delay (0.001 - 60 secs)")
 
     /////////////////////////// PAGE 2
 
@@ -161,7 +154,7 @@ var onRun = function (context) {
     dialog.addLeftLabel("overlayAlignLabel", "Overlay Position")
     var overlayAlignControlRadios = []
     const imageWidth = 342
-    const imageHeight = 164
+    const imageHeight = 170
     const radioWidth = 20
     const radioHeight = 18
     const xDelta = 100
@@ -209,6 +202,59 @@ var onRun = function (context) {
     const overlayAlsoFixedControl = dialog.addCheckbox("overlayAlsoFixed", "Show overlay as fixed panel if called from fixed panel", overlayAlsoFixed)
     const overlayClosePrevOverlayControl = dialog.addCheckbox("overlayClosePrevOverlay", "Replace the previous overlay if called from overlay", overlayClosePrevOverlay)
 
+    // PAGE "TRANSITION"
+    dialog.setTabForViewsCreating(2)
+    dialog.addSpace()
+
+    dialog.addLeftLabel("", "Transition Effect")
+    {
+        const aniTypePositions = [
+            { x: 0, y: 0, label: 'None' },
+            { x: 1, y: 0, label: "Slide-in Up" },
+            { x: 0, y: 1, label: "Slide-in Left" },
+            { x: 1, y: 1, label: "Fade-in" },
+            { x: 2, y: 1, label: "Slide-in Right" },
+            { x: 1, y: 2, label: "Slide-in Down" },
+        ]
+        var transAnimTypelRadios = []
+        //
+        var orgFrame = dialog.getNewFrame(radioHeight, radioWidth)
+        //
+        const imageName = "artboard_transition_animation@2x.png"
+        var image = NSImage.alloc().initByReferencingFile(context.plugin.urlForResourceNamed(imageName).path())
+        const imageFrame = Utils.copyRect(orgFrame)
+        imageFrame.origin.y -= imageHeight - radioHeight
+        imageFrame.size.width = imageWidth
+        imageFrame.size.height = imageHeight
+        const imageView = dialog.addImage("animationImage", image, imageFrame)
+        //imageView.hidden = true
+        //        
+        dialog.startRadioButtions("transAnimType", transAnimType)
+        //
+        aniTypePositions.forEach(function (info, index) {
+            var frame = Utils.copyRect(orgFrame)
+            frame.origin.x = dialog.leftColWidth + (xDelta + radioWidth) * info.x
+            frame.origin.y = orgFrame.origin.y - yDelta * info.y
+
+            const radioControl = dialog.addRadioButton("transAnimType-" + index, " ", index, frame)
+            radioControl.toolTip = info.label
+            transAnimTypelRadios.push(radioControl)
+        }, context)
+        dialog.y -= imageHeight
+    }
+
+    dialog.addDivider()
+    dialog.addLeftLabel("", "Auto-transition")
+
+    const transNextSecsControl = dialog.addTextInput("transNextSecs", "Delay (Secs)", transNextSecs, '', 60)
+    dialog.addHint("transNextSecsHint", "Go to the next page auto the delay (0.001 - 60 secs)")
+
+    dialog.addDivider()
+    const enableAutoScrollControl = dialog.addCheckbox("enableAutoScroll", "Scroll browser page to top", enableAutoScroll)
+    dialog.addHint("enableAutoScrollHint", "The artboard will be scrolled on top after showing")
+
+
+
     enableTypeRelated()
 
     ///////////////// RUN EVENT LOOP ///////////////////////
@@ -249,6 +295,7 @@ var onRun = function (context) {
                 Settings.setLayerSettingForKey(artboard, SettingKeys.ARTBOARD_DISABLE_AUTOSCROLL, enableAutoScrollControl.state() != 1)
         if (transNextSecsControl.isEnabled)
             Settings.setLayerSettingForKey(artboard, SettingKeys.ARTBOARD_TRANS_TO_NEXT_SECS, transNextSecs)
+        Settings.setLayerSettingForKey(artboard, SettingKeys.ARTBOARD_TRANS_ANIM_TYPE, dialog.views['transAnimType'].selectedIndex)
 
         break
 
