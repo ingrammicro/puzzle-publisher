@@ -86,7 +86,10 @@ class PZArtboard extends PZLayer {
             this.transNextSecs = undefined
 
         this.transAnimType = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_TRANS_ANIM_TYPE)
-        if (undefined == this.transAnimType) this.transAnimType = Constants.ARTBOARD_TRANS_ANIM_NONE
+        if (undefined == this.transAnimType)
+            this.transAnimType = Constants.ARTBOARD_TYPE_OVERLAY == this.artboardType ?
+                Constants.ARTBOARD_TRANS_ANIM_FADE :
+                Constants.ARTBOARD_TRANS_ANIM_NONE
         if (Constants.ARTBOARD_TRANS_ANIM_NONE != this.transAnimType) {
             exporter.enableTransitionAnimation = true
         }

@@ -94,7 +94,9 @@ var onRun = function (context) {
     if (undefined == transNextSecs) transNextSecs = ""
 
     let transAnimType = Settings.layerSettingForKey(artboard, SettingKeys.ARTBOARD_TRANS_ANIM_TYPE)
-    if (undefined == transAnimType) transAnimType = 0
+    if (undefined == transAnimType) transAnimType = Constants.ARTBOARD_TYPE_OVERLAY == artboardType ?
+        Constants.ARTBOARD_TRANS_ANIM_FADE :
+        Constants.ARTBOARD_TRANS_ANIM_NONE
 
 
     let overlayByEvent = Settings.layerSettingForKey(artboard, SettingKeys.ARTBOARD_OVERLAY_BY_EVENT)
