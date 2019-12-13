@@ -2,6 +2,8 @@
 
 .image_div {
     margin: 0 auto;
+     position: absolute;
+     /*z-index:0;*/
 }
 
 .image_div img {
@@ -134,11 +136,10 @@
 
 .contentModal {
     z-index: 50;
-    position: fixed;
+    /*position: fixed;*/
     margin: auto;
     max-height: 100%;
     align-items: center;
-    /*pointer-events: none; */
 
 }
 
@@ -363,11 +364,14 @@ a:focus {
     outline: none;
 }
 
-.hidden {
+.transparent {
     visibility: hidden;
     opacity: 0;
 }
 
+.hidden {
+    display: none !important;
+}
 .hotspots-off {
     pointer-events: none;
 }

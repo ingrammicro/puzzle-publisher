@@ -1,17 +1,18 @@
 #container{
 	text-align: center;
     margin: 0 auto;	
+    overflow: auto;
 }
 
 #content,#map{
 	text-align: center;
     margin: 0 auto;	   
     /*width:100%;*/
-    position:absolute; 
+    /*position:fixed; */
 }
 
 #content-shadow {
-	z-index: 40;
+	/*z-index: 40;*/
 	position: fixed;
 	overflow: auto;
 	top: 0;
