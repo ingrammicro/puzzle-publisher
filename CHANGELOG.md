@@ -1,5 +1,8 @@
 # Change Log
 
+##  Version 12.0.1 (17 Dec 2019)
+- Fix overflow on center layout (by @form-follows-function)
+
 ##  Version 12.0.0 (13 Dec 2019)
 1) Added artboard transition animations. 
 You can select an animation it in Configure Artboard > Transitions.
