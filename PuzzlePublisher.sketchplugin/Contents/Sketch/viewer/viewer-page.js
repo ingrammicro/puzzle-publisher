@@ -198,6 +198,7 @@ class ViewerPage {
     // return true (overlay is hidden) or false (overlay is visible)
     onMouseMoveOverlay(x, y) {
         if (this.imageDiv.hasClass("hidden") || this.overlayByEvent != 1) return false
+        if (viewer.linksDisabled) return false
 
         // handle mouse hover if this page is overlay
         var hideSelf = false

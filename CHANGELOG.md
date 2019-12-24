@@ -1,5 +1,8 @@
 # Change Log
 
+##  Version 12.0.2 (24 Dec 2019)
+- Element Inspector works for overlays too
+
 ##  Version 12.0.1 (17 Dec 2019)
 - Fix overflow on center layout (by @form-follows-function)
 

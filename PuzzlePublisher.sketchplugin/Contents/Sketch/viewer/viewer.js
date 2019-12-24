@@ -287,6 +287,7 @@ function createViewer(story, files) {
         },
 
         onContentClick: function () {
+            if (this.linksDisabled) return false
             if (this.onKeyEscape()) return
             this.blinkHotspots()
         },
