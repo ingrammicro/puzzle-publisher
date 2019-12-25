@@ -1,5 +1,8 @@
 # Change Log
 
+##  Version 12.0.3 (25 Dec 2019)
+- Element Inspector shows LESS token values
+
 ##  Version 12.0.2 (24 Dec 2019)
 - Element Inspector works for overlays too
 
