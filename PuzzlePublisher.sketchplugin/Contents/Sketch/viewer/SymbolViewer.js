@@ -273,11 +273,10 @@ class SymbolViewer {
                 info += "<p class='head'>Symbol layers and Tokens</p>"
                 var layerCounter = 0
                 for (const layerName of Object.keys(symInfo.symbol.layers)) {
-                    if (layerCounter)
-                        info += "<br/>"
+                    if (layerCounter) info += "<br/>"
                     info += layerName + "<br/>"
                     for (const tokenName of Object.keys(symInfo.symbol.layers[layerName].tokens)) {
-                        info += tokenName + "<br/>"
+                        info += sv._showTokenInfo(tokenName, layer)
                     }
                     layerCounter++
                 }
@@ -286,7 +285,7 @@ class SymbolViewer {
             if (styleInfo != undefined) {
                 info += "<p class='head'>Style Tokens</p>"
                 for (const tokenName of Object.keys(styleInfo.style.tokens)) {
-                    info += tokenName + "<br/>"
+                    info += sv._showTokenInfo(tokenName, layer)
                 }
             }
 
@@ -304,7 +303,24 @@ class SymbolViewer {
         }).attr('style', style)
 
         symbolDiv.appendTo(a)
+    }
 
+    _showTokenInfo(tokenName, layer) {
+        let text = "<b>" + tokenName + "</b>"
+        if (undefined != layer.smLib) {
+            const tokenValue = this._findTokenValueByName(tokenName, layer.smLib)
+            if (undefined != tokenValue) {
+                text += " = " + tokenValue
+            }
+        }
+
+        return text + "<br/>"
+    }
+
+    _findTokenValueByName(tokenName, libName) {
+        const lib = varsData[libName]
+        if (undefined == lib) return undefined
+        return lib[tokenName]
     }
 
     _findSymbolAndLibBySymbolName(symName) {
