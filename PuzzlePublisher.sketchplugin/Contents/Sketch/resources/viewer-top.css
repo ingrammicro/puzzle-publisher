@@ -12,7 +12,7 @@
 }
 
 #content-shadow {
-	/*z-index: 40;*/
+	z-index: 40;
 	position: fixed;
 	overflow: auto;
 	top: 0;
