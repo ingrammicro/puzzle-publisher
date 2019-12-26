@@ -2,7 +2,7 @@
 
 A Sketch plugin that exports Sketch artboards into clickable HTML file. 
 
-###Join [Spectrum Chat](https://spectrum.chat/puzzle-publisher?) for live talk
+###Join [Spectrum Chat](https://spectrum.chat/puzzle-publisher?) for live talk###
 
 Features:
 - Single HTML file with links highlighting
