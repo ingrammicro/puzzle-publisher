@@ -1,5 +1,8 @@
 # Change Log
 
+##  Version 12.0.4 (26 Dec 2019)
+- Hide fixed panes under modal shadow
+
 ##  Version 12.0.3 (25 Dec 2019)
 - Element Inspector shows LESS token values
 
