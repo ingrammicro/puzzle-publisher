@@ -2,6 +2,8 @@
 
 A Sketch plugin that exports Sketch artboards into clickable HTML file. 
 
+###Join [Spectrum Chat](https://spectrum.chat/puzzle-publisher?) for live talk
+
 Features:
 - Single HTML file with links highlighting
 - Show artboard as an overlay over a previous artboard / [Pict 1](https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/tests/FixedLayers/Overlay1.png), [Pict 2](https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/tests/FixedLayers/Overlay2.png), [Pict 3](https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/tests/FixedLayers/Overlay3.png) / [Example](https://github.com/ingrammicro/puzzle-publisher/tree/master/tests/FixedLayers)
