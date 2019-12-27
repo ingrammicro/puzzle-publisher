@@ -126,6 +126,7 @@ function runExporter(context, exportOptions = null) {
 
     const isCmdExportToHTML = exportOptions['cmd'] == "exportHTML"
     var dontOpen = Settings.settingForKey(SettingKeys.PLUGIN_DONT_OPEN_BROWSER) == 1
+    var askSize = Settings.settingForKey(SettingKeys.PLUGIN_ASK_CUSTOM_SIZE) == 1
     var compress = Settings.settingForKey(SettingKeys.PLUGIN_COMPRESS) == 1
 
 
@@ -152,7 +153,7 @@ function runExporter(context, exportOptions = null) {
             Settings.setSettingForKey(SettingKeys.PLUGIN_INFO_11, 1)
         }
 
-        const dialog = new UIDialog("Export to HTML", NSMakeRect(0, 0, 500, 200), "Export")
+        const dialog = new UIDialog("Export to HTML", NSMakeRect(0, 0, 500, 100 + (askSize ? 100 : 0)), "Export")
         dialog.removeLeftColumn()
 
 
@@ -163,25 +164,28 @@ function runExporter(context, exportOptions = null) {
         })
         //dialog.addCheckbox("compress","Compress images", compress)
         dialog.addCheckbox("open", "Open HTML in browser", !dontOpen)
-        dialog.addTextInput("customWidth", "Artboard custom width (px)", customWidth + "", 'e.g. 1920')
-        dialog.addTextInput("customHeight", "Artboard custom height (px)", customHeight + "", 'e.g. 1080')
-
+        if (askSize) {
+            dialog.addTextInput("customWidth", "Artboard custom width (px)", customWidth + "", 'e.g. 1920')
+            dialog.addTextInput("customHeight", "Artboard custom height (px)", customHeight + "", 'e.g. 1080')
+        }
 
         while (true) {
             const result = dialog.run()
             if (!result) return
 
-            customWidth = dialog.views['customWidth'].stringValue()
-            if (customWidth != '') {
-                if (isNaN(customWidth)) continue
-            } else
-                customWidth = ''
+            if (askSize) {
+                customWidth = dialog.views['customWidth'].stringValue()
+                if (customWidth != '') {
+                    if (isNaN(customWidth)) continue
+                } else
+                    customWidth = ''
 
-            customHeight = dialog.views['customHeight'].stringValue()
-            if (customHeight != '') {
-                if (isNaN(customHeight)) continue
-            } else
-                customHeight = ''
+                customHeight = dialog.views['customHeight'].stringValue()
+                if (customHeight != '') {
+                    if (isNaN(customHeight)) continue
+                } else
+                    customHeight = ''
+            }
 
             currentPath = dialog.views['path'].stringValue() + ""
             if (currentPath == "") continue

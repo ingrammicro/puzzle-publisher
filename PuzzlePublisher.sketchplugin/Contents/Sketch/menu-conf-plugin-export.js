@@ -22,6 +22,8 @@ var onRun = function (context) {
     const hideNav = Settings.settingForKey(SettingKeys.PLUGIN_HIDE_NAV) == 1
     const disableHotspots = Settings.settingForKey(SettingKeys.PLUGIN_DISABLE_HOTSPOTS) == 1
     const dontSaveElements = Settings.settingForKey(SettingKeys.PLUGIN_DONT_SAVE_ELEMENTS) == 1
+    const askCustomSize = Settings.settingForKey(SettingKeys.PLUGIN_ASK_CUSTOM_SIZE) == 1
+
 
     let googleCode = Settings.settingForKey(SettingKeys.PLUGIN_GOOGLE_CODE)
     if (googleCode == undefined) googleCode = ''
@@ -36,6 +38,7 @@ var onRun = function (context) {
     dialog.addLeftLabel("", "Export")
     dialog.addCheckbox("retina", "Export Retina images", !dontRetina)
     dialog.addCheckbox("dontSaveElements", "Don't save data for Element Inspector", dontSaveElements)
+    dialog.addCheckbox("askCustomSize", "Ask custom artboard Size", askCustomSize)
     dialog.addTextInput("googleCode", "Google Code", googleCode, 'e.g. UA-XXXXXXXX-X')
 
     dialog.addDivider()
@@ -69,6 +72,7 @@ var onRun = function (context) {
         Settings.setSettingForKey(SettingKeys.PLUGIN_HIDE_NAV, dialog.views['hidenav'].state() != 1)
         Settings.setSettingForKey(SettingKeys.PLUGIN_DISABLE_HOTSPOTS, dialog.views['disableHotspots'].state() != 1)
         Settings.setSettingForKey(SettingKeys.PLUGIN_DONT_SAVE_ELEMENTS, dialog.views['dontSaveElements'].state() == 1)
+        Settings.setSettingForKey(SettingKeys.PLUGIN_ASK_CUSTOM_SIZE, dialog.views['askCustomSize'].state() == 1)
     }
     dialog.finish()
 
