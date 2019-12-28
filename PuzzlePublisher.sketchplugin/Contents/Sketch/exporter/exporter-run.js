@@ -44,42 +44,47 @@ function exportHTML(currentPath, nDoc, exportOptions, context) {
         panel.addLabel("", "Please wait...")
         panel.show()
 
-        // export HTML  
-        coscript.setShouldKeepAround(true)
 
-        exportInfo.timeout = coscript.scheduleWithInterval_jsFunction(1, function () {
-
-            // Exporting...
-            let exportedOk = exporter.exportArtboards()
-            if (exportedOk) {
-                // open HTML in browser 
-                if (!exportOptions.dontOpenBrowser) {
-                    const openPath = currentPath + "/" + exporter.docName + "/"
-                    const fullPath = "" + openPath + (openPath.endsWith('/') ? '' : '/') + 'index.html'
-                    NSWorkspace.sharedWorkspace().openFile(fullPath);
-                    //log('open: '+fullPath)
-                    /*const openResult = Utils.runCommand('/usr/bin/open', [openPath,openPath+'/index.html'])
-                    
-                    if(openResult.result){
-                    }else{
-                        UI.alert('Can not open HTML in browser', openResult.output)
-                    }*/
-                }
+        Class = function (className, BaseClass, selectorHandlerDict) {
+            const uniqueClassName = className + NSUUID.UUID().UUIDString();
+            const delegateClassDesc = MOClassDescription.allocateDescriptionForClassWithName_superclass_(uniqueClassName, BaseClass);
+            for (let selectorString in selectorHandlerDict) {
+                delegateClassDesc.addInstanceMethodWithSelector_function_(selectorString, selectorHandlerDict[selectorString]);
             }
+            delegateClassDesc.registerClass();
+            return NSClassFromString(uniqueClassName);
+        };
 
-            // 
-            //panelSwitchFinished()
-            closePanel()
-
-            // show final message
-            if (exporter.errors.length > 0) {
-                UI.alert('Export failed with errors', exporter.errors.join("\n\n"))
-            } else if (false && exporter.warnings.length > 0) {
-                UI.alert('Export completed with warnings', exporter.warnings.join("\n\n"))
-            } else {
-                UI.message('HTML exported.')
+        var Runner = Class("Runner", NSObject, {
+            "run:": function (parameters) {
+                // Exporting...
+                let exportedOk = exporter.exportArtboards()
+                if (exportedOk) {
+                    // open HTML in browser 
+                    if (!exportOptions.dontOpenBrowser) {
+                        const openPath = currentPath + "/" + exporter.docName + "/"
+                        const fullPath = "" + openPath + (openPath.endsWith('/') ? '' : '/') + 'index.html'
+                        NSWorkspace.sharedWorkspace().openFile(fullPath);
+                    }
+                }
+                // show final message
+                /*
+                if (exporter.errors.length > 0) {
+                    UI.alert('Export failed with errors', exporter.errors.join("\n\n"))
+                } else if (false && exporter.warnings.length > 0) {
+                    UI.alert('Export completed with warnings', exporter.warnings.join("\n\n"))
+                } else {
+                    UI.message('HTML exported.')
+                }*/
+                // 
+                //panelSwitchFinished()
+                closePanel()
             }
         })
+        var runner = Runner.new();
+        coscript.setShouldKeepAround(true);
+        runner.performSelectorInBackground_withObject("run:", []);
+
     }
 }
 
