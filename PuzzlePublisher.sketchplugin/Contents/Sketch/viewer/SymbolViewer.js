@@ -1,8 +1,7 @@
-class SymbolViewer {
+class SymbolViewer extends AbstractViewer {
     constructor() {
-        this.visible = false
+        super()
         this.createdPages = {}
-        this.inited = false
         this.currentLib = ""
         this.showSymbols = false
     }
@@ -74,7 +73,9 @@ class SymbolViewer {
         return this.visible ? this.hide() : this.show()
     }
 
-    hideSelfOnly() {
+
+
+    _hideSelf() {
         var isModal = viewer.currentPage && viewer.currentPage.isModal
         if (isModal) {
             $(".modalSymbolLink").remove()
@@ -83,14 +84,10 @@ class SymbolViewer {
         const contentDiv = isModal ? $('#content-modal') : $('#content')
         contentDiv.removeClass("contentSymbolsVisible")
 
-        this.visible = false
         viewer.linksDisabled = false
-
         $('#symbol_viewer').addClass("hidden")
-    }
 
-    hide() {
-        viewer.hideSidebar();
+        super._hideSelf()
     }
 
     handleKeyDown(jevent) {
@@ -100,6 +97,7 @@ class SymbolViewer {
     handleKeyDownWhileActive(jevent) {
         const event = jevent.originalEvent
 
+        // Key "M" activates (or deactivates) Symbol Viewer
         if (77 == event.which) { // m
             this.toggle()
         } else {
@@ -110,9 +108,7 @@ class SymbolViewer {
         return true
     }
 
-    show() {
-        viewer.hideSidebarChild();
-
+    _showSelf() {
         if (!this.inited) this.initialize()
 
         viewer.toggleLinks(false)
@@ -128,8 +124,8 @@ class SymbolViewer {
         this._showEmptyContent()
 
         $('#symbol_viewer').removeClass("hidden")
-        viewer.showSidebar(this);
-        this.visible = true
+
+        super._showSelf()
 
     }
 

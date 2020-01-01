@@ -14,10 +14,9 @@ function getVersionInfoRequest() {
 }
 
 
-class VersionViewer {
+class VersionViewer extends AbstractViewer {
     constructor() {
-        this.visible = false
-        this.inited = false
+        super()
         this.screenDiffs = []
         this.mode = 'diff'
     }
@@ -32,9 +31,6 @@ class VersionViewer {
         this.inited = true
     }
 
-    hide() {
-        viewer.hideSidebar();
-    }
 
     goTo(pageIndex) {
         viewer.goToPage(pageIndex)
@@ -62,13 +58,13 @@ class VersionViewer {
     ///////////////////////////////////////////////// called by Viewer
 
 
-    hideSelfOnly() {
+    _hideSelf() {
         this._restoreNewImages()
-        this.visible = false
         $('#version_viewer').addClass("hidden")
         if (document.location.search.includes('v')) {
             document.location.search = "" // remove ?v
         }
+        super._hideSelf()
     }
 
     pageChanged() {
@@ -117,10 +113,6 @@ class VersionViewer {
 
         jevent.preventDefault()
         return true
-    }
-
-    toggle() {
-        return this.visible ? this.hide() : this.show()
     }
 
     /////////////////////////////////////////////////
@@ -218,12 +210,11 @@ class VersionViewer {
         xhr.send(null);
     }
 
-    show() {
-        viewer.hideSidebarChild();
+    _showSelf() {
         if (!this.inited) this.initialize()
         $('#version_viewer').removeClass("hidden")
-        viewer.showSidebar(this)
-        this.visible = true
+
+        super._showSelf()
     }
 
     _showLoadingMessage() {

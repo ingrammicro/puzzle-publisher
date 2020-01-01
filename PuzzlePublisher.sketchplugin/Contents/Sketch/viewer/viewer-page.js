@@ -201,7 +201,7 @@ class ViewerPage {
         if (viewer.linksDisabled) return false
 
         // handle mouse hover if this page is overlay
-        var hideSelf = false
+        var _hideSelf = false
         while (1 == this.overlayByEvent) {
             var localX = Math.round(x / viewer.currentZoom) - this.currentLeft
             var localY = Math.round(y / viewer.currentZoom) - this.currentTop
@@ -223,7 +223,7 @@ class ViewerPage {
                 || localX >= (this.currentLink.x + this.currentLink.width)
                 || localY >= (this.currentLink.y + this.currentLink.height)
             ) {
-                hideSelf = true
+                _hideSelf = true
                 break
             }
             break
@@ -239,7 +239,7 @@ class ViewerPage {
             if (overlay.onMouseMoveOverlay(x, y)) visibleTotal++
         }
 
-        if (hideSelf)
+        if (_hideSelf)
             if (!total || (total && !visibleTotal)) {
                 this.hide(false)
                 return false

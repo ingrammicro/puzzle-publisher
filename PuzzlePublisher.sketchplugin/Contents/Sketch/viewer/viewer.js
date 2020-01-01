@@ -1,7 +1,6 @@
 
 // =============================== PRELOAD IMAGES =========================
 var pagerLoadingTotal = 0
-var gallery = undefined
 
 function getQuery(uri, q) {
     return (uri.match(new RegExp('[?&]' + q + '=([^&]+)')) || [, null])[1];
@@ -135,8 +134,8 @@ function createViewer(story, files) {
         zoomEnabled: story.zoomEnabled,
 
         sidebarVisible: false,
-        sidebarChild: null, // some instance of Viewer
-        allSidebarChilds: [], // list of all inited instances of Viewer
+        child: null, // some instance of Viewer
+        allChilds: [], // list of all inited instances of Viewer
         symbolViewer: null,
         versionViewer: null,
 
@@ -144,8 +143,6 @@ function createViewer(story, files) {
         transQueue: [],
 
         initialize: function () {
-            gallery = createGallery()
-
             this.initParseGetParams()
             this.buildUserStory();
             this.initializeHighDensitySupport();
@@ -165,17 +162,19 @@ function createViewer(story, files) {
         },
 
         initializeLast: function () {
-            gallery.initialize();
+            this.galleryViewer = new GalleryViewer()
+            this.allChilds.push(this.galleryViewer)
+
             if (story.layersExist) {
                 this.symbolViewer = new SymbolViewer()
-                this.allSidebarChilds.push(this.symbolViewer)
+                this.allChilds.push(this.symbolViewer)
 
             }
             // Create Version Viewer for published mockups with some version specified
             if (story.docVersion != 'V_V_V') {
                 this.versionViewer = new VersionViewer()
                 $("#menu_version_viewer").removeClass("hidden");
-                this.allSidebarChilds.push(this.versionViewer)
+                this.allChilds.push(this.versionViewer)
             }
 
             $("body").keydown(function (event) {
@@ -235,15 +234,15 @@ function createViewer(story, files) {
             const event = jevent.originalEvent
 
             // allow all childs to handle global keys
-            for (const child of this.allSidebarChilds) {
+            for (const child of this.allChilds) {
                 if (child.handleKeyDownWhileActive(jevent)) return true
             }
 
             // allow currently active childs to handle global keys
-            if (this.sidebarChild && this.sidebarChild.handleKeyDown(jevent)) return true
+            if (this.child && this.child.handleKeyDown(jevent)) return true
 
-            console.log(jevent.metaKey)
-            console.log(jevent.which)
+            //console.log(jevent.metaKey)
+            //console.log(jevent.which)
             if (13 == event.which || 39 == event.which) { // enter OR right
                 v.next()
             } else if (8 == event.which || 37 == event.which) { // backspace OR left
@@ -258,8 +257,6 @@ function createViewer(story, files) {
                 v.toggleZoom()
             } else if (69 == event.which) { // e
                 v.share()
-            } else if (71 == event.which) { // g
-                gallery.toogle();
             } else if (76 == event.which) { // l
                 v.toogleLayout();
             } else if (83 == event.which) { // s
@@ -311,29 +308,41 @@ function createViewer(story, files) {
         },
 
 
-        showSidebar: function (child) {
-            this.sidebarChild = child;
+        showChild: function (child) {
+            // Hide currently visible child
+            if (this.child) {
+                this.hideChild(this.child)
+            }
+
+            // Show new child
+            this.child = child;
+            if (child.isSidebarChild) {
+                this._showSidebar()
+            }
+            child._showSelf()
+        },
+
+
+        _showSidebar: function () {
             this.sidebarVisible = true
             $('#sidebar').removeClass("hidden")
             viewer.zoomContent()
         },
 
-
-        hideSidebar: function () {
-            if (this.sidebarChild) {
-                this.sidebarChild.hideSelfOnly();
-                this.sidebarChild = null;
-            }
-
+        _hideSidebar: function () {
             this.sidebarVisible = false
             $('#sidebar').addClass("hidden")
             this.zoomContent()
         },
 
-        hideSidebarChild: function () {
-            if (!this.sidebarChild) return;
-            this.sidebarChild.hideSelfOnly();
-            this.sidebarChild = null;
+        hideChild: function () {
+            if (!this.child) return;
+            if (this.child.isSidebarChild) {
+                this._hideSidebar()
+            }
+            this.child._hideSelf();
+            this.child = null;
+
         },
 
         share: function () {
@@ -586,7 +595,7 @@ function createViewer(story, files) {
             }
 
             if (refreshURL) {
-                if (this.sidebarChild) this.sidebarChild.pageChanged()
+                if (this.child) this.child.pageChanged()
             }
 
         },
@@ -809,8 +818,8 @@ function createViewer(story, files) {
         },
         onKeyEscape: function () {
             // If gallery is enabled then close it
-            if (gallery.isVisible()) {
-                gallery.toogle()
+            if (this.galleryViewer.isVisible()) {
+                this.galleryViewer.toogle()
                 return true
             }
             // If the current page has some overlay open then close it

@@ -86,8 +86,9 @@ function buildMainHTML(options) {
     s += '<script type="text/javascript" src="resources/jquery.ba-hashchange.min.js" charset="UTF-8"></script>\n';
     s += '<script type="text/javascript" src="viewer/viewer-page.js' + verPostfix + '" charset="UTF-8"></script>\n';
     s += '<script type="text/javascript" src="viewer/story.js' + verPostfix + '" charset="UTF-8"></script>\n';
-    s += '<script type="text/javascript" src="viewer/gallery.js' + verPostfix + '" charset="UTF-8"></script>\n';
     s += '<script type="text/javascript" src="viewer/viewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
+    s += '<script type="text/javascript" src="viewer/AbstractViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
+    s += '<script type="text/javascript" src="viewer/GalleryViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
     if (options.loadLayers) {
         s += '<script type="text/javascript" src="viewer/LayersData.js' + verPostfix + '" charset="UTF-8"></script>\n';
         s += '<script type="text/javascript" src="viewer/SymbolViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
@@ -174,7 +175,7 @@ function buildMainHTML(options) {
     s += '            <div id="gallery-header-container">\n';
     s += '              <div id="title"><div>' + options.docName + '</div><div id="screensamount"></div></div>\n';
     s += '              <div id="search"><input type="text" placeholder="Search screen..." id="searchInput" onkeyup="searchScreen()"></div>\n';
-    s += '              <div id="closebtn" onclick="gallery.hide(); return false;"><svg><use xlink:href="#icCloseBtn"></use></svg></div>\n';
+    s += '              <div id="closebtn" onclick="viewer.galleryViewer.hide(); return false;"><svg><use xlink:href="#icCloseBtn"></use></svg></div>\n';
     s += '            </div>\n';
     s += '          </div>\n';
     s += '          <div id="gallery"><div id="grid"></div></div>\n';
@@ -247,7 +248,7 @@ function buildMainHTML(options) {
     }
     s += "                            <hr>";
     s += "                            <div class=\"groupe\">";
-    s += "                                <div class=\"item\" onclick=\"gallery.show(); addRemoveClass('class','menu','active'); return false;\">";
+    s += "                                <div class=\"item\" onclick=\"viewer.galleryViewer.show(); addRemoveClass('class','menu','active'); return false;\">";
     s += "                                    <svg><use xlink:href=\"#icGrid\"><\/use><\/svg>";
     s += "                                    <span>View All Screens<\/span>";
     s += "                                    <div class=\"tips\">G<\/div>";
