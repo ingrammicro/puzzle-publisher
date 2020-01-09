@@ -1,5 +1,8 @@
 # Change Log
 
+##  Version 12.1.0 (26 Dec 2019)
+- Improved search in Gallery
+
 ##  Version 12.0.4 (26 Dec 2019)
 - Hide fixed panes under modal shadow
 
