@@ -1,9 +1,13 @@
 
 class AbstractViewer {
     constructor() {
-        this.visible = false
+        // common viewer settings, can be changed in child constructors
         this.isSidebarChild = true
+        this.blockMainNavigation = false
+
+        // internal viewer props, can be read by child 
         this.inited = false
+        this.visible = false
     }
 
 
@@ -17,6 +21,14 @@ class AbstractViewer {
 
     toggle() {
         return this.visible ? this.hide() : this.show()
+    }
+
+    handleKeyDown(jevent) {
+        return false
+    }
+
+    handleKeyDownWhileInactive(jevent) {
+        return false
     }
 
 
@@ -35,6 +47,7 @@ class AbstractViewer {
     _hideSelf() {
         this.visible = false
     }
+
 
 
 }

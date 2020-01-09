@@ -80,7 +80,7 @@ class VersionViewer extends AbstractViewer {
     }
 
 
-    handleKeyDownWhileActive(jevent) {
+    handleKeyDownWhileInactive(jevent) {
         const event = jevent.originalEvent
 
         if (38 == event.which && event.shiftKey) {   // shift + up
@@ -90,7 +90,7 @@ class VersionViewer extends AbstractViewer {
         } else if (86 == event.which) { // "v" key
             this.toggle()
         } else {
-            return false
+            return super.handleKeyDownWhileInactive(jevent)
         }
 
         jevent.preventDefault()
@@ -108,7 +108,7 @@ class VersionViewer extends AbstractViewer {
             this.switchMode(1)
         } else if (event.shiftKey) {   // left + shift
         } else {
-            return false
+            return super.handleKeyDown(jevent)
         }
 
         jevent.preventDefault()

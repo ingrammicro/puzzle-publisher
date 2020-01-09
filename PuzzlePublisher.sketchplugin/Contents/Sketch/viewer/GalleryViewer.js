@@ -4,6 +4,9 @@ class GalleryViewer extends AbstractViewer {
     constructor() {
         super()
         this.isSidebarChild = false
+        this.blockMainNavigation = true
+
+        this.searchInputFocused = false
     }
 
     initialize(force = false) {
@@ -16,14 +19,30 @@ class GalleryViewer extends AbstractViewer {
         this.inited = true
     }
 
-    handleKeyDownWhileActive(jevent) {
+    handleKeyDown(jevent) {
         const event = jevent.originalEvent
 
-        // Key "G" activates (or deactivates) Symbol Viewer
-        if (71 == event.which) { // g
+        if (27 == event.which) { // esc	
+            this.toggle()
+        } else if (!this.searchInputFocused && 71 == event.which) { // g
+            // Key "G" deactivates Symbol Viewer
             this.toggle()
         } else {
-            return false
+            return super.handleKeyDown(jevent)
+        }
+
+        jevent.preventDefault()
+        return true
+    }
+
+    handleKeyDownWhileInactive(jevent) {
+        const event = jevent.originalEvent
+
+        if (71 == event.which) { // g
+            // Key "G" activates Symbol Viewer
+            this.toggle()
+        } else {
+            return super.handleKeyDownWhileInactive(jevent)
         }
 
         jevent.preventDefault()
@@ -34,6 +53,15 @@ class GalleryViewer extends AbstractViewer {
         if (!this.inited) this.initialize()
 
         $('#gallery-modal').removeClass('hidden');
+
+        $('#searchInput').focusin(function () {
+            viewer.galleryViewer.searchInputFocused = true
+        })
+        $('#searchInput').focusout(function () {
+            viewer.galleryViewer.searchInputFocused = false
+        })
+        $('#searchInput').focus()
+
         super._showSelf()
     }
 

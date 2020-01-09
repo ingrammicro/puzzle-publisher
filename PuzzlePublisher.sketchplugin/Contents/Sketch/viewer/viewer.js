@@ -233,9 +233,13 @@ function createViewer(story, files) {
             const v = viewer
             const event = jevent.originalEvent
 
+            const allowNavigation = !this.child || !this.child.blockMainNavigation
+
             // allow all childs to handle global keys
-            for (const child of this.allChilds) {
-                if (child.handleKeyDownWhileActive(jevent)) return true
+            if (!this.child) {
+                for (const child of this.allChilds) {
+                    if (child.handleKeyDownWhileInactive(jevent)) return true
+                }
             }
 
             // allow currently active childs to handle global keys
@@ -243,27 +247,27 @@ function createViewer(story, files) {
 
             //console.log(jevent.metaKey)
             //console.log(jevent.which)
-            if (13 == event.which || 39 == event.which) { // enter OR right
+            if (allowNavigation && (13 == event.which || 39 == event.which)) { // enter OR right
                 v.next()
-            } else if (8 == event.which || 37 == event.which) { // backspace OR left
+            } else if (allowNavigation && (8 == event.which || 37 == event.which)) { // backspace OR left
                 v.previous()
-            } else if (16 == event.which) { // shift
+            } else if (allowNavigation && (16 == event.which)) { // shift
                 if (!jevent.metaKey) {  // no cmd to allow user to make a screenshot on macOS
                     v.toggleLinks()
                 }
-            } else if (91 == event.which) { // cmd
+            } else if (allowNavigation && 91 == event.which) { // cmd
                 if (this.highlightLinks) v.toggleLinks(false) // hide hightlights to allow user to make a screenshot on macOS
-            } else if (90 == event.which) { // z
+            } else if (allowNavigation && 90 == event.which) { // z
                 v.toggleZoom()
-            } else if (69 == event.which) { // e
+            } else if (allowNavigation && 69 == event.which) { // e
                 v.share()
-            } else if (76 == event.which) { // l
+            } else if (allowNavigation && 76 == event.which) { // l
                 v.toogleLayout();
-            } else if (83 == event.which) { // s
+            } else if (allowNavigation && 83 == event.which) { // s
                 var first = v.getFirstUserPage()
                 if (first && first.index != v.currentPage.index)
                     v.goToPage(first.index)
-            } else if (27 == event.which) { // esc	
+            } else if (allowNavigation && 27 == event.which) { // esc	
                 v.onKeyEscape()
             } else {
                 return false
@@ -817,11 +821,6 @@ function createViewer(story, files) {
             this.currentPage.show()
         },
         onKeyEscape: function () {
-            // If gallery is enabled then close it
-            if (this.galleryViewer.isVisible()) {
-                this.galleryViewer.toogle()
-                return true
-            }
             // If the current page has some overlay open then close it
             const page = this.currentPage
             if (page.hideCurrentOverlays()) {
