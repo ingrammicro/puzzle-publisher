@@ -1,6 +1,9 @@
 # Change Log
 
-##  Version 12.1.0 (26 Dec 2019)
+##  Version 12.1.1 (10 Jan 2019)
+- Hotfix for 12.1.0 (Element Inspector can not be closed using "m" key)
+
+##  Version 12.1.0 (09 Jan 2019)
 - Improved search in Gallery
 
 ##  Version 12.0.4 (26 Dec 2019)

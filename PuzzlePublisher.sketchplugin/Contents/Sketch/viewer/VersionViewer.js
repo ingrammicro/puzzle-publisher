@@ -102,11 +102,13 @@ class VersionViewer extends AbstractViewer {
         const event = jevent.originalEvent
         var disabled = !this.screenDiffs[viewer.currentPage.getHash()]
 
-        if (!disabled && 37 == event.which && event.shiftKey) {   // left + shift
+        if (86 == event.which) { // "v" key
+            this.toggle()
+        } else if (!disabled && 37 == event.which && event.shiftKey) {   // left + shift
             this.switchMode(-1)
         } else if (!disabled && 39 == event.which && event.shiftKey) {   // right + shift
             this.switchMode(1)
-        } else if (event.shiftKey) {   // left + shift
+        } else if (event.shiftKey) {  //shift
         } else {
             return super.handleKeyDown(jevent)
         }

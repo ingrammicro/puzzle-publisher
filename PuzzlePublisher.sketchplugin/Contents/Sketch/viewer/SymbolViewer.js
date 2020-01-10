@@ -91,14 +91,25 @@ class SymbolViewer extends AbstractViewer {
     }
 
     handleKeyDown(jevent) {
-        return super.handleKeyDown(jevent)
+
+        const event = jevent.originalEvent
+
+        if (77 == event.which) { // m
+            // Key "M" eactivates Symbol Viewer
+            this.toggle()
+        } else {
+            return super.handleKeyDown(jevent)
+        }
+
+        jevent.preventDefault()
+        return true
     }
 
     handleKeyDownWhileInactive(jevent) {
         const event = jevent.originalEvent
 
-        // Key "M" activates (or deactivates) Symbol Viewer
         if (77 == event.which) { // m
+            // Key "M" activates Symbol Viewer
             this.toggle()
         } else {
             return super.handleKeyDownWhileInactive(jevent)
