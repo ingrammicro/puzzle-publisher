@@ -574,8 +574,8 @@ function createViewer(story, files) {
             this.refresh_switch_modal_layer(newPage);
             if (refreshURL) {
                 this.refresh_url(newPage)
-                this.refresh_update_navbar(newPage);
             }
+            this.refresh_update_navbar(newPage);
 
             this.currentPage = newPage;
             if (!newPage.isModal) {
@@ -623,7 +623,7 @@ function createViewer(story, files) {
             }
         },
         refresh_update_navbar: function (page) {
-            var VERSION_INJECT = "";
+            var VERSION_INJECT = story.docVersion != 'V_V_V' ? (" (v" + story.docVersion + ")") : "";
 
             var prevPage = this.getPreviousUserPage(page)
             var nextPage = this.getNextUserPage(page)
