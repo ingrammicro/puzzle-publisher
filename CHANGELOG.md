@@ -1,5 +1,9 @@
 # Change Log
 
+##  Version 12.1.2 (20 Jan 2019)
+- Show a version of published mockups in navigation bar
+- Allow browser to handle its own keyboard shortcuts (Cmd+L on mac)
+
 ##  Version 12.1.1 (10 Jan 2019)
 - Hotfix for 12.1.0 (Element Inspector can not be closed using "m" key)
 
