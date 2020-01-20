@@ -257,6 +257,8 @@ function createViewer(story, files) {
                 }
             } else if (allowNavigation && 91 == event.which) { // cmd
                 if (this.highlightLinks) v.toggleLinks(false) // hide hightlights to allow user to make a screenshot on macOS
+            } else if (event.metaKey || event.altKey || event.ctrlKey) { // skip any modificator active to allow a browser to handle its own shortkeys
+                return false
             } else if (allowNavigation && 90 == event.which) { // z
                 v.toggleZoom()
             } else if (allowNavigation && 69 == event.which) { // e
