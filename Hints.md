@@ -39,3 +39,7 @@ Run the following command (don't forget to inject a path to your file into  a "-
 
 ## [Hint 5](#hint5): How to see the plugin log
 	tail -f ~/Library/Logs/com.bohemiancoding.sketch3/Plugin\ Log.log
+
+
+## [Hint 6](#hint5): How to change a browser page background for all documents
+ Add "@MainBackground@" magic string to any libary symbol layer name to use its background color as a default color for browser pages
