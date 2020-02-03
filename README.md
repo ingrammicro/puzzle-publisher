@@ -60,3 +60,10 @@ You can use Sketch-native links or add links to external sites. When you're fini
 ### Retina Images
  
 By default it will show 2x images for high pixel density screens. To turn this off uncheck `Export retina images` in Settings and re-export the page.
+
+### Special magic string in layer names
+@MainBackground@: a shape layer background color will be used as a default color for browser pages
+@SiteIcon@: an image layer will be rendered as site icon for mockups
+
+
+
