@@ -250,6 +250,12 @@ class ViewerPage {
 
 
     showAsOverlayInCurrentPage(orgPage, link, posX, posY, linkParentFixed) {
+
+        if (this.overlayRedirectTargetPage != undefined) {
+            // Change base page
+            viewer.goTo(this.overlayRedirectTargetPage)
+        }
+
         const newParentPage = viewer.currentPage
 
         if (!this.imageDiv) {

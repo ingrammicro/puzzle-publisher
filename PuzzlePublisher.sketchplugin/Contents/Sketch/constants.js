@@ -28,8 +28,7 @@ var Constants = {
     ///
     INT_LAYER_NAME_BACKCOLOR: "@MainBackground@",
     INT_LAYER_NAME_SITEICON: "@SiteIcon@",
-    INT_LAYER_NAME_OVERLAYONHOVER: "@OverlayOnhover@",
-    INT_LAYER_NAME_SPLIT: "@Split@",
+    INT_LAYER_NAME_REDIRECT: "@Redirect@",
     ARTBOARD_TYPE_REGULAR: 0,
     ARTBOARD_TYPE_MODAL: 1,
     ARTBOARD_TYPE_EXTERNAL_URL: 2,

@@ -153,9 +153,8 @@ class PZLayer {
             exporter.siteIconLayer = this
         }
         // check: if this layer contains special overlay
-        if (!this.isArtboard && this.name.indexOf(Constants.INT_LAYER_NAME_OVERLAYONHOVER) >= 0) {
-            this.hasHoverOverlay = true
-            this.artboard.overlayLayers.push(this)
+        if (!this.isArtboard && this.name.indexOf(Constants.INT_LAYER_NAME_REDIRECT) >= 0) {
+            this.overlayRedirect = true
         }
 
     }
@@ -262,16 +261,8 @@ class PZLayer {
             //l: l,
             linkType: 'undefined',
             artboardID: null,
-            target: null
-        }
-
-        if (this.hasHoverOverlay) {
-            const hoverHotsport = {
-                r: l.frame.copy(),
-                linkType: 'artboard',
-                artboardID: l.hoverOverlayArtboardID
-            }
-            this.artboard.hotspots.push(hoverHotsport)
+            target: null,
+            overlayRedirect: this.overlayRedirect
         }
 
         while (true) {

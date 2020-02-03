@@ -77,7 +77,6 @@ class PZArtboard extends PZLayer {
         }
         this.overlayClosePrevOverlay = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_OVERLAY_CLOSE_PREVOVERLAY) == 1
 
-
         this.disableAutoScroll =
             exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_DISABLE_AUTOSCROLL)
         this.transNextSecs =
@@ -227,6 +226,8 @@ class PZArtboard extends PZLayer {
 
         // add hotspots 
         js += "'links' : " + JSON.stringify(this._buildHotspots(this.hotspots), null, "\t") + ",\n"
+        if (this.overlayRedirectTargetPage != undefined)
+            js += "'overlayRedirectTargetPage' : " + this.overlayRedirectTargetPage + ",\n"
 
 
         js += "})\n"
@@ -351,6 +352,10 @@ class PZArtboard extends PZLayer {
 
             if (hotspot.target != undefined) {
                 newHotspot.target = hotspot.target
+            }
+
+            if (hotspot.overlayRedirect && newHotspot.page != undefined) {
+                this.overlayRedirectTargetPage = newHotspot.page
             }
 
             newHotspot.index = this.nextLinkIndex++
