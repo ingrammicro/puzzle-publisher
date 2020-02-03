@@ -251,10 +251,7 @@ class ViewerPage {
 
     showAsOverlayInCurrentPage(orgPage, link, posX, posY, linkParentFixed) {
 
-        if (this.overlayRedirectTargetPage != undefined) {
-            // Change base page
-            viewer.goTo(this.overlayRedirectTargetPage)
-        }
+
 
         const newParentPage = viewer.currentPage
 
@@ -593,8 +590,8 @@ function handleLinkEvent(event) {
 
     if (viewer.linksDisabled) return false
 
-    const currentPage = viewer.currentPage
-    const orgPage = customData ? story.pages[customData.pageIndex] : story.pages[$(this).attr("lpi")]
+    let currentPage = viewer.currentPage
+    let orgPage = customData ? story.pages[customData.pageIndex] : story.pages[$(this).attr("lpi")]
 
     const linkIndex = customData ? customData.linkIndex : $(this).attr("li")
     const link = orgPage._getLinkByIndex(linkIndex)
@@ -609,6 +606,15 @@ function handleLinkEvent(event) {
         if (!destPage) return
 
         if ('overlay' == destPage.type) {
+
+
+            if (destPage.overlayRedirectTargetPage != undefined) {
+                // Change base page
+                viewer.goTo(destPage.overlayRedirectTargetPage)
+                currentPage = viewer.currentPage
+                orgPage = viewer.currentPage
+            }
+
             var orgLink = {
                 orgPage: orgPage,
                 index: linkIndex,
@@ -721,6 +727,10 @@ function handleLinkEvent(event) {
             destPage.showAsOverlayInCurrentPage(orgPage, orgLink, pageX, pageY, linkParentFixed)
             return false
         } else {
+
+            // check if we need to close current overlay
+            currentPage.hideCurrentOverlays()
+
             viewer.goTo(parseInt(destPageIndex))
             return false
         }

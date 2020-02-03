@@ -24,7 +24,6 @@ var onRun = function (context) {
         UI.alert("alert", "Select some single layer.")
         return
     }
-
     // read settings
 
     var layerDivID = Settings.layerSettingForKey(layer, SettingKeys.LAYER_DIV_ID)

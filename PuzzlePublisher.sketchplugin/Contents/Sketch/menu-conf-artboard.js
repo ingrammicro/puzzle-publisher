@@ -57,6 +57,11 @@ var onRun = function (context) {
 
     // We need the only one artboard
     if (selection.length != 1 || selection.layers[0].type != 'Artboard') {
+        // 
+        //
+        const l = selection.layers[0]
+        Settings.setLayerSettingForKey(l, "zzzz", "1234")
+        //
         const UI = require('sketch/ui')
         UI.alert("Alert", "Select a single artboard.")
         return
