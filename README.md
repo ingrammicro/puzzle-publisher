@@ -62,6 +62,6 @@ You can use Sketch-native links or add links to external sites. When you're fini
 By default it will show 2x images for high pixel density screens. To turn this off uncheck `Export retina images` in Settings and re-export the page.
 
 ### Special magic string in layer names
-@MainBackground@: a shape layer background color will be used as a default color for browser pages
-@SiteIcon@: an image layer will be rendered as site icon for mockups
-@Redirect@: a link from a marked hostpot will be used to show a page under an overlay ([example](https://github.com/ingrammicro/puzzle-publisher/tree/master/tests/Releases/12.2.0))
+- @MainBackground@: a shape layer background color will be used as a default color for browser pages
+- @SiteIcon@: an image layer will be rendered as site icon for mockups
+- @Redirect@: a link from a marked hostpot will be used to show a page under an overlay ([example](https://github.com/ingrammicro/puzzle-publisher/tree/master/tests/Releases/12.2.0))
