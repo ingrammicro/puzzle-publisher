@@ -152,8 +152,8 @@ class ViewerPage {
 
 
         } else if ("overlay" == this.type) {
-            this.currentLeft = viewer.currentPage.currentLeft
-            this.currentTop = viewer.currentPage.currentTop
+            this.currentLeft = viewer.currentPage ? viewer.currentPage.currentLeft : 0
+            this.currentTop = viewer.currentPage ? viewer.currentPage.currentTop : 0
         }
     }
 
