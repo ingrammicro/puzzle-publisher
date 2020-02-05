@@ -2,7 +2,12 @@
 @import("lib/utils.js")
 Sketch = require('sketch/dom')
 
-const replaceValidKeys = ["frame", "x", "y", "width", "height", "constrains", "childs", "smName", "styleName", "text", "comment", "smLib"]
+const replaceValidKeys = [
+    "x", "y", "w", "h",
+    "c", // childs
+    "s", // smName
+    "l", //styleName
+    "text", "comment", "smLib"]
 // smName: symbol master Name
 function replacer(key, value) {
     // Pass known keys and array indexes
@@ -146,8 +151,12 @@ class PZDoc {
             l.clearRefsBeforeJSON()
         });
 
+        this.mAllArtboards.forEach(l => {
+            l.clearRefsBeforeJSON()
+        });
+
         log(" getJSON: running...")
-        const json = JSON.stringify(this.mAllArtboards, replacer, null)
+        const json = JSON.stringify(this.mAllArtboards)//, replacer, null)
         log(" getJSON: done!")
 
         return json

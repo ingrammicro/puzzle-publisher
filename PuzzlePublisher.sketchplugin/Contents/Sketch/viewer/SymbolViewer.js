@@ -174,31 +174,31 @@ class SymbolViewer extends AbstractViewer {
 
 
     _create() {
-        this._processLayerList(layersData[this.pageIndex].childs)
+        this._processLayerList(layersData[this.pageIndex].c)
     }
 
     _processLayerList(layers, isParentSymbol = false) {
         for (var l of layers) {
             if (this.currentLib != "") {
-                if (this.showSymbols && l.smLib) {
-                    if (l.smLib == this.currentLib) {
+                if (this.showSymbols && l.b) {
+                    if (l.b == this.currentLib) {
                         this._showElement(l)
                         continue
                     }
                 }
-                if (!this.showSymbols && undefined != l.styleName) {
-                    const styleInfo = this._findStyleAndLibByStyleName(l.styleName)
+                if (!this.showSymbols && undefined != l.l) {
+                    const styleInfo = this._findStyleAndLibByStyleName(l.l)
                     if (styleInfo && styleInfo.libName == this.currentLib) {
                         this._showElement(l)
                         continue
                     }
                 }
             } else {
-                if ((this.showSymbols && l.smName != undefined) || (!this.showSymbols && !isParentSymbol && l.styleName != undefined)) {
+                if ((this.showSymbols && l.s != undefined) || (!this.showSymbols && !isParentSymbol && l.l != undefined)) {
                     this._showElement(l)
                 }
             }
-            this._processLayerList(l.childs, this.showSymbols && l.smName != undefined)
+            this._processLayerList(l.c, this.showSymbols && l.s != undefined)
         }
     }
 
@@ -207,8 +207,8 @@ class SymbolViewer extends AbstractViewer {
         var currentPanel = this.page
 
         for (const panel of this.page.fixedPanels) {
-            if (l.frame.x >= panel.x && l.frame.y >= panel.y &&
-                ((l.frame.x + l.frame.width) <= (panel.x + panel.width)) && ((l.frame.y + l.frame.height) <= (panel.y + panel.height))
+            if (l.x >= panel.x && l.y >= panel.y &&
+                ((l.x + l.w) <= (panel.x + panel.width)) && ((l.y + l.h) <= (panel.y + panel.height))
             ) {
                 currentPanel = panel
                 break
@@ -232,13 +232,13 @@ class SymbolViewer extends AbstractViewer {
             const layerIndex = $(this).attr("li")
             const layer = sv.createdPages[pageIndex].layerArray[layerIndex]
 
-            var symName = sv.showSymbols ? layer.smName : null
-            var styleName = layer.styleName
+            var symName = sv.showSymbols ? layer.s : null
+            var styleName = layer.l
             var comment = layer.comment
-            var frameX = layer.frame.x
-            var frameY = layer.frame.y
-            var frameWidth = layer.frame.width
-            var frameHeight = layer.frame.height
+            var frameX = layer.x
+            var frameY = layer.y
+            var frameWidth = layer.w
+            var frameHeight = layer.h
 
             const styleInfo = styleName != undefined ? viewer.symbolViewer._findStyleAndLibByStyleName(styleName) : undefined
             const symInfo = symName != undefined ? viewer.symbolViewer._findSymbolAndLibBySymbolName(symName) : undefined
@@ -248,8 +248,8 @@ class SymbolViewer extends AbstractViewer {
             if (symName != undefined) {
                 info = "<p class='head'>Symbol</p>" + symName
                 info += "<p class='head'>Symbol Source</p>"
-                if (layer.smLib != undefined) {
-                    info += layer.smLib + " (external)"
+                if (layer.b != undefined) {
+                    info += layer.b + " (external)"
                 } else {
                     info += "Document"
                 }
@@ -258,8 +258,8 @@ class SymbolViewer extends AbstractViewer {
             if (styleName != undefined) {
                 info = "<p class='head'>Style</p> " + styleName
                 info += "<p class='head'>Style Source</p>"
-                if (layer.smLib != undefined) {
-                    info += layer.smLib + " (external)"
+                if (layer.b != undefined) {
+                    info += layer.b + " (external)"
                 } else {
                     info += "Document"
                 }
@@ -271,8 +271,8 @@ class SymbolViewer extends AbstractViewer {
             info += "<p class='head'>Position (left x top)</p>" + Math.round(frameX) + " x " + Math.round(frameY)
             info += "<p class='head'>Size (width x height)</p>" + Math.round(frameWidth) + " x " + Math.round(frameHeight)
 
-            if (layer.text != undefined && layer.text != '') {
-                info += "<p class='head'>Text</p> " + layer.text
+            if (layer.t != undefined && layer.t != '') {
+                info += "<p class='head'>Text</p> " + layer.t
             }
 
 
@@ -303,8 +303,8 @@ class SymbolViewer extends AbstractViewer {
 
         a.appendTo(currentPanel.linksDiv)
 
-        var style = "left: " + l.frame.x + "px; top:" + l.frame.y + "px; "
-        style += "width: " + l.frame.width + "px; height:" + l.frame.height + "px; "
+        var style = "left: " + l.x + "px; top:" + l.y + "px; "
+        style += "width: " + l.w + "px; height:" + l.h + "px; "
         var symbolDiv = $("<div>", {
             class: "symbolDiv",
         }).attr('style', style)
@@ -314,8 +314,8 @@ class SymbolViewer extends AbstractViewer {
 
     _showTokenInfo(tokenName, layer) {
         let text = "<b>" + tokenName + "</b>"
-        if (undefined != layer.smLib) {
-            const tokenValue = this._findTokenValueByName(tokenName, layer.smLib)
+        if (undefined != layer.b) {
+            const tokenValue = this._findTokenValueByName(tokenName, layer.b)
             if (undefined != tokenValue) {
                 text += " = " + tokenValue
             }

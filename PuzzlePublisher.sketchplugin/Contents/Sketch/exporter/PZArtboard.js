@@ -255,6 +255,12 @@ class PZArtboard extends PZLayer {
         return this._findLayersShadow(l.childs)
     }
 
+    clearRefsBeforeJSON() {
+        super.clearRefsBeforeJSON()
+        this.overlayLayers = undefined
+        this.fixedLayers = undefined
+    }
+
 
     _pushFixedLayersIntoJSStory() {
         let recs = []

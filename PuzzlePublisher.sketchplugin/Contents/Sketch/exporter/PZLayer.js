@@ -357,6 +357,38 @@ class PZLayer {
         this.slayer = undefined
         //l.nlayer = undefined
         this.customLink = undefined
+        this.nlayer = undefined
+        this.parent = undefined
+        this.artboard = undefined
+        this.objectID = undefined
+        this.isParentFixed = undefined
+        this.isArtboard = undefined
+        this.isGroup = undefined
+        this.isSymbolInstance = undefined
+        this.isLink = undefined
+        this.hotspots = undefined
+        this.targetId = undefined
+        //
+        this.n = this.name
+        this.x = this.frame.x
+        this.y = this.frame.y
+        this.w = this.frame.width
+        this.h = this.frame.height
+        this.s = this.smName
+        this.l = this.styleName
+        this.b = this.smLib
+        this.t = this.text
+        this.c = this.childs
+        this.name = undefined
+        this.frame = undefined
+        this.width = undefined
+        this.height = undefined
+        this.constrains = undefined
+        this.smName = undefined
+        this.styleName = undefined
+        this.smLib = undefined
+        this.text = undefined
+        this.childs = undefined
 
     }
 
