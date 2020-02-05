@@ -1,7 +1,7 @@
 # Change Log
 
 ##  Version 12.2.0 (4 Feb 2020)
-- Added Redirect Overlays
+- Added Redirect Overlays (see [details](https://spectrum.chat/puzzle-publisher/general/12-2-0-released~77f1e2a4-e3df-4667-b0bb-9067efce29ec))
 
 ##  Version 12.1.2 (20 Jan 2020)
 - Show a version of published mockups in navigation bar
