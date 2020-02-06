@@ -1,5 +1,10 @@
 # Change Log
 
+##  Version 12.3.0 (6 Feb 2020)
+- Added ability to export into JPG files (see Configure Export)
+- Replaced Show Last Info menu item by Show Change Log
+- Accelerated export data for Element Inspector
+
 ##  Version 12.2.0 (4 Feb 2020)
 - Added Redirect Overlays (see [details](https://spectrum.chat/puzzle-publisher/general/12-2-0-released~77f1e2a4-e3df-4667-b0bb-9067efce29ec))
 
