@@ -192,12 +192,12 @@ class Utils {
         return page.artboards()[0].isKindOfClass(MSSymbolMaster);
     }
 
-    static removeFilesWithExtension(path, extension) {
+    static removeFilesWithExtension(path, extension, extension2 = null) {
         const error = MOPointer.alloc().init();
         const fileManager = NSFileManager.defaultManager();
         const files = fileManager.contentsOfDirectoryAtPath_error(path, null);
         files.forEach(function (file) {
-            if (file.pathExtension() == extension) {
+            if (file.pathExtension() == extension || (extension2 != null && file.pathExtension() == extension2)) {
                 if (!fileManager.removeItemAtPath_error(path + "/" + file, error)) {
                     log(error.value().localizedDescription());
                 }

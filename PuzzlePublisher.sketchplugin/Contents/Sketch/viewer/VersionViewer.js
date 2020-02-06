@@ -169,7 +169,7 @@ class VersionViewer extends AbstractViewer {
         if (!page.srcImageObjSrc) page.srcImageObjSrc = page.imageObj.attr("src")
 
         if ('diff' == this.mode) {
-            newSrc = data['journals_path'] + '/' + data['dir'] + "/diffs/" + screen['screen_name'] + (story.hasRetina && viewer.isHighDensityDisplay() ? "@2x" : "") + ".png"
+            newSrc = data['journals_path'] + '/' + data['dir'] + "/diffs/" + screen['screen_name'] + (story.hasRetina && viewer.isHighDensityDisplay() ? "@2x" : "") + "." + story.fileType
         } else if ('new' == this.mode) {
             if (page.imageObj.attr("src") != page.srcImageObjSrc) {
                 newSrc = page.srcImageObjSrc

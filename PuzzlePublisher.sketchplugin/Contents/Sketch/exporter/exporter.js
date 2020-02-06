@@ -73,6 +73,10 @@ class Exporter {
         let serverTools = this.Settings.settingForKey(SettingKeys.PLUGIN_SERVERTOOLS_PATH)
         if (serverTools == undefined) serverTools = ''
         this.serverTools = serverTools
+
+        let fileType = Settings.settingForKey(SettingKeys.PLUGIN_FILETYPE)
+        if (fileType == undefined || fileType == "") fileType = "PNG"
+        this.fileType = fileType.toLowerCase()
     }
 
 
@@ -157,6 +161,7 @@ class Exporter {
             '"docVersion": "' + Constants.DOCUMENT_VERSION_PLACEHOLDER + '",\n' +
             '"hasRetina": ' + (this.retinaImages ? 'true' : 'false') + ',\n' +
             '"serverToolsPath":"' + this.serverTools + '",\n' +
+            '"fileType":"' + this.fileType + '",\n' +
             '"disableHotspots": ' + (disableHotspots ? 'true' : 'false') + ',\n' +
             '"pages": [\n';
     }
@@ -306,7 +311,7 @@ class Exporter {
             this.generateJSStoryBegin();
             let index = 0;
 
-            // Export every artboard into PNG image
+            // Export every artboard into image
             this.mDoc.export()
 
             if (!this.generateJSStoryEnd()) return false
@@ -377,7 +382,7 @@ class Exporter {
                 log(error.value().localizedDescription());
             }
         } else {
-            Utils.removeFilesWithExtension(this.imagesPath, "png");
+            Utils.removeFilesWithExtension(this.imagesPath, "png", "jpg");
         }
     }
 }

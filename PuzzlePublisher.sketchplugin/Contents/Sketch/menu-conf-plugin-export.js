@@ -2,6 +2,9 @@
 @import "lib/utils.js";
 @import "constants.js";
 
+const FILE_TYPES = ["PNG", "JPG"]
+
+
 
 var onRun = function (context) {
     const sketch = require('sketch')
@@ -16,6 +19,11 @@ var onRun = function (context) {
 
     let sortRule = Settings.settingForKey(SettingKeys.PLUGIN_SORT_RULE)
     if (sortRule == undefined || sortRule == "") sortRule = 0
+
+    let fileTypeStr = Settings.settingForKey(SettingKeys.PLUGIN_FILETYPE)
+    if (fileTypeStr == undefined || fileTypeStr == "") fileTypeStr = "PNG"
+    let fileType = FILE_TYPES.indexOf(fileTypeStr)
+
 
     const dontRetina = Settings.settingForKey(SettingKeys.PLUGIN_DONT_RETINA_IMAGES) == 1
     const disableZoom = Settings.settingForKey(SettingKeys.PLUGIN_DISABLE_ZOOM) == 1
@@ -32,11 +40,12 @@ var onRun = function (context) {
     //
 
 
-    const dialog = new UIDialog("Configure Export", NSMakeRect(0, 0, 500, 450), "Save", "Edit settings which are common for all documents.")
+    const dialog = new UIDialog("Configure Export", NSMakeRect(0, 0, 500, 520), "Save", "Edit settings which are common for all documents.")
 
 
     dialog.addLeftLabel("", "Export")
     dialog.addCheckbox("retina", "Export Retina images", !dontRetina)
+    dialog.addSelect("fileType", "Image Format", fileType, ["PNG", "JPG"], 150)
     dialog.addCheckbox("dontSaveElements", "Don't save data for Element Inspector", dontSaveElements)
     dialog.addCheckbox("askCustomSize", "Ask custom artboard Size", askCustomSize)
     dialog.addTextInput("googleCode", "Google Code", googleCode, 'e.g. UA-XXXXXXXX-X')
@@ -73,6 +82,10 @@ var onRun = function (context) {
         Settings.setSettingForKey(SettingKeys.PLUGIN_DISABLE_HOTSPOTS, dialog.views['disableHotspots'].state() != 1)
         Settings.setSettingForKey(SettingKeys.PLUGIN_DONT_SAVE_ELEMENTS, dialog.views['dontSaveElements'].state() == 1)
         Settings.setSettingForKey(SettingKeys.PLUGIN_ASK_CUSTOM_SIZE, dialog.views['askCustomSize'].state() == 1)
+
+        // convert position in FILE_TYPES to file type string
+        fileType = dialog.views['fileType'].indexOfSelectedItem()
+        Settings.setSettingForKey(SettingKeys.PLUGIN_FILETYPE, FILE_TYPES[fileType])
     }
     dialog.finish()
 

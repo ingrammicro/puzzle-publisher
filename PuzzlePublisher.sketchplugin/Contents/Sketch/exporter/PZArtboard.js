@@ -153,10 +153,10 @@ class PZArtboard extends PZLayer {
         js +=
             '$.extend(new ViewerPage(),{\n' +
             '"index": ' + parseInt(pageIndex) + ',\n' +
-            '"image": "' + Utils.quoteString(Utils.toFilename(mainName + '.png', false)) + '",\n'
+            '"image": "' + Utils.quoteString(Utils.toFilename(mainName + '.' + exporter.fileType, false)) + '",\n'
         if (exporter.retinaImages)
             js +=
-                '"image2x": "' + Utils.quoteString(Utils.toFilename(mainName + '@2x.png', false)) + '",\n'
+                '"image2x": "' + Utils.quoteString(Utils.toFilename(mainName + '@2x.' + exporter.fileType, false)) + '",\n'
         js +=
             '"width": ' + parseInt(this.frame.width) + ',\n' +
             '"height": ' + parseInt(this.frame.height) + ',\n' +
@@ -302,10 +302,10 @@ class PZArtboard extends PZLayer {
                     isFixedDiv: l.isFixedDiv,
                     divID: l.layerDivID != undefined ? l.layerDivID : "",
                     links: this._buildHotspots(l.hotspots, true),
-                    image: Utils.quoteString(Utils.toFilename(mainName, false) + fileNamePostfix + '.png')
+                    image: Utils.quoteString(Utils.toFilename(mainName, false) + fileNamePostfix + '.' + exporter.fileType)
                 }
                 if (exporter.retinaImages)
-                    rec.image2x = Utils.quoteString(Utils.toFilename(mainName, false) + fileNamePostfix + '@2x.png', false)
+                    rec.image2x = Utils.quoteString(Utils.toFilename(mainName, false) + fileNamePostfix + '@2x.' + exporter.fileType, false)
 
                 // setup shadow
                 const layerWithShadow = this._findLayerShadow(l)
@@ -377,7 +377,7 @@ class PZArtboard extends PZLayer {
 
     _getImageName(scale, panelPostix = "") {
         const suffix = scale == 2 ? "@2x" : "";
-        return Utils.toFilename(this.name, false) + panelPostix + suffix + ".png";
+        return Utils.toFilename(this.name, false) + panelPostix + suffix + "." + exporter.fileType;
     }
 
     _exportImage(scale, layer, nlayer, panelPostix = "", addToExported = true) {
@@ -392,8 +392,10 @@ class PZArtboard extends PZLayer {
         slice = MSExportRequest.exportRequestsFromExportableLayer(nlayer).firstObject();
         slice.scale = scale;
         slice.saveForWeb = false;
-        slice.format = "png";
+        slice.format = exporter.fileType;
         exporter.ndoc.saveArtboardOrSlice_toFile(slice, imagePath);
+        log(imagePath)
+        log(slice)
     }
 
     // new experimental code to export images
@@ -408,7 +410,7 @@ class PZArtboard extends PZLayer {
             output: exporter.imagesPath,
             overwriting: true,
             'save-for-web': true,
-            formats: 'png'
+            formats: exporter.fileType
         }
         Sketch.export(slayer, options)
 
