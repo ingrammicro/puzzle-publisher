@@ -394,8 +394,6 @@ class PZArtboard extends PZLayer {
         slice.saveForWeb = false;
         slice.format = exporter.fileType;
         exporter.ndoc.saveArtboardOrSlice_toFile(slice, imagePath);
-        log(imagePath)
-        log(slice)
     }
 
     // new experimental code to export images
