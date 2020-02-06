@@ -85,11 +85,11 @@
             "identifier": "publish"
         },
         {
-            "script": "exporter/exporter-run.js",
-            "handler": "announce11",
+            "script": "menu-cmd-other.js",
+            "handler": "showChangeLog",
             "shortcut": "",
-            "name": "ℹ️ Show last announcement",
-            "identifier": "announce11"
+            "name": "Show Change Log",
+            "identifier": "showChangeLog"
         }
     ],
     "menu": {
@@ -108,7 +108,7 @@
             "confPluginExport",
             "confPluginPublishing",
             "-",
-            "announce11"
+            "showChangeLog"
         ]
     }
 }

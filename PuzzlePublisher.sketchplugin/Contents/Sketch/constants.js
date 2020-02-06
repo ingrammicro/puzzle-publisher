@@ -22,6 +22,8 @@ var Constants = {
     EXPORT_MODE_CURRENT_PAGE: 1,
     DEF_BACK_COLOR: "#646464",
     //
+    SITE_CHANGELOG_URL: "https://github.com/ingrammicro/puzzle-publisher/blob/master/CHANGELOG.md",
+    //
     SYMBOLTOKENFILE_POSTFIX: "-inspector.json",
     CSSFILE_POSTFIX: "-viewer.css",
     VARSFILE_POSTFIX: "-vars.json",

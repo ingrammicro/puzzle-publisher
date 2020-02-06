@@ -57,13 +57,6 @@ function exportHTML(currentPath, nDoc, exportOptions, context) {
                     const openPath = currentPath + "/" + exporter.docName + "/"
                     const fullPath = "" + openPath + (openPath.endsWith('/') ? '' : '/') + 'index.html'
                     NSWorkspace.sharedWorkspace().openFile(fullPath);
-                    //log('open: '+fullPath)
-                    /*const openResult = Utils.runCommand('/usr/bin/open', [openPath,openPath+'/index.html'])
-                    
-                    if(openResult.result){
-                    }else{
-                        UI.alert('Can not open HTML in browser', openResult.output)
-                    }*/
                 }
             }
 
@@ -83,31 +76,6 @@ function exportHTML(currentPath, nDoc, exportOptions, context) {
     }
 }
 
-
-function announce11() {
-    UI.alert('11.0.0 released',
-        "Hello from Puzzle Publisher plugin creators.\n\
-This is a one-time message. You can view it again via \"Show last announcement\" in the plugin menu.\n\
-\n\
-The latest 11.0.0 release brings full support for the Sketch Smart Layouts feature. \n\
-To implement this support we have re-written all code related to processing of symbol instances overrides. We have actually dropped most of this code.\n\
-\n\
-Currently during the export Publisher detaches all symbol instances from master thus allowing Sketch to apply all transformations itself.\n\
-Of course right after export Publisher undoes these detachments.\n\
-\n\
-Positive effects:\n\
-- Full support for any layer transformations\n\
-- Export time reduced by 20%\n\
-\n\
-Current limitation:\n\
-Links attached directly to symbol instances can be ignored some cases. The best solution would be adding a hotspot inside a symbol master and linking it.\n\
-\n\
-Important note:\n\
-In case the export fails and Published displays an execution error undoing detachments would probably fail too. To fix this just manually select Undo from Edit menu of Sketch.\n\
-\n\
-Thanks for your attention\n\
-Puzzle Publisher team.")
-}
 
 function runExporter(context, exportOptions = null) {
     if (null == exportOptions) {
@@ -147,11 +115,7 @@ function runExporter(context, exportOptions = null) {
     if (!fromCmd) {
         UIDialog.setUp(context);
 
-        // show special message about 11 version
-        if (Settings.settingForKey(SettingKeys.PLUGIN_INFO_11) != 1) {
-            announce11()
-            Settings.setSettingForKey(SettingKeys.PLUGIN_INFO_11, 1)
-        }
+
 
         const dialog = new UIDialog("Export to HTML", NSMakeRect(0, 0, 500, 100 + (askSize ? 100 : 0)), "Export")
         dialog.removeLeftColumn()
