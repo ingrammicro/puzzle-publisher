@@ -726,7 +726,9 @@ function createViewer(story, files) {
 
         _parseLocationHash: function () {
             var result = {
-                reset_url: false
+                reset_url: false,
+                overlayLinkIndex: undefined,
+                redirectOverlayLinkIndex: undefined,
             }
             var hash = location.hash;
 
@@ -766,11 +768,21 @@ function createViewer(story, files) {
 
             var page = story.pages[pageIndex];
 
+            // check if this redirect overlay
+            const overlayRedirectTargetPage = page.overlayRedirectTargetPage
+            if (undefined != overlayRedirectTargetPage) {
+                pageIndex = overlayRedirectTargetPage
+                page = story.pages[pageIndex];
+                reset_url = false
+            }
+
             if (initial)
                 page.isDefault = true
             else
                 this.clear_context();
 
+            // check if this page overlay
+            // check if this redirect overlay
             this.goTo(pageIndex, hashInfo.reset_url);
 
             if (hashInfo.overlayLinkIndex != null) {
@@ -778,6 +790,11 @@ function createViewer(story, files) {
             }
 
             if (!initial) this.urlLastIndex = pageIndex
+
+            if (overlayRedirectTargetPage) {
+                const overlayPage = story.pages[overlayRedirectTargetPage];
+                //overlayPage.show
+            }
         },
 
         clear_context_hide_all_images: function () {

@@ -333,8 +333,12 @@ class ViewerPage {
 
             this.currentLink = link
 
-            var extURL = '/o/' + link.index
-            viewer.refresh_url(newParentPage, extURL)
+            if (undefined != this.overlayRedirectTargetPage) {
+                viewer.refresh_url(this)
+            } else {
+                var extURL = '/o/' + link.index
+                viewer.refresh_url(newParentPage, extURL)
+            }
 
 
         } else if (1 == this.overlayByEvent && posX == this.currentX && posY == this.currentY) {//handle only mouse hover
@@ -610,7 +614,7 @@ function handleLinkEvent(event) {
 
             if (destPage.overlayRedirectTargetPage != undefined) {
                 // Change base page
-                viewer.goTo(destPage.overlayRedirectTargetPage)
+                viewer.goTo(destPage.overlayRedirectTargetPage, false)
                 currentPage = viewer.currentPage
                 orgPage = viewer.currentPage
             }
