@@ -485,6 +485,32 @@ class ViewerPage {
 
 
     /*------------------------------- INTERNAL METHODS -----------------------------*/
+
+    // Try to find a first page and link which has a link to this page
+    _getSrcPageAndLink() {
+        let res = null
+        for (var page of story.pages) {
+            res = this._getLinkByTargetPage(page, page.links, this.index)
+            if (res) return res
+            for (var panel of page.fixedPanels) {
+                res = this._getLinkByTargetPage(page, panel.links, this.index)
+                if (res) return res
+            }
+        }
+        return null
+    }
+
+    _getLinkByTargetPage(page, links, targetPageIndex) {
+        const link = links.find(link => link.page == targetPageIndex)
+        if (!link) return null
+        return {
+            link: link,
+            page: page
+        }
+    }
+
+
+
     _getLinkByIndex(index) {
         var link = this._getLinkByIndexInLinks(index, this.links)
         if (link != null) return link

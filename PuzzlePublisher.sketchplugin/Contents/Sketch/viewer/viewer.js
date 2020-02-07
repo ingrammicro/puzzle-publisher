@@ -769,11 +769,14 @@ function createViewer(story, files) {
             var page = story.pages[pageIndex];
 
             // check if this redirect overlay
-            const overlayRedirectTargetPage = page.overlayRedirectTargetPage
-            if (undefined != overlayRedirectTargetPage) {
-                pageIndex = overlayRedirectTargetPage
-                page = story.pages[pageIndex];
-                reset_url = false
+            let overlayRedirectInfo = null
+            if (undefined != page.overlayRedirectTargetPage) {
+                overlayRedirectInfo = page._getSrcPageAndLink()
+                if (overlayRedirectInfo) {
+                    pageIndex = overlayRedirectInfo.page.index
+                    page = overlayRedirectInfo.page
+                }
+
             }
 
             if (initial)
@@ -791,9 +794,9 @@ function createViewer(story, files) {
 
             if (!initial) this.urlLastIndex = pageIndex
 
-            if (overlayRedirectTargetPage) {
-                const overlayPage = story.pages[overlayRedirectTargetPage];
-                //overlayPage.show
+            // Open redirect overlay over the overlay source page
+            if (overlayRedirectInfo) {
+                overlayRedirectInfo.link.a.click()
             }
         },
 

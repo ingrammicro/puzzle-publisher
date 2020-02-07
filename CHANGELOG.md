@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 12.3.1 (7 Feb 2020)
+- Now redirect overlay has its own URL to open 
+
 ##  Version 12.3.0 (6 Feb 2020)
 - Added ability to export into JPG files (see Configure Export)
 - Replaced Show Last Info menu item by Show Change Log
