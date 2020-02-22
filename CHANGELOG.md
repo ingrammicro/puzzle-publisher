@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 12.4.0 (7 Feb 2020)
+Added new "Up from top center of hotspot" overlay position
+
 ##  Version 12.3.1 (7 Feb 2020)
 - Now redirect overlay has its own URL to open 
 
