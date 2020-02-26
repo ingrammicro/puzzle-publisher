@@ -1,7 +1,11 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
-##  Version 12.4.0 (7 Feb 2020)
+
+##  Version 12.4.2 (26 Feb 2020)
+Respin for 12.4.0
+
+##  Version 12.4.0 (22 Feb 2020)
 Added new "Up from top center of hotspot" overlay position
 
 ##  Version 12.3.1 (7 Feb 2020)
