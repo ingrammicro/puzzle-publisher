@@ -152,7 +152,7 @@ var onRun = function (context) {
     dialog.overlayPositions = [
         ["Under hotspot from left corner to right", "Under hostpot on center", "Under hotspot from right corner to left",
             "From hotspot top left corner", "From hotspot top center", "From hotspot top right corner",
-            "To the right of the bottom right corner of hotspot"],
+            "To the right of the bottom right corner of hotspot", "Up from the top center of the hotspot"],
         ["Page top left", "Page top center", "Page top right",
             "Page bottom left", "Page bottom center", "Page bottom right",
             "Page center"]

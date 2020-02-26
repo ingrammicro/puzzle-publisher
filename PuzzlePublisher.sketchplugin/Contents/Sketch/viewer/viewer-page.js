@@ -737,6 +737,9 @@ function handleLinkEvent(event) {
                     //}else if(13==destPage.oldOverlayAlign){// OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_RIGHT_ALIGN_RIGHT
                 } else if (pinHotspot && 6 == destPage.overlayPinHotspot) {// ARTBOARD_OVERLAY_PIN_HOTSPOT_BOTTOM_RIGHT
                     pageX += orgLink.width
+                } else if (pinHotspot && 7 == destPage.overlayPinHotspot) {// ARTBOARD_OVERLAY_PIN_HOTSPOT_UP_CENTER
+                    pageX += parseInt(orgLink.width / 2) - parseInt(destPage.width / 2)
+                    pageY -= destPage.height
                 }
 
                 // check page right side
