@@ -1,6 +1,8 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 12.5.0 (2 Mar 2020)
+Added custom SSH port settings to Configure Publishing dialog
 
 ##  Version 12.4.2 (26 Feb 2020)
 Respin for 12.4.0
