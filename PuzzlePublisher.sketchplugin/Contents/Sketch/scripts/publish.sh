@@ -6,7 +6,7 @@ docFolder="$3"
 remoteFolder="$4"
 docPathValue="$5"
 mirror1="$6"
-mirror2="$7"
+sshPort="$7"
 skipLive=""
 
 docPathPlaceholder="P_P_P"
@@ -70,22 +70,19 @@ uploadReadyMockups()
 {
 
 	echo "-- publish to mirror1 site from ${orgTmpFolder} to ${mirror1}/"
-	rsync -r "$orgTmpFolder" "${mirror1}/"
+	rsync -e "ssh -p $sshPort" -r "$orgTmpFolder" "${mirror1}/"
 
 	if [ $? != 0 ]; then
 		exit 1
 	fi	
 
-	if [ "$mirror2" != "" ]; then
-		echo "-- publish to mirror2 site"	
-	fi
 } 
 
 if [ "$ver" == "" ]; then
 	if [ "$docFolder" == "" ]; then
 		if [ "$remoteFolder" == "" ]; then
 			echo "ERROR - not all arguments specified"
-			echo "format: publish.sh VERSION ALLMOCKUPSFOLDER DOCFOLDER REMOTEFOLDER MIRROК1 MIRROR2"
+			echo "format: publish.sh VERSION ALLMOCKUPSFOLDER DOCFOLDER REMOTEFOLDER SITE SSHPORT(optional)"
 			exit 1
 		fi
 	fi

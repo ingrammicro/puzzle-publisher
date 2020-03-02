@@ -116,6 +116,7 @@ var SettingKeys = {
     PLUGIN_DONT_SAVE_ELEMENTS: "pluginDontSaveElements",
     PLUGIN_PUBLISH_LOGIN: "publishLogin",
     PLUGIN_PUBLISH_SITEROOT: "publishSiteRoot",
+    PLUGIN_PUBLISH_SSH_PORT: "publishSSHPort",
     PLUGIN_EXPORTING_URL: "pluginExportingURL",
     PLUGIN_SHARE_IFRAME_SIZE: "pluginShareiFrameSize",
 

@@ -10,6 +10,7 @@ class Publisher {
         this.Settings = require('sketch/settings');
 
         this.login = ''
+        this.sshPort = ''
         this.siteRoot = ''
         this.ver = ''
         this.remoteFolder = ''
@@ -83,7 +84,6 @@ class Publisher {
                     if ('--NOTELE' == this.message) {
                         url += "&NOTELE=1"
                     }
-                    log(url)
                     var nURL = NSURL.URLWithString(url);
                     var data = NSData.dataWithContentsOfURL(nURL);
                     //var json = NSJSONSerialization.JSONObjectWithData_options_error(data, 0, nil)
@@ -103,6 +103,9 @@ class Publisher {
                 }
                 this.showMessage(runResult)
             }
+        } else {
+            this.showMessage(runResult)
+            return false
         }
 
         return true
@@ -147,6 +150,10 @@ class Publisher {
 
         this.login = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_LOGIN)
         if (this.login == undefined || this.login == null) this.login = ''
+
+        this.sshPort = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_SSH_PORT)
+        if (this.sshPort == undefined || this.sshPort == null || this.sshPort == '') this.sshPort = '22'
+
 
         this.siteRoot = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_SITEROOT)
         if (this.siteRoot == undefined || this.siteRoot == null) this.siteRoot = ''
@@ -234,7 +241,8 @@ class Publisher {
     runPublishScript(version, allMockupsdDir, docFolder, remoteFolder, commentsID) {
         let args = [version, allMockupsdDir, docFolder, remoteFolder, commentsID]
         args.push(this.login)
-        //args.push(Constants.MIRROR2)
+        args.push(this.sshPort)
+        //args.push(Constants.MIRROR2)        
         return this.runScriptWithArgs("publish.sh", args)
     }
 
