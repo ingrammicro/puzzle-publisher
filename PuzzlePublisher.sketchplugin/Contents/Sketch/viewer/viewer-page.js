@@ -104,10 +104,23 @@ class ViewerPage {
     }
 
     hideChildOverlays() {
+        let success = false
         for (let [index, overlay] of Object.entries(this.parentPage.currentOverlays)) {
             if (overlay.currentLink.orgPage != this) continue
             overlay.hide()
+            success = true
         }
+        return success
+    }
+
+    hideOtherParentOverlays() {
+        let success = false
+        for (let [index, overlay] of Object.entries(this.parentPage.currentOverlays)) {
+            if (overlay == this) continue
+            overlay.hide()
+            success = true
+        }
+        return success
     }
 
 
@@ -190,7 +203,8 @@ class ViewerPage {
     // return true (overlay is hidden) or false (overlay is visible)
     onMouseMove(x, y) {
         for (let [index, overlay] of Object.entries(this.currentOverlays)) {
-            if (overlay.currentLink.orgPage != this) continue
+            // Commented to hide mouseover-overlay inside onclick-overlay  (ver 12.4.3)
+            //if (overlay.currentLink.orgPage != this) continue 
             overlay.onMouseMoveOverlay(x, y)
         }
     }
@@ -265,8 +279,13 @@ class ViewerPage {
 
         if (!currentOverlays[this.index]) {
             if ('overlay' !== link.orgPage.type || this.overlayClosePrevOverlay) {
-                for (let [index, overlay] of Object.entries(currentOverlays)) {
-                    overlay.hide()
+                // if we show new overlay by clicking inside other overlay then we close the original overlay
+                if ('overlay' == orgPage.type && this.overlayClosePrevOverlay) {
+                    orgPage.hide()
+                } else {
+                    for (let [index, overlay] of Object.entries(currentOverlays)) {
+                        overlay.hide()
+                    }
                 }
             }
         }
@@ -291,6 +310,11 @@ class ViewerPage {
 
             // click on overlay outside of any hotspots should not close it
             div.click(function () {
+                const index = parseInt(this.id.substring(this.id.indexOf("_") + 1))
+                if (index >= 0) {
+                    const page = story.pages[index]
+                    page.hideOtherParentOverlays()
+                }
                 return false
             })
 
