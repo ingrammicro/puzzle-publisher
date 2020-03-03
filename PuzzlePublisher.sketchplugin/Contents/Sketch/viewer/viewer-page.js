@@ -44,7 +44,7 @@ function handleAnimationEndOnShow(el) {
 class ViewerPage {
 
     constructor() {
-        this.currentOverlays = {}
+        this.currentOverlays = []
         this.parentPage = undefined
 
         this.image = undefined
@@ -85,7 +85,9 @@ class ViewerPage {
 
             const parent = this.parentPage
             viewer.refresh_url(parent)
-            delete parent.currentOverlays[this.index]
+            // remove this from parent overlay
+            const index = parent.currentOverlays.indexOf(this)
+            parent.currentOverlays.splice(index, 1)
             this.parentPage = undefined
         } else {
             this.hideCurrentOverlays()
@@ -98,29 +100,26 @@ class ViewerPage {
     }
 
     hideCurrentOverlays() {
-        for (let [index, overlay] of Object.entries(this.currentOverlays)) {
+        const overlays = this.currentOverlays.slice()
+        for (let overlay of overlays) {
             overlay.hide()
         }
     }
 
     hideChildOverlays() {
-        let success = false
-        for (let [index, overlay] of Object.entries(this.parentPage.currentOverlays)) {
+        const overlays = this.parentPage.currentOverlays.slice()
+        for (let overlay of overlays) {
             if (overlay.currentLink.orgPage != this) continue
             overlay.hide()
-            success = true
         }
-        return success
     }
 
     hideOtherParentOverlays() {
-        let success = false
-        for (let [index, overlay] of Object.entries(this.parentPage.currentOverlays)) {
+        const overlays = this.parentPage.currentOverlays.slice()
+        for (let overlay of overlays) {
             if (overlay == this) continue
             overlay.hide()
-            success = true
         }
-        return success
     }
 
 
@@ -202,7 +201,7 @@ class ViewerPage {
 
     // return true (overlay is hidden) or false (overlay is visible)
     onMouseMove(x, y) {
-        for (let [index, overlay] of Object.entries(this.currentOverlays)) {
+        for (let overlay of this.currentOverlays) {
             // Commented to hide mouseover-overlay inside onclick-overlay  (ver 12.4.3)
             //if (overlay.currentLink.orgPage != this) continue 
             overlay.onMouseMoveOverlay(x, y)
@@ -247,7 +246,7 @@ class ViewerPage {
         var visibleTotal = 0
         var total = 0
 
-        for (let [index, overlay] of Object.entries(this.parentPage.currentOverlays)) {
+        for (let overlay of this.parentPage.currentOverlays) {
             if (overlay.currentLink.orgPage != this) continue
             total++
             if (overlay.onMouseMoveOverlay(x, y)) visibleTotal++
@@ -277,13 +276,14 @@ class ViewerPage {
         var positionCloned = false
         const currentOverlays = newParentPage.currentOverlays
 
-        if (!currentOverlays[this.index]) {
+        let overlayIndex = currentOverlays.indexOf(this.index)
+        if (overlayIndex < 0) {
             if ('overlay' !== link.orgPage.type || this.overlayClosePrevOverlay) {
                 // if we show new overlay by clicking inside other overlay then we close the original overlay
                 if ('overlay' == orgPage.type && this.overlayClosePrevOverlay) {
                     orgPage.hide()
                 } else {
-                    for (let [index, overlay] of Object.entries(currentOverlays)) {
+                    for (let overlay of currentOverlays) {
                         overlay.hide()
                     }
                 }
@@ -313,7 +313,8 @@ class ViewerPage {
                 const index = parseInt(this.id.substring(this.id.indexOf("_") + 1))
                 if (index >= 0) {
                     const page = story.pages[index]
-                    page.hideOtherParentOverlays()
+                    const indexOverlay = page.parentPage.currentOverlays.indexOf(page)
+                    if (indexOverlay == 0) page.hideOtherParentOverlays()
                 }
                 return false
             })
@@ -352,7 +353,8 @@ class ViewerPage {
             }
 
             this.show()
-            newParentPage.currentOverlays[this.index] = this // add this as new overlay to parent overlays
+            div.css('z-index', 50 + newParentPage.currentOverlays.length)
+            newParentPage.currentOverlays.push(this) // add this as new overlay to parent overlays
             this.parentPage = newParentPage
 
             this.currentLink = link
