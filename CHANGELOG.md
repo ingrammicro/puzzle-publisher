@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 12.5.1 (4 Mar 2020)
+Fixed nested overlay behaviour
+
 ##  Version 12.5.0 (2 Mar 2020)
 Added custom SSH port settings to Configure Publishing dialog
 
