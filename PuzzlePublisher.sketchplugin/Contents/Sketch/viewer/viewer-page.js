@@ -47,6 +47,7 @@ class ViewerPage {
         this.currentOverlays = []
         this.parentPage = undefined
 
+        this.visible = false
         this.image = undefined
         this.imageDiv = undefined
         this.imageObj = undefined
@@ -66,8 +67,8 @@ class ViewerPage {
         return image.substring(0, image.length - 4); // strip .png suffix
     }
 
-    hide(hideChilds = false) {
-        if (TRANS_ANIM_NONE != this.transAnimType) {
+    hide(hideChilds = false, disableAnim = false) {
+        if (!disableAnim && TRANS_ANIM_NONE != this.transAnimType) {
             const transInfo = TRANS_ANIMATIONS[this.transAnimType]
             const el = this.imageDiv.get(0)
             el.setAttribute("_tch", this.transAnimType)
@@ -97,6 +98,9 @@ class ViewerPage {
             this.overlayByEvent = this.tmpSrcOverlayByEvent
             this.tmpSrcOverlayByEvent = undefined
         }
+        // Cleanup
+        this.visible = false
+        this.currentLink = null
     }
 
     hideCurrentOverlays() {
@@ -104,6 +108,7 @@ class ViewerPage {
         for (let overlay of overlays) {
             overlay.hide()
         }
+        return overlays.length > 0
     }
 
     hideChildOverlays() {
@@ -123,12 +128,12 @@ class ViewerPage {
     }
 
 
-    show() {
+    show(disableAnim = false) {
         if (!this.imageObj) this.loadImages(true)
 
         this.updatePosition()
 
-        if (TRANS_ANIM_NONE != this.transAnimType) {
+        if (!disableAnim && TRANS_ANIM_NONE != this.transAnimType) {
             const transInfo = TRANS_ANIMATIONS[this.transAnimType]
             const el = this.imageDiv.get(0)
             el.setAttribute("_tcs", this.transAnimType)
@@ -139,6 +144,7 @@ class ViewerPage {
         } else {
         }
         this.imageDiv.removeClass("hidden")
+        this.visible = true
     }
 
     updatePosition() {
@@ -262,7 +268,7 @@ class ViewerPage {
     }
 
 
-    showAsOverlayInCurrentPage(orgPage, link, posX, posY, linkParentFixed) {
+    showAsOverlayInCurrentPage(orgPage, link, posX, posY, linkParentFixed, disableAnim) {
         const newParentPage = viewer.currentPage
 
         if (!this.imageDiv) {
@@ -281,6 +287,7 @@ class ViewerPage {
                     orgPage.hide()
                 } else {
                     for (let overlay of currentOverlays) {
+                        if (overlay == this) continue
                         overlay.hide()
                     }
                 }
@@ -290,7 +297,6 @@ class ViewerPage {
         // Show overlay on the new position
         const div = this.imageDiv
 
-        // 
         this.inFixedPanel = linkParentFixed && this.overlayAlsoFixed
         if (!this.parentPage || this.parentPage.id != newParentPage.id || div.hasClass('hidden')) {
 
@@ -349,13 +355,13 @@ class ViewerPage {
                 div.css('margin-left', posX + "px")
             }
 
-            this.show()
+            this.show(disableAnim)
             div.css('z-index', 50 + newParentPage.currentOverlays.length)
-            newParentPage.currentOverlays.push(this) // add this as new overlay to parent overlays
+            newParentPage.currentOverlays.push(this)
             this.parentPage = newParentPage
-
             this.currentLink = link
 
+            // Change URL
             if (undefined != this.overlayRedirectTargetPage) {
                 viewer.refresh_url(this)
             } else {
@@ -780,9 +786,15 @@ function handleLinkEvent(event) {
                 if (pageY < 0) pageY = 0
             }
 
-            if (viewer.currentPage.currentOverlays.indexOf(destPage) >= 0) {
-                destPage.hide()
-                if (destPage.currentLink.index == orgLink.index) return false
+            if (destPage.visible) {
+                const sameLink = destPage.currentLink.index == orgLink.index
+                if (sameLink) {
+                    destPage.hide()
+                } else {
+                    destPage.hide(false, true) // hide without transition animation
+                    destPage.showAsOverlayInCurrentPage(orgPage, orgLink, pageX, pageY, linkParentFixed, true)
+                }
+                return false
             }
             destPage.showAsOverlayInCurrentPage(orgPage, orgLink, pageX, pageY, linkParentFixed)
             return false
