@@ -263,9 +263,6 @@ class ViewerPage {
 
 
     showAsOverlayInCurrentPage(orgPage, link, posX, posY, linkParentFixed) {
-
-
-
         const newParentPage = viewer.currentPage
 
         if (!this.imageDiv) {
@@ -783,6 +780,10 @@ function handleLinkEvent(event) {
                 if (pageY < 0) pageY = 0
             }
 
+            if (viewer.currentPage.currentOverlays.indexOf(destPage) >= 0) {
+                destPage.hide()
+                if (destPage.currentLink.index == orgLink.index) return false
+            }
             destPage.showAsOverlayInCurrentPage(orgPage, orgLink, pageX, pageY, linkParentFixed)
             return false
         } else {
