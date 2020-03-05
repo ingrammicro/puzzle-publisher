@@ -1,6 +1,10 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 12.5.2 (5 Mar 2020)
+Fixed case "two links open the same overlay"
+Disabled links highlighting for close overlay click event
+
 ##  Version 12.5.1 (4 Mar 2020)
 Fixed nested overlay behaviour
 
