@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 12.6.0 (30 Mar 2020)
+- Added support for Google Tag Manager codes (GTM* format)
+
 ##  Version 12.5.2 (5 Mar 2020)
 Fixed case "two links open the same overlay"
 Disabled links highlighting for close overlay click event
