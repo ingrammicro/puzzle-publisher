@@ -205,7 +205,7 @@ select:focus{
 }
 
 #symbol_viewer_content .value.code{
-  font-family: Roboto Mono;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
   font-size: 12px;
   line-height: 18px;
 }
