@@ -26,7 +26,7 @@ class SymbolViewer extends AbstractViewer {
             viewer.symbolViewer._selectLib(libName)
 
         })
-        //  
+        //
         const symCheck = $('#symbol_viewer_symbols')
         symCheck.click(function () {
             viewer.symbolViewer._setSymCheck($(this).is(':checked'))
@@ -55,7 +55,7 @@ class SymbolViewer extends AbstractViewer {
     _reShowContent() {
         delete this.createdPages[viewer.currentPage.index]
 
-        // remove existing symbol links        
+        // remove existing symbol links
         this.page.linksDiv.children(".modalSymbolLink,.symbolLink").remove()
         for (const panel of this.page.fixedPanels) {
             panel.linksDiv.children(".modalSymbolLink,.symbolLink").remove()
@@ -246,38 +246,76 @@ class SymbolViewer extends AbstractViewer {
 
             var info = ""
             if (symName != undefined) {
-                info = "<p class='head'>Symbol</p>" + symName
-                info += "<p class='head'>Symbol Source</p>"
+                info = "<hr>" +
+                       "<div class='block'>" +
+                          "<div class='label'>" + "Symbol" + "</div>" +
+                          "<div class='value'>" + symName + "</div>" +
+                       "</div>"
+
+                info += "<hr>" +
+                        "<div class='block'>" +
+                          "<div class='label'>" + "Symbol source" + "</div>" +
+                          "<div class='value'>"
                 if (layer.b != undefined) {
-                    info += layer.b + " (external)"
+                    info += layer.b + " (external)" + "</div></div>"
                 } else {
-                    info += "Document"
+                    info += "Document" + "</div></div>"
                 }
 
             }
             if (styleName != undefined) {
-                info = "<p class='head'>Style</p> " + styleName
-                info += "<p class='head'>Style Source</p>"
+                info = "<hr>" +
+                       "<div class='block'>" +
+                          "<div class='label'>" + "Style" + "</div>" +
+                          "<div class='value'>" + styleName + "</div>"
                 if (layer.b != undefined) {
-                    info += layer.b + " (external)"
+                    info += "<div style='font-size:12px; color:var(--color-secondary)'>" + layer.b + " (external)" + "</div></div>"
                 } else {
-                    info += "Document"
+                    info += "<div class='value'>" + "Document" + "</div></div>"
                 }
             }
 
 
-            if (comment != undefined) info += "<p class='head'>Comment</p> " + comment
+            if (comment != undefined) info +=
+            "<hr>" +
+            "<div class='block'>" +
+              "<div class='label'>" + "Comment" + "</div>" +
+              "<div style='value'>" + comment + "</div>" +
+            "</div>"
 
-            info += "<p class='head'>Position (left x top)</p>" + Math.round(frameX) + " x " + Math.round(frameY)
-            info += "<p class='head'>Size (width x height)</p>" + Math.round(frameWidth) + " x " + Math.round(frameHeight)
+            info += "<hr>" +
+                    "<div class='block twoColumn'>" +
+                      "<div>" +
+                        "<span class='label'>" + "X: </span>" + Math.round(frameX) + "px" +
+                      "</div>" +
+                      "<div>" +
+                        "<span class='label'>" + "Y: </span>" + Math.round(frameY) + "px" +
+                      "</div>" +
+                    "</div>"
+
+            info += "<div class='block twoColumn'>" +
+                      "<div>" +
+                        "<span class='label'>" + "Width: </span>" + Math.round(frameWidth) + "px" +
+                      "</div>" +
+                      "<div>" +
+                        "<span class='label'>" + "Height: </span>" + Math.round(frameHeight) + "px" +
+                      "</div>" +
+                    "</div>"
 
             if (layer.t != undefined && layer.t != '') {
-                info += "<p class='head'>Text</p> " + layer.t
+                info += "<hr>" +
+                        "<div class='block'>" +
+                          "<div class='label'>" + "Content" + "</div>" +
+                          "<div class='value'>" + layer.t + "</div>" +
+                        "</div>"
             }
 
 
             if (symInfo != undefined) {
-                info += "<p class='head'>Symbol layers and Tokens</p>"
+                info += "<hr>" +
+                        "<div class='block'>" +
+                          "<div class='label'>" + "Symbol layers and tokens" + "</div>" +
+                          "<div class='value code'>"
                 var layerCounter = 0
                 for (const layerName of Object.keys(symInfo.symbol.layers)) {
                     if (layerCounter) info += "<br/>"
@@ -287,13 +325,18 @@ class SymbolViewer extends AbstractViewer {
                     }
                     layerCounter++
                 }
+                info += "</div></div>"
             }
 
             if (styleInfo != undefined) {
-                info += "<p class='head'>Style Tokens</p>"
+                info += "<hr>" +
+                        "<div class='block'>" +
+                          "<div class='label'>" + "Style tokens" + "</div>" +
+                          "<div class='value code'>"
                 for (const tokenName of Object.keys(styleInfo.style.tokens)) {
                     info += sv._showTokenInfo(tokenName, layer)
                 }
+                info += "</div></div>"
             }
 
             $('#symbol_viewer #empty').addClass("hidden")
@@ -313,11 +356,11 @@ class SymbolViewer extends AbstractViewer {
     }
 
     _showTokenInfo(tokenName, layer) {
-        let text = "<b>" + tokenName + "</b>"
+        let text = "<span class='tokenName'>" + tokenName + ";</span>"
         if (undefined != layer.b) {
             const tokenValue = this._findTokenValueByName(tokenName, layer.b)
             if (undefined != tokenValue) {
-                text += " = " + tokenValue
+                text += "<span class='tokenValue'>//" + tokenValue + "</span>"
             }
         }
 

@@ -22,7 +22,7 @@ class GalleryViewer extends AbstractViewer {
     handleKeyDown(jevent) {
         const event = jevent.originalEvent
 
-        if (27 == event.which) { // esc	
+        if (27 == event.which) { // esc
             this.toggle()
         } else if (!this.searchInputFocused && 71 == event.which) { // g
             // Key "G" deactivates Symbol Viewer
@@ -113,12 +113,18 @@ class GalleryViewer extends AbstractViewer {
         divMain.appendTo(divWrapper);
         divWrapper.appendTo(div);
 
+        var divTitle = $('<div/>', {
+          class: "div-page-title"
+        });
+
         var title = $('<span/>', {
             id: "page-title",
             alt: page.title,
             text: page.title,
         });
-        title.appendTo(divMain);
+        
+        title.appendTo(divTitle);
+        divTitle.appendTo(divMain);
     }
 }
 
