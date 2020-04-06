@@ -1,6 +1,10 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 12.7.0 (6 Mar 2020)
+New cool design for sidebar (thanks to @zubr133 )
+Fixed issue: Element Inspector doesn't show token values for the document which is a library itself
+
 ##  Version 12.6.0 (30 Mar 2020)
 - Added support for Google Tag Manager codes (GTM* format)
 
