@@ -365,7 +365,7 @@ class ViewerPage {
             if (undefined != this.overlayRedirectTargetPage) {
                 viewer.refresh_url(this)
             } else {
-                var extURL = '/o/' + link.index
+                var extURL = 'o=' + link.index
                 viewer.refresh_url(newParentPage, extURL)
             }
 

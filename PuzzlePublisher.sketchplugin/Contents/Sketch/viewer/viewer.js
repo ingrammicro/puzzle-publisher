@@ -29,14 +29,14 @@ function handleDecreaseVersion() {
     var data = checkFolderInfoRequest(this)
     if (undefined == data) return
     if ('' == data.link_down) return showMessage('This is the oldest version.')
-    window.open(data.link_down + '#' + encodeURIComponent(viewer.currentPage.getHash()), "_self");
+    window.open(data.link_down + '?' + encodeURIComponent(viewer.currentPage.getHash()), "_self");
 }
 
 function handleIncreaseVersion() {
     var data = checkFolderInfoRequest(this)
     if (undefined == data) return
     if ('' == data.link_up) return showMessage('This is the newest version.')
-    window.open(data.link_up + '#' + encodeURIComponent(viewer.currentPage.getHash()), "_self");
+    window.open(data.link_up + '?' + encodeURIComponent(viewer.currentPage.getHash()), "_self");
 }
 
 function doTransNext() {
@@ -119,6 +119,8 @@ function createViewer(story, files) {
         showLayout: false,
         isEmbed: false,
 
+        fullURL: "",
+
         prevPage: undefined,
         currentPage: undefined,
         lastRegularPage: undefined,
@@ -192,8 +194,12 @@ function createViewer(story, files) {
         },
 
         initParseGetParams: function () {
-            var s = document.location.search
-            if (s.includes('embed')) {
+            const loc = document.location
+            this.fullURL = loc.protocol + "//" + loc.hostname + loc.pathname
+            this.urlParams = new URLSearchParams(loc.search.substring(1));
+            this.urlSearch = loc.search
+
+            if (this.urlParams.get('embed') != null) {
                 this.isEmbed = true
                 // hide image preload indicator
                 $('#loading').hide()
@@ -352,27 +358,22 @@ function createViewer(story, files) {
         },
 
         share: function () {
-            var srcHref = document.location.href
-            var href = ''
-
-            if (document.location.search.includes('embed')) {
-                href = srcHref
-            } else {
-                href = srcHref.split('#')[0] + '?embed' + document.location.hash
-            }
-
             var page = undefined == this.lastRegularPage ? this.currentPage : this.lastRegularPage
 
-            var iframe = '<iframe src="' + href + '" style="border: none;" noborder="0"'
+            let url = this.fullURL
+            url += this._getSearchPath(page, 'embed=true')
+
+            var iframe = '<iframe src="' + url + '" style="border: none;" noborder="0"'
             iframe += ' width="' + (story.iFrameSizeWidth ? story.iFrameSizeWidth : page.width) + '"'
             iframe += ' height="' + (story.iFrameSizeHeight ? story.iFrameSizeHeight : page.height) + '"'
             iframe += ' scrolling="auto" seamless id="iFrame1"></iframe>'
 
             iframe += '\n\n'
 
-            var ihref = srcHref.substring(0, srcHref.lastIndexOf("/"))
+            var ihref = url.substring(0, url.lastIndexOf("/"))
+
             ihref = ihref + "/images/" + page['image2x']
-            iframe += "<a target='_blank' href='" + srcHref + "'>" + "<img border='0' "
+            iframe += "<a target='_blank' href='" + url + "'>" + "<img border='0' "
             iframe += ' width="' + (story.iFrameSizeWidth ? story.iFrameSizeWidth : page.width) + '"'
             //iframe += ' height="'+(story.iFrameSizeHeight?story.iFrameSizeHeight:page.height) + '"'
             iframe += "src='" + ihref + "'"
@@ -710,18 +711,23 @@ function createViewer(story, files) {
             contentModal.removeClass('hidden');
         },
 
+
+        _getSearchPath(page = null, extURL = null) {
+            if (!page) page = this.currentPage
+            let search = '?' + encodeURIComponent(page.getHash())
+            if (extURL != null && extURL != "") search += "&" + extURL
+            return search
+        },
+
         refresh_url: function (page, extURL = null) {
             this.handleURLRefresh = false
 
             this.urlLastIndex = page.index
             $(document).attr('title', story.title + ': ' + page.title)
 
-            if (null == extURL) extURL = ''
+            let newPath = document.location.pathname + this._getSearchPath(page, extURL)
 
-            location.hash = '#'
-                + encodeURIComponent(page.getHash())
-                + extURL
-
+            window.history.pushState('page', page.title, newPath);
         },
 
         _parseLocationHash: function () {
@@ -751,15 +757,33 @@ function createViewer(story, files) {
             return result
         },
 
-        handleNewLocation: function (initial) {
-            var hashInfo = this._parseLocationHash()
+        _parseLocationSearch: function () {
+            var result = {
+                page_name: "",
+                reset_url: false,
+                overlayLinkIndex: undefined,
+                redirectOverlayLinkIndex: undefined,
+            }
+            this.urlParams.forEach(function (value, key) {
+                if ("" == value) result.page_name = key
+            }, this);
 
-            var pageName = hashInfo.hash.substring(1)
-            var pageIndex = this.getPageIndex(pageName, null);
+            if (null == result.page_name || "" == result.page_name || this.urlParams.get(result.page_name) != "") {
+                result.page_name = ""
+                result.reset_url = true
+            } else {
+                result.overlayLinkIndex = this.urlParams.get("o")
+            }
+            return result
+        },
+
+        handleNewLocation: function (initial) {
+            var locInfo = this._parseLocationSearch()
+            var pageIndex = locInfo.page_name != null ? this.getPageIndex(locInfo.page_name, null) : null
             if (null == pageIndex) {
                 // get the default page
                 pageIndex = story.startPageIndex
-                hashInfo.reset_url = true
+                locInfo.reset_url = true
             }
 
             if (!initial && this.urlLastIndex == pageIndex) {
@@ -786,10 +810,10 @@ function createViewer(story, files) {
 
             // check if this page overlay
             // check if this redirect overlay
-            this.goTo(pageIndex, hashInfo.reset_url);
+            this.goTo(pageIndex, locInfo.reset_url);
 
-            if (hashInfo.overlayLinkIndex != null) {
-                page.showOverlayByLinkIndex(hashInfo.overlayLinkIndex)
+            if (locInfo.overlayLinkIndex != null) {
+                page.showOverlayByLinkIndex(locInfo.overlayLinkIndex)
             }
 
             if (!initial) this.urlLastIndex = pageIndex
