@@ -187,7 +187,7 @@ function createViewer(story, files) {
             });
             jQuery(window).resize(function () { viewer.zoomContent() });
 
-            if (this.urlParams.get('v') != "" && this.versionViewer) {
+            if (this.urlParams.get('v') != null && this.versionViewer) {
                 this.versionViewer.toggle()
             }
         },
