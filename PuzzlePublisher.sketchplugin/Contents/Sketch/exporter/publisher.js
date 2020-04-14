@@ -42,6 +42,8 @@ class Publisher {
         let version = this.ver
         let destFolder = this.remoteFolder
         if ('' == destFolder) return true
+        // drop trailed /
+        destFolder = destFolder.replace(/(\/)$/, "")
 
         // copy publish script
         if (!this.copyScript("publish.sh")) {

@@ -1,7 +1,7 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
-##  Version 13.0.0 (14 Mar 2020)
+##  Version 13.0.1 (14 Mar 2020)
 Viewer moved from URL format
 https://site.com/dd/index.html?embed#home/o/10  
 to
