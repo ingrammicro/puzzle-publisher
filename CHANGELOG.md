@@ -1,6 +1,14 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 13.0.0 (14 Mar 2020)
+Viewer moved from URL format
+https://site.com/dd/index.html?embed#home/o/10  
+to
+https://site.com/dd/index.html?home&o=10&e=1
+We need this change because URL with # doesn't work correctly on Apache sites with enabled Azure AD integration.
+Attention! The new viewer also supports old URLs.
+
 ##  Version 12.7.0 (6 Mar 2020)
 New cool design for sidebar (thanks to @zubr133 )
 Fixed issue: Element Inspector doesn't show token values for the document which is a library itself

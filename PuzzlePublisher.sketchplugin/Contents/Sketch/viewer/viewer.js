@@ -187,8 +187,7 @@ function createViewer(story, files) {
             });
             jQuery(window).resize(function () { viewer.zoomContent() });
 
-            var s = document.location.search
-            if (s.includes('v') && this.versionViewer) {
+            if (this.urlParams.get('v') != "" && this.versionViewer) {
                 this.versionViewer.toggle()
             }
         },
@@ -199,7 +198,7 @@ function createViewer(story, files) {
             this.urlParams = new URLSearchParams(loc.search.substring(1));
             this.urlSearch = loc.search
 
-            if (this.urlParams.get('embed') != null) {
+            if (this.urlParams.get('e') != null) {
                 this.isEmbed = true
                 // hide image preload indicator
                 $('#loading').hide()
@@ -361,7 +360,7 @@ function createViewer(story, files) {
             var page = undefined == this.lastRegularPage ? this.currentPage : this.lastRegularPage
 
             let url = this.fullURL
-            url += this._getSearchPath(page, 'embed=true')
+            url += this._getSearchPath(page, 'e=1')
 
             var iframe = '<iframe src="' + url + '" style="border: none;" noborder="0"'
             iframe += ' width="' + (story.iFrameSizeWidth ? story.iFrameSizeWidth : page.width) + '"'
@@ -725,11 +724,17 @@ function createViewer(story, files) {
             this.urlLastIndex = page.index
             $(document).attr('title', story.title + ': ' + page.title)
 
+            if (this.isEmbed) {
+                if (null == extURL) extURL = ""
+                extURL += "&e=1"
+            }
+
             let newPath = document.location.pathname + this._getSearchPath(page, extURL)
 
             window.history.pushState('page', page.title, newPath);
         },
 
+        /*
         _parseLocationHash: function () {
             var result = {
                 reset_url: false,
@@ -753,11 +758,14 @@ function createViewer(story, files) {
                 hash = '#' + hash.replace(/^[^#]*#?(.*)$/, '$1');
             }
 
-            result.hash = hash
+            result.page_name = hash
             return result
-        },
+        },*/
 
         _parseLocationSearch: function () {
+            //if (document.location.hash != null && document.location.hash != "")
+            //  return this._parseLocationHash()
+
             var result = {
                 page_name: "",
                 reset_url: false,
@@ -980,8 +988,46 @@ function addRemoveClass(mode, el, cls) {
     }
 }
 
+// Redirect from legacy format URL
+//    https://site.com/dd/index.html#home/o/10?shared  
+// to the new
+//    https://site.com/dd/index.html?home&o=10&shared=true
+
+function redirectFromHashToSearch() {
+    const loc = document.location
+    if (loc.hash == null || loc.hash.length == "") return false
+
+    let url = loc.protocol + "//" + loc.host + loc.pathname
+
+    if (loc.hash.indexOf('/') > 0) {
+        let hash = loc.hash
+        // read additonal parameters
+        var args = hash.split('/')
+        // check for link to click
+        let search = hash.substring(0, hash.indexOf('/'))
+        search = '?' + search.replace(/^[^#]*#?(.*)$/, '$1');
+        if (args[1] == 'o') {
+            search += "&o=" + args[2]
+        }
+        url += search
+    } else {
+        url += "?" + loc.hash.substring(1)
+    }
+    if (null != loc.search && "" != loc.search) {
+        let search = loc.search.substring(1)
+        if ("embed" == search) {
+            url += "&e=1"
+        }
+    }
+    //
+    document.location = url
+    return true
+}
+
 
 $(document).ready(function () {
+    if (redirectFromHashToSearch()) return
+
     viewer.initialize();
     if (!!('ontouchstart' in window) || !!('onmsgesturechange' in window)) {
         $('body').removeClass('screen');
