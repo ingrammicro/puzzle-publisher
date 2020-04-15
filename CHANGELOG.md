@@ -1,6 +1,13 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 13.0.5 (14 Mar 2020)
+Fixed issues:
+- Browser back button doesn't work in PP 13.0.1
+- Please fix overlay position when you open overlay from another overlay (GCUX-7530)
+- Fix link to close overlay (GCUX-7525)
+- Cur trailed "/" in Remote Folder URL 
+
 ##  Version 13.0.1 (14 Mar 2020)
 Viewer moved from URL format
 https://site.com/dd/index.html?embed#home/o/10  
