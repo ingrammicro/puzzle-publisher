@@ -668,7 +668,7 @@ function createViewer(story, files) {
             }
 
             // hide last modal 
-            var prevPageWasModal = this.prevPage && this.prevPage.isModal
+            var prevPageWasModal = this.prevPage != null && this.prevPage.type === "modal"
             if (prevPageWasModal) {
                 var prevImg = $('#img_' + this.prevPage.index);
                 if (prevImg.length) {

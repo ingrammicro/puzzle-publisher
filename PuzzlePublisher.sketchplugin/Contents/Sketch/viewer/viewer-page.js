@@ -33,7 +33,7 @@ function handleAnimationEndOnHide(el) {
 function handleAnimationEndOnShow(el) {
     el.target.removeEventListener("animationend", handleAnimationEndOnShow)
     const t = TRANS_ANIMATIONS[el.target.getAttribute("_tcs")]
-    t.out_classes.forEach(function (className) {
+    t.in_classes.forEach(function (className) {
         el.target.classList.remove(className)
     })
 
@@ -792,7 +792,8 @@ function handleLinkEvent(event) {
                     destPage.hide()
                 } else {
                     destPage.hide(false, true) // hide without transition animation
-                    destPage.showAsOverlayInCurrentPage(orgPage, orgLink, pageX, pageY, linkParentFixed, true)
+                    if (orgPage != destPage)
+                        destPage.showAsOverlayInCurrentPage(orgPage, orgLink, pageX, pageY, linkParentFixed, true)
                 }
                 return false
             }
