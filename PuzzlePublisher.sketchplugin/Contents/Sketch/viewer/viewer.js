@@ -1050,6 +1050,7 @@ $(document).ready(function () {
     if (!viewer.isEmbed) preloadAllPageImages();
 
     window.addEventListener('popstate', handleStateChanges);
+    $(window).hashchange(handleStateChanges);
 
     viewer.zoomContent()
     viewer.initializeLast()
