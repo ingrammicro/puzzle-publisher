@@ -130,7 +130,7 @@ function createViewer(story, files) {
 
         backStack: [],
         urlLastIndex: -1,
-        handleURLRefresh: true,
+        urlLocked: false,
         files: files,
         userStoryPages: [],
         zoomEnabled: story.zoomEnabled,
@@ -719,7 +719,7 @@ function createViewer(story, files) {
         },
 
         refresh_url: function (page, extURL = null) {
-            this.handleURLRefresh = false
+            if (this.urlLocked) return
 
             this.urlLastIndex = page.index
             $(document).attr('title', story.title + ': ' + page.title)
@@ -731,7 +731,7 @@ function createViewer(story, files) {
 
             let newPath = document.location.pathname + this._getSearchPath(page, extURL)
 
-            window.history.pushState('page', page.title, newPath);
+            window.history.pushState(newPath, page.title, newPath);
         },
 
         /*
@@ -959,7 +959,18 @@ function createViewer(story, files) {
             $('#nav-hide').slideToggle('fast', function () {
                 $('#nav').slideToggle('fast');
             }).addClass('hidden');
-        }
+        },
+
+
+        handleStateChanges: function (e) {
+            viewer.urlLocked = true
+            viewer.currentPage.hide(true, true)
+            viewer.currentPage = null
+
+            viewer.initParseGetParams()
+            viewer.handleNewLocation(true)
+            viewer.urlLocked = false
+        },
     };
 }
 
@@ -1023,7 +1034,9 @@ function redirectFromHashToSearch() {
     document.location = url
     return true
 }
-
+function handleStateChanges(e) {
+    viewer.handleStateChanges(e)
+}
 
 $(document).ready(function () {
     if (redirectFromHashToSearch()) return
@@ -1034,14 +1047,10 @@ $(document).ready(function () {
     }
 
     viewer.handleNewLocation(true)
-
     if (!viewer.isEmbed) preloadAllPageImages();
 
-    $(window).hashchange(function (e) {
-        if (viewer.handleURLRefresh)
-            viewer.handleNewLocation(false)
-        viewer.handleURLRefresh = true
-    });
+    window.addEventListener('popstate', handleStateChanges);
+
     viewer.zoomContent()
     viewer.initializeLast()
 });
