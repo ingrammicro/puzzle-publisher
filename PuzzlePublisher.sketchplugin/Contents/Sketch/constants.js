@@ -124,13 +124,14 @@ var SettingKeys = {
 
     LEGACY_ARTBOARD_MODAL: "artboardOverlay", //legacy, replaced by ARTBOARD_TYPE
     LEGACY_ARTBOARD_MODAL_SHADOW: "artboardOverlayShadow", // replaced by  ARTBOARD_SHADOW, Outdated on 14 Frev 2018
+    OLD_ARTBOARD_OVERLAY_ALIGN: "artboardOverlayPosition",
+
 
     ARTBOARD_SHADOW: "artboardShadow",
     ARTBOARD_DISABLE_AUTOSCROLL: "artboardDisableAutoScroll",
     ARTBOARD_TRANS_TO_NEXT_SECS: "artboardTransNextSecs",
     ARTBOARD_TRANS_ANIM_TYPE: "artboardTransAnimType",
     ARTBOARD_OVERLAY_BY_EVENT: "artboardOverlayByEvent",
-    OLD_ARTBOARD_OVERLAY_ALIGN: "artboardOverlayPosition",
     ARTBOARD_OVERLAY_PIN: "artboardOverlayPin",
     ARTBOARD_OVERLAY_PIN_HOTSPOT: "artboardOverlayPinHotspot",
     ARTBOARD_OVERLAY_PIN_PAGE: "artboardOverlayPinPage",

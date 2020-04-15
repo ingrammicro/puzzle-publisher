@@ -1,5 +1,26 @@
 
 ///
+const Constants = {
+    ARTBOARD_OVERLAY_PIN_HOTSPOT: 0,
+    ARTBOARD_OVERLAY_PIN_PAGE: 1,
+    //
+    ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_LEFT: 0,
+    ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_CENTER: 1,
+    ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_RIGHT: 2,
+    ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_LEFT: 3,
+    ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_CENTER: 4,
+    ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_RIGHT: 5,
+    ARTBOARD_OVERLAY_PIN_HOTSPOT_BOTTOM_RIGHT: 6,
+    ARTBOARD_OVERLAY_PIN_HOTSPOT_UP_CENTER: 7,
+    //
+    ARTBOARD_OVERLAY_PIN_PAGE_TOP_LEFT: 0,
+    ARTBOARD_OVERLAY_PIN_PAGE_TOP_CENTER: 1,
+    ARTBOARD_OVERLAY_PIN_PAGE_TOP_RIGHT: 2,
+    ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_LEFT: 3,
+    ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_CENTER: 4,
+    ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_RIGHT: 5,
+    ARTBOARD_OVERLAY_PIN_PAGE_CENTER: 6,
+}
 
 const EVENT_HOVER = 1
 const TRANS_ANIM_NONE = 0
@@ -689,97 +710,91 @@ function handleLinkEvent(event) {
             if (linkParentFixed && destPage.overlayAlsoFixed && orgLink.fixedPanelIndex >= 0 && currentPage.fixedPanels[orgLink.fixedPanelIndex].constrains.bottom) {
                 orgLink.fixedBottomPanel = currentPage.fixedPanels[orgLink.fixedPanelIndex]
             } else { // clicked not from fixed panel           
+                const pinHotspot = Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT == destPage.overlayPin
+                const pinPage = Constants.ARTBOARD_OVERLAY_PIN_PAGE == destPage.overlayPin
 
-                // clicked from some other overlay
-                if ('overlay' == orgPage.type) {
-                    orgLink.x += orgPage.currentX
-                    orgLink.y += orgPage.currentY
-                }
+                var pageX = 0
+                var pageY = 0
 
-                var pageX = orgLink.x
-                var pageY = orgLink.y
+                if (pinHotspot) {
+                    //////////////////////////////// PIN TO HOTSPOT ////////////////////////////////
+                    // clicked from some other overlay
+                    if ('overlay' == orgPage.type) {
+                        orgLink.x += orgPage.currentX
+                        orgLink.y += orgPage.currentY
+                    }
+                    pageX = orgLink.x
+                    pageY = orgLink.y
 
-                const pinHotspot = 0 == destPage.overlayPin // ARTBOARD_OVERLAY_PIN_HOTSPOT
-                const pinPage = !pinHotspot
+                    var offsetX = pinHotspot
+                        && (
+                            Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_LEFT == destPage.overlayPinHotspot
+                            || Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_CENTER == destPage.overlayPinHotspot
+                            || Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_RIGHT == destPage.overlayPinHotspot
+                        )
+                        ? 5 : 0
 
-                var offsetX = pinHotspot
-                    && (
-                        0 == destPage.overlayPinHotspot // ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_LEFT
-                        || 1 == destPage.overlayPinHotspot // ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_CENTER
-                        || 2 == destPage.overlayPinHotspot // ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_RIGHT
-                    )
-                    ? 5 : 0
+                    if (destPage.overlayClosePrevOverlay && ('overlay' == orgPage.type)) {
+                        pageX = orgPage.currentX
+                        pageY = orgPage.currentY
+                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_LEFT == destPage.overlayPinHotspot) {
+                        pageY += link.rect.height
+                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_CENTER == destPage.overlayPinHotspot) {
+                        pageX += parseInt(orgLink.width / 2) - parseInt(destPage.width / 2)
+                        pageY += link.rect.height
+                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_RIGHT == destPage.overlayPinHotspot) {
+                        pageX += orgLink.width - destPage.width
+                        pageY += link.rect.height
+                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_LEFT == destPage.overlayPinHotspot) {
+                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_CENTER == destPage.overlayPinHotspot) {
+                        pageX += parseInt(orgLink.width / 2) - parseInt(destPage.width / 2)
+                        //pageY -= destPage.height                            
+                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_RIGHT == destPage.overlayPinHotspot) {
+                        pageX += orgLink.width - destPage.width
+                        //pageY = pageY - destPage.height                            
+                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_BOTTOM_RIGHT == destPage.overlayPinHotspot) {
+                        pageX += orgLink.width
+                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UP_CENTER == destPage.overlayPinHotspot) {
+                        pageX += parseInt(orgLink.width / 2) - parseInt(destPage.width / 2)
+                        pageY -= destPage.height
+                    }
 
+                    // check page right side
+                    if (!pinHotspot || (Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_LEFT != destPage.overlayPinHotspot)) {
+                        const fullWidth = destPage.width + offsetX // + (('overlayShadowX' in destPage)?destPage.overlayShadowX:0)
+                        if ((pageX + fullWidth) > currentPage.width)
+                            pageX = currentPage.width - fullWidth
 
+                        /*if(linkPosX < (offsetX + (('overlayShadowX' in destPage)?destPage.overlayShadowX:0))){  
+                            linkPosX = offsetX + (('overlayShadowX' in destPage)?destPage.overlayShadowX:0)
+                        }*/
+                    }
+                } else {
+                    //////////////////////////////// PIN TO PAGE ////////////////////////////////
 
-                if (destPage.overlayClosePrevOverlay && ('overlay' == orgPage.type)) {
-                    pageX = orgPage.currentX
-                    pageY = orgPage.currentY
-                } else if (pinHotspot && 0 == destPage.overlayPinHotspot) { // ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_LEFT
-                    pageY += link.rect.height
-                    //}else if(1==destPage.overlayAlign){ // align on hotspot center       
-                } else if (pinHotspot && 1 == destPage.overlayPinHotspot) { // ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_CENTER                                           
-                    pageX += parseInt(orgLink.width / 2) - parseInt(destPage.width / 2)
-                    pageY += link.rect.height
-                    // }else if(2==destPage.overlayAlign){// align on hotpost right  
-                } else if (pinHotspot && 2 == destPage.overlayPinHotspot) {// ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_RIGHT
-                    pageX += orgLink.width - destPage.width
-                    pageY += link.rect.height
-                    //}else if(3==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_TOP_LEFT
-                } else if (pinPage && 0 == destPage.overlayPinPage) {// ARTBOARD_OVERLAY_PIN_PAGE_TOP_LEFT
-                    pageX = 0
-                    pageY = 0
-                    //}else if(4==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_TOP_CENTER
-                } else if (pinPage && 1 == destPage.overlayPinPage) {// ARTBOARD_OVERLAY_PIN_PAGE_TOP_CENTER
-                    pageX = parseInt(orgPage.width / 2) - parseInt(destPage.width / 2)
-                    pageY = 0
-                    //}else if(5==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_TOP_RIGHT
-                } else if (pinPage && 2 == destPage.overlayPinPage) {// ARTBOARD_OVERLAY_PIN_PAGE_TOP_RIGHT
-                    pageX = orgPage.width - destPage.width
-                    pageY = 0
-                    // else if(6==destPage.overlayAlign){// ARTBOARD_OVERLAY_ALIGN_CENTER
-                } else if (pinPage && 6 == destPage.overlayPinPage) {// ARTBOARD_OVERLAY_PIN_PAGE_CENTER
-                    pageX = parseInt(orgPage.width / 2) - parseInt(destPage.width / 2)
-                    pageY = parseInt(orgPage.height / 2) - parseInt(destPage.height / 2)
-                    //}else if(7==destPage.oldOverlayAlign){// OLD_ARTBOARD_OVERLAY_ALIGN_BOTTOM_LEFT
-                } else if (pinPage && 3 == destPage.overlayPinPage) {// ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_LEFT
-                    pageX = 0
-                    pageY = orgPage.height - destPage.height
-                    //}else if(8==destPage.oldOverlayAlign){// OLD_ARTBOARD_OVERLAY_ALIGN_BOTTOM_CENTER     
-                } else if (pinPage && 4 == destPage.overlayPinPage) {// ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_CENTER
-                    pageX = parseInt(orgPage.width / 2) - parseInt(destPage.width / 2)
-                    pageY = orgPage.height - destPage.height
-                    //}else if(9==destPage.oldOverlayAlign){// ARTBOARD_OVERLAY_ALIGN_TOP_RIGHT
-                } else if (pinPage && 5 == destPage.overlayPinPage) {// ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_RIGHT
-                    pageX = orgPage.width - destPage.width
-                    pageY = orgPage.height - destPage.height
-                    //}else if(10==destPage.oldOverlayAlign){// OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_LEFT                                                    
-                } else if (pinHotspot && 3 == destPage.overlayPinHotspot) {// ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_LEFT
-                    //}else if(11==destPage.oldOverlayAlign){// OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_CENTER
-                } else if (pinHotspot && 4 == destPage.overlayPinHotspot) {// ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_CENTER
-                    pageX += parseInt(orgLink.width / 2) - parseInt(destPage.width / 2)
-                    //pageY -= destPage.height                            
-                    //}else if(12==destPage.oldOverlayAlign){// OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_RIGHT
-                } else if (pinHotspot && 5 == destPage.overlayPinHotspot) {// ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_RIGHT
-                    pageX += orgLink.width - destPage.width
-                    //pageY = pageY - destPage.height                            
-                    //}else if(13==destPage.oldOverlayAlign){// OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_RIGHT_ALIGN_RIGHT
-                } else if (pinHotspot && 6 == destPage.overlayPinHotspot) {// ARTBOARD_OVERLAY_PIN_HOTSPOT_BOTTOM_RIGHT
-                    pageX += orgLink.width
-                } else if (pinHotspot && 7 == destPage.overlayPinHotspot) {// ARTBOARD_OVERLAY_PIN_HOTSPOT_UP_CENTER
-                    pageX += parseInt(orgLink.width / 2) - parseInt(destPage.width / 2)
-                    pageY -= destPage.height
-                }
+                    if (pinPage && Constants.ARTBOARD_OVERLAY_PIN_PAGE_TOP_LEFT == destPage.overlayPinPage) {
+                        pageX = 0
+                        pageY = 0
+                    } else if (pinPage && Constants.ARTBOARD_OVERLAY_PIN_PAGE_TOP_CENTER == destPage.overlayPinPage) {
+                        pageX = parseInt(currentPage.width / 2) - parseInt(destPage.width / 2)
+                        pageY = 0
+                    } else if (pinPage && Constants.ARTBOARD_OVERLAY_PIN_PAGE_TOP_RIGHT == destPage.overlayPinPage) {
+                        pageX = currentPage.width - destPage.width
+                        pageY = 0
+                    } else if (pinPage && Constants.ARTBOARD_OVERLAY_PIN_PAGE_CENTER == destPage.overlayPinPage) {
+                        pageX = parseInt(currentPage.width / 2) - parseInt(destPage.width / 2)
+                        pageY = parseInt(currentPage.height / 2) - parseInt(destPage.height / 2)
+                    } else if (pinPage && Constants.ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_LEFT == destPage.overlayPinPage) {
+                        pageX = 0
+                        pageY = currentPage.height - destPage.height
+                    } else if (pinPage && Constants.ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_CENTER == destPage.overlayPinPage) {
+                        pageX = parseInt(currentPage.width / 2) - parseInt(destPage.width / 2)
+                        pageY = currentPage.height - destPage.height
+                    } else if (pinPage && Constants.ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_RIGHT == destPage.overlayPinPage) {
+                        pageX = currentPage.width - destPage.width
+                        pageY = currentPage.height - destPage.height
+                    }
 
-                // check page right side
-                if (!pinHotspot || (3 != destPage.overlayPinHotspot)) {// NOT ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_LEFT
-                    const fullWidth = destPage.width + offsetX // + (('overlayShadowX' in destPage)?destPage.overlayShadowX:0)
-                    if ((pageX + fullWidth) > currentPage.width)
-                        pageX = currentPage.width - fullWidth
-
-                    /*if(linkPosX < (offsetX + (('overlayShadowX' in destPage)?destPage.overlayShadowX:0))){  
-                        linkPosX = offsetX + (('overlayShadowX' in destPage)?destPage.overlayShadowX:0)
-                    }*/
                 }
 
                 if (pageX < 0) pageX = 0
