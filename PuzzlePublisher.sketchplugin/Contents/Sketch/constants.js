@@ -24,9 +24,10 @@ var Constants = {
     //
     SITE_CHANGELOG_URL: "https://github.com/ingrammicro/puzzle-publisher/blob/master/CHANGELOG.md",
     //
-    SYMBOLTOKENFILE_POSTFIX: "-inspector.json",
-    CSSFILE_POSTFIX: "-viewer.css",
-    VARSFILE_POSTFIX: "-vars.json",
+    ASSETS_FOLDER_PREFIX: "_pt-assets",
+    SYMBOLTOKENFILE_POSTFIX: "inspector.json",
+    CSSFILE_POSTFIX: "viewer.css",
+    VARSFILE_POSTFIX: "vars.json",
     ///
     INT_LAYER_NAME_BACKCOLOR: "@MainBackground@",
     INT_LAYER_NAME_SITEICON: "@SiteIcon@",

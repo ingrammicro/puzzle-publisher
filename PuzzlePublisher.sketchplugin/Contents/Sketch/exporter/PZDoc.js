@@ -97,20 +97,26 @@ class PZDoc {
         log(" PZDoc:run done!")
     }
 
+
+    _getLibAssetsPath(lib) {
+        return Utils.cutLastPathFolder(lib.sDoc.path) + "/" + Constants.ASSETS_FOLDER_PREFIX + "/" + lib.jsLib.name
+    }
+
     getSymbolData() {
         // load library inspector file
         let inspectors = ""
         let vars = ""
         const libs = this._getLibraries()
         for (const lib of libs) {
-            const libPath = Utils.cutLastPathFolder(lib.sDoc.path) + "/" + lib.jsLib.name
-            const pathToSymbolTokens = libPath + Constants.SYMBOLTOKENFILE_POSTFIX
+            const libAssetsPath = this._getLibAssetsPath(lib)
+            //Utils.cutLastPathFolder(lib.sDoc.path) + "/" + lib.jsLib.name
+            const pathToSymbolTokens = libAssetsPath + "/" + Constants.SYMBOLTOKENFILE_POSTFIX
             log('pathToSymbolTokens = ' + pathToSymbolTokens + " name=" + lib.jsLib.name)
             const inspectorData = Utils.readFile(pathToSymbolTokens)
             if (inspectors != "") inspectors += ","
             inspectors += "'" + Utils.toFilename(lib.jsLib.name) + "':" + (inspectorData ? inspectorData : "{}")
             //
-            const pathToVars = libPath + Constants.VARSFILE_POSTFIX
+            const pathToVars = libAssetsPath + "/" + Constants.VARSFILE_POSTFIX
             const varsData = Utils.readFile(pathToVars)
             if (vars != "") vars += ","
             vars += "'" + Utils.toFilename(lib.jsLib.name) + "':" + (varsData ? varsData : "{}")
@@ -124,10 +130,11 @@ class PZDoc {
         const cssIncludes = []
         const libs = this._getLibraries()
         for (const lib of libs) {
-            const libPath = Utils.cutLastPathFolder(lib.sDoc.path) + "/" + lib.jsLib.name
+            const libAssetsPath = this._getLibAssetsPath(lib)
+            //const libPath = Utils.cutLastPathFolder(lib.sDoc.path) + "/" + lib.jsLib.name
             // Copy library CSS to Resources folder
             {
-                const pathSrcCSS = libPath + Constants.CSSFILE_POSTFIX
+                const pathSrcCSS = libAssetsPath + "/" + Constants.CSSFILE_POSTFIX
                 const cssFileName = Utils.toFilename(lib.jsLib.name + ".css")
                 const css = Utils.readFile(pathSrcCSS)
                 if (undefined != css) {

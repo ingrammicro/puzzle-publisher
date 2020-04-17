@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 13.1.0 (17 Mar 2020)
+Synced with PT 8.2.0 changes
+
 ##  Version 13.0.5 (14 Mar 2020)
 Fixed issues:
 - Browser back button doesn't work in PP 13.0.1
