@@ -869,7 +869,16 @@ area {
 }
 
 .version-screen-div {
+  margin-bottom: 16px;
   cursor: pointer;
+}
+
+.version-screen-div img{
+  width: 100%;
+}
+
+.version-screen-pagename {
+  margin-bottom: 8px;
 }
 
 /*@media only screen and (max-width: 1024px) and (min-width: 768px) {
