@@ -89,7 +89,7 @@ class ViewerPage {
     }
 
     hide(hideChilds = false, disableAnim = false) {
-        if (!disableAnim && TRANS_ANIM_NONE != this.transAnimType) {
+        if (!disableAnim && TRANS_ANIM_NONE != this.transAnimType && !this.isModal) {
             const transInfo = TRANS_ANIMATIONS[this.transAnimType]
             const el = this.imageDiv.get(0)
             el.setAttribute("_tch", this.transAnimType)
@@ -154,7 +154,7 @@ class ViewerPage {
 
         this.updatePosition()
 
-        if (!disableAnim && TRANS_ANIM_NONE != this.transAnimType) {
+        if (!disableAnim && TRANS_ANIM_NONE != this.transAnimType && !this.isModal) {
             const transInfo = TRANS_ANIMATIONS[this.transAnimType]
             const el = this.imageDiv.get(0)
             el.setAttribute("_tcs", this.transAnimType)
