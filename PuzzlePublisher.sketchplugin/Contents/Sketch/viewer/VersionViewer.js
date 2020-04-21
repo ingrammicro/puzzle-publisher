@@ -143,7 +143,7 @@ class VersionViewer extends AbstractViewer {
             }
 
             info += "<div class='version-screen-div' onclick='viewer.versionViewer.goTo(" + pageIndex + ")'>";
-            info += "<div class='version-screen-pagename'>";
+            info += "<div>";
             info += pageName;
             info += "</div><div>";
             info += "<img src='" + screen['image_url'] + "' border='0'/>";

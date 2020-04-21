@@ -1,6 +1,10 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 13.1.1 (22 Mar 2020)
+- Improved Version Viewer
+- Disable show/hide animations for modal (due to other open issue)
+
 ##  Version 13.1.0 (17 Mar 2020)
 Synced with PT 8.2.0 changes
 
