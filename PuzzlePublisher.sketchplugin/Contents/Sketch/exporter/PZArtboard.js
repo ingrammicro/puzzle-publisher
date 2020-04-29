@@ -504,8 +504,10 @@ class PZArtboard extends PZLayer {
             if (show) {
                 layer.slayer.style.shadows = layer.fixedShadows
             }
+
+            // Commented to make it worked in Sketch 65
+            //Sketch.getSelectedDocument().sketchObject.documentData().invalidateAffectedSymbolInstancesWithDiff(layer.objectID)
         }
-        Sketch.getSelectedDocument().sketchObject.documentData().invalidateAffectedSymbolInstances()
 
     }
 

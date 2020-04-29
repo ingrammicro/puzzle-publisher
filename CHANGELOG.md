@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 13.1.2 (29 Apr 2020)
+- Fixed error in Sketch 65
+
 ##  Version 13.1.1 (22 Mar 2020)
 - Improved Version Viewer
 - Disable show/hide animations for modal (due to other open issue)
