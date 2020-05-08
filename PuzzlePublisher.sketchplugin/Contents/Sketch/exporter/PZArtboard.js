@@ -490,6 +490,7 @@ class PZArtboard extends PZLayer {
         const show = !hide
         for (var layer of this.fixedLayers) {
             // we need to hide/show only div and  float panels
+            if (undefined == layer.slayer.style) continue
             if (layer.isFloat || layer.isFixedDiv) {
                 layer.slayer.hidden = hide
             }
