@@ -62,6 +62,7 @@ class PZLayer {
                 this.smName = sSymbolMaster.name + ""
                 if (lib) {
                     this.smLib = lib.name
+                    pzDoc.usedLibs[lib.name] = true
                 } else {
 
                 }
@@ -77,6 +78,7 @@ class PZLayer {
                 const lib = sharedStyle.getLibrary()
                 if (lib) {
                     this.smLib = lib.name
+                    pzDoc.usedLibs[lib.name] = true
                 }
             }
             if ("Text" == sLayer.type) {
@@ -379,6 +381,7 @@ class PZLayer {
         this.b = this.smLib
         this.t = this.text
         this.c = this.childs
+        //
         this.name = undefined
         this.frame = undefined
         this.width = undefined

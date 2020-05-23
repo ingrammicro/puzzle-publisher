@@ -27,6 +27,7 @@ class PZDoc {
         this.mPages = []
         this.mAllLayers = []
         this.mLinkedLayers = []
+        this.usedLibs = {}
         this.sSymbols = {}
         this.artboardCount = 0
         this.startArtboardIndex = 0
@@ -108,13 +109,14 @@ class PZDoc {
         let vars = ""
         const libs = this._getLibraries()
         for (const lib of libs) {
+            if (!this.usedLibs[lib.jsLib.name]) continue
             const libAssetsPath = this._getLibAssetsPath(lib)
             //Utils.cutLastPathFolder(lib.sDoc.path) + "/" + lib.jsLib.name
             const pathToSymbolTokens = libAssetsPath + "/" + Constants.SYMBOLTOKENFILE_POSTFIX
             log('pathToSymbolTokens = ' + pathToSymbolTokens + " name=" + lib.jsLib.name)
             const inspectorData = Utils.readFile(pathToSymbolTokens)
             if (inspectors != "") inspectors += ","
-            inspectors += "'" + Utils.toFilename(lib.jsLib.name) + "':" + (inspectorData ? inspectorData : "{}")
+            inspectors += '"' + Utils.toFilename(lib.jsLib.name) + '":' + (inspectorData ? inspectorData : "{}")
             //
             const pathToVars = libAssetsPath + "/" + Constants.VARSFILE_POSTFIX
             const varsData = Utils.readFile(pathToVars)
