@@ -2,6 +2,9 @@
 @import("lib/utils.js")
 @import("exporter/PZDoc.js")
 
+var Sketch = require('sketch/dom')
+var Flow = require('sketch/dom').Flow
+var Text = require('sketch/dom').Text
 
 var ResizingConstraint = {
     NONE: 0,
@@ -13,10 +16,30 @@ var ResizingConstraint = {
     TOP: 1 << 5
 }
 
-var UX1LibraryName = "ux1-ui"
+const alignMap2 = {
+    [Text.Alignment.left]: "left",
+    [Text.Alignment.center]: "center",
+    [Text.Alignment.right]: "right",
+    [Text.Alignment.justify]: "justify"
+}
+const vertAlignMap2 = {
+    [Text.VerticalAlignment.top]: "top",
+    [Text.VerticalAlignment.center]: "middle",
+    [Text.VerticalAlignment.bottom]: "bottom",
+}
 
-var Sketch = require('sketch/dom')
-var Flow = require('sketch/dom').Flow
+const weights = [
+    { label: 'thin', sketch: 2, css: 100, title: "Thin" },
+    { label: 'extra-light', sketch: 3, css: 200, title: "Extra Light" },
+    { label: 'light', sketch: 4, css: 300, title: "Light" },
+    { label: 'regular', sketch: 5, css: 400, title: "Regular" },
+    { label: 'medium', sketch: 6, css: 500, title: "Medium" },
+    { label: 'semi-bold', sketch: 8, css: 600, title: "Semi Bold" },
+    { label: 'semibold', sketch: 8, css: 600, title: "Semi Bold#2" },
+    { label: 'bold', sketch: 9, css: 700, title: "Bold" },
+    { label: 'extra-bold', sketch: 10, css: 800, title: "Extra Bold" },
+    { label: 'black', sketch: 12, css: 900, title: "Black" },
+]
 
 class PZLayer {
 
@@ -355,6 +378,35 @@ class PZLayer {
     clearRefsBeforeJSON() {
         // need to cleanup temp object to allow dump it into JSON
         // but keep nlayer because Exporter.exportImage() needs it
+        //
+        this.n = this.name
+        this.x = this.frame.x
+        this.y = this.frame.y
+        this.w = this.frame.width
+        this.h = this.frame.height
+        this.s = this.smName
+        this.l = this.styleName
+        this.b = this.smLib
+        this.t = this.text
+        this.c = this.childs
+        this.tp = this.slayer.type
+        //
+        if ("Text" == this.slayer.type) {
+
+            this._initTextPropsForJSON()
+        }
+        //
+        this.name = undefined
+        this.frame = undefined
+        this.width = undefined
+        this.height = undefined
+        this.constrains = undefined
+        this.smName = undefined
+        this.styleName = undefined
+        this.smLib = undefined
+        this.text = undefined
+        this.childs = undefined
+        //
         this.tempOverrides = undefined
         this.slayer = undefined
         //l.nlayer = undefined
@@ -370,29 +422,55 @@ class PZLayer {
         this.isLink = undefined
         this.hotspots = undefined
         this.targetId = undefined
-        //
-        this.n = this.name
-        this.x = this.frame.x
-        this.y = this.frame.y
-        this.w = this.frame.width
-        this.h = this.frame.height
-        this.s = this.smName
-        this.l = this.styleName
-        this.b = this.smLib
-        this.t = this.text
-        this.c = this.childs
-        //
-        this.name = undefined
-        this.frame = undefined
-        this.width = undefined
-        this.height = undefined
-        this.constrains = undefined
-        this.smName = undefined
-        this.styleName = undefined
-        this.smLib = undefined
-        this.text = undefined
-        this.childs = undefined
 
+    }
+
+
+    _initTextPropsForJSON() {
+
+        const TPROP_FONT_FAMILY = "tff"
+        const TPROP_FONT_SIZE = "tfs"
+        const TPROP_TEXT_COLOR = "ttc"
+        const TPROP_ALIGNMENT = "ta"
+        const TPROP_V_ALIGNMENT = "tva"
+        const TPROP_FONT_WEIGHT = "tfw"
+        const TPROP_FONT_STYLE = "tfst"
+        const TPROP_LINE_HEIGHT = "tlh"
+        const TPROP_TEXT_TRANSFORM = "ttf"
+        const TPROP_TEXT_UNDERLINE = "ttu"
+        const TPROP_TEXT_STRIKE_THROUGHT = "tst"
+        const TPROP_PARAGRAPH_SPACING = "tps"
+        const TPROP_KERNING = "tk"
+        //
+        const sStyle = this.slayer.style
+        let props = {}
+        props[TPROP_FONT_FAMILY] = sStyle.fontFamily
+        props[TPROP_FONT_SIZE] = sStyle.fontSize
+        props[TPROP_TEXT_COLOR] = this._clearColor(sStyle.textColor)
+        props[TPROP_ALIGNMENT] = alignMap2[sStyle.alignment]
+        props[TPROP_V_ALIGNMENT] = vertAlignMap2[sStyle.verticalAlignment]
+        props[TPROP_PARAGRAPH_SPACING] = sStyle.paragraphSpacing
+        {
+            var cssWeights = weights.filter(w => w.sketch == sStyle.fontWeight)
+            if (cssWeights.length > 0)
+                props[TPROP_FONT_WEIGHT] = cssWeights[0].css
+        }
+        if (undefined != sStyle.fontStyle) props[TPROP_FONT_STYLE] = sStyle.fontStyle
+        if (null != sStyle.lineHeight) props[TPROP_LINE_HEIGHT] = sStyle.lineHeight
+        if (undefined != sStyle.textTransform) props[TPROP_TEXT_TRANSFORM] = sStyle.textTransform
+        if (undefined != sStyle.textUnderline) props[TPROP_TEXT_UNDERLINE] = true
+        if (undefined != sStyle.textStrikethrough) props[TPROP_TEXT_STRIKE_THROUGHT] = true
+        if (null != sStyle.kerning) props[TPROP_KERNING] = sStyle.kerning
+        // save text properties into this
+        this.pr = props
+    }
+
+    _clearColor(color) {
+        // drop FF transparency as default
+        if (color.length == 9 && color.substring(7).toUpperCase() == "FF") {
+            color = color.substring(0, 7)
+        }
+        return color.toUpperCase()
     }
 
     exportSiteIcon() {

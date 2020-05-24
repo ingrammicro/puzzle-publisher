@@ -1,3 +1,17 @@
+const TPROP_FONT_FAMILY = "tff"
+const TPROP_FONT_SIZE = "tfs"
+const TPROP_TEXT_COLOR = "ttc"
+const TPROP_ALIGNMENT = "ta"
+const TPROP_V_ALIGNMENT = "tva"
+const TPROP_FONT_WEIGHT = "tfw"
+const TPROP_FONT_STYLE = "tfst"
+const TPROP_LINE_HEIGHT = "tlh"
+const TPROP_TEXT_TRANSFORM = "ttf"
+const TPROP_TEXT_UNDERLINE = "ttu"
+const TPROP_TEXT_STRIKE_THROUGHT = "tst"
+const TPROP_PARAGRAPH_SPACING = "tps"
+const TPROP_KERNING = "tk"
+
 class SymbolViewer extends AbstractViewer {
     constructor() {
         super()
@@ -15,7 +29,7 @@ class SymbolViewer extends AbstractViewer {
             value: "",
             text: 'Library autoselection'
         }));
-        for (const libName of Object.keys(symbolsData)) {
+        for (const libName of Object.keys(SYMBOLS_DICT)) {
             libSelect.append($('<option>', {
                 value: libName,
                 text: libName
@@ -339,6 +353,19 @@ class SymbolViewer extends AbstractViewer {
                 info += "</div></div>"
             }
 
+            if (layer.tp != undefined) {
+                if ("Text" == layer.tp) {
+                    info += "<hr>" +
+                        "<div class='block'>" +
+                        "<div class='label'>" + "Text properties" + "</div>" +
+                        "<div class='value code'>"
+                    info += sv._showTextPropery("Font Family", layer.pr[TPROP_FONT_FAMILY])
+                    info += sv._showTextPropery("Font Size", layer.pr[TPROP_FONT_SIZE], "px")
+                    info += sv._showTextPropery("Text Color", layer.pr[TPROP_TEXT_COLOR])
+                    info += "</div></div>"
+                }
+            }
+
             $('#symbol_viewer #empty').addClass("hidden")
             $("#symbol_viewer_content").html(info)
             //alert(info)
@@ -355,6 +382,11 @@ class SymbolViewer extends AbstractViewer {
         symbolDiv.appendTo(a)
     }
 
+    _showTextPropery(propName, propValue, postfix = "") {
+        let text = propName + ": " + propValue + postfix
+        return text + "<br/>"
+    }
+
     _showTokenInfo(tokenName, layer) {
         let text = "<span class='tokenName'>" + tokenName + ";</span>"
 
@@ -368,14 +400,14 @@ class SymbolViewer extends AbstractViewer {
     }
 
     _findTokenValueByName(tokenName, libName) {
-        const lib = varsData[libName]
+        const lib = TOKENS_DICT[libName]
         if (undefined == lib) return undefined
         return lib[tokenName]
     }
 
     _findSymbolAndLibBySymbolName(symName) {
-        for (const libName of Object.keys(symbolsData)) {
-            const lib = symbolsData[libName]
+        for (const libName of Object.keys(SYMBOLS_DICT)) {
+            const lib = SYMBOLS_DICT[libName]
             if (!(symName in lib)) continue
             return {
                 lib: lib,
@@ -387,8 +419,8 @@ class SymbolViewer extends AbstractViewer {
     }
 
     _findStyleAndLibByStyleName(styleName) {
-        for (const libName of Object.keys(symbolsData)) {
-            const lib = symbolsData[libName]
+        for (const libName of Object.keys(SYMBOLS_DICT)) {
+            const lib = SYMBOLS_DICT[libName]
             if (!("styles" in lib) || !(styleName in lib.styles)) continue
             return {
                 lib: lib,
