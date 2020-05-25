@@ -6,6 +6,7 @@
 @import("exporter/PZPage.js")
 @import("exporter/PZDoc.js")
 @import("exporter/publisher.js") // we need it to run resize.sh script
+@import("tokens/DSExporter.js")
 
 var exporter = undefined
 
@@ -111,6 +112,13 @@ class Exporter {
         return name
     }
 
+    getTokensExporter() {
+        if (undefined == this.tokensExporter) {
+            this.tokensExporter = new DSExporter(this.context)
+            this.tokensExporter.initForPublisher()
+        }
+        return this.tokensExporter
+    }
 
     prepareFilePath(filePath, fileName) {
         const fileManager = NSFileManager.defaultManager();

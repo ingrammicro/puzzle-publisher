@@ -1,3 +1,4 @@
+const TPROP_TEXT = "tt"
 const TPROP_FONT_FAMILY = "tff"
 const TPROP_FONT_SIZE = "tfs"
 const TPROP_TEXT_COLOR = "ttc"
@@ -11,6 +12,8 @@ const TPROP_TEXT_UNDERLINE = "ttu"
 const TPROP_TEXT_STRIKE_THROUGHT = "tst"
 const TPROP_PARAGRAPH_SPACING = "tps"
 const TPROP_KERNING = "tk"
+
+//// ^^^^ copied from PZLayer:_initTextPropsForJSON()
 
 class SymbolViewer extends AbstractViewer {
     constructor() {
@@ -52,6 +55,7 @@ class SymbolViewer extends AbstractViewer {
 
     _setSymCheck(showSymbols) {
         this.showSymbols = showSymbols
+        $('#lib_selector').toggle()
         this._reShowContent()
 
     }
@@ -188,10 +192,14 @@ class SymbolViewer extends AbstractViewer {
 
 
     _create() {
-        this._processLayerList(layersData[this.pageIndex].c)
+        const layers = layersData[this.pageIndex].c
+        if (this.showSymbols)
+            this._processSymbolList(layers)
+        else
+            this._processLayerList(layers)
     }
 
-    _processLayerList(layers, isParentSymbol = false) {
+    _processSymbolList(layers, isParentSymbol = false) {
         for (var l of layers) {
             if (this.currentLib != "") {
                 if (this.showSymbols && l.b) {
@@ -208,11 +216,23 @@ class SymbolViewer extends AbstractViewer {
                     }
                 }
             } else {
-                if ((this.showSymbols && l.s != undefined) || (!this.showSymbols && !isParentSymbol && l.l != undefined)) {
+                if ((this.showSymbols && l.s != undefined) ||
+                    (!this.showSymbols && !isParentSymbol && l.l != undefined)) {
                     this._showElement(l)
                 }
             }
-            this._processLayerList(l.c, this.showSymbols && l.s != undefined)
+            this._processSymbolList(l.c, this.showSymbols && l.s != undefined)
+        }
+    }
+
+    _processLayerList(layers) {
+        const supportedTypes = ["Text", "ShapePath"]
+        for (var l of layers) {
+            if (supportedTypes.indexOf(l.tp) >= 0) {
+                this._showElement(l)
+            } else {
+                this._processLayerList(l.c)
+            }
         }
     }
 
@@ -316,14 +336,6 @@ class SymbolViewer extends AbstractViewer {
                 "</div>" +
                 "</div>"
 
-            if (layer.t != undefined && layer.t != '') {
-                info += "<hr>" +
-                    "<div class='block'>" +
-                    "<div class='label'>" + "Content" + "</div>" +
-                    "<div class='value'>" + layer.t + "</div>" +
-                    "</div>"
-            }
-
 
             if (symInfo != undefined) {
                 info += "<hr>" +
@@ -357,11 +369,16 @@ class SymbolViewer extends AbstractViewer {
                 if ("Text" == layer.tp) {
                     info += "<hr>" +
                         "<div class='block'>" +
-                        "<div class='label'>" + "Text properties" + "</div>" +
+                        "<div class='label'>" + "Text" + (layer.tx != undefined ? (": " + layer.tx) : "") + "</div>" +
                         "<div class='value code'>"
-                    info += sv._showTextPropery("Font Family", layer.pr[TPROP_FONT_FAMILY])
-                    info += sv._showTextPropery("Font Size", layer.pr[TPROP_FONT_SIZE], "px")
-                    info += sv._showTextPropery("Text Color", layer.pr[TPROP_TEXT_COLOR])
+                    info += layer.pr.replace(/\n/g, "<br/>")
+                    info += "</div></div>"
+                } else if ("ShapePath" == layer.tp) {
+                    info += "<hr>" +
+                        "<div class='block'>" +
+                        "<div class='label'>" + "Shape</div>" +
+                        "<div class='value code'>"
+                    info += layer.pr.replace(/\n/g, "<br/>")
                     info += "</div></div>"
                 }
             }
@@ -383,7 +400,7 @@ class SymbolViewer extends AbstractViewer {
     }
 
     _showTextPropery(propName, propValue, postfix = "") {
-        let text = propName + ": " + propValue + postfix
+        let text = propName + ": " + propValue + postfix + ";"
         return text + "<br/>"
     }
 

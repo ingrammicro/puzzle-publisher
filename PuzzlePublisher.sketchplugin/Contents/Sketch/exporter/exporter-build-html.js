@@ -160,36 +160,35 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <svg><use xlink:href="#icClose"></use></svg>\
                   </div>\
                 </div>\
-                <div style="padding: 72px 20px 0 20px">\
-                  <select id="lib_selector"></select>\
-                </div>\
-                <div class="checkbox-container">\
+                <div class="checkbox-container" style="margin-top:62px;">\
                   <input type="checkbox" id="symbol_viewer_symbols" />\
                   <label for="symbol_viewer_symbols"></label>\
-                  <span class="checkbox-label">Show symbols</span>\
+                  <span class="checkbox-label">Show symbols&nbsp;&nbsp;</span>\
+                  <select id="lib_selector" style="width:200px;display:none;"></select>\
                 </div>\
-                <div id="empty" style="padding: 16px 20px 0 20px;">Click any element to inspect</div>\
-                <div id="symbol_viewer_content"></div>\
+                <div id="empty" style="padding: 16px 20px 0 20px;margin-top:20px;">Click any element to inspect</div>\
+                <div id="symbol_viewer_content" style="margin-top:20px;">\
+                </div>\
             </div>\
-            <div id="version_viewer" class="hidden">\
+             <div id="version_viewer" class="hidden">\
                 <div class="title">\
                   <div style="width:100%;">Version Inspector</div>\
                   <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.versionViewer.toggle();  return false;">\
                     <svg><use xlink:href="#icClose"></use></svg>\
                   </div>\
                 </div>\
-                <div style="padding: 72px 20px 0 20px">\
-                  Mode:<br/>\
-                  <input type="radio" name="version_viewer_mode" id="version_viewer_mode_diff" value="diff" checked onclick="viewer.versionViewer.pageChanged()" disabled/><label for="version_viewer_mode_diff">Differences</label><br/>\
-                  <input type="radio" name="version_viewer_mode" id="version_viewer_mode_prev" value="prev" onclick="viewer.versionViewer.pageChanged()" disabled><label for="version_viewer_mode_prev">Prev version</label><br/>\
-                  <input type="radio" name="version_viewer_mode" id="version_viewer_mode_new" value="new" onclick="viewer.versionViewer.pageChanged()" disabled><label for="version_viewer_mode_new">New version</label><br/>\
+            <div style="padding: 72px 20px 0 20px">\
+                   Mode:<br />\
+                  <input type="radio" name="version_viewer_mode" id="version_viewer_mode_diff" value="diff" checked onclick="viewer.versionViewer.pageChanged()" disabled /><label for="version_viewer_mode_diff">Differences</label><br />\
+                  <input type="radio" name="version_viewer_mode" id="version_viewer_mode_prev" value="prev" onclick="viewer.versionViewer.pageChanged()" disabled><label for="version_viewer_mode_prev">Prev version</label><br />\
+                  <input type="radio" name="version_viewer_mode" id="version_viewer_mode_new" value="new" onclick="viewer.versionViewer.pageChanged()" disabled><label for="version_viewer_mode_new">New version</label><br />\
                 </div>\
                 <div id="version_viewer_content" style="padding: 72px 20px 0 20px"></div>\
             </div>\
         </div>\
-        <div id="content-shadow" class="hidden"  onclick="viewer.onContentClick()"></div>\
-        <div id="content-modal" class="contentModal hidden" onclick="viewer.onModalClick()"></div>\
-  ';
+    <div id="content-shadow" class="hidden" onclick="viewer.onContentClick()"></div>\
+    <div id="content-modal" class="contentModal hidden" onclick="viewer.onModalClick()"></div>\
+    ';
     if (options.commentsURL != '') {
         s += ' <div id="commenting" class="hidden">\n';
         s += '  <h1>EasyPageComments example page</h1>\n';

@@ -123,7 +123,7 @@ class PZDoc {
             if (vars != "") vars += ","
             vars += "'" + Utils.toFilename(lib.jsLib.name) + "':" + (varsData ? varsData : "{}")
         }
-        return "const SYMBOLS_DICT = {" + inspectors + "};" +
+        return "const SYMBOLS_DICT = {" + inspectors + "};\n" +
             "const TOKENS_DICT = {" + vars + "};"
     }
 

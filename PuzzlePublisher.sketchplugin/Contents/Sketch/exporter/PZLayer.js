@@ -5,6 +5,7 @@
 var Sketch = require('sketch/dom')
 var Flow = require('sketch/dom').Flow
 var Text = require('sketch/dom').Text
+var Style = require('sketch/dom').Style
 
 var ResizingConstraint = {
     NONE: 0,
@@ -379,7 +380,7 @@ class PZLayer {
         // need to cleanup temp object to allow dump it into JSON
         // but keep nlayer because Exporter.exportImage() needs it
         //
-        this.n = this.name
+        //this.n = this.name
         this.x = this.frame.x
         this.y = this.frame.y
         this.w = this.frame.width
@@ -387,13 +388,13 @@ class PZLayer {
         this.s = this.smName
         this.l = this.styleName
         this.b = this.smLib
-        this.t = this.text
         this.c = this.childs
         this.tp = this.slayer.type
         //
         if ("Text" == this.slayer.type) {
-
-            this._initTextPropsForJSON()
+            this.pr = this._buildTextPropsForJSON()
+        } else if ("ShapePath" == this.slayer.type) {
+            this.pr = this._buildShapePropsForJSON()
         }
         //
         this.name = undefined
@@ -425,45 +426,17 @@ class PZLayer {
 
     }
 
-
-    _initTextPropsForJSON() {
-
-        const TPROP_FONT_FAMILY = "tff"
-        const TPROP_FONT_SIZE = "tfs"
-        const TPROP_TEXT_COLOR = "ttc"
-        const TPROP_ALIGNMENT = "ta"
-        const TPROP_V_ALIGNMENT = "tva"
-        const TPROP_FONT_WEIGHT = "tfw"
-        const TPROP_FONT_STYLE = "tfst"
-        const TPROP_LINE_HEIGHT = "tlh"
-        const TPROP_TEXT_TRANSFORM = "ttf"
-        const TPROP_TEXT_UNDERLINE = "ttu"
-        const TPROP_TEXT_STRIKE_THROUGHT = "tst"
-        const TPROP_PARAGRAPH_SPACING = "tps"
-        const TPROP_KERNING = "tk"
-        //
-        const sStyle = this.slayer.style
-        let props = {}
-        props[TPROP_FONT_FAMILY] = sStyle.fontFamily
-        props[TPROP_FONT_SIZE] = sStyle.fontSize
-        props[TPROP_TEXT_COLOR] = this._clearColor(sStyle.textColor)
-        props[TPROP_ALIGNMENT] = alignMap2[sStyle.alignment]
-        props[TPROP_V_ALIGNMENT] = vertAlignMap2[sStyle.verticalAlignment]
-        props[TPROP_PARAGRAPH_SPACING] = sStyle.paragraphSpacing
-        {
-            var cssWeights = weights.filter(w => w.sketch == sStyle.fontWeight)
-            if (cssWeights.length > 0)
-                props[TPROP_FONT_WEIGHT] = cssWeights[0].css
-        }
-        if (undefined != sStyle.fontStyle) props[TPROP_FONT_STYLE] = sStyle.fontStyle
-        if (null != sStyle.lineHeight) props[TPROP_LINE_HEIGHT] = sStyle.lineHeight
-        if (undefined != sStyle.textTransform) props[TPROP_TEXT_TRANSFORM] = sStyle.textTransform
-        if (undefined != sStyle.textUnderline) props[TPROP_TEXT_UNDERLINE] = true
-        if (undefined != sStyle.textStrikethrough) props[TPROP_TEXT_STRIKE_THROUGHT] = true
-        if (null != sStyle.kerning) props[TPROP_KERNING] = sStyle.kerning
-        // save text properties into this
-        this.pr = props
+    _buildTextPropsForJSON() {
+        this.tx = this.text
+        const pte = exporter.getTokensExporter()
+        return pte._getTextStylePropsAsText(this.slayer.style)
     }
+
+    _buildShapePropsForJSON() {
+        const pte = exporter.getTokensExporter()
+        return pte._getLayerStylePropsAsText(null, this.slayer, this.slayer.style)
+    }
+
 
     _clearColor(color) {
         // drop FF transparency as default
