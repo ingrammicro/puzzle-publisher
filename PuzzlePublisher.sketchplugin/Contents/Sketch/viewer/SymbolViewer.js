@@ -19,6 +19,7 @@ class SymbolViewer extends AbstractViewer {
     constructor() {
         super()
         this.createdPages = {}
+        //this.symbolIDs = {} // layer indexes ( in pages[].layers ) of symbols
         this.currentLib = ""
         this.showSymbols = false
     }
@@ -177,7 +178,8 @@ class SymbolViewer extends AbstractViewer {
         this.page = page
         if (!(pageIndex in this.createdPages)) {
             const newPageInfo = {
-                layerArray: []
+                layerArray: [],
+                siLayerIndexes: {}
             }
             // cache only standalone pages
             this.createdPages[pageIndex] = newPageInfo
@@ -225,31 +227,46 @@ class SymbolViewer extends AbstractViewer {
         }
     }
 
-    _processLayerList(layers) {
+    _processLayerList(layers, sSI = null) {
         const supportedTypes = ["Text", "ShapePath"]
         for (var l of layers) {
             if (supportedTypes.indexOf(l.tp) >= 0) {
-                this._showElement(l)
+                this._showElement(l, sSI)
             } else {
-                this._processLayerList(l.c)
+                if ("SI" == l.tp) sSI = l
+                this._processLayerList(l.c, sSI)
             }
         }
     }
 
-    _showElement(l) {
+    _showElement(l, siLayer = null) {
 
         var currentPanel = this.page
+        l.finalX = l.x
+        l.finalY = l.y
 
         for (const panel of this.page.fixedPanels) {
             if (l.x >= panel.x && l.y >= panel.y &&
                 ((l.x + l.w) <= (panel.x + panel.width)) && ((l.y + l.h) <= (panel.y + panel.height))
             ) {
+                l.finalX = l.x - panel.x
+                l.finalY = l.y - panel.y
                 currentPanel = panel
                 break
             }
         }
 
-
+        // also push symbol instance to a list of layers (if was not aded before)
+        let indexOfSO = -1
+        if (siLayer) {
+            if (siLayer.s in this.pageInfo.siLayerIndexes) {
+                indexOfSO = this.pageInfo.siLayerIndexes[siLayer.s]
+            } else {
+                indexOfSO = this.pageInfo.layerArray.length
+                this.pageInfo.layerArray.push(siLayer)
+            }
+        }
+        //
 
         const layerIndex = this.pageInfo.layerArray.length
         this.pageInfo.layerArray.push(l)
@@ -258,19 +275,22 @@ class SymbolViewer extends AbstractViewer {
             class: viewer.currentPage.isModal ? "modalSymbolLink" : "symbolLink",
             pi: this.pageIndex,
             li: layerIndex,
+            si: indexOfSO
         })
 
         a.click(function () {
             const sv = viewer.symbolViewer
             const pageIndex = $(this).attr("pi")
             const layerIndex = $(this).attr("li")
+            const siLayerIndex = $(this).attr("si")
             const layer = sv.createdPages[pageIndex].layerArray[layerIndex]
+            const siLayer = siLayerIndex >= 0 ? sv.createdPages[pageIndex].layerArray[siLayerIndex] : null
 
-            var symName = sv.showSymbols ? layer.s : null
+            var symName = sv.showSymbols ? layer.s : (siLayer ? siLayer.s : null)
             var styleName = layer.l
             var comment = layer.comment
-            var frameX = layer.x
-            var frameY = layer.y
+            var frameX = layer.finalX
+            var frameY = layer.finalY
             var frameWidth = layer.w
             var frameHeight = layer.h
 
@@ -283,18 +303,9 @@ class SymbolViewer extends AbstractViewer {
                 info = "<hr>" +
                     "<div class='block'>" +
                     "<div class='label'>" + "Symbol" + "</div>" +
-                    "<div class='value'>" + symName + "</div>" +
-                    "</div>"
-
-                info += "<hr>" +
-                    "<div class='block'>" +
-                    "<div class='label'>" + "Symbol source" + "</div>" +
-                    "<div class='value'>"
-                if (layer.b != undefined) {
-                    info += layer.b + " (external)" + "</div></div>"
-                } else {
-                    info += "Document" + "</div></div>"
-                }
+                    "<div class='value'>" + symName + "</div>"
+                const libName = layer.b != undefined ? (layer.b + " (external)") : (siLayer ? siLayer.b : "Document")
+                info += "<div style='font-size:12px; color:var(--color-secondary)'>" + libName + "</div></div>"
 
             }
             if (styleName != undefined) {
@@ -302,11 +313,8 @@ class SymbolViewer extends AbstractViewer {
                     "<div class='block'>" +
                     "<div class='label'>" + "Style" + "</div>" +
                     "<div class='value'>" + styleName + "</div>"
-                if (layer.b != undefined) {
-                    info += "<div style='font-size:12px; color:var(--color-secondary)'>" + layer.b + " (external)" + "</div></div>"
-                } else {
-                    info += "<div class='value'>" + "Document" + "</div></div>"
-                }
+                const libName = layer.b != undefined ? (layer.b + " (external)") : (siLayer ? siLayer.b : "Document")
+                info += "<div style='font-size:12px; color:var(--color-secondary)'>" + libName + "</div></div>"
             }
 
 
@@ -314,8 +322,8 @@ class SymbolViewer extends AbstractViewer {
                 "<hr>" +
                 "<div class='block'>" +
                 "<div class='label'>" + "Comment" + "</div>" +
-                "<div style='value'>" + comment + "</div>" +
-                "</div>"
+                "<div style='value'>" + comment + "</div>" + 2
+            "</div>"
 
             info += "<hr>" +
                 "<div class='block twoColumn'>" +
@@ -337,7 +345,7 @@ class SymbolViewer extends AbstractViewer {
                 "</div>"
 
 
-            if (symInfo != undefined) {
+            if (symInfo != undefined && siLayerIndex < 0) {
                 info += "<hr>" +
                     "<div class='block'>" +
                     "<div class='label'>" + "Symbol layers and tokens" + "</div>" +
@@ -346,40 +354,25 @@ class SymbolViewer extends AbstractViewer {
                 for (const layerName of Object.keys(symInfo.symbol.layers)) {
                     if (layerCounter) info += "<br/>"
                     info += layerName + "<br/>"
-                    for (const tokenName of Object.keys(symInfo.symbol.layers[layerName].tokens)) {
-                        info += sv._showTokenInfo(tokenName, layer)
-                    }
+                    info += sv._decorateTokens(symInfo.symbol.layers[layerName].tokens, layer)
                     layerCounter++
-                }
-                info += "</div></div>"
-            }
-
-            if (styleInfo != undefined) {
-                info += "<hr>" +
-                    "<div class='block'>" +
-                    "<div class='label'>" + "Style tokens" + "</div>" +
-                    "<div class='value code'>"
-                for (const tokenName of Object.keys(styleInfo.style.tokens)) {
-                    info += sv._showTokenInfo(tokenName, layer)
                 }
                 info += "</div></div>"
             }
 
             if (layer.tp != undefined) {
                 if ("Text" == layer.tp) {
-                    info += "<hr>" +
-                        "<div class='block'>" +
-                        "<div class='label'>" + "Text" + (layer.tx != undefined ? (": " + layer.tx) : "") + "</div>" +
-                        "<div class='value code'>"
-                    info += layer.pr.replace(/\n/g, "<br/>")
-                    info += "</div></div>"
+                    info += sv._decorateCSS(layer.pr, symInfo ? symInfo.symbol.layers[layer.n].tokens : null, siLayer)
+                    if (layer.tx != undefined && layer.tx != "") {
+                        info += "<hr>" +
+                            "<div class='block'>" +
+                            "<div class='label'>Content</div >" +
+                            "<div class='value code'>"
+                        info += layer.tx
+                        info += "</div></div>"
+                    }
                 } else if ("ShapePath" == layer.tp) {
-                    info += "<hr>" +
-                        "<div class='block'>" +
-                        "<div class='label'>" + "Shape</div>" +
-                        "<div class='value code'>"
-                    info += layer.pr.replace(/\n/g, "<br/>")
-                    info += "</div></div>"
+                    info += sv._decorateCSS(layer.pr, symInfo ? symInfo.symbol.layers[layer.n].tokens : null, siLayer)
                 }
             }
 
@@ -390,7 +383,7 @@ class SymbolViewer extends AbstractViewer {
 
         a.appendTo(currentPanel.linksDiv)
 
-        var style = "left: " + l.x + "px; top:" + l.y + "px; "
+        var style = "left: " + l.finalX + "px; top:" + l.finalY + "px; "
         style += "width: " + l.w + "px; height:" + l.h + "px; "
         var symbolDiv = $("<div>", {
             class: "symbolDiv",
@@ -399,21 +392,63 @@ class SymbolViewer extends AbstractViewer {
         symbolDiv.appendTo(a)
     }
 
+    _decorateCSS(css, tokens, siLayer) {
+        let result = ""
+
+        result += "<hr>" +
+            "<div class='block'>" +
+            "<div class='label'>Styles</div > " +
+            "<div class='value code'>"
+
+        css.split("\n").forEach(line => {
+            if ("" == line) return
+            const props = line.split(": ", 2)
+            if (!props.length) return
+            result += "" + props[0] + ": "
+            result += "<span class='tokenName'>"
+            //
+            const tokenStr = tokens != null ? this._decorateStyleToken(props[0], tokens, siLayer) : ""
+            result += tokenStr != "" ? tokenStr : props[1]
+            //
+            result += "</span>"
+            result += "<br/>"
+        }, this);
+
+        result += "</div></div>"
+        return result
+    }
+
+    _decorateStyleToken(style, tokens, siLayer) {
+        // search tokan name by style name 
+        const foundTokens = tokens.filter(t => t[0] == style)
+        if (!foundTokens.length) return ""
+        const tokenName = foundTokens[0][1]
+        //
+        const libName = undefined != siLayer.b ? siLayer.b : story.docName
+        const tokenValue = this._findTokenValueByName(tokenName, libName)
+        //
+        return tokenName + "</span><span class='tokenValue'>//" + tokenValue
+    }
+
+
     _showTextPropery(propName, propValue, postfix = "") {
         let text = propName + ": " + propValue + postfix + ";"
         return text + "<br/>"
     }
 
-    _showTokenInfo(tokenName, layer) {
-        let text = "<span class='tokenName'>" + tokenName + ";</span>"
-
-        const libName = undefined != layer.b ? layer.b : story.docName
-        const tokenValue = this._findTokenValueByName(tokenName, libName)
-        if (undefined != tokenValue) {
-            text += "<span class='tokenValue'>//" + tokenValue + "</span>"
-        }
-
-        return text + "<br/>"
+    _decorateTokens(tokens, layer) {
+        let text = ""
+        tokens.forEach(token => {
+            const [tokenType, tokenName] = token
+            text += "<span class='tokenName'>" + tokenName + ";</span>"
+            const libName = undefined != layer.b ? layer.b : story.docName
+            const tokenValue = this._findTokenValueByName(tokenName, libName)
+            if (undefined != tokenValue) {
+                text += "<span class='tokenValue'>//" + tokenValue + "</span>"
+            }
+            text += "<br/>"
+        })
+        return text
     }
 
     _findTokenValueByName(tokenName, libName) {

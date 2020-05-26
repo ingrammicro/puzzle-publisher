@@ -379,8 +379,7 @@ class PZLayer {
     clearRefsBeforeJSON() {
         // need to cleanup temp object to allow dump it into JSON
         // but keep nlayer because Exporter.exportImage() needs it
-        //
-        //this.n = this.name
+        //        
         this.x = this.frame.x
         this.y = this.frame.y
         this.w = this.frame.width
@@ -389,7 +388,8 @@ class PZLayer {
         this.l = this.styleName
         this.b = this.smLib
         this.c = this.childs
-        this.tp = this.slayer.type
+        this.tp = this.isSymbolInstance ? "SI" : this.slayer.type
+        if (!this.isSymbolInstance) this.n = this.name
         //
         if ("Text" == this.slayer.type) {
             this.pr = this._buildTextPropsForJSON()
