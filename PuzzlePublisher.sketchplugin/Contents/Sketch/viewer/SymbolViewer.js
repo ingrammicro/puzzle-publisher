@@ -304,7 +304,7 @@ class SymbolViewer extends AbstractViewer {
                     "<div class='block'>" +
                     "<div class='label'>" + "Symbol" + "</div>" +
                     "<div class='value'>" + symName + "</div>"
-                const libName = layer.b != undefined ? (layer.b + " (external)") : (siLayer ? siLayer.b : "Document")
+                const libName = layer.b != undefined ? (layer.b + " (external)") : (siLayer && siLayer.b ? siLayer.b : "Document")
                 info += "<div style='font-size:12px; color:var(--color-secondary)'>" + libName + "</div></div>"
 
             }

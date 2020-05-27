@@ -1,7 +1,7 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
-##  Version 14.0.0 (27 May 2020)
+##  Version 14.0.1 (27 May 2020)
 - Totally reworked Element Inspector to show all text/shape layer styles
 - Updated file protocol between Puzzle Publisher and Puzzle Tokens
 
