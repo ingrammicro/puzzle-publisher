@@ -1,20 +1,3 @@
-const TPROP_TEXT = "tt"
-const TPROP_FONT_FAMILY = "tff"
-const TPROP_FONT_SIZE = "tfs"
-const TPROP_TEXT_COLOR = "ttc"
-const TPROP_ALIGNMENT = "ta"
-const TPROP_V_ALIGNMENT = "tva"
-const TPROP_FONT_WEIGHT = "tfw"
-const TPROP_FONT_STYLE = "tfst"
-const TPROP_LINE_HEIGHT = "tlh"
-const TPROP_TEXT_TRANSFORM = "ttf"
-const TPROP_TEXT_UNDERLINE = "ttu"
-const TPROP_TEXT_STRIKE_THROUGHT = "tst"
-const TPROP_PARAGRAPH_SPACING = "tps"
-const TPROP_KERNING = "tk"
-
-//// ^^^^ copied from PZLayer:_initTextPropsForJSON()
-
 class SymbolViewer extends AbstractViewer {
     constructor() {
         super()
@@ -345,24 +328,11 @@ class SymbolViewer extends AbstractViewer {
                 "</div>"
 
 
-            if (symInfo != undefined && siLayerIndex < 0) {
-                info += "<hr>" +
-                    "<div class='block'>" +
-                    "<div class='label'>" + "Symbol layers and tokens" + "</div>" +
-                    "<div class='value code'>"
-                var layerCounter = 0
-                for (const layerName of Object.keys(symInfo.symbol.layers)) {
-                    if (layerCounter) info += "<br/>"
-                    info += layerName + "<br/>"
-                    info += sv._decorateTokens(symInfo.symbol.layers[layerName].tokens, layer)
-                    layerCounter++
-                }
-                info += "</div></div>"
-            }
-
             if (layer.tp != undefined) {
+                const tokens = styleInfo ? styleInfo.style.tokens :
+                    (symInfo ? symInfo.symbol.layers[layer.n].tokens : null)
                 if ("Text" == layer.tp) {
-                    info += sv._decorateCSS(layer.pr, symInfo ? symInfo.symbol.layers[layer.n].tokens : null, siLayer)
+                    info += sv._decorateCSS(layer.pr, tokens, layer.b ? layer : siLayer)
                     if (layer.tx != undefined && layer.tx != "") {
                         info += "<hr>" +
                             "<div class='block'>" +
@@ -372,7 +342,7 @@ class SymbolViewer extends AbstractViewer {
                         info += "</div></div>"
                     }
                 } else if ("ShapePath" == layer.tp) {
-                    info += sv._decorateCSS(layer.pr, symInfo ? symInfo.symbol.layers[layer.n].tokens : null, siLayer)
+                    info += sv._decorateCSS(layer.pr, tokens, layer.b ? layer : siLayer)
                 }
             }
 
@@ -404,11 +374,13 @@ class SymbolViewer extends AbstractViewer {
             if ("" == line) return
             const props = line.split(": ", 2)
             if (!props.length) return
-            result += "" + props[0] + ": "
+            const styleName = props[0]
+            const styleValue = props[1].slice(0, -1)
+            result += "" + styleName + ": "
             result += "<span class='tokenName'>"
             //
-            const tokenStr = tokens != null ? this._decorateStyleToken(props[0], tokens, siLayer) : ""
-            result += tokenStr != "" ? tokenStr : props[1]
+            const tokenStr = tokens != null ? this._decorateStyleToken(styleName, tokens, siLayer, styleValue) : ""
+            result += tokenStr != "" ? tokenStr : (styleValue + ";")
             //
             result += "</span>"
             result += "<br/>"
@@ -418,16 +390,19 @@ class SymbolViewer extends AbstractViewer {
         return result
     }
 
-    _decorateStyleToken(style, tokens, siLayer) {
+    _decorateStyleToken(style, tokens, siLayer, styleValue) {
         // search tokan name by style name 
         const foundTokens = tokens.filter(t => t[0] == style)
         if (!foundTokens.length) return ""
-        const tokenName = foundTokens[0][1]
+        const tokenName = foundTokens[foundTokens.length - 1][1]
         //
         const libName = undefined != siLayer.b ? siLayer.b : story.docName
-        const tokenValue = this._findTokenValueByName(tokenName, libName)
+        const finalTokenInfo = this._findTokenValueByName(tokenName, libName, styleValue)
         //
-        return tokenName + "</span><span class='tokenValue'>//" + tokenValue
+        if (finalTokenInfo)
+            return finalTokenInfo[0] + ";</span><span class='tokenValue'>//" + finalTokenInfo[1]
+        else
+            return ""
     }
 
 
@@ -436,25 +411,29 @@ class SymbolViewer extends AbstractViewer {
         return text + "<br/>"
     }
 
-    _decorateTokens(tokens, layer) {
-        let text = ""
-        tokens.forEach(token => {
-            const [tokenType, tokenName] = token
-            text += "<span class='tokenName'>" + tokenName + ";</span>"
-            const libName = undefined != layer.b ? layer.b : story.docName
-            const tokenValue = this._findTokenValueByName(tokenName, libName)
-            if (undefined != tokenValue) {
-                text += "<span class='tokenValue'>//" + tokenValue + "</span>"
-            }
-            text += "<br/>"
-        })
-        return text
-    }
-
-    _findTokenValueByName(tokenName, libName) {
+    // result: undefined or [tokenName,tokenValue]
+    _findTokenValueByName(tokenName, libName, styleValue = null) {
         const lib = TOKENS_DICT[libName]
         if (undefined == lib) return undefined
-        return lib[tokenName]
+        let value = lib[tokenName]
+        if (value != undefined || null == styleValue) return [tokenName, lib[tokenName]]
+
+        ///// try to find a token with a similar name
+        // cut magic postfix to get a string for search
+        const pos = tokenName.indexOf("--token")
+        if (pos < 0) return undefined
+        styleValue = styleValue.toLowerCase()
+        const newName = tokenName.slice(0, pos)
+        // filter lib tokens by name and value
+        const similarTokens = Object.keys(lib).filter(function (n) {
+            return n.startsWith(newName) && lib[n].toLowerCase() == styleValue
+        }, this)
+        if (!similarTokens.length) return undefined
+        //
+        return [
+            similarTokens[0],
+            lib[similarTokens[0]]
+        ]
     }
 
     _findSymbolAndLibBySymbolName(symName) {

@@ -420,7 +420,7 @@ function createViewer(story, files) {
             var sidebarWidth = 0
             if (this.sidebarVisible) {
                 var sidebar = $("#sidebar")
-                var defSidebarWidth = 300
+                var defSidebarWidth = 400
 
                 sidebarWidth = Math.round((fullWidth - page.width) / 2)
                 if (sidebarWidth < defSidebarWidth) {
