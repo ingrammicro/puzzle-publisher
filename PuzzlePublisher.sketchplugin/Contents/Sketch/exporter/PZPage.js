@@ -81,6 +81,8 @@ class PZPage {
             //log("PZPage._scanLayersToSaveInfo() old name="+ sl.name)
             // save symbol ID to restore info about master after the detachs
             sl.name = sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + sl.symbolId
+
+            this._scanLayersToSaveInfo(smaster)
         }, this)
     }
 

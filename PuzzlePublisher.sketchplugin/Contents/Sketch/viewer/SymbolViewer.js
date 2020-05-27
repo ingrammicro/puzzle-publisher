@@ -328,11 +328,16 @@ class SymbolViewer extends AbstractViewer {
                 "</div>"
 
 
-            if (layer.tp != undefined) {
-                const tokens = styleInfo ? styleInfo.style.tokens :
-                    (symInfo ? symInfo.symbol.layers[layer.n].tokens : null)
+            if (layer.pr != undefined) {
+                let tokens = null
+                if (styleInfo)
+                    tokens = styleInfo.style.tokens
+                else if (symInfo) {
+                    const foundLayer = symInfo.symbol.layers[layer.n]
+                    if (foundLayer) tokens = foundLayer.tokens
+                }
+                info += sv._decorateCSS(layer.pr, tokens, layer.b ? layer : siLayer)
                 if ("Text" == layer.tp) {
-                    info += sv._decorateCSS(layer.pr, tokens, layer.b ? layer : siLayer)
                     if (layer.tx != undefined && layer.tx != "") {
                         info += "<hr>" +
                             "<div class='block'>" +
@@ -341,8 +346,6 @@ class SymbolViewer extends AbstractViewer {
                         info += layer.tx
                         info += "</div></div>"
                     }
-                } else if ("ShapePath" == layer.tp) {
-                    info += sv._decorateCSS(layer.pr, tokens, layer.b ? layer : siLayer)
                 }
             }
 
