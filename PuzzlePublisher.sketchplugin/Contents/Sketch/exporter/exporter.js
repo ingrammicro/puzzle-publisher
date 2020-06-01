@@ -1,5 +1,6 @@
 @import("constants.js")
 @import("lib/utils.js")
+@import("lib/ga.js")
 @import("exporter/exporter-build-html.js")
 @import("exporter/PZLayer.js")
 @import("exporter/PZArtboard.js")
@@ -82,7 +83,6 @@ class Exporter {
 
 
     logMsg(msg) {
-        if (!Constants.LOGGING) return
         log(msg)
     }
 
