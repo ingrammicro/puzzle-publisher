@@ -1,6 +1,11 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.1.0 (1 June 2020)
+Added ability to enable debug logging
+PP now sends anonymous usage data (using Google Analytics). You can disable it in Configure Plugin.
+Workaround two Sketch issues
+
 ##  Version 14.0.2 (28 May 2020)
 - Improvements and fixes for Element Inspector 
 
