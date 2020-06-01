@@ -13,12 +13,12 @@ class PZPage {
     }
 
     collectData(sArtboards = null) {
-        exporter.logMsg("PZPage.collectData() starting... name=" + (this.sPage ? this.sPage.name : ''))
+        if (DEBUG) exporter.logMsg("PZPage.collectData() starting... name=" + (this.sPage ? this.sPage.name : ''))
         // 
         if (!sArtboards) sArtboards = this.sPage.layers
 
         // prepare layers for collecting
-        exporter.logMsg("PZPage.collectData() preparing...")
+        if (DEBUG) exporter.logMsg("PZPage.collectData() preparing...")
         for (const sa of sArtboards) {
             if ("Artboard" != sa.type) continue
             if (exporter.filterAster && sa.name.indexOf("*") == 0) continue
@@ -34,7 +34,7 @@ class PZPage {
         }
 
         // collect layers
-        exporter.logMsg("PZPage.collectData() collecting...")
+        if (DEBUG) exporter.logMsg("PZPage.collectData() collecting...")
         this._collectArtboards(sArtboards)
 
         // cleanup temporary data
@@ -60,7 +60,7 @@ class PZPage {
     //////////////////////// PRIVATE FUNCTIONS //////////////////////////////////////
 
     _scanLayersToSaveInfo(sParent) {
-        exporter.logMsg("PZPage._scanLayersToSaveInfo() running name=" + (this.sPage ? this.sPage.name : ''))
+        if (DEBUG) exporter.logMsg("PZPage._scanLayersToSaveInfo() running name=" + (this.sPage ? this.sPage.name : ''))
         const nParent = sParent.sketchObject
 
         nParent.children().forEach(function (nl) {
@@ -87,7 +87,7 @@ class PZPage {
     }
 
     _scanLayersToDetachSymbols(sParent) {
-        exporter.logMsg("PZPage._scanLayersToDetachSymbols() runnning...name=" + (this.sPage ? this.sPage.name : ''))
+        if (DEBUG) exporter.logMsg("PZPage._scanLayersToDetachSymbols() runnning...name=" + (this.sPage ? this.sPage.name : ''))
         const nParent = sParent.sketchObject
 
         nParent.children().forEach(function (nl) {
@@ -100,7 +100,7 @@ class PZPage {
 
         }, this)
 
-        exporter.logMsg("PZPage._scanLayersToDetachSymbols() completed")
+        if (DEBUG) exporter.logMsg("PZPage._scanLayersToDetachSymbols() completed")
     }
 
     _collectArtboards(sArtboards) {

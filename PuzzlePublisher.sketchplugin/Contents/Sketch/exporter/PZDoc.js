@@ -61,7 +61,7 @@ class PZDoc {
         } else {
             // build all pages and artboards
             for (var sPage of this.sDoc.pages) {
-                exporter.logMsg("PZDoc:collectData() process page=" + sPage.name)
+                if (DEBUG) exporter.logMsg("PZDoc:collectData() process page=" + sPage.name)
 
                 if (exporter.filterAster && sPage.name.indexOf("*") == 0) continue
 
@@ -241,18 +241,18 @@ class PZDoc {
 
     // return Sketch native object
     _findLibraryArtboardByID(artboardID) {
-        exporter.logMsg("findLibraryArtboardByID running...  artboardID:" + artboardID)
+        if (DEBUG) exporter.logMsg("findLibraryArtboardByID running...  artboardID:" + artboardID)
         // find Sketch Artboard
         var sArtboard = undefined
         var lib = undefined
         for (lib of this._getLibraries()) {
-            exporter.logMsg("findLibraryArtboardByID getLayerWithID for lib " + lib.jsLib.name)
+            if (DEBUG) exporter.logMsg("findLibraryArtboardByID getLayerWithID for lib " + lib.jsLib.name)
             sArtboard = lib.sDoc.getLayerWithID(artboardID)
             if (sArtboard) break
         }
         // check artboard existing
         if (!sArtboard) {
-            exporter.logMsg("findLibraryArtboardByID FAILED")
+            if (DEBUG) exporter.logMsg("findLibraryArtboardByID FAILED")
             return false
         }
 

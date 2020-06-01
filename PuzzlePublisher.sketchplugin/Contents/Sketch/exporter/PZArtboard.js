@@ -10,7 +10,7 @@ Sketch = require('sketch/dom')
 class PZArtboard extends PZLayer {
 
     constructor(slayer) {
-        exporter.logMsg("PZArtboard.create id=" + slayer.name)
+        if (DEBUG) exporter.logMsg("PZArtboard.create id=" + slayer.name)
 
         // init Artboard own things !!! before object construction !!!
         let artboardType = exporter.Settings.layerSettingForKey(slayer, SettingKeys.ARTBOARD_TYPE)
@@ -113,7 +113,7 @@ class PZArtboard extends PZLayer {
     }
 
     collectLayers(space) {
-        //exporter.logMsg(space+"PZArtboard.collectLayers() name="+this.name)
+        //if(DEBUG) exporter.logMsg(space+"PZArtboard.collectLayers() name="+this.name)
         this.childs = this.collectAChilds(this.slayer.layers, space + " ")
     }
 
@@ -146,7 +146,7 @@ class PZArtboard extends PZLayer {
     _pushIntoJSStory(pageIndex) {
         const mainName = this.name
 
-        exporter.logMsg("process main artboard " + mainName);
+        if (DEBUG) exporter.logMsg("process main artboard " + mainName);
         pzDoc.totalImages++
 
         let js = pageIndex ? ',' : '';
@@ -343,7 +343,7 @@ class PZArtboard extends PZLayer {
             } else if (hotspot.linkType == 'artboard') {
                 const targetPage = pzDoc.artboardIDsDict[hotspot.artboardID]
                 if (targetPage == undefined) {
-                    exporter.logMsg("undefined artboard: '" + hotspot.artboardName + '"');
+                    if (DEBUG) exporter.logMsg("undefined artboard: '" + hotspot.artboardName + '"');
                     continue
                 }
                 const targetPageIndex = targetPage.index;
@@ -353,7 +353,7 @@ class PZArtboard extends PZLayer {
             } else if (hotspot.target != undefined) {
                 newHotspot.target = hotspot.target
             } else {
-                exporter.logMsg("_pushHotspotIntoJSStory: Uknown hotspot link type: '" + hotspot.linkType + "'")
+                if (DEBUG) exporter.logMsg("_pushHotspotIntoJSStory: Uknown hotspot link type: '" + hotspot.linkType + "'")
             }
 
             if (hotspot.target != undefined) {
@@ -381,7 +381,7 @@ class PZArtboard extends PZLayer {
     }
 
     _exportImage(scale, layer, nlayer, panelPostix = "", addToExported = true) {
-        exporter.logMsg("   exportImage() for " + nlayer.name())
+        if (DEBUG) exporter.logMsg("   exportImage() for " + nlayer.name())
 
         const imageName = this._getImageName(scale, panelPostix)
         const imagePath = exporter.imagesPath + imageName
@@ -399,7 +399,7 @@ class PZArtboard extends PZLayer {
     // new experimental code to export images
     // we don't use it because it doesn't allow to set a file name
     _exportImage2(scales, slayer) {
-        exporter.logMsg("exportImage()");
+        if (DEBUG) exporter.logMsg("exportImage()");
 
         const imagePath = exporter.imagesPath // + this._getImageName(scales)
         log('_exportImage2 name=' + slayer.name)

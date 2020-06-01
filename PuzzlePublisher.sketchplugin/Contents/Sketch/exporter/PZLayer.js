@@ -318,7 +318,7 @@ class PZLayer {
         // finalization
         Array.prototype.push.apply(this.artboard.hotspots, hotspots);
 
-        exporter.logMsg(prefix + "_processLayerLinks")
+        if (DEBUG) exporter.logMsg(prefix + "_processLayerLinks")
     }
 
 
@@ -328,7 +328,7 @@ class PZLayer {
         if (targetArtboardID == 'back') {
             // hande Back action
             finalHotspot.linkType = "back";
-            exporter.logMsg(prefix + "hotspot: back")
+            if (DEBUG) exporter.logMsg(prefix + "hotspot: back")
         } else if (targetArtboardID != null && targetArtboardID != "" && targetArtboardID != "null") {
             // hande direct link
             let targetArtboard = pzDoc.findArtboardByID(targetArtboardID)
@@ -358,7 +358,7 @@ class PZLayer {
     }
 
     _specifyExternalURLHotspot(prefix, finalHotspot, externalLink) {
-        exporter.logMsg(prefix + "_specifyExternalURLHotspothotspot: href")
+        if (DEBUG) exporter.logMsg(prefix + "_specifyExternalURLHotspothotspot: href")
         // found external link
         const regExp = new RegExp("^http(s?)://");
         var href = externalLink.href
