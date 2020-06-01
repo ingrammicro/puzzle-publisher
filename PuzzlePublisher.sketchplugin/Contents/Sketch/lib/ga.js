@@ -14,7 +14,7 @@ function jsonToQueryString(json) {
 function track(page, props = undefined) {
     coscript.scheduleWithInterval_jsFunction(1, function () {
 
-        var trackingId = "UA-84277242-4"
+        var trackingId = Constants.GA_ID
 
         var Settings = require("sketch/settings");
         var kUUIDKey = "google.analytics.uuid";
