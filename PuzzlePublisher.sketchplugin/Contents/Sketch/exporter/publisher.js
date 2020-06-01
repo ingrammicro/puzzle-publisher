@@ -1,5 +1,6 @@
 @import("constants.js")
 @import("lib/utils.js")
+@import("lib/ga.js")
 @import("lib/uidialog.js")
 
 class Publisher {
@@ -61,6 +62,7 @@ class Publisher {
         commentsID = Utils.toFilename(commentsID)
         const runResult = this.runPublishScript(version, this.allMockupsdDir, docFolder, destFolder, commentsID)
 
+        track(TRACK_PUBLISH_COMPLETED)
         // success
         if (runResult.result) {
             const openURL = this.siteRoot + destFolder + (version == "-1" ? "" : ("/" + version)) + "/index.html"
@@ -200,9 +202,13 @@ class Publisher {
         }
 
 
+        track(TRACK_PUBLISH_DIALOG_SHOWN)
         while (true) {
             const result = dialog.run()
-            if (!result) return false
+            if (!result) {
+                track(TRACK_PUBLISH_DIALOG_CLOSED, { "cmd": "cancel" })
+                return false
+            }
 
             if (askLogin) {
                 this.login = dialog.views['login'].stringValue() + ""
@@ -227,6 +233,9 @@ class Publisher {
             if ('' == this.ver) continue
             if (askMessage && '' == this.message) continue
 
+
+            dialog.finish()
+            track(TRACK_PUBLISH_DIALOG_CLOSED, { "cmd": "ok" })
             // save new version into document settings         
             if (askSiteRoot) {
                 Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_SITEROOT, this.siteRoot)

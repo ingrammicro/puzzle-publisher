@@ -38,6 +38,7 @@ function exportHTML(currentPath, nDoc, exportOptions, context) {
 
     if (fromCmd) {
         exporter.exportArtboards()
+        track(TRACK_EXPORT_COMPLETED)
     } else {
         let panel = new UIPanel("Exporting to HTML")
         exportInfo.panel = panel
@@ -63,6 +64,7 @@ function exportHTML(currentPath, nDoc, exportOptions, context) {
             // 
             //panelSwitchFinished()
             closePanel()
+            track(TRACK_EXPORT_COMPLETED)
 
             // show final message
             if (exporter.errors.length > 0) {
@@ -133,9 +135,13 @@ function runExporter(context, exportOptions = null) {
             dialog.addTextInput("customHeight", "Artboard custom height (px)", customHeight + "", 'e.g. 1080')
         }
 
+        track(TRACK_EXPORT_DIALOG_SHOWN)
         while (true) {
             const result = dialog.run()
-            if (!result) return
+            if (!result) {
+                track(TRACK_EXPORT_DIALOG_CLOSED, { "cmd": "cancel" })
+                return false
+            }
 
             if (askSize) {
                 customWidth = dialog.views['customWidth'].stringValue()
@@ -160,8 +166,8 @@ function runExporter(context, exportOptions = null) {
 
             break
         }
-
         dialog.finish()
+        track(TRACK_EXPORT_DIALOG_CLOSED, { "cmd": "ok" })
 
         Settings.setSettingForKey(SettingKeys.PLUGIN_EXPORTING_URL, currentPath)
         Settings.setSettingForKey(SettingKeys.PLUGIN_DONT_OPEN_BROWSER, dontOpen)

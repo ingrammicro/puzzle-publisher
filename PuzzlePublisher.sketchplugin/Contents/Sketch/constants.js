@@ -1,4 +1,4 @@
-var Constants = {
+const Constants = {
     DOCUMENT_VERSION: "docVersion",
     DOCUMENT_VERSION_PLACEHOLDER: "V_V_V",
     TAB_SIZE: 2,
@@ -86,17 +86,28 @@ var Constants = {
     LAYER_OVERLAY_DEFAULT: 0,
     LAYER_OVERLAY_TRANSP_TOP: 1,
     LAYER_OVERLAY_TRANSP_LEFT: 2,
-    LAYER_OVERLAY_DIV: 3
+    LAYER_OVERLAY_DIV: 3,
+    //
+    GA_ID: "UA-84277242-5"
 };
 
-var PublishKeys = {
+const TRACK_INSTALLED = "installed"
+const TRACK_STARTED = "started"
+const TRACK_EXPORT_DIALOG_SHOWN = "export-dialog-shown"
+const TRACK_EXPORT_DIALOG_CLOSED = "export-dialog-closed"  // cmd:ok,cancel
+const TRACK_EXPORT_COMPLETED = "export-completed"
+const TRACK_PUBLISH_DIALOG_SHOWN = "publish-dialog-shown"
+const TRACK_PUBLISH_DIALOG_CLOSED = "publish-dialog-closed"  // cmd:ok,cancel
+const TRACK_PUBLISH_COMPLETED = "publish-completed"
+
+const PublishKeys = {
     SHOW_OUTPUT: false,
     TMP_FILE: "publish.sh",
     RESOURCES_FOLDER: "scripts",
 
 }
 
-var SettingKeys = {
+const SettingKeys = {
     PLUGIN_INFO_11: "pluginShown11",
 
     PLUGIN_POSITION: "positon",
@@ -154,5 +165,8 @@ var SettingKeys = {
     LAYER_DIV_ID: 'layerDivID',
     LAYER_EXTERNAL_LINK: "externalLink",
     LAYER_EXTERNAL_LINK_BLANKWIN: "layerNewWindow",
-    LAYER_COMMENT: 'layerComment'
+    LAYER_COMMENT: 'layerComment',
+
+    PLUGIN_GA_DISABLED: "pluginGADisabled",
+    PLUGIN_LOGDEBUG_ENABLED: "pluginLogDebugEnabled",
 };
