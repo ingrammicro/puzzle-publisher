@@ -257,10 +257,11 @@ class DSExporter {
         res += "///////////////// Text Styles /////////////////\n"
         this.sDoc.sharedTextStyles.forEach(function (sStyle) {
             if (!this.confExportLibStyles && sStyle.getLibrary()) return
+            if (DEBUG) log("export text style: " + sStyle.name)
             res += this._getStyleInfoAsText(sStyle)
             let si = this._parseStyleName(sStyle.name, true)
             res += si.openTags
-            ///
+            ///            
             res += this._getTextStylePropsAsText(sStyle.style, si.spaces)
             ///
             res += si.closeTags
@@ -269,6 +270,7 @@ class DSExporter {
         res += "///////////////// Layer Styles /////////////////\n"
         this.sDoc.sharedLayerStyles.forEach(function (sStyle) {
             if (!this.confExportLibStyles && sStyle.getLibrary()) return
+            if (DEBUG) log("export layer style: " + sStyle.name)
             res += this._getStyleInfoAsText(sStyle)
             let si = this._parseStyleName(sStyle.name, false)
             //
@@ -370,6 +372,9 @@ class DSExporter {
 
 
     _getTextStylePropsAsText(sStyle, spaces = "") {
+        // In some cases text object can has non-text style
+        if (sStyle.styleType != "Text") return
+
         let res = ""
 
         res += spaces + "font-family" + ": " + this._getFontFamilyToken(sStyle.fontFamily) + eol
@@ -427,6 +432,9 @@ class DSExporter {
             if (0 == layers.length) break
             const l = layers[0] // take the first
             if ("Shape" != l.type && "ShapePath" != l.type) break;
+
+            // in some case we can got undefined points property
+            if (undefined == l.points) break
 
             let str = ""
             let radiusesHash = {}
