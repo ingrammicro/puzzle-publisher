@@ -11,6 +11,16 @@
     "icon": "icon.png",
     "commands": [
         {
+            "script": "cmd-actions.js",
+            "name": "My Action Listener",
+            "handlers": {
+                "actions": {
+                    "Startup": "onStartup"
+                }
+            },
+            "identifier": "my-action-listener-identifier"
+        },
+        {
             "script": "cmdline-functions.js",
             "handler": "cmdRun",
             "name": "Run from command line",
@@ -107,6 +117,7 @@
             "-",
             "confPluginExport",
             "confPluginPublishing",
+            "confPlugin",
             "-",
             "showChangeLog"
         ]
