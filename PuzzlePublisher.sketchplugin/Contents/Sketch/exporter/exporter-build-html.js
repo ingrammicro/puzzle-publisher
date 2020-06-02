@@ -126,6 +126,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             s += "</script>\n"
         }
     }
+    s += `
+<script>
+    function copyToBuffer(elID) {        
+        var copyText = document.getElementById(elID);
+
+        var $temp = $("<input>");
+        $("body").append($temp);
+        $temp.val($(copyText).text()).select();
+        document.execCommand("copy");
+        $temp.remove();
+    }
+</script > `
     s += '<!--HEAD_INJECT-->\n';
     s += '</head>\n';
     s += '<body class="screen" style="background:' + options.backColor + '">\n';

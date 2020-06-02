@@ -339,12 +339,12 @@ class SymbolViewer extends AbstractViewer {
                 info += sv._decorateCSS(layer.pr, tokens, layer.b ? layer : siLayer)
                 if ("Text" == layer.tp) {
                     if (layer.tx != undefined && layer.tx != "") {
-                        info += "<hr>" +
-                            "<div class='block'>" +
-                            "<div class='label'>Content</div >" +
-                            "<div class='value code'>"
-                        info += layer.tx
-                        info += "</div></div>"
+                        info += `
+                            <hr>
+                            <div class='block'>
+                            <div class='label'>Content<button onclick = "copyToBuffer('sv_content')">Copy</button></div >
+                            <div id='sv_content' class='value code'>`+ layer.tx + "</div>"
+                        info += "</div>"
                     }
                 }
             }
