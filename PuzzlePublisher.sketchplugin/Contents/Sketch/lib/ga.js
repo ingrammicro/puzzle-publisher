@@ -9,6 +9,10 @@ function jsonToQueryString(json) {
         .join("&");
 }
 
+function _completeGA(d, r, e) {
+    if (DEBUG) log("Completed GA")
+}
+
 
 
 function track(page, props = undefined) {
@@ -65,7 +69,11 @@ function track(page, props = undefined) {
             NSUUID.UUID().UUIDString()
         );
         if (DEBUG) log("Started GA " + nURL)
-        NSData.dataWithContentsOfURL(nURL);
-        if (DEBUG) log("Completed GA")
+        //NSData.dataWithContentsOfURL(nURL);
+        let session = NSURLSession.sharedSession()
+        //let task = [session dataTaskWithURL: nURL completionHandler: _completeGA]//, _completeGA)
+        //let task = session.dataTaskWithURL_completionHandler_(nURL, _completeGA)
+        let task = session.dataTaskWithURL(nURL)
+        task.resume()
     })
 }
