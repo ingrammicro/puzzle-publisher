@@ -167,6 +167,7 @@ const SettingKeys = {
     LAYER_EXTERNAL_LINK_BLANKWIN: "layerNewWindow",
     LAYER_COMMENT: 'layerComment',
 
+    PLUGIN_INSTALLED: "pluginInstalled",
     PLUGIN_GA_DISABLED: "pluginGADisabled",
     PLUGIN_LOGDEBUG_ENABLED: "pluginLogDebugEnabled",
 };

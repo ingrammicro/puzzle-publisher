@@ -3,6 +3,8 @@
 @import "constants.js";
 
 function onStartup(context) {
+    const Settings = require('sketch/settings')
+
     const installedBefore = Settings.settingForKey(SettingKeys.PLUGIN_INSTALLED)
     if (!installedBefore) {
         track(TRACK_INSTALLED)
