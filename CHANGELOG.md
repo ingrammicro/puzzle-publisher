@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.1.2 (2 June 2020)
+Fixed internal error on Sketch startup
+
 ##  Version 14.1.1 (2 June 2020)
 Improved async mode for sending statistics
 
