@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.1.1 (2 June 2020)
+Improved async mode for sending statistics
+
 ##  Version 14.1.0 (1 June 2020)
 Added ability to enable debug logging
 PP now sends anonymous usage data (using Google Analytics). You can disable it in Configure Plugin.
