@@ -137,6 +137,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         document.execCommand("copy");
         $temp.remove();
     }
+    function showFAIconInfo(code){
+        window.open("https://fontawesome.com/icons?d=gallery&q="+code,"_blank")
+    }                     
 </script > `
     s += '<!--HEAD_INJECT-->\n';
     s += '</head>\n';

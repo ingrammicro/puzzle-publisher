@@ -340,19 +340,25 @@ class SymbolViewer extends AbstractViewer {
                 info += decRes.css
                 if ("Text" == layer.tp) {
                     if (layer.tx != undefined && layer.tx != "") {
+                        info += `
+                            <hr>
+                            <div class='block'>
+                            <div class='label'>Content<button onclick = "copyToBuffer('sv_content')">Copy</button>`
+                        let afterContent = ""
                         let cssClass = ""
                         if (decRes.styles["font-family"].startsWith("Font Awesome 5")) {
                             cssClass += "icon "
                             if (decRes.styles["font-weight"] != "400") cssClass += "solid "
-                            //https://fontawesome.com/icons?d=gallery&q=f2bb
+                            const codeText = layer.tx.codePointAt(0).toString(16)
+                            afterContent = "Unicode: " + codeText
+                            info += `<button onclick = "showFAIconInfo('` + codeText + `')">Info</button>`
                         } else {
                             cssClass += "code value"
                         }
-                        info += `
-                            <hr>
-                            <div class='block'>
-                            <div class='label'>Content<button onclick = "copyToBuffer('sv_content')">Copy</button></div >
-                            <div id='sv_content' class="`+ cssClass + `">` + layer.tx + "</div>"
+                        info += `</div ><div id='sv_content' class="` + cssClass + `">` + layer.tx + "</div>"
+                        if (afterContent != "") {
+                            info += "<div  class='code value'>" + afterContent + "</div>"
+                        }
                         info += "</div>"
                     }
                 }
