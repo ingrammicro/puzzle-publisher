@@ -171,3 +171,4 @@ const SettingKeys = {
     PLUGIN_GA_DISABLED: "pluginGADisabled",
     PLUGIN_LOGDEBUG_ENABLED: "pluginLogDebugEnabled",
 };
+

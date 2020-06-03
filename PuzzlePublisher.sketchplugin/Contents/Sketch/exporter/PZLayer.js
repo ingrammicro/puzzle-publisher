@@ -39,6 +39,7 @@ const weights = [
     { label: 'semibold', sketch: 8, css: 600, title: "Semi Bold#2" },
     { label: 'bold', sketch: 9, css: 700, title: "Bold" },
     { label: 'extra-bold', sketch: 10, css: 800, title: "Extra Bold" },
+    { label: 'black', sketch: 11, css: 900, title: "Black" },
     { label: 'black', sketch: 12, css: 900, title: "Black" },
 ]
 

@@ -107,8 +107,11 @@ class DSExporter {
 
     // Tools
     logMsg(msg) {
-        //log(msg)
-        this.messages += msg + "\n"
+        if (this.runningForTokens) {
+            this.messages += msg + "\n"
+        } else {
+            log(msg)
+        }
     }
 
 

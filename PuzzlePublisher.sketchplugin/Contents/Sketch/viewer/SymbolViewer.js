@@ -336,14 +336,20 @@ class SymbolViewer extends AbstractViewer {
                     const foundLayer = symInfo.symbol.layers[layer.n]
                     if (foundLayer) tokens = foundLayer.tokens
                 }
-                info += sv._decorateCSS(layer.pr, tokens, layer.b ? layer : siLayer)
+                const decRes = sv._decorateCSS(layer.pr, tokens, layer.b ? layer : siLayer)
+                info += decRes.css
                 if ("Text" == layer.tp) {
                     if (layer.tx != undefined && layer.tx != "") {
+                        let cssStyle = ""
+                        if (decRes.styles["font-family"].startsWith("Font Awesome 5")) {
+                            cssStyle += "font-family: Font Awesome;";
+                            cssStyle += "font-weight:" + decRes.styles["font-weight"] + ";"
+                        }
                         info += `
                             <hr>
                             <div class='block'>
                             <div class='label'>Content<button onclick = "copyToBuffer('sv_content')">Copy</button></div >
-                            <div id='sv_content' class='value code'>`+ layer.tx + "</div>"
+                            <div id='sv_content' style="`+ cssStyle + `">` + layer.tx + "</div>"
                         info += "</div>"
                     }
                 }
@@ -367,6 +373,7 @@ class SymbolViewer extends AbstractViewer {
 
     _decorateCSS(css, tokens, siLayer) {
         let result = ""
+        let styles = {}
 
         result += "<hr>" +
             "<div class='block'>" +
@@ -382,6 +389,8 @@ class SymbolViewer extends AbstractViewer {
             result += "" + styleName + ": "
             result += "<span class='tokenName'>"
             //
+            styles[styleName] = styleValue
+            //
             const tokenStr = tokens != null ? this._decorateStyleToken(styleName, tokens, siLayer, styleValue) : ""
             result += tokenStr != "" ? tokenStr : (styleValue + ";")
             //
@@ -390,7 +399,7 @@ class SymbolViewer extends AbstractViewer {
         }, this);
 
         result += "</div></div>"
-        return result
+        return { "css": result, "styles": styles }
     }
 
     _decorateStyleToken(style, tokens, siLayer, styleValue) {
