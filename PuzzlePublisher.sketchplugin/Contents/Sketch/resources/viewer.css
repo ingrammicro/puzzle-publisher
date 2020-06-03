@@ -6,11 +6,11 @@
     url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/webfonts/fa-regular-400.ttf') format('truetype');
 }
 @font-face {
-    font-family: 'Font-Awesome';
+    font-family: 'Font Awesome';
     font-weight:900;
-    src: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/webfonts/fa-regular-900.woff2') format("woff2"),
-    url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/webfonts/fa-regular-900.woff') format('woff'), 
-    url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/webfonts/fa-regular-900.ttf') format('truetype');
+    src: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/webfonts/fa-solid-900.woff2') format("woff2"),
+    url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/webfonts/fa-solid-900.woff') format('woff'), 
+    url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/webfonts/fa-solid-900.ttf') format('truetype');
 }
 
 /*@import "https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.css";*/
@@ -223,6 +223,16 @@ select:focus{
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
   font-size: 12px;
   line-height: 18px;
+}
+
+#symbol_viewer_content .icon{
+    font-family: "Font Awesome";
+    font-size: 60px;
+    line-height: 60px;
+    font-weight:400;    
+}
+#symbol_viewer_content .icon.solid{
+    font-weight:900;    
 }
 
 #sv_content{    
