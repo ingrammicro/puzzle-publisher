@@ -1,6 +1,10 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.2.0 (4 June 2020)
+New features:
+- Element Inspector shows FA icon details
+
 ##  Version 14.1.2 (2 June 2020)
 Fixed internal error on Sketch startup
 
