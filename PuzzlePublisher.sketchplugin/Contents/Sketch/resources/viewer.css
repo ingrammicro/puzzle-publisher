@@ -1,18 +1,3 @@
-@font-face {
-    font-family: 'Font Awesome';
-    font-weight:400;
-    src: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/webfonts/fa-regular-400.woff2') format("woff2"),
-    url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/webfonts/fa-regular-400.woff') format('woff'), 
-    url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/webfonts/fa-regular-400.ttf') format('truetype');
-}
-@font-face {
-    font-family: 'Font Awesome';
-    font-weight:900;
-    src: url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/webfonts/fa-solid-900.woff2') format("woff2"),
-    url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/webfonts/fa-solid-900.woff') format('woff'), 
-    url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/webfonts/fa-solid-900.ttf') format('truetype');
-}
-
 /*@import "https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.css";*/
 .image_div {
   margin: 0 auto;

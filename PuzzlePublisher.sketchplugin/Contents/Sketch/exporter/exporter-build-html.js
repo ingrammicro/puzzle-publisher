@@ -91,6 +91,7 @@ function buildMainHTML(options) {
     if (options.loadLayers) {
         s += '<script type="text/javascript" src="viewer/LayersData.js' + verPostfix + '" charset="UTF-8"></script>\n';
         s += '<script type="text/javascript" src="viewer/SymbolViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
+        s += '<link rel="stylesheet" type="text/css" href="resources/viewer-fonts.css' + verPostfix + '">\n';
     }
     s += '<script type="text/javascript" src="viewer/VersionViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
     if (options.commentsURL != '') {
