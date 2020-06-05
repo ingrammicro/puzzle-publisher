@@ -4,6 +4,7 @@ class SymbolViewer extends AbstractViewer {
         this.createdPages = {}
         //this.symbolIDs = {} // layer indexes ( in pages[].layers ) of symbols
         this.currentLib = ""
+        this.selected = null
         this.showSymbols = false
     }
 
@@ -88,6 +89,8 @@ class SymbolViewer extends AbstractViewer {
 
         viewer.linksDisabled = false
         $('#symbol_viewer').addClass("hidden")
+
+        this.setSelected(null, null)
 
         super._hideSelf()
     }
@@ -266,8 +269,11 @@ class SymbolViewer extends AbstractViewer {
             const pageIndex = $(this).attr("pi")
             const layerIndex = $(this).attr("li")
             const siLayerIndex = $(this).attr("si")
-            const layer = sv.createdPages[pageIndex].layerArray[layerIndex]
-            const siLayer = siLayerIndex >= 0 ? sv.createdPages[pageIndex].layerArray[siLayerIndex] : null
+            const pageInfo = sv.createdPages[pageIndex]
+            const layer = pageInfo.layerArray[layerIndex]
+            const siLayer = siLayerIndex >= 0 ? pageInfo.layerArray[siLayerIndex] : null
+
+            sv.setSelected(layer, $(this))
 
             var symName = sv.showSymbols ? layer.s : (siLayer ? siLayer.s : null)
             var styleName = layer.l
@@ -279,7 +285,6 @@ class SymbolViewer extends AbstractViewer {
 
             const styleInfo = styleName != undefined ? viewer.symbolViewer._findStyleAndLibByStyleName(styleName) : undefined
             const symInfo = symName != undefined ? viewer.symbolViewer._findSymbolAndLibBySymbolName(symName) : undefined
-
 
             var info = ""
             if (symName != undefined) {
@@ -376,8 +381,224 @@ class SymbolViewer extends AbstractViewer {
         var symbolDiv = $("<div>", {
             class: "symbolDiv",
         }).attr('style', style)
+        symbolDiv.mouseenter(function () {
+            viewer.symbolViewer.mouseEnterLayerDiv($(this))
+        })
 
         symbolDiv.appendTo(a)
+    }
+
+    setSelected(layer, a) {
+        // reset previous selection        
+        if (this.selected) {
+            this.selected.marginDivs.forEach(d => d.remove())
+            this.selected.borderDivs.forEach(d => d.remove())
+        }
+        if (!layer) {
+            this.selected = null
+            return
+        }
+        // select new
+        this.selected = {
+            layer: layer,
+            a: $(this),
+            marginDivs: [],
+            borderDivs: [],
+        }
+        // draw left vertical border
+        this.selected.borderDivs.push(
+            this._drawMarginLine(this.page, layer.finalX, 0, 1, this.page.height, "svBorderLineDiv")
+        )
+        // draw right vertical border
+        this.selected.borderDivs.push(
+            this._drawMarginLine(this.page, layer.finalX + layer.w, 0, 1, this.page.height, "svBorderLineDiv")
+        )
+        // draw top horizonal border
+        this.selected.borderDivs.push(
+            this._drawMarginLine(this.page, 0, layer.finalY, this.page.width, 1, "svBorderLineDiv")
+        )
+        // draw bottom horizonal border
+        this.selected.borderDivs.push(
+            this._drawMarginLine(this.page, 0, layer.finalY + layer.h, this.page.width, 1, "svBorderLineDiv")
+        )
+    }
+
+
+    mouseEnterLayerDiv(div) {
+        var currentPanel = this.page
+        // get a layer under mouse 
+        const a = div.parent()
+        const sv = viewer.symbolViewer
+        const pageIndex = a.attr("pi")
+        const layerIndex = a.attr("li")
+        const layer = sv.createdPages[pageIndex].layerArray[layerIndex]
+        if (!layer) return
+        // get a currently selected layer
+        if (!sv.selected) return
+        const slayer = sv.selected.layer
+        //
+        if (!slayer || !layer) return
+        // remove previous margins
+        this.selected.marginDivs.forEach(d => d.remove())
+        this.selected.marginDivs = []
+        // show margins
+        this._drawTopVMargin(currentPanel, layer, slayer)
+        this._drawBottomVMargin(currentPanel, layer, slayer)
+        this._drawLeftHMargin(currentPanel, layer, slayer)
+        this._drawRightHMargin(currentPanel, layer, slayer)
+    }
+
+    _drawLeftHMargin(currentPanel, layer, slayer) {
+        let hmargin = 0
+        let x = null
+        if (layer.finalX == slayer.finalX) {
+        } else if ((slayer.finalX + slayer.w) < layer.finalX) {
+            // if layer bottom over slayer top => don't show top margin
+        } else if ((layer.finalX + layer.w) < slayer.finalX) {
+            // layer bottom over slayer.top
+            x = layer.finalX + layer.w
+            hmargin = slayer.finalX - x
+        } else if (layer.finalY < slayer.finalY) {
+            // layer top over slayer.top
+            x = layer.finalX
+            hmargin = slayer.finalX - x
+        } else {
+            // layer top over slayer.top
+            x = slayer.finalX
+            hmargin = layer.finalX - x
+        }
+
+        if (hmargin > 0) {
+            let y = this._findLayersCenterY(layer, slayer)
+            this.selected.marginDivs.push(this._drawMarginLine(currentPanel, x, y, hmargin, 1, "svMarginLineDiv"))
+            this.selected.marginDivs.push(this._drawMarginValue(currentPanel, x + hmargin / 2, y, hmargin, "svMarginLineDiv"))
+        }
+    }
+
+
+    _drawRightHMargin(currentPanel, layer, slayer) {
+        let hmargin = 0
+        let x = null
+
+        const layerRight = layer.finalX + layer.w
+        const slayerRight = slayer.finalX + slayer.w
+
+        if (layerRight == slayerRight) {
+        } else if (layerRight < slayer.finalX) {
+            // if layer bottom over slayer bottom => don't show bottom margin        
+        } else if (slayerRight < layer.finalX) {
+            // slayer bottom over layer.top
+            x = slayerRight
+            hmargin = layer.finalX - x
+        } else if (slayerRight < layerRight) {
+            // slayer bottom over layer.bottom
+            x = slayerRight
+            hmargin = layerRight - x
+        } else {
+            // slayer bottom over layer.bottom
+            x = layerRight
+            hmargin = slayerRight - x
+        }
+
+        if (hmargin > 0) {
+            let y = this._findLayersCenterY(layer, slayer)
+            this.selected.marginDivs.push(this._drawMarginLine(currentPanel, x, y, hmargin, 1, "svMarginLineDiv"))
+            this.selected.marginDivs.push(this._drawMarginValue(currentPanel, x + hmargin / 2, y, hmargin, "svMarginLineDiv"))
+        }
+    }
+
+
+    _drawTopVMargin(currentPanel, layer, slayer) {
+        let vmargin = 0
+        let y = null
+        if (layer.finalY == slayer.finalY) {
+        } else if ((slayer.finalY + slayer.h) < layer.finalY) {
+            // if layer bottom over slayer top => don't show top margin
+        } else if ((layer.finalY + layer.h) < slayer.finalY) {
+            // layer bottom over slayer.top
+            y = layer.finalY + layer.h
+            vmargin = slayer.finalY - y
+        } else if (layer.finalY < slayer.finalY) {
+            // layer top over slayer.top
+            y = layer.finalY
+            vmargin = slayer.finalY - y
+        } else {
+            // layer top over slayer.top
+            y = slayer.finalY
+            vmargin = layer.finalY - y
+        }
+
+        if (vmargin > 0) {
+            let x = this._findLayersCenterX(layer, slayer)
+            this.selected.marginDivs.push(this._drawMarginLine(currentPanel, x, y, 1, vmargin, "svMarginLineDiv"))
+            this.selected.marginDivs.push(this._drawMarginValue(currentPanel, x, y + vmargin / 2, vmargin, "svMarginLineDiv"))
+        }
+    }
+
+    _drawBottomVMargin(currentPanel, layer, slayer) {
+        let vmargin = 0
+        let y = null
+
+        const layerBottom = layer.finalY + layer.h
+        const slayerBottom = slayer.finalY + slayer.h
+
+        if (layerBottom == slayerBottom) {
+        } else if (layerBottom < slayer.finalY) {
+            // if layer bottom over slayer bottom => don't show bottom margin        
+        } else if (slayerBottom < layer.finalY) {
+            // slayer bottom over layer.top
+            y = slayerBottom
+            vmargin = layer.finalY - y
+        } else if (slayerBottom < layerBottom) {
+            // slayer bottom over layer.bottom
+            y = slayerBottom
+            vmargin = layerBottom - y
+        } else {
+            // slayer bottom over layer.bottom
+            y = layerBottom
+            vmargin = slayerBottom - y
+        }
+
+        if (vmargin > 0) {
+            let x = this._findLayersCenterX(layer, slayer)
+            this.selected.marginDivs.push(this._drawMarginLine(currentPanel, x, y, 1, vmargin, "svMarginLineDiv"))
+            this.selected.marginDivs.push(this._drawMarginValue(currentPanel, x, y + vmargin / 2, vmargin, "svMarginLineDiv"))
+        }
+    }
+
+
+    _findLayersCenterX(l, sl) {
+        let c = l.finalX + l.w / 2
+        let sc = sl.finalX + sl.w / 2
+        return sl.finalX > l.finalX && ((sl.finalX + sl.w) < (l.finalX + l.w)) ? sc : c
+    }
+
+    _findLayersCenterY(l, sl) {
+        let c = l.finalY + l.h / 2
+        let sc = sl.finalY + sl.h / 2
+        return sl.finalY > l.finalY && ((sl.finalY + sl.h) < (l.finalY + l.h)) ? sc : c
+    }
+
+    _drawMarginLine(currentPanel, x, y, width, height, className) {
+        var style = "left: " + x + "px; top:" + y + "px; "
+        style += "width: " + width + "px; height:" + height + "px; "
+        var div = $("<div>", { class: className }).attr('style', style)
+        div.appendTo(currentPanel.linksDiv)
+        return div
+    }
+    _drawMarginValue(currentPanel, x, y, value) {
+        const valueHeight = 20
+        const valueWidth = 30
+        var style = "left: " + (x - valueWidth / 2) + "px; top:" + (y - valueHeight / 2) + "px; "
+        style += "width: " + valueWidth + "px; height:" + valueHeight + "px; "
+        var div = $("<div>", {
+            class: "svMarginValueDiv",
+        }).attr('style', style)
+        //
+        div.html(value)
+        //
+        div.appendTo(currentPanel.linksDiv)
+        return div
     }
 
     _decorateCSS(css, tokens, siLayer) {

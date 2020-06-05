@@ -67,9 +67,51 @@
   display: block;
   cursor: pointer;
   /*border: 1px dashed red;   */
-  outline: 1px dashed red;
+  outline: 1px solid red;
   outline-offset: -1px;
   transition: all 0.3s;
+}
+
+.svBorderLineDiv {
+    position: absolute;
+    display: none;
+    z-index: 30;
+}  
+.contentSymbolsVisible .svBorderLineDiv {
+    display: block;
+    cursor: pointer;
+    outline: 1px dashed red;
+    outline-offset: -1px;
+    transition: all 0.3s;
+}
+
+
+.svMarginLineDiv {
+    position: absolute;
+    display: none;
+    z-index: 31;
+}  
+.contentSymbolsVisible .svMarginLineDiv {
+    display: block;
+    cursor: pointer;
+    outline: 1px solid blue;
+    outline-offset: -1px;
+    transition: all 0.3s;
+}
+
+.svMarginValueDiv {
+    position: absolute;
+    display: none;
+    z-index: 32;
+}  
+.contentSymbolsVisible .svMarginValueDiv {    
+    display: block;
+    cursor: pointer;
+    border-radius:8px;
+    background-color: blue;
+    transition: all 0.3s;
+    font-size:10px;
+    color:white;
 }
 
 #symbol_viewer,
