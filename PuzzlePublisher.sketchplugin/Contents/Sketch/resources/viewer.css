@@ -106,9 +106,13 @@
 }  
 .contentSymbolsVisible .svMarginValueDiv {    
     display: block;
-    cursor: pointer;
-    border-radius:8px;
-    background-color: blue;
+    cursor: pointer; 
+    border-radius: 4px;
+    height: 16px;
+    width:30px;
+    line-height: 16px;
+    font-weight: 500;
+    background-color: var(--color-accent);
     transition: all 0.3s;
     font-size:10px;
     color:white;

@@ -458,7 +458,7 @@ class SymbolViewer extends AbstractViewer {
             // layer bottom over slayer.top
             x = layer.finalX + layer.w
             hmargin = slayer.finalX - x
-        } else if (layer.finalY < slayer.finalY) {
+        } else if (layer.finalX < slayer.finalX) {
             // layer top over slayer.top
             x = layer.finalX
             hmargin = slayer.finalX - x
@@ -485,7 +485,7 @@ class SymbolViewer extends AbstractViewer {
 
         if (layerRight == slayerRight) {
         } else if (layerRight < slayer.finalX) {
-            // if layer bottom over slayer bottom => don't show bottom margin        
+            // if layer bottom over slayer bottom => don't show bottom margin                
         } else if (slayerRight < layer.finalX) {
             // slayer bottom over layer.top
             x = slayerRight
@@ -590,12 +590,12 @@ class SymbolViewer extends AbstractViewer {
         const valueHeight = 20
         const valueWidth = 30
         var style = "left: " + (x - valueWidth / 2) + "px; top:" + (y - valueHeight / 2) + "px; "
-        style += "width: " + valueWidth + "px; height:" + valueHeight + "px; "
+        //style += "width: " + valueWidth + "px; height:" + valueHeight + "px; "
         var div = $("<div>", {
             class: "svMarginValueDiv",
         }).attr('style', style)
         //
-        div.html(value)
+        div.html(" " + value + " ")
         //
         div.appendTo(currentPanel.linksDiv)
         return div
