@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.3.0 (8 June 2020)
+Added margins to Element Inspector
+
 ##  Version 14.2.0 (4 June 2020)
 New features:
 - Element Inspector shows FA icon details
