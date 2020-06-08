@@ -94,7 +94,7 @@
 .contentSymbolsVisible .svMarginLineDiv {
     display: block;
     cursor: pointer;
-    outline: 1px solid blue;
+    outline: 1px solid var(--color-accent);
     outline-offset: -1px;
     transition: all 0.3s;
 }
