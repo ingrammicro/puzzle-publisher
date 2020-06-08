@@ -140,9 +140,11 @@ class PZLayer {
             this.comment = comment
         }
 
-        if ("Image" == sLayer.type) {
+        if ("Image" == sLayer.type || (("Group" == sLayer.type || "ShapePath" == sLayer.type) && undefined != sLayer.exportFormats && sLayer.exportFormats.length > 0)) {
             this.imageIndex = this.artboard.imageLayers.length
             this.artboard.imageLayers.push(this)
+            if (DEBUG) exporter.logMsg("Add image layer: " + this.name)
+            log(sLayer.exportFormats)
         }
 
         this.childs = []
@@ -205,14 +207,18 @@ class PZLayer {
     }
 
     collectAChilds(sLayers, space) {
+
         var aLayers = []
         if (undefined == sLayers) {
             log(this)
             log("PZLayer:collectAChilds() empty sLayers. this.name=" + this.name)
         }
-        for (const sl of sLayers) {
+        for (const sl of sLayers.filter(l => !l.hidden)) {
+            //            
             const al = new PZLayer(sl, this)
-            if (al.isGroup) al.childs = al.collectAChilds(sl.layers, space + " ")
+            if (undefined != al.imageIndex) {
+            } else
+                if (al.isGroup) al.childs = al.collectAChilds(sl.layers, space + " ")
             aLayers.push(al)
         }
         return aLayers
@@ -401,8 +407,9 @@ class PZLayer {
             this.pr = this._buildTextPropsForJSON()
         } else if ("ShapePath" == this.slayer.type) {
             this.pr = this._buildShapePropsForJSON()
-        } else if ("Image" == this.slayer.type) {
-            this.iu = _this.buildImageURL()
+        } else if (undefined != this.imageIndex) {
+            this.tp = "Image"
+            this.iu = this._buildImageURL()
         }
 
         //
@@ -434,6 +441,7 @@ class PZLayer {
         this.targetId = undefined
         this.imageIndex = undefined
     }
+
     _buildImageURL() {
         return Constants.IMAGES_DIRECTORY + Utils.toFilename(this.artboard.name, false) + "--" + this.imageIndex + "." + exporter.fileType;
     }

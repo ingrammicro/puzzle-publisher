@@ -366,15 +366,18 @@ class SymbolViewer extends AbstractViewer {
                         }
                         info += "</div>"
                     }
-                } else if ("Image" == layer.tp) {
-                    info += `
+                }
+            }
+
+            if ("Image" == layer.tp) {
+                const url = layer.iu
+                info += `
                         <hr>
                         <div class='block'>
-                        <div class='label'>Content&nbsp;<a href="">Download</a>`
-                    let cssClass = ""
-                    const url = "../" + layer.iu
-                    info += `</div ><div id='sv_content' class="` + cssClass + `"><img src="` + url + `"/></div>`
-                }
+                        <div class='label'>Content&nbsp;<a class="svlink" href="`+ url + `">Download</a>`
+                let cssClass = "code value"
+                const width = 200 //viewer.defSidebarWidth - 40
+                info += `</div ><div id='sv_content' class="` + cssClass + `"><img ` + `width="` + width + `" src="` + url + `"/></div>`
             }
 
             $('#symbol_viewer #empty').addClass("hidden")
@@ -603,7 +606,7 @@ class SymbolViewer extends AbstractViewer {
             class: "svMarginValueDiv",
         }).attr('style', style)
         //
-        div.html(" " + value + " ")
+        div.html(" " + Number.parseFloat(value).toFixed(0) + " ")
         //
         div.appendTo(currentPanel.linksDiv)
         return div

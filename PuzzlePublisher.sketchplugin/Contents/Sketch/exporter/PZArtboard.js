@@ -467,18 +467,25 @@ class PZArtboard extends PZLayer {
     _exportImageLayers() {
         log('_exportImageLayers: running')
         for (var layer of this.imageLayers) {
-            //this._exportImage(scale, l, l.nlayer, "-" + layer.fixedIndex, false)        
-            //
-            const path = this._outputPath + "/" + layer._buildImageURL()
+            const path = exporter._outputPath + "/" + layer._buildImageURL()
             if (DEBUG) exporter.logMsg(path)
-            // The folowing code source — https://stackoverflow.com/a/17510651/9384835
-            let image = layer.slayer.image.nsimage
-            let cgRef = [image CGImageForProposedRect: nil context: nil hints: nil]
-            let newRep = [[NSBitmapImageRep alloc] initWithCGImage: cgRef]
-            [newRep setSize: [image size]];
-            let pngData = [newRep representationUsingType: NSPNGFileType properties: nil];
-            [pngData writeToFile: path atomically: true];
-            [newRep autorelease];
+            if ("Image" == layer.slayer.type) {
+                // The folowing code source — https://stackoverflow.com/a/17510651/9384835
+                let image = layer.slayer.image.nsimage
+                let cgRef = [image CGImageForProposedRect: nil context: nil hints: nil]
+                let newRep = [[NSBitmapImageRep alloc] initWithCGImage: cgRef]
+                [newRep setSize: [image size]];
+                let pngData = [newRep representationUsingType: NSPNGFileType properties: nil];
+                [pngData writeToFile: path atomically: true];
+                [newRep autorelease];
+            } else if ("Group" == layer.slayer.type) {
+                if (DEBUG) exporter.logMsg("Export group")
+                const slice = MSExportRequest.exportRequestsFromExportableLayer(layer.nlayer).firstObject();
+                slice.scale = 2
+                slice.saveForWeb = false
+                slice.format = exporter.fileType
+                exporter.ndoc.saveArtboardOrSlice_toFile(slice, path)
+            }
         }
         log('_exportImageLayers: done')
     }
