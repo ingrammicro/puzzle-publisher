@@ -256,6 +256,10 @@ select:focus{
   line-height: 18px;
 }
 
+.svlink{
+    color: var(--color-accent);
+}
+
 #symbol_viewer_content .icon{
     font-family: "Font Awesome";
     font-size: 60px;
