@@ -141,6 +141,7 @@ function createViewer(story, files) {
         symbolViewer: null,
         versionViewer: null,
 
+        defSidebarWidth: 400,
 
         transQueue: [],
 
@@ -420,7 +421,7 @@ function createViewer(story, files) {
             var sidebarWidth = 0
             if (this.sidebarVisible) {
                 var sidebar = $("#sidebar")
-                var defSidebarWidth = 400
+                var defSidebarWidth = this.defSidebarWidth
 
                 sidebarWidth = Math.round((fullWidth - page.width) / 2)
                 if (sidebarWidth < defSidebarWidth) {
