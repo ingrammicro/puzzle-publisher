@@ -214,7 +214,7 @@ class SymbolViewer extends AbstractViewer {
     }
 
     _processLayerList(layers, sSI = null) {
-        const supportedTypes = ["Text", "ShapePath"]
+        const supportedTypes = ["Text", "ShapePath", "Image"]
         for (var l of layers) {
             if (supportedTypes.indexOf(l.tp) >= 0) {
                 this._showElement(l, sSI)
@@ -348,7 +348,7 @@ class SymbolViewer extends AbstractViewer {
                         info += `
                             <hr>
                             <div class='block'>
-                            <div class='label'>Content<button onclick = "copyToBuffer('sv_content')">Copy</button>`
+                            <div class='label'>Content&nbsp;<button onclick = "copyToBuffer('sv_content')">Copy</button>`
                         let afterContent = ""
                         let cssClass = ""
                         if (decRes.styles["font-family"].startsWith("Font Awesome 5")) {
@@ -366,6 +366,14 @@ class SymbolViewer extends AbstractViewer {
                         }
                         info += "</div>"
                     }
+                } else if ("Image" == layer.tp) {
+                    info += `
+                        <hr>
+                        <div class='block'>
+                        <div class='label'>Content&nbsp;<a href="">Download</a>`
+                    let cssClass = ""
+                    const url = "../" + layer.iu
+                    info += `</div ><div id='sv_content' class="` + cssClass + `"><img src="` + url + `"/></div>`
                 }
             }
 

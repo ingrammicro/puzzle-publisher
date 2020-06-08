@@ -40,6 +40,7 @@ class PZArtboard extends PZLayer {
         this.overlayLayers = []
         this.fixedLayers = [] // list of layers which are configured as fixed
         this.nextLinkIndex = 0 // we need it to generate uniq id of the every link
+        this.imageLayers = [] // list of all Image childs
 
         // check if the page name is unique in document
         if (this.name in pzDoc.artboardsDict) {
@@ -259,6 +260,7 @@ class PZArtboard extends PZLayer {
         super.clearRefsBeforeJSON()
         this.overlayLayers = undefined
         this.fixedLayers = undefined
+        this.imageLayers = undefined
     }
 
 
@@ -432,6 +434,11 @@ class PZArtboard extends PZLayer {
             this._exportImage(scale, this, this.nlayer, '', Constants.ARTBOARD_TYPE_OVERLAY != this.artboardType)
         }
 
+        // export images for Element Inspector
+        if (exporter.enabledJSON) {
+            this._exportImageLayers()
+        }
+
         // show fixed panels back
         // ! temporary disabled because an exported image still shows hidden layers
         this._hideFixedLayers(false)
@@ -455,6 +462,25 @@ class PZArtboard extends PZLayer {
             //
         }
         log('_exportOverlayLayers: done!')
+    }
+
+    _exportImageLayers() {
+        log('_exportImageLayers: running')
+        for (var layer of this.imageLayers) {
+            //this._exportImage(scale, l, l.nlayer, "-" + layer.fixedIndex, false)        
+            //
+            const path = this._outputPath + "/" + layer._buildImageURL()
+            if (DEBUG) exporter.logMsg(path)
+            // The folowing code source — https://stackoverflow.com/a/17510651/9384835
+            let image = layer.slayer.image.nsimage
+            let cgRef = [image CGImageForProposedRect: nil context: nil hints: nil]
+            let newRep = [[NSBitmapImageRep alloc] initWithCGImage: cgRef]
+            [newRep setSize: [image size]];
+            let pngData = [newRep representationUsingType: NSPNGFileType properties: nil];
+            [pngData writeToFile: path atomically: true];
+            [newRep autorelease];
+        }
+        log('_exportImageLayers: done')
     }
 
 

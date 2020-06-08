@@ -140,6 +140,11 @@ class PZLayer {
             this.comment = comment
         }
 
+        if ("Image" == sLayer.type) {
+            this.imageIndex = this.artboard.imageLayers.length
+            this.artboard.imageLayers.push(this)
+        }
+
         this.childs = []
         this.hotspots = []
 
@@ -396,7 +401,10 @@ class PZLayer {
             this.pr = this._buildTextPropsForJSON()
         } else if ("ShapePath" == this.slayer.type) {
             this.pr = this._buildShapePropsForJSON()
+        } else if ("Image" == this.slayer.type) {
+            this.iu = _this.buildImageURL()
         }
+
         //
         this.name = undefined
         this.frame = undefined
@@ -424,7 +432,10 @@ class PZLayer {
         this.isLink = undefined
         this.hotspots = undefined
         this.targetId = undefined
-
+        this.imageIndex = undefined
+    }
+    _buildImageURL() {
+        return Constants.IMAGES_DIRECTORY + Utils.toFilename(this.artboard.name, false) + "--" + this.imageIndex + "." + exporter.fileType;
     }
 
     _buildTextPropsForJSON() {
