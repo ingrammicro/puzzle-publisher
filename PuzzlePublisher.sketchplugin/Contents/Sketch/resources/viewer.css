@@ -812,29 +812,31 @@ area {
 }
 
 /*** FIXED PANELS ***/
-.fixedPanel {
-  position: fixed;
-  z-index: 12;
-  overflow: hidden;
-  /*background: rgba(100,100,100,255);*/
-  color: #f1f1f1;
-  text-align: center;
-  margin: 0 auto;
-  pointer-events: none;
-  user-select: none;
+.fixedPanelTop {
+    z-index: 14;
+  }
+
+.fixedPanel1 {
+    position: fixed;
+    z-index: 12;
+    overflow: hidden;
+    margin: 0 auto;
+    pointer-events: none;
+    user-select: none;
 }
 
-.fixedPanelTop {
-  z-index: 14;
+.fixedPanel {
+    position: fixed;
+    z-index: 12;
+    overflow: hidden;
+    text-align: center;
 }
 
 .fixedPanelFloat {
-  position: fixed;
-  z-index: 13;
-  overflow: hidden;
-  /*background: rgba(100,100,100,255);*/
-  color: #f1f1f1;
-  text-align: center;
+    position: fixed;
+    z-index: 13;
+    overflow: hidden;
+    text-align: center;
 }
 
 .fixed_back {

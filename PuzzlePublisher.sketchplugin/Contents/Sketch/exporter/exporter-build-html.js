@@ -158,6 +158,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
 
     s += buildMainHTML_NavigationIcons(options)
+    //s += `<input id="__focusInput" type="text" style="width:0px;height:0px;"/><script>$( "#__focusInput" ).focus()</script>`
     s += '<!-- load indicator -->\n';
     s += '<div id="loading" >\n';
     s += '\
