@@ -159,6 +159,7 @@ const SettingKeys = {
     DOC_CUSTOM_HIDE_NAV: "docCustomHideNavigation",
     DOC_CUSTOM_SORT_RULE: "docCustomSortRule", // How to sort artboards
     DOC_BACK_COLOR: "docBackColor",
+    DOC_SKIP_AUTOSYNC: "DOC_SKIP_AUTOSYNC",
 
     LAYER_ANNOTATIONS: "layerAnnotations",
     LAYER_OVERLAY_TYPE: "layerOverlayType",

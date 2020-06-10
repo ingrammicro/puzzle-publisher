@@ -3,7 +3,6 @@
 // osascript -e 'quit app "Sketch"'
 const example = `
 /Applications/Sketch.app/Contents/Resources/sketchtool/bin/sketchtool --without-activating=YES --new-instance=No run ~/Library/Application\ Support/com.bohemiancoding.sketch3/Plugins/PuzzlePublisher.sketchplugin "cmdRun"  --context='{"file":"/Users/baza/GitHub/puzzle-publisher/tests/Links2.sketch","commands":"sync,export,publish,save"}'
-
 `
 
 function syncDocumentStyles(styles) {
@@ -18,6 +17,10 @@ function syncDocumentStyles(styles) {
 
 function syncDocument(document) {
     const jSymbols = document.getSymbols()
+    if (Settings.documentSettingForKey(document, SettingKeys.DOC_SKIP_AUTOSYNC) == 1) {
+        log(" SKIP SYNCINC")
+        return
+    }
     log(" SYNCING " + jSymbols.length + " SYMBOLS ...")
     for (var master of jSymbols) {
         if (null == master.getLibrary()) continue // we need only library-based master
