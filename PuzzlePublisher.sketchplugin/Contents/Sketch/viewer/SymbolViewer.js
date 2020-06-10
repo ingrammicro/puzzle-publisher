@@ -241,6 +241,7 @@ class SymbolViewer extends AbstractViewer {
                 break
             }
         }
+        l.parentPanel = currentPanel
 
         // also push symbol instance to a list of layers (if was not aded before)
         let indexOfSO = -1
@@ -254,13 +255,13 @@ class SymbolViewer extends AbstractViewer {
         }
         //
 
-        const layerIndex = this.pageInfo.layerArray.length
+        l.infoIndex = this.pageInfo.layerArray.length
         this.pageInfo.layerArray.push(l)
 
         var a = $("<a>", {
             class: viewer.currentPage.isModal ? "modalSymbolLink" : "symbolLink",
             pi: this.pageIndex,
-            li: layerIndex,
+            li: l.infoIndex,
             si: indexOfSO
         })
 
@@ -405,7 +406,7 @@ class SymbolViewer extends AbstractViewer {
             this.selected.marginDivs.forEach(d => d.remove())
             this.selected.borderDivs.forEach(d => d.remove())
         }
-        if (!layer) {
+        if (!layer || (this.selected && layer.infoIndex == this.selected.layer.infoIndex)) {
             this.selected = null
             return
         }
@@ -418,25 +419,24 @@ class SymbolViewer extends AbstractViewer {
         }
         // draw left vertical border
         this.selected.borderDivs.push(
-            this._drawMarginLine(this.page, layer.finalX, 0, 1, this.page.height, "svBorderLineDiv")
+            this._drawMarginLine(layer.parentPanel, layer.finalX, 0, 1, layer.parentPanel.height, "svBorderLineDiv")
         )
         // draw right vertical border
         this.selected.borderDivs.push(
-            this._drawMarginLine(this.page, layer.finalX + layer.w, 0, 1, this.page.height, "svBorderLineDiv")
+            this._drawMarginLine(layer.parentPanel, layer.finalX + layer.w, 0, 1, layer.parentPanel.height, "svBorderLineDiv")
         )
         // draw top horizonal border
         this.selected.borderDivs.push(
-            this._drawMarginLine(this.page, 0, layer.finalY, this.page.width, 1, "svBorderLineDiv")
+            this._drawMarginLine(layer.parentPanel, 0, layer.finalY, layer.parentPanel.width, 1, "svBorderLineDiv")
         )
         // draw bottom horizonal border
         this.selected.borderDivs.push(
-            this._drawMarginLine(this.page, 0, layer.finalY + layer.h, this.page.width, 1, "svBorderLineDiv")
+            this._drawMarginLine(layer.parentPanel, 0, layer.finalY + layer.h, layer.parentPanel.width, 1, "svBorderLineDiv")
         )
     }
 
 
     mouseEnterLayerDiv(div) {
-        var currentPanel = this.page
         // get a layer under mouse 
         const a = div.parent()
         const sv = viewer.symbolViewer
@@ -449,14 +449,16 @@ class SymbolViewer extends AbstractViewer {
         const slayer = sv.selected.layer
         //
         if (!slayer || !layer) return
+        // check if layers are in the same panel
+        if (slayer.parentPanel != layer.parentPanel) return
         // remove previous margins
         this.selected.marginDivs.forEach(d => d.remove())
         this.selected.marginDivs = []
         // show margins
-        this._drawTopVMargin(currentPanel, layer, slayer)
-        this._drawBottomVMargin(currentPanel, layer, slayer)
-        this._drawLeftHMargin(currentPanel, layer, slayer)
-        this._drawRightHMargin(currentPanel, layer, slayer)
+        this._drawTopVMargin(slayer.parentPanel, layer, slayer)
+        this._drawBottomVMargin(slayer.parentPanel, layer, slayer)
+        this._drawLeftHMargin(slayer.parentPanel, layer, slayer)
+        this._drawRightHMargin(slayer.parentPanel, layer, slayer)
     }
 
     _drawLeftHMargin(currentPanel, layer, slayer) {
