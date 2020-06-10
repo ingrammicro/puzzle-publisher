@@ -144,7 +144,6 @@ class PZLayer {
             this.imageIndex = this.artboard.imageLayers.length
             this.artboard.imageLayers.push(this)
             if (DEBUG) exporter.logMsg("Add image layer: " + this.name)
-            log(sLayer.exportFormats)
         }
 
         this.childs = []
