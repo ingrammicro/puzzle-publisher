@@ -211,7 +211,8 @@ select:focus{
   display: flex;
   align-items: center;
   position: fixed;
-  width: 260px;
+  box-sizing:border-box;
+  width: 400px;
   padding: 0 20px;
   background: var(--color-background);
   font-weight: var(--font-weight-bold);
