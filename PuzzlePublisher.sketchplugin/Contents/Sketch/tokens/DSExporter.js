@@ -446,6 +446,8 @@ class DSExporter {
             })
             if (Object.keys(radiusesHash).length == 1) {
                 // all points have the same radius
+                // skip zero radius
+                if (0 == l.points[0].cornerRadius) break
                 str = l.points[0].cornerRadius + "px"
             } else {
 
