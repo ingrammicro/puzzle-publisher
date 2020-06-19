@@ -47,7 +47,7 @@ class SymbolViewer extends AbstractViewer {
 
     // called by Viewer
     pageChanged() {
-
+        this._buildSymbolLinks()
     }
 
     _selectLib(libName) {
@@ -188,7 +188,7 @@ class SymbolViewer extends AbstractViewer {
     }
 
     _processSymbolList(layers, isParentSymbol = false) {
-        for (var l of layers) {
+        for (var l of layers.reverse()) {
             if (this.currentLib != "") {
                 if (this.showSymbols && l.b) {
                     if (l.b == this.currentLib) {
@@ -215,7 +215,7 @@ class SymbolViewer extends AbstractViewer {
 
     _processLayerList(layers, sSI = null) {
         const supportedTypes = ["Text", "ShapePath", "Image"]
-        for (var l of layers) {
+        for (var l of layers.reverse()) {
             if (supportedTypes.indexOf(l.tp) >= 0) {
                 this._showElement(l, sSI)
             } else {
@@ -242,6 +242,11 @@ class SymbolViewer extends AbstractViewer {
             }
         }
         l.parentPanel = currentPanel
+
+
+        for (const pl of this.pageInfo.layerArray) {
+            if (pl.finalX <= l.finalX && pl.finalY <= l.finalY && (pl.finalX + pl.w) >= (l.finalX + l.w) && (pl.finalY + pl.h) >= (l.finalY + l.h)) return
+        }
 
         // also push symbol instance to a list of layers (if was not aded before)
         let indexOfSO = -1
@@ -386,7 +391,7 @@ class SymbolViewer extends AbstractViewer {
             //alert(info)
         })
 
-        a.appendTo(currentPanel.linksDiv)
+        a.prependTo(currentPanel.linksDiv)
 
         var style = "left: " + l.finalX + "px; top:" + l.finalY + "px; "
         style += "width: " + l.w + "px; height:" + l.h + "px; "
