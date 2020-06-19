@@ -244,8 +244,14 @@ class SymbolViewer extends AbstractViewer {
         l.parentPanel = currentPanel
 
 
+        // Check if some layer on top of current
         for (const pl of this.pageInfo.layerArray) {
             if (pl.finalX <= l.finalX && pl.finalY <= l.finalY && (pl.finalX + pl.w) >= (l.finalX + l.w) && (pl.finalY + pl.h) >= (l.finalY + l.h)) return
+        }
+
+        // Check if layer is empty
+        if ("Text" == l.tp) {
+            if ("" == l.tx.trim()) return
         }
 
         // also push symbol instance to a list of layers (if was not aded before)
