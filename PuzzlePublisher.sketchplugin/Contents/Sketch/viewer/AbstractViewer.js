@@ -11,6 +11,11 @@ class AbstractViewer {
     }
 
 
+    // called by Viewer
+    pageChanged() {
+
+    }
+
     hide() {
         viewer.hideChild()
     }
