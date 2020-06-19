@@ -15,6 +15,8 @@ var onRun = function (context) {
     if (login == undefined || login == null) login = ''
     let siteRoot = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_SITEROOT)
     if (siteRoot == undefined || siteRoot == null) siteRoot = ''
+    let secret = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_SECRET)
+    if (secret == undefined || secret == null) secret = ''
 
     let sshPort = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_SSH_PORT)
     if (sshPort == undefined || sshPort == null) sshPort = ''
@@ -28,7 +30,7 @@ var onRun = function (context) {
     if (authorName == undefined) authorName = ''
 
 
-    const dialog = new UIDialog("Configure Publishing", NSMakeRect(0, 0, 500, 340), "Save", "Edit settings which are common for all documents.")
+    const dialog = new UIDialog("Configure Publishing", NSMakeRect(0, 0, 500, 400), "Save", "Edit settings which are common for all documents.")
 
     dialog.addDivider()
     dialog.addLeftLabel("", "SFTP Server\nCredentials", 40)
@@ -44,6 +46,7 @@ var onRun = function (context) {
     dialog.addTextInput("siteRoot", "Site Root URL", siteRoot, 'http://mysite.com', 350)
     dialog.addHint("siteRootHint", "Specify to open uploaded HTML in web browser automatically")
     dialog.addTextInput("serverToolsPath", "Relative URL to Server Tools", serverToolsPath, '/_tools/')
+    dialog.addTextInput("secret", "Site Secret Key", secret, '', 350)
 
     dialog.addDivider()
     dialog.addLeftLabel("", "Author", 40)
@@ -65,6 +68,7 @@ var onRun = function (context) {
         Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_SSH_PORT, sshPort)
 
         Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_SITEROOT, dialog.views['siteRoot'].stringValue() + "")
+        Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_SECRET, dialog.views['secret'].stringValue() + "")
         Settings.setSettingForKey(SettingKeys.PLUGIN_SERVERTOOLS_PATH, dialog.views['serverToolsPath'].stringValue() + "")
         Settings.setSettingForKey(SettingKeys.PLUGIN_AUTHOR_NAME, dialog.views['authorName'].stringValue() + "")
         break

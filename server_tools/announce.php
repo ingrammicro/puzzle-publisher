@@ -53,6 +53,13 @@ class Worker{
         // read params
         $this->skip_tele = $_GET["NOTELE"]."";
         $this->skip_save = $_GET["NOSAVE"]."";
+        
+
+        $secret = $_GET["sec"]."";
+        if($secret!=$this->config['secret-key']){
+            print("Error: secrets are not the same ");
+            return FALSE;
+        }
 
         $data = array(
             'time' => time(),

@@ -82,6 +82,7 @@ class Publisher {
                 try {
                     var url = this.siteRoot + this.serverToolsPath + Constants.SERVER_ANNOUNCE_SCRIPT
                     url += "?author=" + encodeURI(this.authorName).replace(/[#]/g, '')
+                    if ("" != this.secret) url += "&sec=" + encodeURI(this.secret).replace(/[#]/g, '')
                     url += "&msg=" + encodeURI(this.message).replace(/[#]/g, '')
                     url += "&ver=" + encodeURI(this.ver).replace(/[#]/g, '')
                     url += "&dir=" + encodeURI(announceFolder).replace(/[#]/g, '')
@@ -161,6 +162,9 @@ class Publisher {
 
         this.siteRoot = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_SITEROOT)
         if (this.siteRoot == undefined || this.siteRoot == null) this.siteRoot = ''
+
+        this.secret = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_SECRET)
+        if (this.secret == undefined || this.secret == null) this.secret = ''
 
         this.remoteFolder = Settings.documentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_REMOTE_FOLDER)
         if (this.remoteFolder == undefined || this.remoteFolder == null) this.remoteFolder = ''

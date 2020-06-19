@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.6.0 (19 June 2020)
+Added optional Secret Key pair settings to Configure Publishing dialod and server_tools/config.json
+
 ##  Version 14.5.0 (19 June 2020)
 Element Inspector improved
 - build layer tree using valid z-index

@@ -1,4 +1,5 @@
 {
-	"telegram-bot-token": 	"XXXXXX:XXXXXXXXXXXXXXXXXXXXX",
-	"telegram-channel-id":	"@my_channel"
+    "telegram-bot-token": "XXXXXX:XXXXXXXXXXXXXXXXXXXXX",
+    "telegram-channel-id": "@my_channel",
+    "secret-key": ""
 }
