@@ -459,7 +459,7 @@ class DSExporter {
         }
 
         if (sStyle.opacity < 1) {
-            res += spaces + "opacity" + ": " + sStyle.opacity + eol
+            res += spaces + "opacity" + ": " + Math.round(sStyle.opacity * 100) / 100 + eol
         }
 
         return res
