@@ -1,6 +1,12 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.5.0 (19 June 2020)
+Element Inspector improved
+- build layer tree using valid z-index
+- skip text layers with empty (or whitespace only) content
+- suppor page navigation (left,right keys)
+
 ##  Version 14.4.1 (10 June 2020)
 Added support for fixed layers to Element Inspector
 Added ability to disable a library sync for document during automation
