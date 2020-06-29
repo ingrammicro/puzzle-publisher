@@ -296,6 +296,9 @@ function createViewer(story, files) {
         },
 
         onContentClick: function () {
+            // allow currently active child to handle click
+            if (this.child && this.child.onContentClick()) return true
+
             if (this.linksDisabled) return false
             if (this.onKeyEscape()) return
             this.blinkHotspots()

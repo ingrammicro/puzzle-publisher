@@ -35,6 +35,9 @@ class AbstractViewer {
     handleKeyDownWhileInactive(jevent) {
         return false
     }
+    onContentClick() {
+        return false
+    }
 
 
     isVisible() {

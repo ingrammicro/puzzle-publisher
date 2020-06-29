@@ -95,6 +95,11 @@ class SymbolViewer extends AbstractViewer {
         super._hideSelf()
     }
 
+    onContentClick() {
+        this.setSelected(null)
+        return true
+    }
+
     handleKeyDown(jevent) {
 
         const event = jevent.originalEvent
@@ -395,6 +400,7 @@ class SymbolViewer extends AbstractViewer {
             $('#symbol_viewer #empty').addClass("hidden")
             $("#symbol_viewer_content").html(info)
             //alert(info)
+            return false
         })
 
         a.prependTo(currentPanel.linksDiv)
