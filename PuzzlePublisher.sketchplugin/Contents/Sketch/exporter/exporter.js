@@ -81,6 +81,12 @@ class Exporter {
         this.fileType = fileType.toLowerCase()
     }
 
+    getManifest() {
+        var manifestPath = this.context.plugin.url().URLByAppendingPathComponent("Contents").URLByAppendingPathComponent("Sketch").URLByAppendingPathComponent("manifest.json").path()
+        return NSJSONSerialization.JSONObjectWithData_options_error(NSData.dataWithContentsOfFile(manifestPath), 0, nil)
+
+    }
+
 
     logMsg(msg) {
         log(msg)
