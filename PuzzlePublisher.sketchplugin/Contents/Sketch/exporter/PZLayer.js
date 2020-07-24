@@ -370,12 +370,12 @@ class PZLayer {
 
     _specifyExternalURLHotspot(prefix, finalHotspot, externalLink) {
         if (DEBUG) exporter.logMsg(prefix + "_specifyExternalURLHotspothotspot: href")
-        // found external link
-        const regExp = new RegExp("^http(s?)://");
+        // found external link        
         var href = externalLink.href
+        /*const regExp = new RegExp("^http(s?)://");
         if (!regExp.test(href.toLowerCase())) {
             href = "http://" + href;
-        }
+        }*/
         const target = externalLink.openNewWindow ? "_blank" : null;
 
         finalHotspot.linkType = "href"

@@ -439,7 +439,7 @@ function createViewer(story, files) {
             }
 
 
-            if (this.zoomEnabled && availableWidth < page.width) {
+            if (this.zoomEnabled && ((availableWidth < page.width) || screen.width <= 800)) {
                 zoom = availableWidth / page.width
                 scale = "scale(" + zoom + ")"
             }

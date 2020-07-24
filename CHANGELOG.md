@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.7.0 (24 July 2020)
+Added support for relative URLs
+
 ##  Version 14.6.1 (25 June 2020)
 Improvement for Element Inspector: click outside of any element unselect current element
 
