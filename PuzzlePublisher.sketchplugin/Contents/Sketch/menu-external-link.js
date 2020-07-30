@@ -35,11 +35,13 @@ var onRun = function (context) {
 
     // Ask user for external URL
     //--------------------------------------------------------------------
-    const dialog = new UIDialog("Provide some external URL", NSMakeRect(0, 0, 400, 100), "Save", "The selected layers or artboards will be linked to the specified URL.")
+    const dialog = new UIDialog("Provide some external URL", NSMakeRect(0, 0, 400, 200), "Save", "The selected layers or artboards will be linked to the specified URL.")
 
     dialog.removeLeftColumn()
-    dialog.addTextInput("url", "URL", link, 'http://', 350)
-    dialog.addCheckbox("sameWindow", "Open new browser window", openNewWindow)
+    dialog.addTextBox("url", "URL", link, 'http://', 60)
+    dialog.addHint("url_hint", "You can specify absolut URL, like http://news.com, or any relative URL, like /test.html", 30)
+    dialog.addSpace()
+    dialog.addCheckbox("sameWindow", "Open URL in new browser window", openNewWindow)
 
 
     //Save new external URL

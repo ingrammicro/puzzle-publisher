@@ -244,6 +244,7 @@ class UIAbstractWindow {
         const input = NSTextField.alloc().initWithFrame(frame ? frame : this.getNewFrame(20, width))
         input.setEditable(true)
         input.setBordered(true)
+        input.maximumNumberOfLines = 1
         input.setStringValue(textValue)
         if (inlineHint != "") {
             input.setPlaceholderString(inlineHint)

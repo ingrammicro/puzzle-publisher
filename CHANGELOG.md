@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.7.1 (24 July 2020)
+Improved External URL dialog
+
 ##  Version 14.7.0 (24 July 2020)
 Added support for relative URLs
 
