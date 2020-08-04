@@ -26,7 +26,7 @@ var onRun = function (context) {
     let skipAutoSync = Settings.documentSettingForKey(doc, SettingKeys.DOC_SKIP_AUTOSYNC) == 1
 
     //
-    const dialog = new UIDialog("Document Settings", NSMakeRect(0, 0, 500, 260), "Save", "Configure settings common for all document artboards. ")
+    const dialog = new UIDialog("Document Settings", NSMakeRect(0, 0, 500, 310), "Save", "Configure settings common for all document artboards. ")
 
     dialog.addLeftLabel("", "Export")
     dialog.addCheckbox("disableFixed", "Disable Fixed Layers", disableFixed)

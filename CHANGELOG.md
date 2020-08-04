@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.7.2 (4 Aug 2020)
+Fixed Document Settings modal (height increased to show all fields)
+
 ##  Version 14.7.1 (24 July 2020)
 Improved External URL dialog
 
