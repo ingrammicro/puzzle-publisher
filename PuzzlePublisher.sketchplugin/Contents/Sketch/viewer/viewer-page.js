@@ -815,6 +815,11 @@ function handleLinkEvent(event) {
             destPage.showAsOverlayInCurrentPage(orgPage, orgLink, pageX, pageY, linkParentFixed)
             return false
         } else {
+            // close modal if some link inside a modal opens the same modal
+            if (destPageIndex == currentPage.index && currentPage.isModal) {
+                viewer.goBack()
+                return false
+            }
 
             // check if we need to close current overlay
             currentPage.hideCurrentOverlays()

@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.7.3 (10 Aug 2020)
+Link inside a modal to the same modal closes it (similer to overlays)
+
 ##  Version 14.7.2 (4 Aug 2020)
 Fixed Document Settings modal (height increased to show all fields)
 
