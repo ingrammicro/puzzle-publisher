@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.8.0 (18 Aug 2020)
+New feature: The plugin can publish mockups on Miro whiteboards
+
 ##  Version 14.7.3 (10 Aug 2020)
 Link inside a modal to the same modal closes it (similer to overlays)
 

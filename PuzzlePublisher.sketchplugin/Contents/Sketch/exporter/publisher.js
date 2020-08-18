@@ -3,11 +3,32 @@
 @import("lib/ga.js")
 @import("lib/uidialog.js")
 
+@import "miro/api.js";
+@import "miro/utils.js";
+
+let publisher = null
+
+Api.prototype.artboardsToPNG = function (context, exportAll, scale) {
+    var imagePath = publisher.mockupsPath + "/images/"
+    var exportInfoList = [];
+    const Dom = require('sketch/dom')
+    const jDoc = Dom.fromNative(publisher.doc)
+
+    log("Miro: build page list: start")
+    for (var page of publisher.story.pages) {
+        const artboard = jDoc.getLayerWithID(page["id"])
+        var exportInfo = { "artboardID": page["id"], "artboard": artboard.sketchObject, "path": imagePath + page['image2x'] };
+        exportInfoList.push(exportInfo);
+    }
+    log("Miro: build page list: done")
+    return exportInfoList;
+}
+
 class Publisher {
     constructor(context, doc) {
         this.doc = doc;
-        this.context = context;
         this.UI = require('sketch/ui')
+        this.context = context;
         this.Settings = require('sketch/settings');
 
         this.login = ''
@@ -21,6 +42,10 @@ class Publisher {
         this.authorName = this.Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_NAME) + ""
 
         this.message = ""
+        publisher = this
+
+        this.story = null
+        this.mockupsPath = ''
     }
 
 
@@ -32,7 +57,7 @@ class Publisher {
 
         this.readOptions()
 
-        // Show UI
+        // Show this.UI
         if (!this.context.fromCmd) {
             while (true) {
                 if (!this.askOptions()) return false
@@ -57,6 +82,12 @@ class Publisher {
         if (posSketch > 0) {
             docFolder = docFolder.slice(0, posSketch)
         }
+
+        // 
+        if (this.miroEmail != "" && this.miroBoard != "") {
+            this.publishToMiro()
+        }
+
         // run publish script
         let commentsID = destFolder
         commentsID = Utils.toFilename(commentsID)
@@ -103,7 +134,7 @@ class Publisher {
                     const openResult = Utils.runCommand('/usr/bin/open', [openURL])
                     if (openResult.result) {
                     } else {
-                        UI.alert('Can not open HTML in browser', openResult.output)
+                        this.UI.alert('Can not open HTML in browser', openResult.output)
                     }
                 }
                 this.showMessage(runResult)
@@ -115,6 +146,58 @@ class Publisher {
 
         return true
     }
+
+    publishToMiro() {
+        let miroBoard = this.miroBoard
+        log("publishToMiro: start")
+
+        //  Get token
+        var token = api.getToken();
+        if (!token) return false
+        log("publishToMiro: got token")
+
+        // Get request
+        var response = api.authCheckRequest(this.context);
+        if (response) {
+            if (response.success == 1) {
+
+            } else if (response.error && response.error.code == 401) {
+                api.setToken(nil);
+                log(response.error)
+                this.UI.alert('Error', "Can not publish to Miro")
+                return false
+            } else {
+                dealWithErrors(context, 'Something went wrong.');
+                return false
+            }
+        }
+        log("publishToMiro: established connect")
+
+        // Get board ID
+        const boards = api.getBoards()
+        const found = boards.find(el => el.title == miroBoard)
+        if (!found) {
+            this.UI.alert('Error', "Can not find '" + miroBoard + "' board in Miro")
+            return false
+        }
+        const boardId = found['boardId']
+
+        this.mockupsPath = "/Users/baza/Ingram/Generated Mockups/Project HX"
+
+        // Load story.js file and eval it
+        const storyPath = this.mockupsPath + "/viewer/story.js"
+        let storyJS = Utils.readFile(storyPath).replace("var story = {", "this.story = {")
+        storyJS = storyJS.replaceAll("$.extend(new ViewerPage(),", "").replaceAll("})", "}")
+        eval(storyJS)
+
+        // Publish
+        log("publishToMiro: strart publishing")
+        api.uploadArtboardsToRTB(this.context, boardId, true)
+
+        log("publishToMiro: done")
+
+    }
+
 
     showMessage(result) {
         if (result.result) {
@@ -169,6 +252,11 @@ class Publisher {
         this.remoteFolder = Settings.documentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_REMOTE_FOLDER)
         if (this.remoteFolder == undefined || this.remoteFolder == null) this.remoteFolder = ''
 
+        this.miroBoard = Settings.settingForKey(SettingKeys.DOC_PUBLISH_MIRO_BOARD)
+        if (this.miroBoard == undefined || this.miroBoard == null) this.miroBoard = ''
+
+        this.miroEmail = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_MIRO_EMAIL)
+        if (this.miroEmail == undefined || this.miroEmail == null) this.miroEmail = ''
     }
 
     askOptions() {
@@ -177,10 +265,11 @@ class Publisher {
         let askLogin = '' == this.login
         let askSiteRoot = '' == this.siteRoot
         let askMessage = '' != this.serverToolsPath
+        let askMiro = '' != this.miroEmail
 
         // show dialod        
         const dialog = new UIDialog("Publish HTML", NSMakeRect(0, 0, 400,
-            180 + (askMessage ? 65 : 0) + (askLogin ? 60 : 0) + (askSiteRoot ? 60 : 0)),
+            180 + (askMessage ? 65 : 0) + (askLogin ? 60 : 0) + (askSiteRoot ? 60 : 0) + (askMiro ? 60 : 0)),
             "Publish", "Generated HTML will be uploaded to external site by SFTP.")
         dialog.removeLeftColumn()
 
@@ -205,6 +294,10 @@ class Publisher {
             dialog.addHint("siteRootHint", "Specify to open uploaded HTML in web browser automatically")
         }
 
+        if (askMiro) {
+            dialog.addTextInput("miroBoard", "Miro board", this.miroBoard, 'Board name (optional)', 350)
+        }
+
 
         track(TRACK_PUBLISH_DIALOG_SHOWN)
         while (true) {
@@ -220,6 +313,9 @@ class Publisher {
 
             if (askSiteRoot) {
                 this.siteRoot = dialog.views['siteRoot'].stringValue() + ""
+            }
+            if (askMiro) {
+                this.miroBoard = dialog.views['miroBoard'].stringValue() + ""
             }
 
             this.remoteFolder = dialog.views['remoteFolder'].stringValue() + ""
@@ -237,6 +333,15 @@ class Publisher {
             if ('' == this.ver) continue
             if (askMessage && '' == this.message) continue
 
+            if (askMiro && this.miroBoard != '') {
+                // Check board
+                const boards = api.getBoards()
+                const found = boards.find(el => el.title == this.miroBoard)
+                if (!found) {
+                    UI.alert("Error", "No such board in Miro")
+                    continue
+                }
+            }
 
             dialog.finish()
             track(TRACK_PUBLISH_DIALOG_CLOSED, { "cmd": "ok" })
@@ -244,6 +349,10 @@ class Publisher {
             if (askSiteRoot) {
                 Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_SITEROOT, this.siteRoot)
             }
+            if (askMiro) {
+                Settings.setSettingForKey(SettingKeys.DOC_PUBLISH_MIRO_BOARD, this.miroBoard)
+            }
+
             Settings.setDocumentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_REMOTE_FOLDER, this.remoteFolder)
             Settings.setDocumentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_VERSION, (verInt >= 0 ? verInt + 1 : verInt) + "")
             return true

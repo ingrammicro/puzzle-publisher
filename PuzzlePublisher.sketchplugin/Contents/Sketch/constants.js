@@ -132,6 +132,11 @@ const SettingKeys = {
     PLUGIN_PUBLISH_SSH_PORT: "publishSSHPort",
     PLUGIN_EXPORTING_URL: "pluginExportingURL",
     PLUGIN_SHARE_IFRAME_SIZE: "pluginShareiFrameSize",
+    PLUGIN_PUBLISH_MIRO_EMAIL: "PLUGIN_PUBLISH_MIRO_EMAIL",
+    PLUGIN_PUBLISH_MIRO_PASSWORD: "PLUGIN_PUBLISH_MIRO_PASSWORD",
+    PLUGIN_INSTALLED: "pluginInstalled",
+    PLUGIN_GA_DISABLED: "pluginGADisabled",
+    PLUGIN_LOGDEBUG_ENABLED: "pluginLogDebugEnabled",
 
     ARTBOARD_TYPE: "artboardType",
 
@@ -153,6 +158,7 @@ const SettingKeys = {
     ARTBOARD_OVERLAY_CLOSE_PREVOVERLAY: "artboardClosePrevOverlay",
 
     DOC_EXPORTING_URL: "docExportingURL", // legacy, replaced by PLUGIN_EXPORTING_URL
+    DOC_PUBLISH_MIRO_BOARD: "DOC_PUBLISH_MIRO_BOARD",
     DOC_PUBLISH_COMPRESS: "docPublishCompress",
     DOC_DISABLE_FIXED_LAYERS: "docDisablFixedLayers",
     DOC_PUBLISH_VERSION: "mockupsVersion",
@@ -167,10 +173,6 @@ const SettingKeys = {
     LAYER_DIV_ID: 'layerDivID',
     LAYER_EXTERNAL_LINK: "externalLink",
     LAYER_EXTERNAL_LINK_BLANKWIN: "layerNewWindow",
-    LAYER_COMMENT: 'layerComment',
-
-    PLUGIN_INSTALLED: "pluginInstalled",
-    PLUGIN_GA_DISABLED: "pluginGADisabled",
-    PLUGIN_LOGDEBUG_ENABLED: "pluginLogDebugEnabled",
+    LAYER_COMMENT: 'layerComment'
 };
 

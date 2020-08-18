@@ -256,6 +256,24 @@ class UIAbstractWindow {
         return input
     }
 
+    addSecureTextInput(id, label, textValue, inlineHint = "", width = 220, frame = undefined) {
+        if (label != '') this.addLabel(id + "Label", label, 17)
+
+        const input = NSSecureTextField.alloc().initWithFrame(frame ? frame : this.getNewFrame(20, width))
+        input.setEditable(true)
+        input.setBordered(true)
+        input.maximumNumberOfLines = 1
+        input.setStringValue(textValue)
+        if (inlineHint != "") {
+            input.setPlaceholderString(inlineHint)
+        }
+
+        this.container.addSubview(input)
+        this.views[id] = input
+
+        return input
+    }
+
     // opt: required: id, label, labelSelect, textValue
     //      optional: inlineHint = "", width = 220, widthSelect = 50), askFilePath=false
     //       comboBoxOptions: string array

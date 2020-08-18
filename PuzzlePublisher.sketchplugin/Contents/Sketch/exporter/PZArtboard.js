@@ -153,6 +153,7 @@ class PZArtboard extends PZLayer {
         let js = pageIndex ? ',' : '';
         js +=
             '$.extend(new ViewerPage(),{\n' +
+            '"id" : "' + this.objectID + '",\n' +
             '"index": ' + parseInt(pageIndex) + ',\n' +
             '"image": "' + Utils.quoteString(Utils.toFilename(mainName + '.' + exporter.fileType, false)) + '",\n'
         if (exporter.retinaImages)
