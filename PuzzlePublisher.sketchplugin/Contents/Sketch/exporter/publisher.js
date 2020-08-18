@@ -41,21 +41,63 @@ class Publisher {
         this.serverToolsPath = this.Settings.settingForKey(SettingKeys.PLUGIN_SERVERTOOLS_PATH) + ""
         this.authorName = this.Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_NAME) + ""
 
+        this.docFolder = this.doc.cloudName();
+        let posSketch = this.docFolder.indexOf(".sketch")
+        if (posSketch > 0) {
+            this.docFolder = this.docFolder.slice(0, posSketch)
+        }
+
         this.message = ""
         publisher = this
 
         this.story = null
-        this.mockupsPath = ''
+        this.mockupsPath = this.allMockupsdDir + "/" + this.docFolder
+
+        log('this.mockupsPath=' + this.mockupsPath)
+
+        this.readOptions()
     }
 
+
+    readOptions() {
+        // read current version from document settings
+        let Settings = this.Settings
+
+        this.ver = Settings.documentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_VERSION)
+        if (this.ver == undefined || this.ver == null) this.ver = '1'
+
+        this.login = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_LOGIN)
+        if (this.login == undefined || this.login == null) this.login = ''
+
+        this.sshPort = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_SSH_PORT)
+        if (this.sshPort == undefined || this.sshPort == null || this.sshPort == '') this.sshPort = '22'
+
+
+        this.siteRoot = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_SITEROOT)
+        if (this.siteRoot == undefined || this.siteRoot == null) this.siteRoot = ''
+
+        this.secret = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_SECRET)
+        if (this.secret == undefined || this.secret == null) this.secret = ''
+
+        this.remoteFolder = Settings.documentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_REMOTE_FOLDER)
+        if (this.remoteFolder == undefined || this.remoteFolder == null) this.remoteFolder = ''
+
+        this.miroBoard = Settings.documentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_MIRO_BOARD)
+        if (this.miroBoard == undefined || this.miroBoard == null) this.miroBoard = ''
+
+        this.miroEmail = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_MIRO_EMAIL)
+        if (this.miroEmail == undefined || this.miroEmail == null) this.miroEmail = ''
+
+        this.miroPassword = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_MIRO_PASSWORD)
+        if (this.miroPassword == undefined || this.miroPassword == null) this.miroPassword = ''
+
+    }
 
     log(msg) {
         //log(msg)
     }
 
     publish() {
-
-        this.readOptions()
 
         // Show this.UI
         if (!this.context.fromCmd) {
@@ -76,13 +118,6 @@ class Publisher {
             return false
         }
 
-
-        let docFolder = this.doc.cloudName();
-        let posSketch = docFolder.indexOf(".sketch")
-        if (posSketch > 0) {
-            docFolder = docFolder.slice(0, posSketch)
-        }
-
         // 
         if (this.miroEmail != "" && this.miroBoard != "") {
             this.publishToMiro()
@@ -91,7 +126,7 @@ class Publisher {
         // run publish script
         let commentsID = destFolder
         commentsID = Utils.toFilename(commentsID)
-        const runResult = this.runPublishScript(version, this.allMockupsdDir, docFolder, destFolder, commentsID)
+        const runResult = this.runPublishScript(version, this.allMockupsdDir, this.docFolder, destFolder, commentsID)
 
         track(TRACK_PUBLISH_COMPLETED)
         // success
@@ -182,8 +217,6 @@ class Publisher {
         }
         const boardId = found['boardId']
 
-        this.mockupsPath = "/Users/baza/Ingram/Generated Mockups/Project HX"
-
         // Load story.js file and eval it
         const storyPath = this.mockupsPath + "/viewer/story.js"
         let storyJS = Utils.readFile(storyPath).replace("var story = {", "this.story = {")
@@ -228,36 +261,6 @@ class Publisher {
         return true
     }
 
-
-    readOptions() {
-        // read current version from document settings
-        let Settings = this.Settings
-
-        this.ver = Settings.documentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_VERSION)
-        if (this.ver == undefined || this.ver == null) this.ver = '1'
-
-        this.login = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_LOGIN)
-        if (this.login == undefined || this.login == null) this.login = ''
-
-        this.sshPort = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_SSH_PORT)
-        if (this.sshPort == undefined || this.sshPort == null || this.sshPort == '') this.sshPort = '22'
-
-
-        this.siteRoot = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_SITEROOT)
-        if (this.siteRoot == undefined || this.siteRoot == null) this.siteRoot = ''
-
-        this.secret = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_SECRET)
-        if (this.secret == undefined || this.secret == null) this.secret = ''
-
-        this.remoteFolder = Settings.documentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_REMOTE_FOLDER)
-        if (this.remoteFolder == undefined || this.remoteFolder == null) this.remoteFolder = ''
-
-        this.miroBoard = Settings.settingForKey(SettingKeys.DOC_PUBLISH_MIRO_BOARD)
-        if (this.miroBoard == undefined || this.miroBoard == null) this.miroBoard = ''
-
-        this.miroEmail = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_MIRO_EMAIL)
-        if (this.miroEmail == undefined || this.miroEmail == null) this.miroEmail = ''
-    }
 
     askOptions() {
         let Settings = this.Settings
@@ -355,6 +358,74 @@ class Publisher {
 
             Settings.setDocumentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_REMOTE_FOLDER, this.remoteFolder)
             Settings.setDocumentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_VERSION, (verInt >= 0 ? verInt + 1 : verInt) + "")
+            return true
+        }
+        return false
+    }
+
+    askMiroOptions() {
+        let Settings = this.Settings
+
+        let askCreds = '' == this.miroEmail || '' == this.miroPassword
+
+        // show dialog        
+        const dialog = new UIDialog("Publish to Miro", NSMakeRect(0, 0, 600,
+            40 + (askCreds ? 120 : 0)),
+            "Publish", "Generated images will be uploaded to Miro whiteboard")
+
+        if (askCreds) {
+            dialog.addLeftLabel("", "Miro Credentials", 40)
+            dialog.addTextInput("miroEmail", "Email", this.miroEmail, 'user@gmail.com', 350)
+            dialog.addSecureTextInput("miroPassword", "Password", this.miroPassword, '', 350)
+            dialog.addDivider()
+        }
+        dialog.addLeftLabel("", "Publish to", 40)
+        dialog.addTextInput("miroBoard", "Miro board", this.miroBoard, 'Board name', 350)
+
+        track(TRACK_PUBLISH_MIRO_DIALOG_SHOWN)
+        while (true) {
+            const result = dialog.run()
+            if (!result) {
+                track(TRACK_PUBLISH_MIRO_DIALOG_CLOSED, { "cmd": "cancel" })
+                return false
+            }
+
+            if (askCreds) {
+                this.miroEmail = dialog.views['miroEmail'].stringValue() + ""
+                this.miroPassword = dialog.views['miroPassword'].stringValue() + ""
+                if ('' == this.miroEmail || '' == this.miroPassword) {
+                    this.UI.alert("Error", "Both Miro email and password should be specified")
+                    continue
+                }
+            }
+            this.miroBoard = dialog.views['miroBoard'].stringValue() + ""
+            if ('' == this.miroBoard) {
+                this.UI.alert("Error", "Miro board should be specified")
+                continue
+            }
+
+            // Test connection
+            if (!Utils.testMiro(this.context, this.miroEmail, this.miroPassword)) {
+                continue
+            }
+
+            // Check board
+            const boards = api.getBoards()
+            const found = boards.find(el => el.title == this.miroBoard)
+            if (!found) {
+                this.UI.alert("Error", "No such board in Miro")
+                continue
+            }
+
+            dialog.finish()
+            track(TRACK_PUBLISH_MIRO_DIALOG_CLOSED, { "cmd": "ok" })
+
+            // save 
+            if (askCreds) {
+                Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_MIRO_EMAIL, this.miroEmail)
+                Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_MIRO_PASSWORD, this.miroPassword)
+            }
+            Settings.setDocumentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_MIRO_BOARD, this.miroBoard)
             return true
         }
         return false

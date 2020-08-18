@@ -7,40 +7,6 @@
 
 const UI = require('sketch/ui')
 
-function testMiro(context, email, password, board) {
-
-    var keys = [NSMutableArray array];
-    [keys addObject: 'email'];
-    [keys addObject: 'password'];
-
-    var values = [NSMutableArray array];
-    [values addObject: email];
-    [values addObject: password];
-
-    var data = [[NSDictionary alloc] initWithObjects: values forKeys: keys]
-
-    var response = api.authRequest(context, data);
-    if (response) {
-        if (response.error) {
-            var messages = getMessagesByError(response.error);
-
-
-            if (messages.alert) {
-                UI.alert("Can't connect to Miro", messages.alert)
-            } else if (messages.label) {
-                UI.alert("Can't connect to Miro", messages.label)
-            }
-        } else {
-            var token = response.token;
-            api.setToken(token);
-            return true
-        }
-    } else {
-        UI.alert("Can't connect to Miro", "No response")
-    }
-    return false
-}
-
 var onRun = function (context) {
     const sketch = require('sketch')
     const Settings = require('sketch/settings')
@@ -116,7 +82,7 @@ var onRun = function (context) {
             continue
         }
         if ('' != miroPassword && '' != miroEmail) {
-            if (!testMiro(context, miroEmail, miroPassword)) {
+            if (!Utils.testMiro(context, miroEmail, miroPassword)) {
                 continue
             }
         }

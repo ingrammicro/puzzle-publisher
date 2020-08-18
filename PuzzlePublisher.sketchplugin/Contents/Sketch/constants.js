@@ -99,6 +99,10 @@ const TRACK_EXPORT_COMPLETED = "export-completed"
 const TRACK_PUBLISH_DIALOG_SHOWN = "publish-dialog-shown"
 const TRACK_PUBLISH_DIALOG_CLOSED = "publish-dialog-closed"  // cmd:ok,cancel
 const TRACK_PUBLISH_COMPLETED = "publish-completed"
+const TRACK_PUBLISH_MIRO_DIALOG_SHOWN = "publish-miro-dialog-shown"
+const TRACK_PUBLISH_MIRO_DIALOG_CLOSED = "publish-miro-dialog-closed"  // cmd:ok,cancel
+const TRACK_PUBLISH_MIRO_COMPLETED = "publish-miro-completed"
+
 
 const PublishKeys = {
     SHOW_OUTPUT: false,

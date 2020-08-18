@@ -1,7 +1,7 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
-##  Version 14.8.0 (18 Aug 2020)
+##  Version 14.8.1 (18 Aug 2020)
 New feature: The plugin can publish mockups on Miro whiteboards
 
 ##  Version 14.7.3 (10 Aug 2020)
