@@ -182,7 +182,7 @@ class Publisher {
         return true
     }
 
-    publishToMiro() {
+    publishToMiro(standalone = false) {
         let miroBoard = this.miroBoard
         log("publishToMiro: start")
 
@@ -228,6 +228,17 @@ class Publisher {
         api.uploadArtboardsToRTB(this.context, boardId, true)
 
         log("publishToMiro: done")
+
+        // Show in browser
+        if (standalone) {
+            var fullBoardURL = boardURL + boardId;
+            const openResult = Utils.runCommand('/usr/bin/open', [fullBoardURL])
+            if (openResult.result) {
+            } else {
+                this.UI.alert('Can not open HTML in browser', openResult.output)
+            }
+        }
+
 
     }
 
