@@ -9,19 +9,7 @@
 let publisher = null
 
 Api.prototype.artboardsToPNG = function (context, exportAll, scale) {
-    var imagePath = publisher.mockupsPath + "/images/"
-    var exportInfoList = [];
-    const Dom = require('sketch/dom')
-    const jDoc = Dom.fromNative(publisher.doc)
-
-    log("Miro: build page list: start")
-    for (var page of publisher.story.pages) {
-        const artboard = jDoc.getLayerWithID(page["id"])
-        var exportInfo = { "artboardID": page["id"], "artboard": artboard.sketchObject, "path": imagePath + page['image2x'] };
-        exportInfoList.push(exportInfo);
-    }
-    log("Miro: build page list: done")
-    return exportInfoList;
+    return publisher.miroExportInfoList
 }
 
 class Publisher {
@@ -52,6 +40,7 @@ class Publisher {
 
         this.story = null
         this.mockupsPath = this.allMockupsdDir + "/" + this.docFolder
+        this.miroExportInfoList = []
 
         log('this.mockupsPath=' + this.mockupsPath)
 
@@ -183,6 +172,9 @@ class Publisher {
     }
 
     publishToMiro(standalone = false) {
+
+        if (standalone && !this.askMiroOptions()) return false
+
         let miroBoard = this.miroBoard
         log("publishToMiro: start")
 
@@ -219,11 +211,19 @@ class Publisher {
 
         // Load story.js file and eval it
         const storyPath = this.mockupsPath + "/viewer/story.js"
-        let storyJS = Utils.readFile(storyPath).replace("var story = {", "this.story = {")
+        let storyJS = Utils.readFile(storyPath)
+        if (undefined == storyJS) {
+            this.UI.alert('Error', "Can't find mockups on path: " + this.mockupsPath)
+            return false
+        }
+        storyJS = Utils.readFile(storyPath).replace("var story = {", "this.story = {")
         storyJS = storyJS.replaceAll("$.extend(new ViewerPage(),", "").replaceAll("})", "}")
         eval(storyJS)
 
-        // Publish
+        // Build page list
+        this.miroExportInfoList = this.getArtboardsListForMiro()
+
+        // Publish        
         log("publishToMiro: strart publishing")
         api.uploadArtboardsToRTB(this.context, boardId, true)
 
@@ -239,8 +239,25 @@ class Publisher {
             }
         }
 
-
     }
+
+
+    getArtboardsListForMiro() {
+        var imagePath = this.mockupsPath + "/images/"
+        var exportInfoList = [];
+        const Dom = require('sketch/dom')
+        const jDoc = Dom.fromNative(publisher.doc)
+
+        log("Miro: build page list: start")
+        for (var page of this.story.pages) {
+            const artboard = jDoc.getLayerWithID(page["id"])
+            var exportInfo = { "artboardID": page["id"], "artboard": artboard.sketchObject, "path": imagePath + page['image2x'] };
+            exportInfoList.push(exportInfo);
+        }
+        log("Miro: build page list: done")
+        return exportInfoList;
+    }
+
 
 
     showMessage(result) {
@@ -381,16 +398,20 @@ class Publisher {
 
         // show dialog        
         const dialog = new UIDialog("Publish to Miro", NSMakeRect(0, 0, 600,
-            40 + (askCreds ? 120 : 0)),
-            "Publish", "Generated images will be uploaded to Miro whiteboard")
+            60 + (askCreds ? 120 : 0)),
+            "Publish", "Previously exported pages will be uploaded to Miro whiteboard as images")
 
         if (askCreds) {
             dialog.addLeftLabel("", "Miro Credentials", 40)
             dialog.addTextInput("miroEmail", "Email", this.miroEmail, 'user@gmail.com', 350)
             dialog.addSecureTextInput("miroPassword", "Password", this.miroPassword, '', 350)
             dialog.addDivider()
+        } else {
+            dialog.removeLeftColumn()
         }
-        dialog.addLeftLabel("", "Publish to", 40)
+        if (askCreds) {
+            dialog.addLeftLabel("", "Publish to", 40)
+        }
         dialog.addTextInput("miroBoard", "Miro board", this.miroBoard, 'Board name', 350)
 
         track(TRACK_PUBLISH_MIRO_DIALOG_SHOWN)
@@ -400,7 +421,6 @@ class Publisher {
                 track(TRACK_PUBLISH_MIRO_DIALOG_CLOSED, { "cmd": "cancel" })
                 return false
             }
-
             if (askCreds) {
                 this.miroEmail = dialog.views['miroEmail'].stringValue() + ""
                 this.miroPassword = dialog.views['miroPassword'].stringValue() + ""
