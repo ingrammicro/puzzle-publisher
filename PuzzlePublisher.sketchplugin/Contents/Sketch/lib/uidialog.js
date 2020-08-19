@@ -277,11 +277,13 @@ class UIAbstractWindow {
     // opt: required: id, label, labelSelect, textValue
     //      optional: inlineHint = "", width = 220, widthSelect = 50), askFilePath=false
     //       comboBoxOptions: string array
+    //      customHandler: custom JS handler for Select button
     addPathInput(opt) {
         if (!('width' in opt)) opt.width = 220
         if (!('widthSelect' in opt)) opt.widthSelect = 50
         if (!('inlineHint' in opt)) opt.inlineHint = ""
         if (!('askFilePath' in opt)) opt.askFilePath = false
+        if (!('customHandler' in opt)) opt.customHandler = null
 
         if (opt.label != '') this.addLabel(opt.id + "Label", opt.label, 17)
 
@@ -294,7 +296,7 @@ class UIAbstractWindow {
             this.addComboBox({ id: opt.id, options: opt.comboBoxOptions, width: 0, frame: frame })
             : this.addTextInput(opt.id, "", opt.textValue, opt.inlineHint, 0, frame)
 
-        this.addButton(opt.id + "Select", opt.labelSelect, function () {
+        this.addButton(opt.id + "Select", opt.labelSelect, opt.customHandler ? opt.customHandler : function () {
             const newPath = opt.askFilePath
                 ? Utils.askFilePath(input.stringValue() + "")
                 : Utils.askPath(input.stringValue() + "")
@@ -305,6 +307,7 @@ class UIAbstractWindow {
         }, 0, frame2)
         return input
     }
+
     addSelect(id, label, selectItem, options, width = 100) {
         if (label != '') this.addLabel(id + "Label", label, 15)
 

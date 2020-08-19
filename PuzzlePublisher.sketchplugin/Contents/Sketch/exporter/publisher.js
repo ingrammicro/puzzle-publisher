@@ -309,7 +309,7 @@ class Publisher {
             dialog.addHint("messageHint", "Describe briefly was changed")
         }
 
-        dialog.addTextInput("version", "Version", this.ver, '1')
+        dialog.addTextInput("version", "Version", this.ver, '1', 50)
         dialog.addHint("versionHint", "Exporter will publish two HTML sets - live and <version>")
 
         dialog.addTextInput("remoteFolder", "Remote Site Folder", this.remoteFolder, 'myprojects/project1', 350)
@@ -326,7 +326,8 @@ class Publisher {
         }
 
         if (askMiro) {
-            dialog.addTextInput("miroBoard", "Miro board", this.miroBoard, 'Board name (optional)', 350)
+            this.addMiroBoardSelector(dialog, 350, " (optional)")
+            //dialog.addTextInput("miroBoard", "Miro board", this.miroBoard, 'Board name (optional)', 350)
         }
 
 
@@ -412,7 +413,7 @@ class Publisher {
         if (askCreds) {
             dialog.addLeftLabel("", "Publish to", 40)
         }
-        dialog.addTextInput("miroBoard", "Miro board", this.miroBoard, 'Board name', 350)
+        this.addMiroBoardSelector(dialog)
 
         track(TRACK_PUBLISH_MIRO_DIALOG_SHOWN)
         while (true) {
@@ -460,8 +461,46 @@ class Publisher {
             return true
         }
         return false
+    }
+
+    addMiroBoardSelector(dialog, width = 520, inlineHintPostfix = "") {
+
+        //dialog.addTextInput("miroBoard", "Miro board", this.miroBoard, 'Board name', 350)
+
+        const input = dialog.addPathInput({
+            id: "miroBoard", label: "Miro board", labelSelect: "Select",
+            textValue: this.miroBoard,
+            inlineHint: 'Board name' + inlineHintPostfix, width,
+            customHandler: function () {
+                const dialog = new UIDialog("Select Miro Board ", NSMakeRect(0, 0, 350, 60), "Select")
+                dialog.removeLeftColumn()
 
 
+                const currentBoard = input.stringValue() + ""
+                const options = api.getBoards().map(b => b.title)
+                const currentBoardIndex = options.indexOf(currentBoard)
+
+                dialog.addSelect("miroBoard", "", currentBoardIndex, options, 350)
+
+                while (true) {
+                    const result = dialog.run()
+                    if (!result) {
+                        return false
+                    }
+                    const miroBoardIndex = dialog.views['miroBoard'].indexOfSelectedItem()
+                    if (0 > miroBoardIndex) {
+                        publisher.UI.alert("Error", "Miro board should be specified")
+                        continue
+                    }
+                    input.setStringValue(options[miroBoardIndex])
+
+                    dialog.finish()
+                    // save 
+                    return true
+                }
+                return false
+            }
+        })
     }
 
     runPublishScript(version, allMockupsdDir, docFolder, remoteFolder, commentsID) {
