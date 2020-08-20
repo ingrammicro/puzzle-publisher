@@ -9,7 +9,7 @@ Sketch = require('sketch/dom')
 
 class PZArtboard extends PZLayer {
 
-    constructor(slayer) {
+    constructor(slayer, pageId) {
         if (DEBUG) exporter.logMsg("PZArtboard.create id=" + slayer.name)
 
         // init Artboard own things !!! before object construction !!!
@@ -41,6 +41,7 @@ class PZArtboard extends PZLayer {
         this.fixedLayers = [] // list of layers which are configured as fixed
         this.nextLinkIndex = 0 // we need it to generate uniq id of the every link
         this.imageLayers = [] // list of all Image childs
+        this.pageId = pageId
 
         // check if the page name is unique in document
         if (this.name in pzDoc.artboardsDict) {
@@ -154,6 +155,7 @@ class PZArtboard extends PZLayer {
         js +=
             '$.extend(new ViewerPage(),{\n' +
             '"id" : "' + this.objectID + '",\n' +
+            '"pageId" : "' + this.pageId + '",\n' +
             '"index": ' + parseInt(pageIndex) + ',\n' +
             '"image": "' + Utils.quoteString(Utils.toFilename(mainName + '.' + exporter.fileType, false)) + '",\n'
         if (exporter.retinaImages)
@@ -387,7 +389,7 @@ class PZArtboard extends PZLayer {
         if (DEBUG) exporter.logMsg("   exportImage() for " + nlayer.name())
 
         const imageName = this._getImageName(scale, panelPostix)
-        const imagePath = exporter.imagesPath + imageName
+        const imagePath = (!addToExported ? exporter.imagesPath : exporter.fullImagesPath) + imageName
         let slice = null
 
         if (addToExported) exporter.exportedImages.push(imageName)
@@ -432,7 +434,7 @@ class PZArtboard extends PZLayer {
         this._hideFixedLayers(true)
 
         for (var scale of scales) {
-            this._exportImage(scale, this, this.nlayer, '', Constants.ARTBOARD_TYPE_OVERLAY != this.artboardType)
+            this._exportImage(scale, this, this.nlayer, '', false)
         }
 
         // export images for Element Inspector
@@ -443,6 +445,9 @@ class PZArtboard extends PZLayer {
         // show fixed panels back
         // ! temporary disabled because an exported image still shows hidden layers
         this._hideFixedLayers(false)
+
+        // export full image
+        this._exportImage(2, this, this.nlayer, '', true)
 
         log("  exportArtboardImages: done!")
     }

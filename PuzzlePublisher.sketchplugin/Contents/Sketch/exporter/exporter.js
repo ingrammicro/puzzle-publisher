@@ -246,7 +246,7 @@ class Exporter {
 
         for (var file of this.exportedImages) {
             //log(" buildPreviews: "+file)
-            var fileName = this.imagesPath + "/" + file
+            var fileName = this.fullImagesPath + "/" + file
 
             let args = ["-Z", "300", fileName, "--out", this.imagesPath + "previews/"]
             let res = pub.runToolWithArgs("/usr/bin/sips", args)
@@ -388,6 +388,8 @@ class Exporter {
         }
 
         this.imagesPath = this._outputPath + "/" + Constants.IMAGES_DIRECTORY;
+        this.fullImagesPath = selectedPath + "/" + this.docName + Constants.FULLIMAGES_DIRPOSTFIX;
+
         const previewPath = this.imagesPath + "previews/"
         if (!fileManager.fileExistsAtPath(previewPath)) {
             error = MOPointer.alloc().init();

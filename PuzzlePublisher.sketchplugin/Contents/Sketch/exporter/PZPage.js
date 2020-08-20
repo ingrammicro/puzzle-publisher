@@ -108,7 +108,7 @@ class PZPage {
             if ("SymbolMaster" == sa.type) continue
             if ("Artboard" != sa.type) continue
             if (exporter.filterAster && sa.name.indexOf("*") == 0) continue
-            const ma = new PZArtboard(sa)
+            const ma = new PZArtboard(sa, this.sPage.id)
             ma.collectLayers(' ')
             this.addArtboard(ma)
         }

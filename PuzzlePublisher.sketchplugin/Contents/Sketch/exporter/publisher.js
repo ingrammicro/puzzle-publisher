@@ -40,6 +40,7 @@ class Publisher {
 
         this.story = null
         this.mockupsPath = this.allMockupsdDir + "/" + this.docFolder
+        this.fullImagesPath = this.allMockupsdDir + "/" + this.docFolder + Constants.FULLIMAGES_DIRPOSTFIX;
         this.miroExportInfoList = []
 
         log('this.mockupsPath=' + this.mockupsPath)
@@ -243,7 +244,7 @@ class Publisher {
 
 
     getArtboardsListForMiro() {
-        var imagePath = this.mockupsPath + "/images/"
+        var imagePath = this.fullImagesPath
         var exportInfoList = [];
         const Dom = require('sketch/dom')
         const jDoc = Dom.fromNative(publisher.doc)
@@ -251,11 +252,11 @@ class Publisher {
         log("Miro: build page list: start")
         for (var page of this.story.pages) {
             const artboard = jDoc.getLayerWithID(page["id"])
-            var exportInfo = { "artboardID": page["id"], "artboard": artboard.sketchObject, "path": imagePath + page['image2x'] };
+            var exportInfo = { "artboardID": page["id"], "artboard": artboard.sketchObject, "path": imagePath + page['image2x'], "pageId": page['pageId'] };
             exportInfoList.push(exportInfo);
         }
         log("Miro: build page list: done")
-        return exportInfoList;
+        return exportInfoList; 1
     }
 
 

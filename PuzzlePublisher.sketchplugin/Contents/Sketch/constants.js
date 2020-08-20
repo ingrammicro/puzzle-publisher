@@ -6,6 +6,7 @@ const Constants = {
     LOGGING: false,
     SERVER_ANNOUNCE_SCRIPT: "announce.php",
     IMAGES_DIRECTORY: "images/",
+    FULLIMAGES_DIRPOSTFIX: "-FULLIMAGES/",
     VIEWER_DIRECTORY: "viewer/",
     RESOURCES_DIRECTORY: "resources/",
     PLUGIN_IDENTIFIER: "com.cloudblue.sketch.exporter",
