@@ -27,6 +27,7 @@ Viewer features:
 Publisher features:
 - Increasing of version counter and injecting it into HTML
 - Publishing to external site by SFTP
+- Publishing to Miro whiteboards
 - Announce new version changes in Telegram channel
 
 Run from command line:
