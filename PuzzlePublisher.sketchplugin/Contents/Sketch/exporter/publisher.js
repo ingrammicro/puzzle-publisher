@@ -217,8 +217,11 @@ class Publisher {
             this.UI.alert('Error', "Can't find mockups on path: " + this.mockupsPath)
             return false
         }
+        String.prototype.replaceAllMe = function (search, replacement) {
+            return this.split(search).join(replacement)
+        }
         storyJS = Utils.readFile(storyPath).replace("var story = {", "this.story = {")
-        storyJS = storyJS.replaceAll("$.extend(new ViewerPage(),", "").replaceAll("})", "}")
+        storyJS = storyJS.replaceAllMe("$.extend(new ViewerPage(),", "").replaceAllMe("})", "}")
         eval(storyJS)
 
         // Build page list
@@ -252,7 +255,7 @@ class Publisher {
         log("Miro: build page list: start")
         for (var page of this.story.pages) {
             const artboard = jDoc.getLayerWithID(page["id"])
-            var exportInfo = { "artboardID": page["id"], "artboard": artboard.sketchObject, "path": imagePath + page['image2x'], "pageId": page['pageId'] };
+            var exportInfo = { "artboardID": page["id"], "artboard": artboard.sketchObject, "path": imagePath + page['image2x'] };
             exportInfoList.push(exportInfo);
         }
         log("Miro: build page list: done")
@@ -479,7 +482,8 @@ class Publisher {
 
                 const currentBoard = input.stringValue() + ""
                 const options = api.getBoards().map(b => b.title)
-                const currentBoardIndex = options.indexOf(currentBoard)
+                let currentBoardIndex = currentBoard != "" ? options.indexOf(currentBoard) : 0
+                if (currentBoardIndex < 0) currentBoardIndex = 0
 
                 dialog.addSelect("miroBoard", "", currentBoardIndex, options, 350)
 

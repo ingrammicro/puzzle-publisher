@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.8.5 (26 Aug 2020)
+Improved publishing to Miro
+
 ##  Version 14.8.4 (20 Aug 2020)
 "Show All Images" feature now shows full artboard pictures included fixed images
 "Publish to Miro" now places artboards correctly to prevent overlaping

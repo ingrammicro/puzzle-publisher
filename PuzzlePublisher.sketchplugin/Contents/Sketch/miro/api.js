@@ -308,7 +308,7 @@ function Api() {
             var originalId = context.command.valueForKey_onLayer_forPluginIdentifier("originalId", artboard, "rtb_sync");
             var objectId = [artboard objectID];
             var absoluteInfluenceRect = [artboard absoluteInfluenceRect];
-            var pageId = exportInfoList[i].pageId
+            var pageId = artboard.parentGroup().objectID()
 
             if (pageId != lastPageId) {
                 marginX = largeX + 200
