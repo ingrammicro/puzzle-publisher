@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.8.6 (27 Aug 2020)
+Fixed unstable behaviour of Miro publishing
+
 ##  Version 14.8.5 (26 Aug 2020)
 Improved publishing to Miro
 

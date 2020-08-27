@@ -247,6 +247,12 @@ class Utils {
     static testMiro(context, email, password, board) {
         const UI = require('sketch/ui')
 
+        // Drop old token
+        if (api.getToken()) {
+            api.logoutRequest(context);
+            api.setToken(nil);
+        }
+
         var keys = [NSMutableArray array];
         [keys addObject: 'email'];
         [keys addObject: 'password'];
@@ -269,8 +275,10 @@ class Utils {
                     UI.alert("Can't connect to Miro", messages.label)
                 }
             } else {
+                // Set new token
                 var token = response.token;
                 api.setToken(token);
+                api.setFromRetina(true)
                 return true
             }
         } else {

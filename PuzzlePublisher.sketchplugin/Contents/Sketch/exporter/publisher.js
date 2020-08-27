@@ -176,71 +176,81 @@ class Publisher {
 
         if (standalone && !this.askMiroOptions()) return false
 
-        let miroBoard = this.miroBoard
-        log("publishToMiro: start")
+        try {
 
-        //  Get token
-        var token = api.getToken();
-        if (!token) return false
-        log("publishToMiro: got token")
+            let miroBoard = this.miroBoard
+            log("publishToMiro: start")
 
-        // Get request
-        var response = api.authCheckRequest(this.context);
-        if (response) {
-            if (response.success == 1) {
+            //  Get token
+            var token = api.getToken();
+            if (!token) return false
+            log("publishToMiro: got token")
 
-            } else if (response.error && response.error.code == 401) {
-                api.setToken(nil);
-                log(response.error)
-                this.UI.alert('Error', "Can not publish to Miro")
-                return false
-            } else {
-                dealWithErrors(context, 'Something went wrong.');
+            // Get request
+            var response = api.authCheckRequest(this.context);
+            if (response) {
+                if (response.success == 1) {
+
+                } else if (response.error && response.error.code == 401) {
+                    api.setToken(nil);
+                    log(response.error)
+                    this.UI.alert('Error', "Can not publish to Miro")
+                    return false
+                } else {
+                    dealWithErrors(context, 'Something went wrong.');
+                    return false
+                }
+            }
+            log("publishToMiro: established connect")
+
+            // Get board ID
+            const boards = api.getBoards()
+            const found = boards.find(el => el.title == miroBoard)
+            if (!found) {
+                this.UI.alert('Error', "Can not find '" + miroBoard + "' board in Miro")
                 return false
             }
-        }
-        log("publishToMiro: established connect")
+            const boardId = found['boardId']
 
-        // Get board ID
-        const boards = api.getBoards()
-        const found = boards.find(el => el.title == miroBoard)
-        if (!found) {
-            this.UI.alert('Error', "Can not find '" + miroBoard + "' board in Miro")
-            return false
-        }
-        const boardId = found['boardId']
-
-        // Load story.js file and eval it
-        const storyPath = this.mockupsPath + "/viewer/story.js"
-        let storyJS = Utils.readFile(storyPath)
-        if (undefined == storyJS) {
-            this.UI.alert('Error', "Can't find mockups on path: " + this.mockupsPath)
-            return false
-        }
-        String.prototype.replaceAllMe = function (search, replacement) {
-            return this.split(search).join(replacement)
-        }
-        storyJS = Utils.readFile(storyPath).replace("var story = {", "this.story = {")
-        storyJS = storyJS.replaceAllMe("$.extend(new ViewerPage(),", "").replaceAllMe("})", "}")
-        eval(storyJS)
-
-        // Build page list
-        this.miroExportInfoList = this.getArtboardsListForMiro()
-
-        // Publish        
-        log("publishToMiro: strart publishing")
-        api.uploadArtboardsToRTB(this.context, boardId, true)
-
-        log("publishToMiro: done")
-
-        // Show in browser
-        if (standalone) {
-            var fullBoardURL = boardURL + boardId;
-            const openResult = Utils.runCommand('/usr/bin/open', [fullBoardURL])
-            if (openResult.result) {
-            } else {
-                this.UI.alert('Can not open HTML in browser', openResult.output)
+            // Load story.js file and eval it
+            const storyPath = this.mockupsPath + "/viewer/story.js"
+            let storyJS = Utils.readFile(storyPath)
+            if (undefined == storyJS) {
+                this.UI.alert('Error', "Can't find mockups on path: " + this.mockupsPath)
+                return false
             }
+            String.prototype.replaceAllMe = function (search, replacement) {
+                return this.split(search).join(replacement)
+            }
+            storyJS = Utils.readFile(storyPath).replace("var story = {", "this.story = {")
+            storyJS = storyJS.replaceAllMe("$.extend(new ViewerPage(),", "").replaceAllMe("})", "}")
+            eval(storyJS)
+
+            // Build page list
+            this.miroExportInfoList = this.getArtboardsListForMiro()
+
+            // Publish        
+            log("publishToMiro: strart publishing")
+            api.uploadArtboardsToRTB(this.context, boardId, true)
+
+            // Show in browser
+            if (standalone) {
+                var fullBoardURL = boardURL + boardId;
+                const openResult = Utils.runCommand('/usr/bin/open', [fullBoardURL])
+                if (openResult.result) {
+                } else {
+                    this.UI.alert('Can not open HTML in browser', openResult.output)
+                }
+            }
+
+
+        }
+        catch (error) {
+            this.UI.alert('Publishing to Miro failed', error)
+        }
+        finally {
+            log("publishToMiro: done")
+
         }
 
     }
@@ -252,14 +262,25 @@ class Publisher {
         const Dom = require('sketch/dom')
         const jDoc = Dom.fromNative(publisher.doc)
 
+        let errors = ""
+
         log("Miro: build page list: start")
         for (var page of this.story.pages) {
             const artboard = jDoc.getLayerWithID(page["id"])
+            if (!artboard) {
+                if ("" != errors) errors += "\n"
+                errors += page['title']
+                continue
+            }
             var exportInfo = { "artboardID": page["id"], "artboard": artboard.sketchObject, "path": imagePath + page['image2x'] };
             exportInfoList.push(exportInfo);
         }
         log("Miro: build page list: done")
-        return exportInfoList; 1
+        if ("" != errors) {
+            this.UI.alert('Can not find by ID the following artboards', errors)
+            return null
+        }
+        return exportInfoList;
     }
 
 
