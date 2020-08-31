@@ -224,13 +224,16 @@ class SymbolViewer extends AbstractViewer {
             if (supportedTypes.indexOf(l.tp) >= 0) {
                 this._showElement(l, sSI)
             } else {
-                if ("SI" == l.tp) sSI = l
-                this._processLayerList(l.c, sSI)
+                this._processLayerList(l.c, "SI" == l.tp ? l : sSI)
             }
         }
     }
 
     _showElement(l, siLayer = null) {
+
+        if (l.n != null && l.n == "What are you selling") {
+            l = l
+        }
 
         var currentPanel = this.page
         l.finalX = l.x
@@ -307,7 +310,8 @@ class SymbolViewer extends AbstractViewer {
             // layer.b : shared library name, owner of style or symbol
             // layer.s : symbol name
             // layer.l : style name
-            // siLayer : symbol master, owner of the layer
+            // layer.tp : layer type: SI, Text, ShapePath or Image
+            // siLayer : symbol master, owner of the layer            
 
             if (symName != undefined) {
                 info = "<hr>" +
@@ -315,7 +319,7 @@ class SymbolViewer extends AbstractViewer {
                     "<div class='label'>" + "Symbol" + "</div>" +
                     "<div class='value'>" + symName + "</div>"
                 const libName = layer.b != undefined ? (layer.b + " (external)") :
-                    (siLayer && siLayer.b ? siLayer.b : "Document")
+                    (siLayer && siLayer.b ? siLayer.b + " (external)" : "Document")
                 info += "<div style='font-size:12px; color:var(--color-secondary)'>" + libName + "</div></div>"
 
             }
@@ -325,7 +329,7 @@ class SymbolViewer extends AbstractViewer {
                     "<div class='label'>" + "Style" + "</div>" +
                     "<div class='value'>" + styleName + "</div>"
                 const libName = layer.b != undefined ? (layer.b + " (external)") :
-                    (siLayer ? siLayer.b : "Document")
+                    (siLayer ? siLayer.b + " (external)" : "Document")
                 info += "<div style='font-size:12px; color:var(--color-secondary)'>" + libName + "</div></div>"
             }
 
