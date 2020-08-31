@@ -50,6 +50,7 @@ var onRun = function (context) {
     }
 
     // check is something to export
+    modeOptions['currentPage'] = doc.currentPage()
     if (mode == Constants.EXPORT_MODE_SELECTED_ARTBOARDS) {
         const filteredArtboards = []
         for (var i = 0; i < document.selectedLayers.length; i++) {
@@ -63,7 +64,6 @@ var onRun = function (context) {
         modeOptions['selectedArtboards'] = filteredArtboards
 
     } else if (mode == Constants.EXPORT_MODE_CURRENT_PAGE) {
-        modeOptions['currentPage'] = doc.currentPage()
     } else {
         return
     }
