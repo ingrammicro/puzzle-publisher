@@ -304,12 +304,18 @@ class SymbolViewer extends AbstractViewer {
             const symInfo = symName != undefined ? viewer.symbolViewer._findSymbolAndLibBySymbolName(symName) : undefined
 
             var info = ""
+            // layer.b : shared library name, owner of style or symbol
+            // layer.s : symbol name
+            // layer.l : style name
+            // siLayer : symbol master, owner of the layer
+
             if (symName != undefined) {
                 info = "<hr>" +
                     "<div class='block'>" +
                     "<div class='label'>" + "Symbol" + "</div>" +
                     "<div class='value'>" + symName + "</div>"
-                const libName = layer.b != undefined ? (layer.b + " (external)") : (siLayer && siLayer.b ? siLayer.b : "Document")
+                const libName = layer.b != undefined ? (layer.b + " (external)") :
+                    (siLayer && siLayer.b ? siLayer.b : "Document")
                 info += "<div style='font-size:12px; color:var(--color-secondary)'>" + libName + "</div></div>"
 
             }
@@ -318,7 +324,8 @@ class SymbolViewer extends AbstractViewer {
                     "<div class='block'>" +
                     "<div class='label'>" + "Style" + "</div>" +
                     "<div class='value'>" + styleName + "</div>"
-                const libName = layer.b != undefined ? (layer.b + " (external)") : (siLayer ? siLayer.b : "Document")
+                const libName = layer.b != undefined ? (layer.b + " (external)") :
+                    (siLayer ? siLayer.b : "Document")
                 info += "<div style='font-size:12px; color:var(--color-secondary)'>" + libName + "</div></div>"
             }
 
