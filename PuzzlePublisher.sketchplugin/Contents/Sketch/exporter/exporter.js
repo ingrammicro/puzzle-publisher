@@ -154,7 +154,7 @@ class Exporter {
         if (undefined == targetPath) return false
 
         const sourcePath = this.context.plugin.url().URLByAppendingPathComponent("Contents").URLByAppendingPathComponent("Sketch").URLByAppendingPathComponent(resFolder)
-        //const sourcePath = this.context.plugin.url().URLByAppendingPathComponent("Contents").URLByAppendingPathComponent("Sketch").URLByAppendingPathComponent(resFolder).path();        
+        //const sourcePath = this.context.plugin.url().URLByAppendingPathComponent("Contents").URLByAppendingPathComponent("Sketch").URLByAppendingPathComponent(resFolder).path();
 
         let error = MOPointer.alloc().init();
         if (!fileManager.copyItemAtPath_toPath_error(sourcePath, targetPath, error)) {
@@ -248,7 +248,7 @@ class Exporter {
             //log(" buildPreviews: "+file)
             var fileName = this.fullImagesPath + "/" + file
 
-            let args = ["-Z", "300", fileName, "--out", this.imagesPath + "previews/"]
+            let args = ["-Z", "300", fileName, "--out", this.imagesPath + "/"]
             let res = pub.runToolWithArgs("/usr/bin/sips", args)
 
             if (!res.result) {
@@ -321,7 +321,7 @@ class Exporter {
             // Build main HTML file
             if (!this.createMainHTML()) return false
 
-            // Build Story.js with hotspots  
+            // Build Story.js with hotspots
             this.generateJSStoryBegin();
             let index = 0;
 
@@ -390,7 +390,7 @@ class Exporter {
         this.imagesPath = this._outputPath + "/" + Constants.IMAGES_DIRECTORY;
         this.fullImagesPath = selectedPath + "/" + this.docName + Constants.FULLIMAGES_DIRPOSTFIX;
 
-        const previewPath = this.imagesPath + "previews/"
+        const previewPath = this.imagesPath + "/"
         if (!fileManager.fileExistsAtPath(previewPath)) {
             error = MOPointer.alloc().init();
             log(previewPath)
