@@ -106,7 +106,7 @@ class GalleryViewer extends AbstractViewer {
             id: "img_gallery_" + page.index,
             class: "gallery-image",
             alt: page.title,
-            src: encodeURIComponent(viewer.files) + '/' + encodeURIComponent(imageURI),
+            src: encodeURIComponent(viewer.files) + '/previews/' + encodeURIComponent(imageURI),
         });
 
         img.appendTo(divMain);
@@ -122,7 +122,7 @@ class GalleryViewer extends AbstractViewer {
             alt: page.title,
             text: page.title,
         });
-
+        
         title.appendTo(divTitle);
         divTitle.appendTo(divMain);
     }
