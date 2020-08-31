@@ -86,7 +86,7 @@ class PZLayer {
                 const lib = sSymbolMaster.getLibrary()
                 this.smName = sSymbolMaster.name + ""
                 if (lib) {
-                    this.smLib = lib.name
+                    this.sharedLib = lib.name
                     pzDoc.usedLibs[lib.name] = true
                 } else {
 
@@ -102,7 +102,7 @@ class PZLayer {
                 this.styleName = sharedStyle.name
                 const lib = sharedStyle.getLibrary()
                 if (lib) {
-                    this.smLib = lib.name
+                    this.sharedLib = lib.name
                     pzDoc.usedLibs[lib.name] = true
                 }
             }
@@ -397,7 +397,7 @@ class PZLayer {
         this.h = this.frame.height
         this.s = this.smName
         this.l = this.styleName
-        this.b = this.smLib
+        this.b = this.sharedLib
         this.c = this.childs
         this.tp = this.isSymbolInstance ? "SI" : this.slayer.type
         if (!this.isSymbolInstance) this.n = this.name
@@ -419,7 +419,7 @@ class PZLayer {
         this.constrains = undefined
         this.smName = undefined
         this.styleName = undefined
-        this.smLib = undefined
+        this.sharedLib = undefined
         this.text = undefined
         this.childs = undefined
         //

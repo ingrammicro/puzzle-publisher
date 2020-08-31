@@ -7,7 +7,7 @@ const replaceValidKeys = [
     "c", // childs
     "s", // smName
     "l", //styleName
-    "text", "comment", "smLib"]
+    "text", "comment", "sharedLib"]
 // smName: symbol master Name
 function replacer(key, value) {
     // Pass known keys and array indexes
