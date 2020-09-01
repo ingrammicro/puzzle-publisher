@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.8.8 (1 Sep 2020)
+Group Miro boards by project
+
 ##  Version 14.8.7 (31 Aug 2020)
 Fixed image paths in Gallery
 Improved shared style/symbol information in Element Inspector
