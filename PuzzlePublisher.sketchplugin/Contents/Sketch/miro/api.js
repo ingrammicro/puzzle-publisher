@@ -134,6 +134,9 @@ function Api() {
                                 title: accountBoards[j]["title"],
                                 lastOpenedByMeDate: accountBoards[j]["lastOpenedByMeDate"]
                             };
+                            if (accountBoards[j]['project'] != null) {
+                                board['project'] = accountBoards[j]['project']["title"]
+                            }
                             boards.push(board);
                         }
                     }
@@ -202,7 +205,7 @@ function Api() {
         var result = null;
 
         if (token) {
-            var url = "boards/?sort=LAST_OPENED&attachment=" + accountId + "&fields=title,id,currentUserPermission{role},lastOpenedByMeDate&limit=1000";
+            var url = "boards/?sort=LAST_OPENED&attachment=" + accountId + "&fields=title,project,id,currentUserPermission{role},lastOpenedByMeDate&limit=1000";
             result = this.request(context, url, "GET", null);
         }
 

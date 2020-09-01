@@ -244,6 +244,26 @@ class Utils {
         }
     }
 
+    static getMiroBoardsGroupedByProject(context) {
+        const boards = api.getBoards()
+        let projects = boards.map(el => el["project"]).filter(function (x, i, a) {
+            return x != undefined && a.indexOf(x) === i;
+        });
+        projects.sort()
+        let groupedBoards = []
+        projects.forEach(function (project) {
+            groupedBoards.push("--- " + project + " ----")
+            boards.filter(el => el["project"] == project).forEach(el => groupedBoards.push(el['title']))
+        })
+        const boardsWithouProject = boards.filter(el => !("project" in el))
+        if (boardsWithouProject.length) {
+            if (projects.length) groupedBoards.push("--- " + "Out of projects" + " ----")
+            boardsWithouProject.forEach(el => groupedBoards.push(el['title']))
+        }
+
+        return groupedBoards
+    }
+
     static testMiro(context, email, password, board) {
         const UI = require('sketch/ui')
 

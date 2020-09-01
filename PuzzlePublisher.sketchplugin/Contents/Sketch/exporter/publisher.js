@@ -502,9 +502,9 @@ class Publisher {
 
 
                 const currentBoard = input.stringValue() + ""
-                const options = api.getBoards().map(b => b.title)
+                const options = Utils.getMiroBoardsGroupedByProject()
                 let currentBoardIndex = currentBoard != "" ? options.indexOf(currentBoard) : 0
-                if (currentBoardIndex < 0) currentBoardIndex = 0
+                //if (currentBoardIndex < 0) currentBoardIndex = 0
 
                 dialog.addSelect("miroBoard", "", currentBoardIndex, options, 350)
 
