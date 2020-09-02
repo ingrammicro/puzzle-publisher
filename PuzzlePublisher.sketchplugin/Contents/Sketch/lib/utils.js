@@ -279,7 +279,7 @@ class Utils {
 
         var values = [NSMutableArray array];
         [values addObject: email];
-        [values addObject: password];
+        [values addObject: encodeHtmlSpecialCharacters(password)];
 
         var data = [[NSDictionary alloc] initWithObjects: values forKeys: keys]
 
@@ -288,6 +288,7 @@ class Utils {
             if (response.error) {
                 var messages = getMessagesByError(response.error);
 
+                log(email + "/" + password + "/")
 
                 if (messages.alert) {
                     UI.alert("Can't connect to Miro", messages.alert)
