@@ -1,6 +1,10 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.8.10 (2 Sep 2020)
+Fixed login to Miro for passwords with special characters
+Improved publishing to Miro
+
 ##  Version 14.8.8 (1 Sep 2020)
 Group Miro boards by project
 

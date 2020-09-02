@@ -325,9 +325,15 @@ function Api() {
             var width = absoluteInfluenceRect.size.width;
             var height = absoluteInfluenceRect.size.height;
 
-            if ((xPos - rightX) > 300) {
-                marginX -= (xPos - rightX) - 300
+            if ((xPos - largeX) > 300) {
+                log("name: " + artboard.name())
+                log("old xPos: " + xPos)
+                log("largeX: " + largeX)
+                log("old MarginX: " + marginX)
+                marginX -= xPos - largeX - 300
+                log("new MarginX: " + marginX)
                 xPos = absoluteInfluenceRect.origin.x + marginX + pageMarginX;
+                log("new xPos: " + xPos)
             }
 
             var centralXPos = width / 2 + xPos;
