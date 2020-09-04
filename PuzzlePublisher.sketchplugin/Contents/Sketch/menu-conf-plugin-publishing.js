@@ -103,5 +103,9 @@ var onRun = function (context) {
     }
     dialog.finish()
 
-};
+    // If connection to Miro specified then show a message
+    if (miroEmail != "") {
+        require('sketch/ui').alert('Success', 'Miro credentials have been verified successfully')
+    }
 
+};
