@@ -9,7 +9,7 @@ Sketch = require('sketch/dom')
 
 class PZArtboard extends PZLayer {
 
-    constructor(slayer, pageId) {
+    constructor(slayer) {
         if (DEBUG) exporter.logMsg("PZArtboard.create id=" + slayer.name)
 
         // init Artboard own things !!! before object construction !!!
@@ -41,7 +41,6 @@ class PZArtboard extends PZLayer {
         this.fixedLayers = [] // list of layers which are configured as fixed
         this.nextLinkIndex = 0 // we need it to generate uniq id of the every link
         this.imageLayers = [] // list of all Image childs
-        this.pageId = pageId
 
         // check if the page name is unique in document
         if (this.name in pzDoc.artboardsDict) {
