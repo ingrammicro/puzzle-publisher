@@ -250,7 +250,7 @@ class Publisher {
         }
         finally {
             log("publishToMiro: done")
-
+            require('sketch/ui').alert('Success', 'Published successfully')
         }
 
     }
@@ -265,7 +265,7 @@ class Publisher {
         let errors = ""
 
         log("Miro: build page list: start")
-        for (var page of this.story.pages) {
+        for (var page of this.story.pages.filter(el => "external" != el.type)) {
             const artboard = jDoc.getLayerWithID(page["id"])
             if (!artboard) {
                 if ("" != errors) errors += "\n"
