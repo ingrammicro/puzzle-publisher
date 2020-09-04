@@ -1,6 +1,10 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.8.11 (2 Sep 2020)
+Fixed exporting of external "external" artboards
+Added success messages to Miro operations
+
 ##  Version 14.8.10 (2 Sep 2020)
 Fixed login to Miro for passwords with special characters
 Improved publishing to Miro
