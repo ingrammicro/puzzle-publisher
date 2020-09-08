@@ -485,15 +485,15 @@ function createViewer(story, files) {
             var link = null;
             for (var i = story.pages.length - 1; i >= 0; i--) {
                 page = story.pages[i];
-                if (page.type === 'modal') continue;
+                if (page.type === 'modal' || page.type === 'overlay') continue;
                 for (var li = 0; li < page.links.length; li++) {
                     link = page.links[li];
                     if (link.page != null && link.page == modalIndex) {
-                        // check if the source link is in overlay?
+                        /*// check if the source link is in overlay?
                         if (page.type === 'overlay') {
                             // ok, now find the source page for this overlay
                             return this.getModalFirstParentPageIndex(i)
-                        }
+                        }*/
                         // return the page index which has link to modal
                         return i;
                     }
