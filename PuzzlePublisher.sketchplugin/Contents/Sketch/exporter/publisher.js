@@ -231,7 +231,10 @@ class Publisher {
 
             // Publish        
             log("publishToMiro: strart publishing")
-            api.uploadArtboardsToRTB(this.context, boardId, true)
+            const result = api.uploadArtboardsToRTB(this.context, boardId, true)
+            if (result != api.UploadEnum.SUCCESS) {
+                throw "Failed to publish"
+            }
 
             // Show in browser
             if (standalone) {
@@ -242,15 +245,13 @@ class Publisher {
                     this.UI.alert('Can not open HTML in browser', openResult.output)
                 }
             }
-
-
+            require('sketch/ui').alert('Success', 'Published successfully')
         }
         catch (error) {
             this.UI.alert('Publishing to Miro failed', error)
         }
         finally {
             log("publishToMiro: done")
-            require('sketch/ui').alert('Success', 'Published successfully')
         }
 
     }
@@ -272,7 +273,7 @@ class Publisher {
                 errors += page['title']
                 continue
             }
-            var exportInfo = { "artboardID": page["id"], "artboard": artboard.sketchObject, "path": imagePath + page['image2x'] };
+            var exportInfo = { "artboardID": page["id"], "artboard": artboard.sketchObject, "path": imagePath + page['image'] };
             exportInfoList.push(exportInfo);
         }
         log("Miro: build page list: done")

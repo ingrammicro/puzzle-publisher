@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.8.14 (17 Sep 2020)
+Fixed publishing to Miro
+
 ##  Version 14.8.13 (17 Sep 2020)
 Many improvements in image generation
 - Generate full images only if Miro settings configured

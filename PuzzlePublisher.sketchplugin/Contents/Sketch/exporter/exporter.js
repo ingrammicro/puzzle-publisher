@@ -81,7 +81,7 @@ class Exporter {
 
         // To know do we need full-size images or not
         const miroEmail = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_MIRO_EMAIL)
-        this.exportFullImages = !(this.miroEmail == undefined || this.miroEmail == null)
+        this.exportFullImages = !(miroEmail == undefined || miroEmail == null)
     }
 
     getManifest() {

@@ -439,7 +439,7 @@ class PZArtboard extends PZLayer {
 
         //this._getAllLayersMatchingPredicate(Sketch.getSelectedDocument().sketchObject)
 
-        log("  exportArtboardImages: running... " + this.name)
+        log("PZArtboard._exportImages: running... " + this.name)
         let scales = exporter.retinaImages ? [1, 2] : [1]
 
         // export fixed panels to their own image files
@@ -462,13 +462,14 @@ class PZArtboard extends PZLayer {
 
         if (exporter.exportFullImages) {
             // export full image        
+            if (DEBUG) exporter.logMsg("PZArtboard._exportImages: export full image")
             this._exportImage("full")
         }
 
         // export preview images (to use by Gallery and Inspector Viewer)        
         this._exportImage("preview")
 
-        log("  exportArtboardImages: done!")
+        log("PZArtboard._exportImages: done!")
     }
 
 
