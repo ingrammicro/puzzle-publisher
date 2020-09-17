@@ -1,6 +1,12 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.8.13 (17 Sep 2020)
+Many improvements in image generation
+- Generate full images only if Miro settings configured
+- Generate preview images by Sketch, not by external "sips" tool
+- Use retina images in Gallery on non-retinal diplays too
+
 ##  Version 14.8.12 (10 Sep 2020)
 Fixed direct link to modal called from overlay
 
