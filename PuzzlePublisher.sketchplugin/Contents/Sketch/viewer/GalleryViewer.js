@@ -84,7 +84,8 @@ class GalleryViewer extends AbstractViewer {
     }
 
     loadOnePage(page) {
-        var imageURI = story.hasRetina && viewer.isHighDensityDisplay() ? page.image2x : page.image;
+        //var imageURI = story.hasRetina && viewer.isHighDensityDisplay() ? page.image2x : page.image;
+        var imageURI = page.image2x
 
         var div = $('<div/>', {
             id: page.index,
@@ -114,7 +115,7 @@ class GalleryViewer extends AbstractViewer {
         divWrapper.appendTo(div);
 
         var divTitle = $('<div/>', {
-          class: "div-page-title"
+            class: "div-page-title"
         });
 
         var title = $('<span/>', {
@@ -122,7 +123,7 @@ class GalleryViewer extends AbstractViewer {
             alt: page.title,
             text: page.title,
         });
-        
+
         title.appendTo(divTitle);
         divTitle.appendTo(divMain);
     }

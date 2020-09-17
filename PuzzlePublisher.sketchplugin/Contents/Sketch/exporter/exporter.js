@@ -39,7 +39,7 @@ class Exporter {
         }
         // @workaround for Sketch 52
 
-        this.prepareOutputFolder(selectedPath);
+        this.initPaths(selectedPath)
 
         this.exportOptions = exportOptions
         this._readSettings()
@@ -248,7 +248,7 @@ class Exporter {
             //log(" buildPreviews: "+file)
             var fileName = this.fullImagesPath + "/" + file
 
-            let args = ["-Z", "300", fileName, "--out", this.imagesPath + "previews/"]
+            let args = ["--resampleWidth", "552", fileName, "--out", this.imagesPath + "previews/"]
             let res = pub.runToolWithArgs("/usr/bin/sips", args)
 
             if (!res.result) {
@@ -306,6 +306,9 @@ class Exporter {
 
     exportArtboards() {
         log("exportArtboards: running...")
+
+        // Prepare folders
+        this.prepareOutputFolder()
 
         // Copy static files
         if (!this.copyStatic("resources")) return false
@@ -369,12 +372,16 @@ class Exporter {
     }
 
 
-    prepareOutputFolder(selectedPath) {
+    initPaths(selectedPath) {
+        this._outputPath = selectedPath + "/" + this.docName
+        this.imagesPath = this._outputPath + "/" + Constants.IMAGES_DIRECTORY;
+        this.fullImagesPath = selectedPath + "/" + this.docName + Constants.FULLIMAGES_DIRPOSTFIX;
+    }
+
+
+    prepareOutputFolder() {
         let error;
         const fileManager = NSFileManager.defaultManager();
-
-        this._outputPath = selectedPath + "/" + this.docName
-
 
         if (fileManager.fileExistsAtPath(this._outputPath)) {
             error = MOPointer.alloc().init();
@@ -387,13 +394,9 @@ class Exporter {
             log(error.value().localizedDescription());
         }
 
-        this.imagesPath = this._outputPath + "/" + Constants.IMAGES_DIRECTORY;
-        this.fullImagesPath = selectedPath + "/" + this.docName + Constants.FULLIMAGES_DIRPOSTFIX;
-
         const previewPath = this.imagesPath + "previews/"
         if (!fileManager.fileExistsAtPath(previewPath)) {
             error = MOPointer.alloc().init();
-            log(previewPath)
             if (!fileManager.createDirectoryAtPath_withIntermediateDirectories_attributes_error(previewPath, true, null, error)) {
                 log(error.value().localizedDescription());
             }
