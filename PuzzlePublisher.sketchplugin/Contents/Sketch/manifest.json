@@ -7,7 +7,7 @@
     "identifier": "com.cloudblue.sketch.exporter",
     "appcast": "https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/appcast.xml",
     "compatibleVersion": "52",
-    "version": "14.8.12",
+    "version": "14.8.13",
     "icon": "icon.png",
     "commands": [
         {
