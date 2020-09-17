@@ -245,6 +245,11 @@ class Exporter {
 
     buildPreviews() {
         log(" buildPreviews: running...")
+        // WE NEED THE FOLLOWING DUMMY CODE TO GET UNDO CHANGES ( see PZDoc.undoChanges() )
+        const pub = new Publisher(this.context, this.ndoc);
+        let args = ["-Z", "300", "fileName", "--out", this.imagesPath + "previews/"]
+        let res = pub.runToolWithArgs("/usr/bin/sips", args)
+
         log(" buildPreviews: done!!!!!")
     }
 
