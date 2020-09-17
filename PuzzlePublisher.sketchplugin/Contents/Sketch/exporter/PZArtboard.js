@@ -378,25 +378,43 @@ class PZArtboard extends PZLayer {
     //------------------ GENERATE IMAGES  ------------------
 
 
-    _getImageName(scale, panelPostix = "") {
-        const suffix = scale == 2 ? "@2x" : "";
+    _getImageName(scale, injectScaleToName = true, panelPostix = "") {
+        const suffix = injectScaleToName && scale == 2 ? "@2x" : "";
         return Utils.toFilename(this.name, false) + panelPostix + suffix + "." + exporter.fileType;
     }
 
-    _exportImage(scale, layer, nlayer, panelPostix = "", addToExported = true) {
+    // exportType:  full, layer, preview, artboard
+    _exportImage(exportType, nlayer = null, panelPostix = "") {
+        nlayer = nlayer || this.nlayer
         if (DEBUG) exporter.logMsg("   exportImage() for " + nlayer.name())
 
-        const imageName = this._getImageName(scale, panelPostix)
-        const imagePath = (!addToExported ? exporter.imagesPath : exporter.fullImagesPath) + imageName
-        let slice = null
+        let scales = null
+        let imageBasePath = exporter.imagesPath
+        let injectScaleToName = true
 
-        if (addToExported) exporter.exportedImages.push(imageName)
+        if ('artboard' == exportType || 'layer' == exportType) {
+            scales = exporter.retinaImages ? [1, 2] : [1]
+        } else if ('full' == exportType) {
+            scales = [2]
+            imageBasePath = exporter.fullImagesPath
+            injectScaleToName = false
+        } else if ('preview' == exportType) {
+            scales = [522 / nlayer.frame().width()]
+            imageBasePath = exporter.previewsImagePath
+            injectScaleToName = false
+        }
 
-        slice = MSExportRequest.exportRequestsFromExportableLayer(nlayer).firstObject();
-        slice.scale = scale;
-        slice.saveForWeb = false;
-        slice.format = exporter.fileType;
-        exporter.ndoc.saveArtboardOrSlice_toFile(slice, imagePath);
+        for (let scale of scales) {
+            const imageName = this._getImageName(scale, injectScaleToName, panelPostix)
+            const imagePath = imageBasePath + imageName
+            let slice = null
+
+            slice = MSExportRequest.exportRequestsFromExportableLayer(nlayer).firstObject();
+            slice.scale = scale;
+            slice.saveForWeb = false;
+            slice.format = exporter.fileType;
+            exporter.ndoc.saveArtboardOrSlice_toFile(slice, imagePath);
+        }
     }
 
     // new experimental code to export images
@@ -431,9 +449,7 @@ class PZArtboard extends PZLayer {
         // and their artefacts (shadows)
         this._hideFixedLayers(true)
 
-        for (var scale of scales) {
-            this._exportImage(scale, this, this.nlayer, '', false)
-        }
+        this._exportImage("artboard")
 
         // export images for Element Inspector
         if (exporter.enabledJSON) {
@@ -444,8 +460,13 @@ class PZArtboard extends PZLayer {
         // ! temporary disabled because an exported image still shows hidden layers
         this._hideFixedLayers(false)
 
-        // export full image
-        this._exportImage(2, this, this.nlayer, '', true)
+        if (exporter.exportFullImages) {
+            // export full image        
+            this._exportImage("full")
+        }
+
+        // export preview images (to use by Gallery and Inspector Viewer)        
+        this._exportImage("preview")
 
         log("  exportArtboardImages: done!")
     }
@@ -460,9 +481,7 @@ class PZArtboard extends PZLayer {
             const artboard = this._findArtboardByName(layer.name + "@")
             if (!artboard) continue
             //
-            for (var scale of scales) {
-                this._exportImage(scale, undefined, artboard.sketchObject, "-" + layer.name, false)
-            }
+            this._exportImage("layer", artboard.sketchObject, "-" + layer.name)
             //
         }
         log('_exportOverlayLayers: done!')
@@ -510,10 +529,8 @@ class PZArtboard extends PZLayer {
             // for div and  float fixed layer we need to generate its own image files
             if (layer.isFloat || layer.isFixedDiv) {
                 //this._exportImage2('1, 2',layer.parent.slayer)         
-                for (var scale of scales) {
-                    const l = layer.parent.isSymbolInstance ? layer : layer
-                    this._exportImage(scale, l, l.nlayer, "-" + layer.fixedIndex, false)
-                }
+                const l = layer.parent.isSymbolInstance ? layer : layer
+                this._exportImage("layer", l.nlayer, "-" + layer.fixedIndex)
             }
 
             // restore original fixed panel shadows

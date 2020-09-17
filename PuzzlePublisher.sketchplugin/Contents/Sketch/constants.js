@@ -6,6 +6,7 @@ const Constants = {
     LOGGING: false,
     SERVER_ANNOUNCE_SCRIPT: "announce.php",
     IMAGES_DIRECTORY: "images/",
+    PREVIEWS_DIRECTORY: "previews/",
     FULLIMAGES_DIRPOSTFIX: "-FULLIMAGES/",
     VIEWER_DIRECTORY: "viewer/",
     RESOURCES_DIRECTORY: "resources/",

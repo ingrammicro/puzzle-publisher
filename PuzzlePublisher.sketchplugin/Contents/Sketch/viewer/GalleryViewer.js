@@ -84,8 +84,7 @@ class GalleryViewer extends AbstractViewer {
     }
 
     loadOnePage(page) {
-        //var imageURI = story.hasRetina && viewer.isHighDensityDisplay() ? page.image2x : page.image;
-        var imageURI = page.image2x
+        var imageURI = page.image
 
         var div = $('<div/>', {
             id: page.index,

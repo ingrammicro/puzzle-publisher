@@ -29,7 +29,6 @@ class Exporter {
         this.jsStory = '';
         this.errors = []
         this.warnings = []
-        this.exportedImages = []
 
         // workaround for Sketch 52s
         this.docName = this._clearCloudName(this.ndoc.cloudName())
@@ -79,6 +78,10 @@ class Exporter {
         let fileType = Settings.settingForKey(SettingKeys.PLUGIN_FILETYPE)
         if (fileType == undefined || fileType == "") fileType = "PNG"
         this.fileType = fileType.toLowerCase()
+
+        // To know do we need full-size images or not
+        const miroEmail = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_MIRO_EMAIL)
+        this.exportFullImages = !(this.miroEmail == undefined || this.miroEmail == null)
     }
 
     getManifest() {
@@ -242,21 +245,6 @@ class Exporter {
 
     buildPreviews() {
         log(" buildPreviews: running...")
-        const pub = new Publisher(this.context, this.ndoc);
-
-        for (var file of this.exportedImages) {
-            //log(" buildPreviews: "+file)
-            var fileName = this.fullImagesPath + "/" + file
-
-            let args = ["--resampleWidth", "552", fileName, "--out", this.imagesPath + "previews/"]
-            let res = pub.runToolWithArgs("/usr/bin/sips", args)
-
-            if (!res.result) {
-                pub.showOutput(res)
-                break
-            }
-        }
-
         log(" buildPreviews: done!!!!!")
     }
 
@@ -351,6 +339,7 @@ class Exporter {
             this.logError(error)
         }
         finally {
+            if (DEBUG) exporter.logMsg("exportArtboards: undo changes")
             this.mDoc.undoChanges()
 
         }
@@ -376,6 +365,7 @@ class Exporter {
         this._outputPath = selectedPath + "/" + this.docName
         this.imagesPath = this._outputPath + "/" + Constants.IMAGES_DIRECTORY;
         this.fullImagesPath = selectedPath + "/" + this.docName + Constants.FULLIMAGES_DIRPOSTFIX;
+        this.previewsImagePath = this.imagesPath + Constants.PREVIEWS_DIRECTORY
     }
 
 
@@ -394,10 +384,9 @@ class Exporter {
             log(error.value().localizedDescription());
         }
 
-        const previewPath = this.imagesPath + "previews/"
-        if (!fileManager.fileExistsAtPath(previewPath)) {
+        if (!fileManager.fileExistsAtPath(this.previewsImagePath)) {
             error = MOPointer.alloc().init();
-            if (!fileManager.createDirectoryAtPath_withIntermediateDirectories_attributes_error(previewPath, true, null, error)) {
+            if (!fileManager.createDirectoryAtPath_withIntermediateDirectories_attributes_error(this.previewsImagePath, true, null, error)) {
                 log(error.value().localizedDescription());
             }
         } else {
