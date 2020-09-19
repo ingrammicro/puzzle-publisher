@@ -725,23 +725,26 @@ function createViewer(story, files) {
             return search
         },
 
-        refresh_url: function (page, extURL = null, pushHistory = true) {
+        refresh_url: function (page, extURL = "", pushHistory = true) {
             if (this.urlLocked) return
 
             this.urlLastIndex = page.index
             $(document).attr('title', story.title + ': ' + page.title)
 
             if (this.isEmbed) {
-                if (null == extURL) extURL = ""
-                extURL += "&e=1"
+                if (extURL != '') extURL += "&"
+                extURL += "e=1"
             }
-            if (this.galleryViewer && this.galleryViewer.isVisible(()) {
-                extURL += "&g=1"
+            if (this.galleryViewer && this.galleryViewer.isVisible()) {
+                if (extURL != '') extURL += "&"
+                extURL += "g=1"
             }
 
+            let newPath = document.location.pathname + this._getSearchPath(page, extURL)
             if (pushHistory) {
-                let newPath = document.location.pathname + this._getSearchPath(page, extURL)
                 window.history.pushState(newPath, page.title, newPath);
+            } else {
+                window.history.replaceState({}, page.title, newPath);
             }
         },
 

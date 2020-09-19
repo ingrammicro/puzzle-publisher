@@ -404,7 +404,7 @@ class SymbolViewer extends AbstractViewer {
                         <div class='block'>
                         <div class='label'>Content&nbsp;<a class="svlink" href="`+ url + `">Download</a>`
                 let cssClass = "code value"
-                const width = 200 //viewer.defSidebarWidth - 40
+                const width = "100%" //viewer.defSidebarWidth - 40
                 info += `</div ><div id='sv_content' class="` + cssClass + `"><img ` + `width="` + width + `" src="` + url + `"/></div>`
             }
 
