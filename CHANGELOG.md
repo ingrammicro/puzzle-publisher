@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.9.1 (19 Sep 2020)
+Gallery can be opened on document load using &g=1 search param
+
 ##  Version 14.8.14 (17 Sep 2020)
 Fixed publishing to Miro
 
