@@ -63,11 +63,14 @@ class GalleryViewer extends AbstractViewer {
         $('#searchInput').focus()
 
         super._showSelf()
+
+        viewer.refresh_url(viewer.currentPage, null, false)
     }
 
     _hideSelf() {
         $('#gallery-modal').addClass('hidden');
         super._hideSelf()
+        viewer.refresh_url(viewer.currentPage, null, false)
     }
 
 

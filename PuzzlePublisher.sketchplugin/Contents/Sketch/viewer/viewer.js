@@ -191,6 +191,9 @@ function createViewer(story, files) {
             if (this.urlParams.get('v') != null && this.versionViewer) {
                 this.versionViewer.toggle()
             }
+            if (this.urlParams.get('g') != null && this.galleryViewer) {
+                this.galleryViewer.toggle()
+            }
         },
 
         initParseGetParams: function () {
@@ -722,7 +725,7 @@ function createViewer(story, files) {
             return search
         },
 
-        refresh_url: function (page, extURL = null) {
+        refresh_url: function (page, extURL = null, pushHistory = true) {
             if (this.urlLocked) return
 
             this.urlLastIndex = page.index
@@ -732,10 +735,14 @@ function createViewer(story, files) {
                 if (null == extURL) extURL = ""
                 extURL += "&e=1"
             }
+            if (this.galleryViewer && this.galleryViewer.isVisible(()) {
+                extURL += "&g=1"
+            }
 
-            let newPath = document.location.pathname + this._getSearchPath(page, extURL)
-
-            window.history.pushState(newPath, page.title, newPath);
+            if (pushHistory) {
+                let newPath = document.location.pathname + this._getSearchPath(page, extURL)
+                window.history.pushState(newPath, page.title, newPath);
+            }
         },
 
         /*
@@ -746,11 +753,11 @@ function createViewer(story, files) {
                 redirectOverlayLinkIndex: undefined,
             }
             var hash = location.hash;
-
+ 
             if (hash == null || hash.length == 0) {
                 hash = '#'
                 result.reset_url = true
-
+ 
             } else if (hash.indexOf('/') > 0) {
                 // read additonal parameters
                 var args = hash.split('/')
@@ -761,7 +768,7 @@ function createViewer(story, files) {
                 hash = hash.substring(0, hash.indexOf('/'))
                 hash = '#' + hash.replace(/^[^#]*#?(.*)$/, '$1');
             }
-
+ 
             result.page_name = hash
             return result
         },*/
