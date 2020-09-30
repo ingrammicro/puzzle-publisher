@@ -92,17 +92,18 @@ class Exporter {
 
 
     logMsg(msg) {
-        log(msg)
+        const d = new Date()
+        log(d.getHours() + ":" + d.getMinutes() + "." + d.getSeconds() + " " + msg)
     }
 
 
     logWarning(text) {
-        log("[ WARNING ] " + text)
+        this.logMsg("[ WARNING ] " + text)
         this.warnings.push(text)
     }
 
     logError(error) {
-        log("[ ERROR ] " + error)
+        this.logMsg("[ ERROR ] " + error)
         this.errors.push(error)
     }
 
@@ -161,7 +162,7 @@ class Exporter {
 
         let error = MOPointer.alloc().init();
         if (!fileManager.copyItemAtPath_toPath_error(sourcePath, targetPath, error)) {
-            log(error.value().localizedDescription());
+            this.logMsg(error.value().localizedDescription());
             return this.logError("copyStatic(): Can't copy '" + sourcePath + "' to directory '" + targetPath + "'. Error: " + error.value().localizedDescription());
         }
 
@@ -230,27 +231,27 @@ class Exporter {
     compressImages() {
         if (!this.exportOptions.compress) return true
 
-        log(" compressImages: running...")
+        this.logMsg(" compressImages: running...")
         const pub = new Publisher(this.context, this.ndoc);
         pub.copyScript("compress2.sh")
         var url = pub.context.plugin.urlForResourceNamed('advpng').path()
         const res = pub.runScriptWithArgs("compress2.sh", [this.imagesPath, url])
         if (!res.result) {
-            log(" compressImages: failed!")
+            this.logMsg(" compressImages: failed!")
         } else
-            log(" compressImages: done!")
+            this.logMsg(" compressImages: done!")
 
         pub.showOutput(res)
     }
 
     buildPreviews() {
-        log(" buildPreviews: running...")
+        this.logMsg(" buildPreviews: running...")
         // WE NEED THE FOLLOWING DUMMY CODE TO GET UNDO CHANGES ( see PZDoc.undoChanges() )
         const pub = new Publisher(this.context, this.ndoc);
         let args = ["-Z", "300", "fileName", "--out", this.imagesPath + "previews/"]
         let res = pub.runToolWithArgs("/usr/bin/sips", args)
 
-        log(" buildPreviews: done!!!!!")
+        this.logMsg(" buildPreviews: done!!!!!")
     }
 
     createViewerFile(fileName, folder = Constants.VIEWER_DIRECTORY) {
@@ -298,7 +299,7 @@ class Exporter {
 
 
     exportArtboards() {
-        log("exportArtboards: running...")
+        this.logMsg("exportArtboards: running...")
 
         // Prepare folders
         this.prepareOutputFolder()
@@ -349,7 +350,7 @@ class Exporter {
 
         }
 
-        log("exportArtboards: done!")
+        this.logMsg("exportArtboards: done!")
 
         return true
     }
@@ -381,18 +382,18 @@ class Exporter {
         if (fileManager.fileExistsAtPath(this._outputPath)) {
             error = MOPointer.alloc().init();
             if (!fileManager.removeItemAtPath_error(this._outputPath, error)) {
-                log(error.value().localizedDescription());
+                this.logMsg(error.value().localizedDescription());
             }
         }
         error = MOPointer.alloc().init();
         if (!fileManager.createDirectoryAtPath_withIntermediateDirectories_attributes_error(this._outputPath, false, null, error)) {
-            log(error.value().localizedDescription());
+            this.logMsg(error.value().localizedDescription());
         }
 
         if (!fileManager.fileExistsAtPath(this.previewsImagePath)) {
             error = MOPointer.alloc().init();
             if (!fileManager.createDirectoryAtPath_withIntermediateDirectories_attributes_error(this.previewsImagePath, true, null, error)) {
-                log(error.value().localizedDescription());
+                this.logMsg(error.value().localizedDescription());
             }
         } else {
             Utils.removeFilesWithExtension(this.imagesPath, "png", "jpg");

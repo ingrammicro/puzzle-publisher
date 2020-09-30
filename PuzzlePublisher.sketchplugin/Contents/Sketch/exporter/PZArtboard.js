@@ -423,7 +423,7 @@ class PZArtboard extends PZLayer {
         if (DEBUG) exporter.logMsg("exportImage()");
 
         const imagePath = exporter.imagesPath // + this._getImageName(scales)
-        log('_exportImage2 name=' + slayer.name)
+        exporter.logMsg('_exportImage2 name=' + slayer.name)
         const options = {
             scales: scales,
             output: exporter.imagesPath,
@@ -439,7 +439,7 @@ class PZArtboard extends PZLayer {
 
         //this._getAllLayersMatchingPredicate(Sketch.getSelectedDocument().sketchObject)
 
-        log("PZArtboard._exportImages: running... " + this.name)
+        if (DEBUG) exporter.logMsg("PZArtboard._exportImages: running... " + this.name)
         let scales = exporter.retinaImages ? [1, 2] : [1]
 
         // export fixed panels to their own image files
@@ -469,12 +469,12 @@ class PZArtboard extends PZLayer {
         // export preview images (to use by Gallery and Inspector Viewer)        
         this._exportImage("preview")
 
-        log("PZArtboard._exportImages: done!")
+        if (DEBUG) exporter.logMsg("PZArtboard._exportImages: done!")
     }
 
 
     _exportOverlayLayers() {
-        log('_exportOverlayLayers: running')
+        if (DEBUG) exporter.logMsg('_exportOverlayLayers: running')
         let scales = exporter.retinaImages ? [1, 2] : [1]
         for (const layer of this.overlayLayers) {
             // log('_exportOverlayLayers: '+layer.name)               
@@ -485,11 +485,11 @@ class PZArtboard extends PZLayer {
             this._exportImage("layer", artboard.sketchObject, "-" + layer.name)
             //
         }
-        log('_exportOverlayLayers: done!')
+        if (DEBUG) exporter.logMsg('_exportOverlayLayers: done!')
     }
 
     _exportImageLayers() {
-        log('_exportImageLayers: running')
+        if (DEBUG) exporter.logMsg('_exportImageLayers: running')
         for (var layer of this.imageLayers) {
             const path = exporter._outputPath + "/" + layer._buildImageURL()
             if (DEBUG) exporter.logMsg(path)
@@ -511,7 +511,7 @@ class PZArtboard extends PZLayer {
                 exporter.ndoc.saveArtboardOrSlice_toFile(slice, path)
             }
         }
-        log('_exportImageLayers: done')
+        if (DEBUG) exporter.logMsg('_exportImageLayers: done')
     }
 
 

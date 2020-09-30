@@ -43,8 +43,6 @@ class Publisher {
         this.fullImagesPath = this.allMockupsdDir + "/" + this.docFolder + Constants.FULLIMAGES_DIRPOSTFIX;
         this.miroExportInfoList = []
 
-        log('this.mockupsPath=' + this.mockupsPath)
-
         this.readOptions()
     }
 

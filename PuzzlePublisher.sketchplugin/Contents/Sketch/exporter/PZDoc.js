@@ -79,23 +79,23 @@ class PZDoc {
 
 
     buildLinks() {
-        log('PZDoc.buildLinks: running')
+        exporter.logMsg('PZDoc.buildLinks: running')
         for (var mLayer of this.mLinkedLayers) {
             mLayer.buildLinks(' ');
         }
-        log('PZDoc.buildLinks: stop')
+        exporter.logMsg('PZDoc.buildLinks: stop')
     }
 
 
     export() {
-        log(" PZDoc:run running...")
+        exporter.logMsg(" PZDoc:run running...")
         this.totalImages = 0
 
         for (var page of this.mPages) {
             page.export();
         }
 
-        log(" PZDoc:run done!")
+        exporter.logMsg(" PZDoc:run done!")
     }
 
 
@@ -113,7 +113,7 @@ class PZDoc {
             const libAssetsPath = this._getLibAssetsPath(lib)
             //Utils.cutLastPathFolder(lib.sDoc.path) + "/" + lib.jsLib.name
             const pathToSymbolTokens = libAssetsPath + "/" + Constants.SYMBOLTOKENFILE_POSTFIX
-            log('pathToSymbolTokens = ' + pathToSymbolTokens + " name=" + lib.jsLib.name)
+            exporter.logMsg('pathToSymbolTokens = ' + pathToSymbolTokens + " name=" + lib.jsLib.name)
             const inspectorData = Utils.readFile(pathToSymbolTokens)
             if (inspectors != "") inspectors += ","
             inspectors += '"' + Utils.toFilename(lib.jsLib.name) + '":' + (inspectorData ? inspectorData : "{}")
@@ -155,7 +155,7 @@ class PZDoc {
 
     getJSON() {
 
-        log(" getJSON: cleanup before saving...")
+        exporter.logMsg(" getJSON: cleanup before saving...")
         this.mAllLayers.forEach(l => {
             l.clearRefsBeforeJSON()
         });
@@ -164,9 +164,9 @@ class PZDoc {
             l.clearRefsBeforeJSON()
         });
 
-        log(" getJSON: running...")
+        exporter.logMsg(" getJSON: running...")
         const json = JSON.stringify(this.mAllArtboards)//, replacer, null)
-        log(" getJSON: done!")
+        exporter.logMsg(" getJSON: done!")
 
         return json
     }
@@ -212,7 +212,7 @@ class PZDoc {
 
     getSymbolMasterByID(id) {
         if (!(id in this.sSymbols)) {
-            log('getSymbolMasterByID can not find symbol by ID=' + id)
+            exporter.logMsg('getSymbolMasterByID can not find symbol by ID=' + id)
             return undefined
         }
         return this.sSymbols[id]
@@ -268,17 +268,17 @@ class PZDoc {
     _getLibraries() {
         if (undefined != this.jsLibs) return this.jsLibs
 
-        log("_getLibraries: start")
+        exporter.logMsg("_getLibraries: start")
         this.jsLibs = []
 
         var libraries = require('sketch/dom').getLibraries()
         for (const jsLib of libraries) {
             if (!jsLib.valid || !jsLib.enabled) continue
-            log("_getLibraries: try to load document for library " + jsLib.name + "")
+            exporter.logMsg("_getLibraries: try to load document for library " + jsLib.name + "")
 
             const sDoc = jsLib.getDocument()
             if (!sDoc) {
-                log("_getLibraries: can't load document for library " + sDoc.path + "")
+                exporter.logMsg("_getLibraries: can't load document for library " + sDoc.path + "")
                 continue
             }
             this.jsLibs.push({
@@ -286,7 +286,7 @@ class PZDoc {
                 sDoc: sDoc
             })
         }
-        log("_getLibraries: finish")
+        exporter.logMsg("_getLibraries: finish")
         return this.jsLibs
     }
 
