@@ -5,6 +5,7 @@ class GalleryViewer extends AbstractViewer {
         super()
         this.isSidebarChild = false
         this.blockMainNavigation = true
+        this.enableTopNavigation = true
 
         this.searchInputFocused = false
     }

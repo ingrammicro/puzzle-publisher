@@ -124,6 +124,7 @@ const SettingKeys = {
     PLUGIN_DISABLE_ZOOM: "pluginDisableZoom",
     PLUGIN_COMMENTS_URL: "commentsURL",
     PLUGIN_GOOGLE_CODE: "googleCode",
+    PLUGIN_EXPORT_JS_CODE: "pluginExportJSCode",
     PLUGIN_SERVERTOOLS_PATH: "pluginServerToolsPath",
     PLUGIN_AUTHOR_NAME: "pluginAuthorName",
     PLUGIN_EXPORT_MODE: "exportMode",

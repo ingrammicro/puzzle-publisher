@@ -101,11 +101,15 @@ function buildMainHTML(options) {
         s += '<script type="text/javascript" src="' + options.commentsURL + '/comments.js' + verPostfix + '" charset="UTF-8"></script>\n';
     }
     s += '<script type="text/javascript">\n';
+    if (options.jsCode != '') {
+        s += 'function runJSCode(){' + options.jsCode + '}\n'
+    }
     s += '  var viewer = createViewer(story, "images");\n';
     if (options.commentsURL != '') {
         s += '  var comments = createComments();\n';
     }
     s += '</script>\n';
+
     if (options.googleCode != '') {
         if (options.googleCode.startsWith("GTM")) {
             let code = `
@@ -141,11 +145,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
     function showFAIconInfo(code){
         window.open("https://fontawesome.com/icons?d=gallery&q="+code,"_blank")
-    }                     
+    }                         
 </script > `
-    s += '<!--HEAD_INJECT-->\n';
-    s += '</head>\n';
-    s += '<body class="screen" style="background:' + options.backColor + '">\n';
+    s += '<!--HEAD_INJECT-->\n'
+    s += '</head>\n'
+    s += '<body class="screen" '
+    if (options.jsCode != '') {
+        s += ' onload="runJSCode()" '
+    }
+    s += 'style="background:' + options.backColor + '">\n'
 
     if (options.googleCode != '') {
         if (options.googleCode.startsWith("GTM")) {
@@ -232,28 +240,28 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     s += "            <div class=\"navLeft\">";
     s += "                <div id=\"menu\" class=\"menu\">";
     s += "                            <div class=\"groupe\">";
-    s += "                                <div class=\"item\" onclick=\"viewer.toggleLinks(); addRemoveClass('class','menu','active'); return false;\">";
+    s += "                                <div id=\"links\" class=\"item\" onclick=\"viewer.toggleLinks(); addRemoveClass('class','menu','active'); return false;\">";
     s += "                                    <svg><use xlink:href=\"#icPointer\"><\/use><\/svg>";
     s += "                                    <span>Hot Spots<\/span>";
     s += "                                    <div class=\"tips\">⇧<\/div>";
     s += "                                <\/div>";
-    s += "                                <div class=\"item\" onclick=\"viewer.toggleZoom(); addRemoveClass('class','menu','active'); return false;\">";
+    s += "                                <div  id=\"zoom\" class=\"item\" onclick=\"viewer.toggleZoom(); addRemoveClass('class','menu','active'); return false;\">";
     s += "                                    <svg><use xlink:href=\"#icResize\"><\/use><\/svg>";
     s += "                                    <span>Toogle Auto-Scale<\/span>";
     s += "                                    <div class=\"tips\">Z<\/div>";
     s += "                                <\/div>";
-    s += "                                <div class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.share();  return false;\">";
+    s += "                                <div  id=\"embed\" class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.share();  return false;\">";
     s += "                                    <svg><use xlink:href=\"#icEmbed\"><\/use><\/svg>";
     s += "                                    <span>Show Embed Code<\/span>";
     s += "                                    <div class=\"tips\">E<\/div>";
     s += "                                <\/div>";
-    s += "                                <div class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.toogleLayout();  return false;\">";
+    s += "                                <div  id=\"grid\" class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.toogleLayout();  return false;\">";
     s += "                                    <svg><use xlink:href=\"#icGridLayout\"><\/use><\/svg>";
     s += "                                    <span>Toogle Grid Layout<\/span>";
     s += "                                    <div class=\"tips\">L<\/div>";
     s += "                                <\/div>";
     if (options.loadLayers) {
-        s += "                            <div class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.symbolViewer.toggle();  return false;\">";
+        s += "                            <div  id=\"symbols\"  class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.symbolViewer.toggle();  return false;\">";
         s += "                                <svg><use xlink:href=\"#icElementInspector\"><\/use><\/svg>";
         s += "                                <span>Toogle Elements Inspector<\/span>";
         s += "                                <div class=\"tips\">M<\/div>";
@@ -294,13 +302,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         s += "                            <\/div>";
     }
     s += "                            <hr>";
-    s += "                            <div class=\"groupe\">";
+    s += "                            <div  id=\"viewall\" class=\"groupe\">";
     s += "                                <div class=\"item\" onclick=\"viewer.galleryViewer.show(); addRemoveClass('class','menu','active'); return false;\">";
     s += "                                    <svg><use xlink:href=\"#icGrid\"><\/use><\/svg>";
     s += "                                    <span>View All Screens<\/span>";
     s += "                                    <div class=\"tips\">G<\/div>";
     s += "                                <\/div>";
-    s += "                                <div class=\"item\" onclick=\"viewer.goToPage(0); addRemoveClass('class','menu','active'); return false;\">";
+    s += "                                <div  id=\"start\"  class=\"item\" onclick=\"viewer.goToPage(0); addRemoveClass('class','menu','active'); return false;\">";
     s += "                                    <svg><use xlink:href=\"#icBack\"><\/use><\/svg>";
     s += "                                    <span>Go To Start<\/span>";
     s += "                                    <div class=\"tips\">S<\/div>";

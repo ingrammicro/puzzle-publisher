@@ -35,12 +35,14 @@ var onRun = function (context) {
 
     let googleCode = Settings.settingForKey(SettingKeys.PLUGIN_GOOGLE_CODE)
     if (googleCode == undefined) googleCode = ''
+    let jsCode = Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_JS_CODE)
+    if (jsCode == undefined) jsCode = ''
     let shareiFrameSize = Settings.settingForKey(SettingKeys.PLUGIN_SHARE_IFRAME_SIZE)
     if (shareiFrameSize == undefined) shareiFrameSize = ''
     //
 
 
-    const dialog = new UIDialog("Configure Export", NSMakeRect(0, 0, 500, 520), "Save", "Edit settings which are common for all documents.")
+    const dialog = new UIDialog("Configure Export", NSMakeRect(0, 0, 500, 560), "Save", "Edit settings which are common for all documents.")
 
 
     dialog.addLeftLabel("", "Export")
@@ -49,6 +51,7 @@ var onRun = function (context) {
     dialog.addCheckbox("dontSaveElements", "Don't save data for Element Inspector", dontSaveElements)
     dialog.addCheckbox("askCustomSize", "Ask custom artboard Size", askCustomSize)
     dialog.addTextInput("googleCode", "Google Code", googleCode, 'e.g. UA-XXXXXXXX-X')
+    dialog.addTextInput("jsCode", "Custom JS Code", jsCode, 'e.g. alert("Hello")')
 
     dialog.addDivider()
     dialog.addLeftLabel("", "Artboards")
@@ -77,6 +80,7 @@ var onRun = function (context) {
         Settings.setSettingForKey(SettingKeys.PLUGIN_DONT_RETINA_IMAGES, dialog.views['retina'].state() != 1)
         Settings.setSettingForKey(SettingKeys.PLUGIN_DISABLE_ZOOM, dialog.views['zoom'].state() != 1)
         Settings.setSettingForKey(SettingKeys.PLUGIN_GOOGLE_CODE, dialog.views['googleCode'].stringValue() + "")
+        Settings.setSettingForKey(SettingKeys.PLUGIN_EXPORT_JS_CODE, dialog.views['jsCode'].stringValue() + "")
         Settings.setSettingForKey(SettingKeys.PLUGIN_SHARE_IFRAME_SIZE, dialog.views['shareiFrameSize'].stringValue() + "")
         Settings.setSettingForKey(SettingKeys.PLUGIN_HIDE_NAV, dialog.views['hidenav'].state() != 1)
         Settings.setSettingForKey(SettingKeys.PLUGIN_DISABLE_HOTSPOTS, dialog.views['disableHotspots'].state() != 1)

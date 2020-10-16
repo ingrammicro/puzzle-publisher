@@ -4,6 +4,7 @@ class AbstractViewer {
         // common viewer settings, can be changed in child constructors
         this.isSidebarChild = true
         this.blockMainNavigation = false
+        this.enableTopNavigation = false
 
         // internal viewer props, can be read by child 
         this.inited = false

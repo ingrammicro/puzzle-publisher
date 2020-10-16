@@ -213,6 +213,9 @@ class Exporter {
         let googleCode = this.Settings.settingForKey(SettingKeys.PLUGIN_GOOGLE_CODE)
         if (googleCode == undefined) googleCode = ''
         buildOptions.googleCode = googleCode
+        let jsCode = this.Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_JS_CODE)
+        if (jsCode == undefined) jsCode = ''
+        buildOptions.jsCode = jsCode
 
         if ("" == buildOptions.backColor) buildOptions.backColor = Constants.DEF_BACK_COLOR
 

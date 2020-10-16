@@ -1,6 +1,13 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.10.0 (16 Sep 2020)
+Now it's possible to inject any custom JS code into Viewer. See Plugin > Configure Export > JS Code option.
+As example - you can hide some navigation menu ites using the following code:
+$("#menu #zoom").hide();$("#menu #embed").hide();$("#menu #grid").hide();
+
+"View All Screens" mode now handles "s" key correctly
+
 ##  Version 14.9.1 (19 Sep 2020)
 Gallery can be opened on document load using &g=1 search param
 

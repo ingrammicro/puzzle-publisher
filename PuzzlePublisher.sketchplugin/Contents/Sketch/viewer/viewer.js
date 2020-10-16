@@ -243,6 +243,7 @@ function createViewer(story, files) {
             const event = jevent.originalEvent
 
             const allowNavigation = !this.child || !this.child.blockMainNavigation
+            const enableTopNavigation = !this.child || this.child.enableTopNavigation
 
             // allow all childs to handle global keys
             if (!this.child) {
@@ -274,10 +275,12 @@ function createViewer(story, files) {
                 v.share()
             } else if (allowNavigation && 76 == event.which) { // l
                 v.toogleLayout();
-            } else if (allowNavigation && 83 == event.which) { // s
+            } else if (enableTopNavigation && 83 == event.which) { // s
                 var first = v.getFirstUserPage()
-                if (first && first.index != v.currentPage.index)
+                if (first && (first.index != v.currentPage.index || this.child)) {
+                    this.hideChild()
                     v.goToPage(first.index)
+                }
             } else if (allowNavigation && 27 == event.which) { // esc	
                 v.onKeyEscape()
             } else {
