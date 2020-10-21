@@ -450,7 +450,7 @@ select:focus{
   transition: all .24s;
 }
 
-#grid {
+#gallery #grid {
   display: -webkit-box;
   display: flex;
   justify-content: center;

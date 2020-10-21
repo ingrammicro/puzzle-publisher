@@ -263,7 +263,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     if (options.loadLayers) {
         s += "                            <div  id=\"symbols\"  class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.symbolViewer.toggle();  return false;\">";
         s += "                                <svg><use xlink:href=\"#icElementInspector\"><\/use><\/svg>";
-        s += "                                <span>Toogle Elements Inspector<\/span>";
+        s += "                                <span>Elements Inspector<\/span>";
         s += "                                <div class=\"tips\">M<\/div>";
         s += "                            <\/div>";
     }

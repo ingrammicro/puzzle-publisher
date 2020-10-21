@@ -104,7 +104,7 @@ class GalleryViewer extends AbstractViewer {
         div.click(function (e) {
             viewer.galleryViewer.selectPage(parseInt(this.id));
         });
-        div.appendTo($('#grid'));
+        div.appendTo($('#gallery #grid'));
 
         var img = $('<img/>', {
             id: "img_gallery_" + page.index,
