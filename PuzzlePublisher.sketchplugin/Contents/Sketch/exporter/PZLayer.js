@@ -279,9 +279,13 @@ class PZLayer {
             shadowsStyle += shadow.spread + " "
             shadowsStyle += shadow.color + " "
 
-            shadowInfo = {
-                style: shadowsStyle,
-                x: shadow.x + shadow.blur
+            if (shadowInfo) {
+                shadowInfo.style += ", " + shadowsStyle
+            } else {
+                shadowInfo = {
+                    style: shadowsStyle,
+                    x: shadow.x + shadow.blur
+                }
             }
         }
 

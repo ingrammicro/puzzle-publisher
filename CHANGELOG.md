@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.10.2 (28 Sep 2020)
+Fixes overlay multishadows
+
 ##  Version 14.10.1 (16 Sep 2020)
 Fixed navigation menu layout
 
