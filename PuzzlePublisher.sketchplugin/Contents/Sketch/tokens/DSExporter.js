@@ -26,6 +26,25 @@ const bordedLineEndMap2 = {
     [Style.LineEnd.Projecting]: "projecting"
 }
 
+const BLENDING_MODE_SKETCH_TO_CSS = {
+    [Style.BlendingMode.Normal]: "normal",
+    [Style.BlendingMode.Darken]: "darken",
+    [Style.BlendingMode.Multiply]: "multiply",
+    [Style.BlendingMode.ColorBurn]: "color-burn",
+    [Style.BlendingMode.Lighten]: "lighten",
+    [Style.BlendingMode.Screen]: "screen",
+    [Style.BlendingMode.ColorDodge]: "color-dodge",
+    [Style.BlendingMode.Overlay]: "overlay",
+    //"darken", [Style.BlendingMode.SoftLight]:  // Not supported in CSS
+    //"darken", [Style.BlendingMode.HardLight]:  // Not supported in CSS
+    [Style.BlendingMode.Difference]: "difference",
+    [Style.BlendingMode.Exclusion]: "exclusion",
+    [Style.BlendingMode.Hue]: "hue",
+    [Style.BlendingMode.Saturation]: "saturation",
+    [Style.BlendingMode.Color]: "color",
+    [Style.BlendingMode.Luminosity]: "luminosity"
+}
+
 
 const eol = ";\n"
 const pxeol = "px" + eol
@@ -548,6 +567,16 @@ class DSExporter {
         } else {
             return ""
         }
+        //
+        if (Style.BlendingMode.Normal != sStyle.blendingMode) {
+            const cssValue = BLENDING_MODE_SKETCH_TO_CSS[sStyle.blendingMode]
+            if (undefined == cssValue) {
+                this.logError('Can not set CSS mix-blend-mode: for Sketch blendingMode ' + sStyle.blendingMode)
+            } else {
+                res += spaces + "mix-blend-mode: " + cssValue + eol
+            }
+        }
+        //
         return res
     }
 
