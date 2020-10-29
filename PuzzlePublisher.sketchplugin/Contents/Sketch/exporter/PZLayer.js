@@ -406,10 +406,12 @@ class PZLayer {
         this.tp = this.isSymbolInstance ? "SI" : this.slayer.type
         if (!this.isSymbolInstance) this.n = this.name
         //
+        log("type=" + this.slayer.type)
         if ("Text" == this.slayer.type) {
             this.pr = this._buildTextPropsForJSON()
-        } else if ("ShapePath" == this.slayer.type) {
+        } else if ("ShapePath" == this.slayer.type || "Shape" == this.slayer.type) {
             this.pr = this._buildShapePropsForJSON()
+            this.tp = "ShapePath"
         } else if (undefined != this.imageIndex) {
             this.tp = "Image"
             this.iu = this._buildImageURL()
@@ -443,6 +445,7 @@ class PZLayer {
         this.hotspots = undefined
         this.targetId = undefined
         this.imageIndex = undefined
+
     }
 
     _buildImageURL() {
