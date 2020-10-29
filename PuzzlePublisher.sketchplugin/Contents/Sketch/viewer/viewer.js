@@ -397,13 +397,10 @@ function createViewer(story, files) {
         },
 
         openNewWindow: function () {
-            // remove GET parames from current URL 
-            var cleanURL = window.location.origin
-            if (window.location.port != '') cleanURL = cleanURL + ":" + window.location.port
-            cleanURL = cleanURL + window.location.pathname
-            if (window.location.hash != '') cleanURL = cleanURL + window.location.hash
+            var page = this.currentPage
+            let url = this.fullURL + this._getSearchPath(page)
             // ok, now open it in the new browse window
-            window.open(cleanURL, "_blank")
+            window.open(url, "_blank")
         },
 
         zoomContent: function () {
