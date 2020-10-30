@@ -1,6 +1,11 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.10.3 (30 Oct 2020)
+Fixed support for Shape shadows in Inspector
+Fixed "Open in new window" icon behaviour (Embedded mode)
+Supported tokens for color variables
+
 ##  Version 14.10.2 (28 Sep 2020)
 Fixes overlay multishadows
 

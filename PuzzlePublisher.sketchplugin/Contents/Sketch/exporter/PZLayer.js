@@ -109,6 +109,7 @@ class PZLayer {
             if ("Text" == sLayer.type) {
                 this.text = this.slayer.text + ""
             }
+            this.cv = this._getColorVariable()
 
             this.targetId = this.slayer.flow ? this.slayer.flow.targetId : null
         }
@@ -406,10 +407,8 @@ class PZLayer {
         this.tp = this.isSymbolInstance ? "SI" : this.slayer.type
         if (!this.isSymbolInstance) this.n = this.name
         //
-        log("type=" + this.slayer.type)
         if ("Text" == this.slayer.type) {
             this.pr = this._buildTextPropsForJSON()
-            this.cv = this._getColorVariable()
         } else if ("ShapePath" == this.slayer.type || "Shape" == this.slayer.type) {
             this.pr = this._buildShapePropsForJSON()
             this.tp = "ShapePath"
@@ -468,14 +467,13 @@ class PZLayer {
     _getColorVariable() {
 
         const style = this.slayer.style
-        // Try to find that color variables was used
+        if (!style || !style.sketchObject.primitiveTextStyle()) return
+        // Try to find that color variables was used        
         var attributes = style.sketchObject.primitiveTextStyle().attributes()
         var swatchID = attributes.MSAttributedStringColorAttribute.swatchID()
         if (!swatchID) return undefined
         //
         var swatchInfo = pzDoc.getSwatchInfoByID(swatchID)
-        log('swatchInfo:')
-        log(swatchInfo)
         return swatchInfo
     }
 

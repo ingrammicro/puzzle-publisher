@@ -109,6 +109,8 @@ class PZDoc {
         let inspectors = ""
         let vars = ""
         const libs = this._getLibraries()
+        log('this.usedLibs')
+        log(this.usedLibs)
         for (const lib of libs) {
             if (!this.usedLibs[lib.jsLib.name]) continue
             const libAssetsPath = this._getLibAssetsPath(lib)
@@ -238,7 +240,11 @@ class PZDoc {
             }, this)
         }
         // find
-        return this.swatchesMap[swatchID]
+        const res = this.swatchesMap[swatchID]
+        this.usedLibs[res.ln] = true
+        log("getSwatchInfoByID")
+        log(this.usedLibs)
+        return res
     }
 
     //////////////////////////// PRIVATE ///////////////////////

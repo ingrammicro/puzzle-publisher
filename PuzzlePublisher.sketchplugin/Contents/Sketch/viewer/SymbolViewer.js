@@ -369,7 +369,7 @@ class SymbolViewer extends AbstractViewer {
                     const foundLayer = symInfo.symbol.layers[layer.n]
                     if (foundLayer) tokens = foundLayer.tokens
                 }
-                const decRes = sv._decorateCSS(layer.pr, tokens, layer.b ? layer : siLayer)
+                const decRes = sv._decorateCSS(layer, tokens, layer.b ? layer : siLayer)
                 info += decRes.css
                 if ("Text" == layer.tp) {
                     if (layer.tx != undefined && layer.tx != "") {
@@ -642,7 +642,8 @@ class SymbolViewer extends AbstractViewer {
         return div
     }
 
-    _decorateCSS(css, tokens, siLayer) {
+    _decorateCSS(layer, tokens, siLayer) {
+        let css = layer.pr
         let result = ""
         let styles = {}
 
@@ -662,8 +663,17 @@ class SymbolViewer extends AbstractViewer {
             //
             styles[styleName] = styleValue
             //
-            const tokenStr = tokens != null ? this._decorateStyleToken(styleName, tokens, siLayer, styleValue) : ""
-            result += tokenStr != "" ? tokenStr : (styleValue + ";")
+            if (layer.cv && "color" == styleName) {
+                // get token for color variable
+                const tokens = this._findSwatchTokens(layer.cv)
+                if (tokens) {
+                    const tokenStr = this._decorateSwatchToken(tokens, styleValue)
+                    result += tokenStr != "" ? tokenStr : (styleValue + ";")
+                }
+            } else {
+                const tokenStr = tokens != null ? this._decorateStyleToken(styleName, tokens, siLayer, styleValue) : ""
+                result += tokenStr != "" ? tokenStr : (styleValue + ";")
+            }
             //
             result += "</span>"
             result += "<br/>"
@@ -671,6 +681,12 @@ class SymbolViewer extends AbstractViewer {
 
         result += "</div></div>"
         return { "css": result, "styles": styles }
+    }
+
+    _decorateSwatchToken(tokens, styleValue) {
+        const tokenName = tokens[0][1]
+        //
+        return tokenName + ";</span><span class='tokenValue'>//" + styleValue
     }
 
     _decorateStyleToken(style, tokens, siLayer, styleValue) {
@@ -743,5 +759,25 @@ class SymbolViewer extends AbstractViewer {
             }
         }
         return undefined
+    }
+
+    // cv:{
+    //   sn: swatch name
+    //   ln:  lib name
+    // }
+    _findSwatchTokens(cv) {
+        const lib = SYMBOLS_DICT[cv.ln]
+        if (!lib) {
+            console.log("Can not find lib " + cv.ln)
+            return null
+        }
+        //
+        const swatch = lib.colors__[cv.sn]
+        if (!swatch) {
+            console.log("Can not find color name " + cv.sn)
+            return null
+        }
+
+        return swatch
     }
 }
