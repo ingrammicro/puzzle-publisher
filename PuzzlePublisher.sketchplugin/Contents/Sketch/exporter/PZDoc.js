@@ -28,6 +28,7 @@ class PZDoc {
         this.mAllLayers = []
         this.mLinkedLayers = []
         this.usedLibs = {}
+        this.swatchesMap = undefined
         this.sSymbols = {}
         this.artboardCount = 0
         this.startArtboardIndex = 0
@@ -218,6 +219,27 @@ class PZDoc {
         return this.sSymbols[id]
     }
 
+
+    getSwatchInfoByID(swatchID) {
+        // load all swatched initially
+        if (undefined == this.swatcheLibs) {
+            this.swatchesMap = {}
+            var libs = require('sketch/dom').getLibraries()
+
+            libs.filter(l => l.valid && l.enabled).forEach(function (lib) {
+                var stylesReferences = lib.getImportableSwatchReferencesForDocument(this.sDoc)
+                stylesReferences.forEach(function (s) {
+                    log(s)
+                    this.swatchesMap[s.id] = {
+                        sn: s.name,
+                        ln: lib.name
+                    }
+                }, this)
+            }, this)
+        }
+        // find
+        return this.swatchesMap[swatchID]
+    }
 
     //////////////////////////// PRIVATE ///////////////////////
 

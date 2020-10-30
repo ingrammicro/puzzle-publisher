@@ -401,7 +401,6 @@ class DSExporter {
 
         res += spaces + "font-family" + ": " + this._getFontFamilyToken(sStyle.fontFamily) + eol
         res += spaces + "font-size" + ": " + this._getFontSizeToken(sStyle.fontSize) + eol
-        res += spaces + "color" + ": " + this._getColorToken(sStyle.textColor) + eol
         res += spaces + "text-align" + ": " + alignMap2[sStyle.alignment] + eol
         res += spaces + "vertical-align" + ": " + vertAlignMap2[sStyle.verticalAlignment] + eol
         {
@@ -431,6 +430,9 @@ class DSExporter {
         if (this.runningForTokens) {
             res += spaces + PT_PARAGRAPH_SPACING + ": " + sStyle.paragraphSpacing + eol
         }
+
+        //
+        res += spaces + "color" + ": " + this._getColorToken(sStyle.textColor) + eol
 
         return res
     }
