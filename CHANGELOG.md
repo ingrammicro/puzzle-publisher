@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.10.4 (2 Nov 2020)
+Fixed crash
+
 ##  Version 14.10.3 (30 Oct 2020)
 Fixed support for Shape shadows in Inspector
 Fixed "Open in new window" icon behaviour (Embedded mode)

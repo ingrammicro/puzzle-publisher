@@ -221,29 +221,32 @@ class PZDoc {
         return this.sSymbols[id]
     }
 
-
+    // result: array [{sn: swatch name,ln: library name},..] OR null
     getSwatchInfoByID(swatchID) {
         // load all swatched initially
-        if (undefined == this.swatcheLibs) {
+        if (undefined == this.swatchesMap) {
             this.swatchesMap = {}
+            // load library colors
             var libs = require('sketch/dom').getLibraries()
-
             libs.filter(l => l.valid && l.enabled).forEach(function (lib) {
                 var stylesReferences = lib.getImportableSwatchReferencesForDocument(this.sDoc)
                 stylesReferences.forEach(function (s) {
-                    log(s)
                     this.swatchesMap[s.id] = {
                         sn: s.name,
                         ln: lib.name
                     }
                 }, this)
             }, this)
+            // load local colors
+            //          log(require('sketch').globalAssets.colors)
         }
         // find
+        //        log("getSwatchInfoByID")
         const res = this.swatchesMap[swatchID]
+        if (!res) return null
+        //    log(this.swatchesMap)
+        //  log(res.ln)
         this.usedLibs[res.ln] = true
-        log("getSwatchInfoByID")
-        log(this.usedLibs)
         return res
     }
 
