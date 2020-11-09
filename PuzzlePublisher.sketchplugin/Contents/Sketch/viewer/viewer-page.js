@@ -685,15 +685,16 @@ function handleLinkEvent(event) {
         var destPage = story.pages[destPageIndex]
         if (!destPage) return
 
+
+        if (('overlay' == destPage.type || 'modal' == destPage.type) && destPage.overlayRedirectTargetPage != undefined) {
+
+            // Change base page
+            viewer.goTo(destPage.overlayRedirectTargetPage, false)
+            currentPage = viewer.currentPage
+            orgPage = viewer.currentPage
+        }
+
         if ('overlay' == destPage.type) {
-
-
-            if (destPage.overlayRedirectTargetPage != undefined) {
-                // Change base page
-                viewer.goTo(destPage.overlayRedirectTargetPage, false)
-                currentPage = viewer.currentPage
-                orgPage = viewer.currentPage
-            }
 
             var orgLink = {
                 orgPage: orgPage,

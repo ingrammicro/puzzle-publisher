@@ -95,7 +95,7 @@ function runExporter(context, exportOptions = null) {
 
 
     const isCmdExportToHTML = exportOptions['cmd'] == "exportHTML"
-    var dontOpen = Settings.settingForKey(SettingKeys.PLUGIN_DONT_OPEN_BROWSER) == 1
+    var dontOpenBrowser = Settings.settingForKey(SettingKeys.PLUGIN_DONT_OPEN_BROWSER) == 1
     var askSize = Settings.settingForKey(SettingKeys.PLUGIN_ASK_CUSTOM_SIZE) == 1
     var compress = Settings.settingForKey(SettingKeys.PLUGIN_COMPRESS) == 1
 
@@ -129,7 +129,7 @@ function runExporter(context, exportOptions = null) {
             inlineHint: 'e.g. ~/HTML', width: 450
         })
         //dialog.addCheckbox("compress","Compress images", compress)
-        dialog.addCheckbox("open", "Open HTML in browser", !dontOpen)
+        dialog.addCheckbox("open", "Open HTML in browser", !dontOpenBrowser)
         if (askSize) {
             dialog.addTextInput("customWidth", "Artboard custom width (px)", customWidth + "", 'e.g. 1920')
             dialog.addTextInput("customHeight", "Artboard custom height (px)", customHeight + "", 'e.g. 1080')
@@ -160,7 +160,7 @@ function runExporter(context, exportOptions = null) {
             currentPath = dialog.views['path'].stringValue() + ""
             if (currentPath == "") continue
 
-            dontOpen = dialog.views['open'].state() != 1
+            dontOpenBrowser = dialog.views['open'].state() != 1
             compress = false //dialog.views['compress'].state() == 1
 
 
@@ -170,12 +170,12 @@ function runExporter(context, exportOptions = null) {
         track(TRACK_EXPORT_DIALOG_CLOSED, { "cmd": "ok" })
 
         Settings.setSettingForKey(SettingKeys.PLUGIN_EXPORTING_URL, currentPath)
-        Settings.setSettingForKey(SettingKeys.PLUGIN_DONT_OPEN_BROWSER, dontOpen)
+        Settings.setSettingForKey(SettingKeys.PLUGIN_DONT_OPEN_BROWSER, dontOpenBrowser)
         Settings.setSettingForKey(SettingKeys.PLUGIN_COMPRESS, compress)
     }
 
 
-    exportOptions.dontOpen = dontOpen
+    exportOptions.dontOpenBrowser = dontOpenBrowser
     exportOptions.compress = compress
     exportOptions.customArtboardHeight = customHeight
     exportOptions.customArtboardWidth = customWidth
