@@ -119,7 +119,8 @@ function createViewer(story, files) {
         showLayout: false,
         isEmbed: false,
 
-        fullURL: "",
+        fullBaseURL: "",
+        fullCurrentPageURL: "",
 
         prevPage: undefined,
         currentPage: undefined,
@@ -198,7 +199,7 @@ function createViewer(story, files) {
 
         initParseGetParams: function () {
             const loc = document.location
-            this.fullURL = loc.protocol + "//" + loc.hostname + loc.pathname
+            this.fullBaseURL = loc.protocol + "//" + loc.hostname + loc.pathname
             this.urlParams = new URLSearchParams(loc.search.substring(1));
             this.urlSearch = loc.search
 
@@ -369,8 +370,8 @@ function createViewer(story, files) {
         share: function () {
             var page = undefined == this.lastRegularPage ? this.currentPage : this.lastRegularPage
 
-            let url = this.fullURL
-            url += this._getSearchPath(page, 'e=1')
+            let url = this.fullCurrentPageURL
+            url += '&e=1'
 
             var iframe = '<iframe src="' + url + '" style="border: none;" noborder="0"'
             iframe += ' width="' + (story.iFrameSizeWidth ? story.iFrameSizeWidth : page.width) + '"'
@@ -397,8 +398,7 @@ function createViewer(story, files) {
         },
 
         openNewWindow: function () {
-            var page = this.currentPage
-            let url = this.fullURL + this._getSearchPath(page)
+            let url = this.fullCurrentPageURL
             // ok, now open it in the new browse window
             window.open(url, "_blank")
         },
@@ -731,16 +731,16 @@ function createViewer(story, files) {
             this.urlLastIndex = page.index
             $(document).attr('title', story.title + ': ' + page.title)
 
+            let newPath = this.fullBaseURL + this._getSearchPath(page, extURL)
+            this.fullCurrentPageURL = newPath
+
             if (this.isEmbed) {
-                if (extURL != '') extURL += "&"
-                extURL += "e=1"
+                newPath += "&e=1"
             }
             if (this.galleryViewer && this.galleryViewer.isVisible()) {
-                if (extURL != '') extURL += "&"
-                extURL += "g=1"
+                newPath += "&g=1"
             }
 
-            let newPath = document.location.pathname + this._getSearchPath(page, extURL)
             if (pushHistory) {
                 window.history.pushState(newPath, page.title, newPath);
             } else {

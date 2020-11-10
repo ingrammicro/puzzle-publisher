@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 14.11.1 (9 Nov 2020)
+Fix: URLs are lowercased again
+
 ##  Version 14.11.0 (9 Nov 2020)
 Fixed "Open HTML in browser" checkbox behaviour
 Suport @Redirect@ for modals too
