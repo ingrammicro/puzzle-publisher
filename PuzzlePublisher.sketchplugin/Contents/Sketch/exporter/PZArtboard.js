@@ -150,89 +150,90 @@ class PZArtboard extends PZLayer {
         if (DEBUG) exporter.logMsg("process main artboard " + mainName);
         pzDoc.totalImages++
 
-        let js = pageIndex ? ',' : '';
-        js +=
-            '$.extend(new ViewerPage(),{\n' +
-            '"id" : "' + this.objectID + '",\n' +
-            '"index": ' + parseInt(pageIndex) + ',\n' +
-            '"image": "' + Utils.quoteString(Utils.toFilename(mainName + '.' + exporter.fileType, false)) + '",\n'
+        let data = {}
+
+        data['id'] = this.objectID
+        data['index'] = pageIndex
+        data['image'] = Utils.toFilename(mainName + '.' + exporter.fileType, false)
         if (exporter.retinaImages)
-            js +=
-                '"image2x": "' + Utils.quoteString(Utils.toFilename(mainName + '@2x.' + exporter.fileType, false)) + '",\n'
-        js +=
-            '"width": ' + parseInt(this.frame.width) + ',\n' +
-            '"height": ' + parseInt(this.frame.height) + ',\n' +
-            '"title": "' + Utils.quoteString(mainName) + '",\n';
+            data['image2x'] = Utils.toFilename(mainName + '@2x.' + exporter.fileType, false)
+
+        data['width'] = this.frame.width
+        data['height'] = this.frame.height
+        data['x'] = this.frame.x
+        data['y'] = this.frame.y
+        data['title'] = mainName
 
         if (this.transNextSecs != undefined) {
-            js += "'transNextMsecs': " + parseFloat(this.transNextSecs) * 1000 + ",\n";
+            data['transNextMsecs'] = parseFloat(this.transNextSecs) * 1000
         }
 
-        js += "'transAnimType': " + this.transAnimType + ",\n";
+        data['transAnimType'] = this.transAnimType
 
         if (this.disableAutoScroll) {
-            js += "'disableAutoScroll': " + (this.disableAutoScroll ? 'true' : 'false') + ",\n";
+            data['disableAutoScroll'] = true
         }
 
         {
             var layoutGrid = this.nlayer.layout() // class: MSLayoutGrid
             if (!layoutGrid) layoutGrid = MSDefaultLayoutGrid.defaultLayout();
             if (layoutGrid) {
-                var data = {
+                var grid = {
                     offset: layoutGrid.horizontalOffset(),
                     totalWidth: layoutGrid.totalWidth(),
                     numberOfColumns: layoutGrid.numberOfColumns(),
                     columnWidth: layoutGrid.columnWidth(),
                     gutterWidth: layoutGrid.gutterWidth()
                 }
-                js += "'layout' : " + JSON.stringify(data, null, "\t") + ",\n"
+                data['layout'] = grid
             }
         }
 
         if (this.isModal) {
-            js += "'type': 'modal',\n";
-            js += "'isModal': true,\n";
-            js += "'showShadow': " + (this.showShadow ? 1 : 0) + ",\n";
+            data['type'] = 'modal'
+            data['isModal'] = true
+            data['showShadow'] = this.showShadow ? 1 : 0
         } else if (this.externalArtboardURL != undefined && this.externalArtboardURL != '') {
-            js += "'type': 'external',\n";
+            data['type'] = 'external'
         } else if (Constants.ARTBOARD_TYPE_OVERLAY == this.artboardType) {
-            js += "'type': 'overlay',\n";
+            data['type'] = 'overlay'
             // try to find a shadow
             if (this.showShadow) {
                 const layerWithShadow = this._getOverlayShadowLayer()
                 if (layerWithShadow) {
                     const shadowInfo = layerWithShadow.getShadowAsStyle()
-                    js += "'overlayShadow':'" + shadowInfo.style + "',\n"
-                    js += "'overlayShadowX':" + shadowInfo.x + ",\n"
+                    data['overlayShadow'] = shadowInfo.style
+                    data['overlayShadowX'] = shadowInfo.x
                 }
             } else if ((Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT == this.overlayPin) && (Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_LEFT == this.overlayPinHotspot)) {
                 const layerWithShadow = this._getOverlayShadowLayer()
                 if (layerWithShadow) {
                     const shadowInfo = layerWithShadow.getShadowAsStyle()
-                    js += "'overlayShadowX':" + shadowInfo.x + ",\n"
+                    data['overlayShadowX'] = shadowInfo.x
                 }
             }
-            js += "'overlayByEvent': " + this.overlayByEvent + ",\n";
-            js += "'overlayPin': " + this.overlayPin + ",\n";
-            js += "'overlayPinHotspot': " + this.overlayPinHotspot + ",\n";
-            js += "'overlayPinPage': " + this.overlayPinPage + ",\n";
-            js += "overlayOverFixed:" + (this.overlayOverFixed ? "true" : "false") + ",\n"
-            js += "overlayAlsoFixed:" + (this.overlayAlsoFixed ? "true" : "false") + ",\n"
-            js += "overlayClosePrevOverlay:" + (this.overlayClosePrevOverlay ? "true" : "false") + ",\n"
+            data['overlayByEvent'] = this.overlayByEvent
+            data['overlayPin'] = this.overlayPin
+            data['overlayPinHotspot'] = this.overlayPinHotspot
+            data['overlayPinPage'] = this.overlayPinPage
+            data['overlayOverFixed'] = !!this.overlayOverFixed
+            data['overlayAlsoFixed'] = !!this.overlayAlsoFixed
+            data['overlayClosePrevOverlay'] = !!this.overlayClosePrevOverlay
         } else {
-            js += "'type': 'regular',\n";
+            data['type'] = 'regular'
         }
 
         // add fixed layers
-        js += this._pushFixedLayersIntoJSStory()
+        data['fixedPanels'] = this._getFixedLayersForJSON()
 
         // add hotspots 
-        js += "'links' : " + JSON.stringify(this._buildHotspots(this.hotspots), null, "\t") + ",\n"
+        data['links'] = this._buildHotspots(this.hotspots)
+
         if (this.overlayRedirectTargetPage != undefined)
-            js += "'overlayRedirectTargetPage' : " + this.overlayRedirectTargetPage + ",\n"
+            data['overlayRedirectTargetPage'] = this.overlayRedirectTargetPage
 
-
-        js += "})\n"
+        let js = pageIndex ? ',' : '';
+        js += "$.extend(new ViewerPage()," + JSON.stringify(data, null, ' ') + ")\n"
 
         exporter.jsStory += js;
     }
@@ -265,7 +266,7 @@ class PZArtboard extends PZLayer {
     }
 
 
-    _pushFixedLayersIntoJSStory() {
+    _getFixedLayersForJSON() {
         let recs = []
 
         if (this.fixedLayers.length) {
@@ -321,9 +322,7 @@ class PZArtboard extends PZLayer {
             }
         }
 
-        let js = "'fixedPanels': " + JSON.stringify(recs, null, "\t") + ",\n";
-
-        return js
+        return recs
     }
 
 
