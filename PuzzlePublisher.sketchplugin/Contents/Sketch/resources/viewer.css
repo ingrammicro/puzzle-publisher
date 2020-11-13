@@ -461,6 +461,15 @@ select:focus{
   margin: 0 -32px 80px -32px;
 }
 
+.galleryArtboardAbs{
+    position: absolute;
+    border-radius: 5px;
+    background: #fff;
+    box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    transition: transform .24s, box-shadow .24s;
+}  
+
 #commenting {
   z-index: 100;
   position: fixed;
@@ -495,7 +504,8 @@ select:focus{
   transition: transform .24s, box-shadow .24s;
 }
 
-.grid-cell:hover {
+.grid-cell:hover,
+.galleryArtboardAbs:hover {
   transition: all .2s;
   transform: translateY(-2px);
   box-shadow: 0 0.3125rem 2rem 0 rgba(0, 0, 0, 0.3);

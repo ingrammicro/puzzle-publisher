@@ -6,6 +6,7 @@ class GalleryViewer extends AbstractViewer {
         this.isSidebarChild = false
         this.blockMainNavigation = true
         this.enableTopNavigation = true
+        this.absZoom = 0.2
 
         this.searchInputFocused = false
     }
@@ -77,8 +78,32 @@ class GalleryViewer extends AbstractViewer {
 
 
     loadPages() {
+        return this.loadPagesAbs()
         viewer.userStoryPages.forEach(function (page) {
-            this.loadOnePage(page);
+            this.loadOnePageAbs(page);
+        }, this);
+    }
+
+    loadPagesAbs() {
+        // find left corner of artboard collection
+        this.absLeft = null
+        this.absTop = null
+        this.absRight = null
+        this.absBottom = null
+        viewer.userStoryPages.forEach(function (page) {
+            if (null == this.absLeft || page.x < this.absLeft) this.absLeft = page.x
+            if (null == this.absTop || page.y < this.absTop) this.absTop = page.y
+            //
+            const right = page.x + page.width
+            const bottom = page.y + page.height
+            if (null == this.absRight || right > this.absRight) this.absRight = right
+            if (null == this.absBottom || bottom > this.absBottom) this.absBottom = bottom
+        }, this);
+        // calculate zoom to fit all artboards
+        this.absZoom = (this.absRight - this.absLeft) / viewer.fullWidth
+        // show pages using their coordinates and current zoom
+        viewer.userStoryPages.forEach(function (page) {
+            this.loadOnePageAbs(page);
         }, this);
     }
 
@@ -130,7 +155,42 @@ class GalleryViewer extends AbstractViewer {
         title.appendTo(divTitle);
         divTitle.appendTo(divMain);
     }
+    loadOnePageAbs(page) {
+        var imageURI = page.image
+
+        let style = this._valueToStyle("left", page.x - this.absLeft) + this._valueToStyle("top", page.y - this.absTop)
+            + this._valueToStyle("width", page.width) + this._valueToStyle("height", page.height)
+
+        var div = $('<div/>', {
+            class: "galleryArtboardAbs",
+            style: style,
+        });
+
+        div.click(function (e) {
+            viewer.galleryViewer.selectPage(parseInt(this.id));
+        });
+        div.appendTo($('#gallery #grid'));
+
+        var img = $('<img/>', {
+            id: "img_gallery_" + page.index,
+            class: "gallery-image",
+            alt: page.title,
+            height: this.absZoom * page.height + "px",
+            width: this.absZoom * page.width + "px",
+            src: encodeURIComponent(viewer.files) + '/previews/' + encodeURIComponent(imageURI),
+        });
+
+        img.appendTo(div);
+
+    }
+
+    _valueToStyle(styleName, v) {
+        return styleName + ": " + Number.parseInt(v * this.absZoom) + "px;"
+    }
+
 }
+
+
 
 //Search page in gallery by page name
 function searchScreen() {

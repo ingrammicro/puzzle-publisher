@@ -460,6 +460,7 @@ function createViewer(story, files) {
             }
 
             this.currentZoom = newZoom
+            this.fullWidth = fullWidth
 
             // Calculate margins
             this.currentMarginLeft = Math.round(availableWidth / 2) - Math.round(page.width / 2 * this.currentZoom)
