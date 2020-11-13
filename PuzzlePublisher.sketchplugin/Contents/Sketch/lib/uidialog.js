@@ -41,7 +41,6 @@ class UIAbstractWindow {
         const intRect = this.rect
 
         this.tabs = tabs.map(function (tab) { return { label: tab } })
-        log(this.tabs)
 
         var tabView = NSTabView.alloc().initWithFrame(intRect)
 

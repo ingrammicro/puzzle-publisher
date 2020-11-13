@@ -394,6 +394,17 @@ select:focus{
   text-align: left;
 }
 
+#gallery-header-container #controls {
+    width: 100%;
+    text-align:center;
+    font-size: 14px;
+}
+/*#galleryShowMap {
+    width: 100%;
+    text-align:center;
+  }
+*/
+
 #gallery-header-container #screensamount {
   font-size: 14px;
   line-height: 20px;

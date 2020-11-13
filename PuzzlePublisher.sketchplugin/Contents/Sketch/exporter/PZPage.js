@@ -46,6 +46,14 @@ class PZPage {
         for (const a of this.mArtboards) {
             a.export()
         }
+        //// export itself
+        if (this.sPage != null) {
+            const data = {
+                'id': String(this.sPage.id),
+                name: this.sPage.name
+            }
+            exporter.storyData.groups.push(data)
+        }
     }
 
 

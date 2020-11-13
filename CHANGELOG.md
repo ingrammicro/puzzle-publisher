@@ -1,6 +1,10 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 15.0.0 (14 Nov 2020)
+Added map view to All Screens page
+Code refactoring
+
 ##  Version 14.11.1 (9 Nov 2020)
 Fix: URLs are lowercased again
 

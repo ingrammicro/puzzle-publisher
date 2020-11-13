@@ -90,8 +90,9 @@ class PZDoc {
 
     export() {
         exporter.logMsg(" PZDoc:run running...")
-        this.totalImages = 0
 
+        /// Export pages
+        this.totalImages = 0
         for (var page of this.mPages) {
             page.export();
         }
@@ -109,8 +110,7 @@ class PZDoc {
         let inspectors = ""
         let vars = ""
         const libs = this._getLibraries()
-        log('this.usedLibs')
-        log(this.usedLibs)
+
         for (const lib of libs) {
             if (!this.usedLibs[lib.jsLib.name]) continue
             const libAssetsPath = this._getLibAssetsPath(lib)

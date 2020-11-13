@@ -17,6 +17,11 @@ class AbstractViewer {
 
     }
 
+    // called by viewer
+    viewerResized() {
+
+    }
+
     hide() {
         viewer.hideChild()
     }
@@ -39,6 +44,7 @@ class AbstractViewer {
     onContentClick() {
         return false
     }
+
 
 
     isVisible() {

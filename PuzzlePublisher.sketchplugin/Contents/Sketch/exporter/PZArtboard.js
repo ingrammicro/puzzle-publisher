@@ -122,7 +122,7 @@ class PZArtboard extends PZLayer {
         this._exportImages()
         this._findFixedPanelHotspots()
         //this._exportOverlayLayers()
-        this._pushIntoJSStory(this.index)
+        this._pushIntoStoryData(this.index)
     }
 
     //------------------- FIND HOTSPOTS WHICH LOCATE OVER FIXED HOTPOSTS ----------------------------
@@ -144,7 +144,7 @@ class PZArtboard extends PZLayer {
     }
 
     //------------------ GENERATE STORY.JS FILE  ------------------
-    _pushIntoJSStory(pageIndex) {
+    _pushIntoStoryData(pageIndex) {
         const mainName = this.name
 
         if (DEBUG) exporter.logMsg("process main artboard " + mainName);
@@ -153,6 +153,7 @@ class PZArtboard extends PZLayer {
         let data = {}
 
         data['id'] = this.objectID
+        data['groupID'] = String(this.slayer.parent.id)
         data['index'] = pageIndex
         data['image'] = Utils.toFilename(mainName + '.' + exporter.fileType, false)
         if (exporter.retinaImages)
@@ -235,7 +236,7 @@ class PZArtboard extends PZLayer {
         let js = pageIndex ? ',' : '';
         js += "$.extend(new ViewerPage()," + JSON.stringify(data, null, ' ') + ")\n"
 
-        exporter.jsStory += js;
+        exporter.storyData.pages.push(data)
     }
 
 

@@ -210,7 +210,6 @@ class PZLayer {
 
         var aLayers = []
         if (undefined == sLayers) {
-            log(this)
             exporter.logMsg("PZLayer:collectAChilds() empty sLayers. this.name=" + this.name)
         }
         for (const sl of sLayers.filter(l => !l.hidden)) {

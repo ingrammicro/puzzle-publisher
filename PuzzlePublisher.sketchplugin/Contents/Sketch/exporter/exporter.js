@@ -12,7 +12,6 @@
 var exporter = undefined
 
 
-
 class Exporter {
 
     constructor(selectedPath, ndoc, page, exportOptions, context) {
@@ -26,12 +25,11 @@ class Exporter {
         this.enableTransitionAnimation = false
         this.siteIconLayer = undefined
         this.myLayers = []
-        this.jsStory = '';
         this.errors = []
         this.warnings = []
 
         // workaround for Sketch 52s
-        this.docName = this._clearCloudName(this.ndoc.cloudName())
+        this.docName = this._clearCloudName(this.ndoc.cloudName() + "")
         let posSketch = this.docName.indexOf(".sketch")
         if (posSketch > 0) {
             this.docName = this.docName.slice(0, posSketch)
@@ -169,27 +167,27 @@ class Exporter {
         return true
     }
 
-    generateJSStoryBegin() {
+    startStoryData() {
         const disableHotspots = this.Settings.settingForKey(SettingKeys.PLUGIN_DISABLE_HOTSPOTS) == 1
 
-        this.jsStory =
-            'var story = {\n' +
-            '"docName": "' + Utils.toFilename(this.docName) + '",\n' +
-            '"docPath": "P_P_P",\n' +
-            '"docVersion": "' + Constants.DOCUMENT_VERSION_PLACEHOLDER + '",\n' +
-            '"hasRetina": ' + (this.retinaImages ? 'true' : 'false') + ',\n' +
-            '"serverToolsPath":"' + this.serverTools + '",\n' +
-            '"fileType":"' + this.fileType + '",\n' +
-            '"disableHotspots": ' + (disableHotspots ? 'true' : 'false') + ',\n' +
-            '"pages": [\n';
+        this.storyData = {
+            docName: Utils.toFilename(this.docName),
+            docPath: "P_P_P",
+            docVersion: Constants.DOCUMENT_VERSION_PLACEHOLDER,
+            hasRetina: this.retinaImages,
+            serverToolsPath: this.serverTools,
+            fileType: this.fileType,
+            disableHotspots: disableHotspots,
+            zoomEnabled: this.Settings.settingForKey(SettingKeys.PLUGIN_DISABLE_ZOOM) != 1,
+            title: this.docName,
+            layersExist: this.enabledJSON,
+            centerContent: this.Settings.settingForKey(SettingKeys.PLUGIN_POSITION) === Constants.POSITION_CENTER),
+            highlightLinks: false,
+            pages: [],
+            groups: []
+        }
+        //
     }
-
-    // result: full path to file OR undefined
-    createJSStoryFile() {
-        const fileName = 'story.js';
-        return this.prepareFilePath(this._outputPath + "/" + Constants.VIEWER_DIRECTORY, fileName);
-    }
-
 
     createMainHTML() {
         const buildOptions = {
@@ -262,7 +260,7 @@ class Exporter {
     }
 
     // result: true OR false
-    generateJSStoryEnd() {
+    finishSaveStoryData() {
         const iFrameSizeSrc = this.Settings.settingForKey(SettingKeys.PLUGIN_SHARE_IFRAME_SIZE)
         let iFrameSize = undefined
         if (iFrameSizeSrc != undefined && iFrameSizeSrc != '') {
@@ -275,27 +273,20 @@ class Exporter {
             }
         }
 
-        this.jsStory +=
-            '   ]\n,' +
-            '"resolutions": [' + (this.retinaImages ? '2' : '1') + '],\n' +
-            '"zoomEnabled": ' + (this.Settings.settingForKey(SettingKeys.PLUGIN_DISABLE_ZOOM) != 1 ? 'true' : 'false') + ',\n' +
-            '"title": "' + this.docName + '",\n' +
-            '"startPageIndex": ' + this.mDoc.startArtboardIndex + ',\n' +
-            '"layersExist": ' + (this.enabledJSON ? "true" : "false") + ',\n' +
-            '"centerContent":  ' + (this.Settings.settingForKey(SettingKeys.PLUGIN_POSITION) === Constants.POSITION_CENTER) + ',\n' +
-            '"totalImages": ' + pzDoc.totalImages + ',\n' +
-            '"highlightLinks": false\n'
+        this.storyData['startPageIndex'] = this.mDoc.startArtboardIndex
+        this.storyData['totalImages'] = this.mDoc.totalImages
         if (undefined != iFrameSize) {
-            this.jsStory += ',"iFrameSizeWidth": "' + iFrameSize.width + '"\n'
-            this.jsStory += ',"iFrameSizeHeight": "' + iFrameSize.height + '"\n'
+            this.storyData['iFrameSizeWidth'] = iFrameSize.width
+            this.storyData['iFrameSizeHeight'] = iFrameSize.height
         }
-        this.jsStory +=
-            '}\n';
 
+        // Convert data to JSON
+        let jsStory = "var story = " + JSON.stringify(this.storyData, null, ' ')
+
+        // And save it
         const pathStoryJS = this.createViewerFile('story.js')
         if (undefined == pathStoryJS) return false
-
-        Utils.writeToFile(this.jsStory, pathStoryJS)
+        Utils.writeToFile(jsStory, pathStoryJS)
         return true
     }
 
@@ -322,13 +313,10 @@ class Exporter {
             if (!this.createMainHTML()) return false
 
             // Build Story.js with hotspots  
-            this.generateJSStoryBegin();
-            let index = 0;
-
+            this.startStoryData();
             // Export every artboard into image
             this.mDoc.export()
-
-            if (!this.generateJSStoryEnd()) return false
+            if (!this.finishSaveStoryData()) return false
 
             // Compress Images
             this.compressImages()

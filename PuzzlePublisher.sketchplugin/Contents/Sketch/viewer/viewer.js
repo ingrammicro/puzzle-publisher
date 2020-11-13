@@ -228,6 +228,13 @@ function createViewer(story, files) {
             return (this.hdMediaQuery && this.hdMediaQuery.matches || (window.devicePixelRatio && window.devicePixelRatio > 1));
         },
         buildUserStory: function () {
+            // 
+            let opages = []
+            story.pages.forEach(function (page) {
+                opages.push($.extend(new ViewerPage(), page))
+            })
+            story.pages = opages
+            //
             this.userStoryPages = []
             for (var page of story.pages) {
                 if ('regular' == page.type || 'modal' == page.type) {
@@ -472,6 +479,11 @@ function createViewer(story, files) {
             content.css("margin-left", this.currentMarginLeft + "px")
             content.css("margin-top", this.currentMarginTop + "px")
             this.currentPage.updatePosition()
+
+            // 
+            if (this.child) {
+                this.child.viewerResized()
+            }
         },
 
         getPageHashes: function () {
