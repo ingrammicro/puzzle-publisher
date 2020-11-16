@@ -7,26 +7,37 @@ class GalleryViewer extends AbstractViewer {
         this.blockMainNavigation = true
         this.enableTopNavigation = true
 
-        {
-            const restoredMode = window.localStorage.getItem("galleryIsModeAbs") == "true"
-            if (null != restoredMode) this.isModeAbs = restoredMode
-            //
-            $("#gallery-header-container #controls #galleryShowMap").prop('checked', this.isModeAbs);
-        }
-
+        const restoredMode = window.localStorage.getItem("galleryIsModeAbs") == "true"
+        if (null != restoredMode) this.isModeAbs = restoredMode
+        //
+        $("#gallery-header-container #controls #galleryShowMap").prop('checked', this.isModeAbs);
         this.absZoom = 0.2
+        this.isCustomMapZoom = false
         this.currentFullWidth = null
 
         this.searchInputFocused = false
     }
 
-    initialize(force = false) {
+    initialize(force = false, skipZoomUpdate = false) {
         if (!force && this.inited) return
 
         $('#gallery #grid').empty()
         this.loadPages();
+
         //load amount of pages to gallery title
         document.getElementById("screensamount").innerHTML = viewer.userStoryPages.length + " screens";
+
+        // Adjust map zoom
+        const zoomContainter = $("#gallery-header-container #mapControls")
+        if (this.isModeAbs) {
+            if (!skipZoomUpdate) {
+                const zoomControl = $(".mapZoom")
+                zoomControl.val(this.absZoom * 100)
+            }
+            zoomContainter.show();
+        } else {
+            zoomContainter.hide()
+        }
 
         this.inited = true
     }
@@ -49,6 +60,12 @@ class GalleryViewer extends AbstractViewer {
         return true
     }
 
+    mapZoomChanged(zoomValue) {
+        this.absZoom = zoomValue / 100
+        this.isCustomMapZoom = true
+        this.initialize(true, true)
+    }
+
     viewerResized() {
         if (!this.isModeAbs) return
         this.initialize(true)
@@ -68,9 +85,16 @@ class GalleryViewer extends AbstractViewer {
         return true
     }
 
+    // Calling from UI
     enableMapMode(enabled) {
         window.localStorage.setItem("galleryIsModeAbs", enabled)
         this.isModeAbs = enabled
+        this.initialize(true)
+    }
+
+    // Calling from UI
+    resetMapZoom() {
+        this.isCustomMapZoom = false
         this.initialize(true)
     }
 
@@ -134,8 +158,10 @@ class GalleryViewer extends AbstractViewer {
         }, this);
 
         // Calculate zoom to fit max width
-        this.absZoom = viewer.fullWidth / maxGroupWidth
-        if (this.absZoom > 0.6) this.absZoom = 0.6
+        if (!this.isCustomMapZoom) {
+            this.absZoom = viewer.fullWidth / maxGroupWidth
+            if (this.absZoom > 0.6) this.absZoom = 0.6
+        }
         this.currentFullWidth = viewer.fullWidth
 
         // show pages using their coordinates and current zoom
@@ -202,8 +228,6 @@ class GalleryViewer extends AbstractViewer {
         divTitle.appendTo(divMain);
     }
     loadOnePageAbs(page) {
-        var imageURI = page.image
-
         let style = this._valueToStyle("left", page.x - this.absLeft) + this._valueToStyle("top", page.y + this.absTop, 80)
             + this._valueToStyle("width", page.width) + this._valueToStyle("height", page.height)
 
@@ -218,12 +242,22 @@ class GalleryViewer extends AbstractViewer {
         });
         div.appendTo($('#gallery #grid'));
 
+        const width = Number.parseInt(this.absZoom * page.width)
+        // Show large image for large width        
+        const previewWidth = 522
+        let src = encodeURIComponent(viewer.files)
+        if (width < previewWidth) {
+            src += '/previews/' + encodeURIComponent(page.image)
+        } else {
+            src += '/' + encodeURIComponent(story.hasRetina ? page['image2x'] : page.image)
+        }
+
         var img = $('<img/>', {
-            class: "gallery-image",
+            class: "gallery-map-image",
             alt: page.title,
-            height: this.absZoom * page.height + "px",
-            width: this.absZoom * page.width + "px",
-            src: encodeURIComponent(viewer.files) + '/previews/' + encodeURIComponent(imageURI),
+            width: width,
+            height: Number.parseInt(this.absZoom * page.height) + "px",
+            src: src
         });
         img.appendTo(div);
     }
@@ -252,9 +286,4 @@ function searchScreen() {
 
     //load amount of pages to gallery title
     $("#screensamount").html(foundScreenAmount + " screens")
-}
-
-//Search page in gallery by page name
-function galleryShowMap(checked) {
-    viewer.galleryViewer.enableMapMode(checked)
 }

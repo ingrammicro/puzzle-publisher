@@ -475,11 +475,28 @@ select:focus{
 .galleryArtboardAbs{
     position: absolute;
     border-radius: 5px;
-    background: #fff;
+    background: none;
     box-shadow: 0 2px 4px 1px rgba(0, 0, 0, 0.08);
     cursor: pointer;
     transition: transform .24s, box-shadow .24s;
 }  
+
+.galleryArtboardAbs image{
+} 
+
+#gallery-header-container #mapControls{
+    width:100%;    
+}
+
+#gallery-header-container #mapControls .mapZoom{
+    width:100px;
+}
+
+#gallery-header-container #mapControls .mapResetZoom{
+    color:white;
+    font-size:14px;
+    cursor: pointer;
+}
 
 #commenting {
   z-index: 100;

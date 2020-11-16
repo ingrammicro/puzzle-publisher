@@ -229,7 +229,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     s += '          <div id="gallery-header">\n';
     s += '            <div id="gallery-header-container">\n';
     s += '              <div id="title"><div>' + options.docName + '</div><div id="screensamount"></div></div>\n';
-    s += '              <div id="controls"><input type="checkbox" id="galleryShowMap" onclick="galleryShowMap(this.checked)"/><label for="galleryShowMap">Show map</label></div>\n';
+    s += '              <div id="controls">\n';
+    s += '                 <input type="checkbox" id="galleryShowMap" onclick="viewer.galleryViewer.enableMapMode(this.checked)"/><label for="galleryShowMap">Show map</label>\n';
+    s += '              <div id="mapControls" style="display:none">\n';
+    s += '                 <input type="range" min="0" max="100" value="50" class="mapZoom" onclick="viewer.galleryViewer.mapZoomChanged(this.value)">\n';
+    s += '                 <span onclick="viewer.galleryViewer.resetMapZoom();return false;" class="mapResetZoom">Reset zoom</span>\n';
+    s += '              </div>\n';
+    s += '              </div>\n';
     s += '              <div id="search"><input type="text" placeholder="Search screen..." id="searchInput" onkeyup="searchScreen()"></div>\n';
     s += '              <div id="closebtn" onclick="viewer.galleryViewer.hide(); return false;"><svg><use xlink:href="#icCloseBtn"></use></svg></div>\n';
     s += '            </div>\n';
