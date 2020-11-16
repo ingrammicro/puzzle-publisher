@@ -650,7 +650,7 @@ body {
   display: none;
 }
 
-svg {
+.svgIcon {
   width: 24px;
   height: 24px;
   fill: var(--color-primary);

@@ -260,6 +260,36 @@ class GalleryViewer extends AbstractViewer {
             src: src
         });
         img.appendTo(div);
+
+        /// Show links to other pages
+        page.links.forEach(function (l) {
+            var lsx = l.rect.x + l.rect.width / 2 + page.x
+            var lsy = l.rect.y + l.rect.height / 2 + page.y
+            //
+            const dpage = story.pages[l.page]
+            var ldx = dpage.x + dpage.width / 2
+            var ldy = dpage.y + dpage.height / 2
+            //            
+            let svg = "<svg"
+                + " height='" + Math.abs(Number.parseInt((ldy - lsy) * this.absZoom)) + "'"
+                + " width='" + Math.abs(Number.parseInt((ldx - lsx) * this.absZoom)) + "'"
+                + " >"
+
+            svg += "<line "
+                + " x1='" + Number.parseInt(lsx * this.absZoom) + "'"
+                + " x2='" + Number.parseInt(ldx * this.absZoom) + "'"
+                + " y1='" + Number.parseInt(lsy * this.absZoom) + "'"
+                + " y2='" + Number.parseInt(ldy * this.absZoom) + "'"
+                + " style='stroke:rgb(255,0,0);stroke-width:2'"
+                + "/>"
+
+            svg += "</svg>"
+
+            $('#gallery #grid').append(svg)
+            //
+        }, this)
+
+
     }
 
     _valueToStyle(styleName, v, absDelta = 0) {
