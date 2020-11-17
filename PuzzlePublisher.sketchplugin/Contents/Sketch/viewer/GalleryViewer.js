@@ -21,6 +21,13 @@ class GalleryViewer extends AbstractViewer {
     initialize(force = false, skipZoomUpdate = false) {
         if (!force && this.inited) return
 
+        // adjust main container for current mode
+        if (this.isModeAbs) {
+            $("#gallery").removeClass("gallery-grid")
+        } else {
+            $("#gallery").addClass("gallery-grid")
+        }
+
         $('#gallery #grid').empty()
         this.loadPages();
 
@@ -132,6 +139,8 @@ class GalleryViewer extends AbstractViewer {
     }
 
     loadPagesAbs() {
+        const groupSpace = 40
+
         // find maximum width of Sketch page with artoards
         let maxGroupWidth = null
 
@@ -169,15 +178,19 @@ class GalleryViewer extends AbstractViewer {
         story.groups.forEach(function (group) {
             if (group.pages.length == 0) return
             ///
-            this.absTop = deltaY - group.top
-            this.absLeft = group.left
+            const top = deltaY - group.top
+            const left = group.left
+            group.finalTop = top
             //// show pages
             group.pages.forEach(function (page) {
-                this.loadOnePageAbs(page);
+                this.loadOnePageAbs(page, left, top);
             }, this);
             //
-            deltaY += group.bottom + 40
+            deltaY += group.bottom + groupSpace
         }, this);
+
+        //
+        this._showMapLinks(maxGroupWidth, deltaY)
     }
 
     selectPage(index) {
@@ -227,8 +240,8 @@ class GalleryViewer extends AbstractViewer {
         title.appendTo(divTitle);
         divTitle.appendTo(divMain);
     }
-    loadOnePageAbs(page) {
-        let style = this._valueToStyle("left", page.x - this.absLeft) + this._valueToStyle("top", page.y + this.absTop, 80)
+    loadOnePageAbs(page, pageLeft, pageTop) {
+        let style = this._valueToStyle("left", page.x - pageLeft) + this._valueToStyle("top", page.y + pageTop, 80)
             + this._valueToStyle("width", page.width) + this._valueToStyle("height", page.height)
 
         var div = $('<div/>', {
@@ -260,40 +273,58 @@ class GalleryViewer extends AbstractViewer {
             src: src
         });
         img.appendTo(div);
-
-        /// Show links to other pages
-        page.links.forEach(function (l) {
-            var lsx = l.rect.x + l.rect.width / 2 + page.x
-            var lsy = l.rect.y + l.rect.height / 2 + page.y
-            //
-            const dpage = story.pages[l.page]
-            var ldx = dpage.x + dpage.width / 2
-            var ldy = dpage.y + dpage.height / 2
-            //            
-            let svg = "<svg"
-                + " height='" + Math.abs(Number.parseInt((ldy - lsy) * this.absZoom)) + "'"
-                + " width='" + Math.abs(Number.parseInt((ldx - lsx) * this.absZoom)) + "'"
-                + " >"
-
-            svg += "<line "
-                + " x1='" + Number.parseInt(lsx * this.absZoom) + "'"
-                + " x2='" + Number.parseInt(ldx * this.absZoom) + "'"
-                + " y1='" + Number.parseInt(lsy * this.absZoom) + "'"
-                + " y2='" + Number.parseInt(ldy * this.absZoom) + "'"
-                + " style='stroke:rgb(255,0,0);stroke-width:2'"
-                + "/>"
-
-            svg += "</svg>"
-
-            $('#gallery #grid').append(svg)
-            //
-        }, this)
-
-
     }
 
     _valueToStyle(styleName, v, absDelta = 0) {
         return styleName + ": " + Number.parseInt(v * this.absZoom + absDelta) + "px;"
+    }
+
+
+    _showMapLinks(finalWidth, finalHeight) {
+        // build scene
+        let svg = `
+        <defs>
+            <marker id='head' orient='auto'
+                markerWidth='40' markerHeight='40'
+                refX='0.1' refY='2'>
+            <path d='M0,0 V4 L2,2 Z' fill="red"/>
+            </marker>
+        </defs>
+      `
+        svg += "<svg"
+            + " height='" + Math.abs(Number.parseInt(finalHeight * this.absZoom)) + "'"
+            + " width='" + Math.abs(Number.parseInt(finalWidth * this.absZoom)) + "'"
+            + " >"
+        //
+        let indexCounter = 0
+        //
+        viewer.userStoryPages.forEach(function (page) {
+            /// Show links to other pages
+            page.links.forEach(function (l) {
+                var lsx = l.rect.x + l.rect.width / 2 + page.x
+                var lsy = l.rect.y + l.rect.height / 2 + page.y
+                //
+                const dpage = story.pages[l.page]
+                if (!dpage) return
+                var ldx = dpage.x// + dpage.width / 2
+                var ldy = dpage.y// + dpage.height / 2
+                //            
+                svg += "<path marker-end='url(#head)' id='gmpl" + indexCounter + "' d='M "
+                    + Number.parseInt(lsx * this.absZoom) + " "
+                    + Number.parseInt(lsy * this.absZoom) + " "
+                    + "q "
+                    + Number.parseInt((ldx - lsx) / 2 * this.absZoom) + " "
+                    + "100 "
+                    + Number.parseInt((ldx - lsx) * this.absZoom) + " "
+                    + Number.parseInt((ldy - lsy) * this.absZoom) + " "
+                    + "'/>"
+                //
+                indexCounter++
+            }, this)
+        }, this)
+
+        svg += "</svg>"
+        $('#gallery #grid').append(svg)
     }
 
 }

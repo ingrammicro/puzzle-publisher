@@ -362,9 +362,12 @@ select:focus{
 }
 
 #gallery {
-  max-width: 1200px;
   width: calc(100% - 80px);
   margin: 80px 40px;
+}
+
+.gallery-grid {
+    max-width: 1200px;
 }
 
 #gallery-header {
@@ -483,6 +486,15 @@ select:focus{
 
 .galleryArtboardAbs image{
 } 
+
+#gallery #grid svg{
+    z-index:61;
+}
+#gallery #grid svg path{
+    stroke:rgb(0,200,0);
+    stroke-width:1;
+    fill:none;
+}
 
 #gallery-header-container #mapControls{
     width:100%;    
