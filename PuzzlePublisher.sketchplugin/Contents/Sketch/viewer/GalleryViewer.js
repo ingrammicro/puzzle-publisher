@@ -1,3 +1,4 @@
+const GALLERY_TOP_MARGIN = 80
 
 
 class GalleryViewer extends AbstractViewer {
@@ -152,6 +153,8 @@ class GalleryViewer extends AbstractViewer {
             ///
             let left = null, right = null, top = null, bottom = null
             pages.forEach(function (page) {
+                page.group = group
+                //
                 if (null == top || page.y < top) top = page.y
                 if (null == left || page.x < left) left = page.x
                 if (null == right || (page.x + page.width) > right) right = page.x + page.width
@@ -181,8 +184,9 @@ class GalleryViewer extends AbstractViewer {
             const top = deltaY - group.top
             const left = group.left
             group.finalTop = top
+            //////
             //// show pages
-            group.pages.forEach(function (page) {
+            group.pages.forEach(function (page) {                //
                 this.loadOnePageAbs(page, left, top);
             }, this);
             //
@@ -241,7 +245,10 @@ class GalleryViewer extends AbstractViewer {
         divTitle.appendTo(divMain);
     }
     loadOnePageAbs(page, pageLeft, pageTop) {
-        let style = this._valueToStyle("left", page.x - pageLeft) + this._valueToStyle("top", page.y + pageTop, 80)
+        page.finalTop = pageTop + page.y
+        page.finalLeft = page.x - pageLeft
+
+        let style = this._valueToStyle("left", page.finalLeft) + this._valueToStyle("top", page.finalTop, GALLERY_TOP_MARGIN)
             + this._valueToStyle("width", page.width) + this._valueToStyle("height", page.height)
 
         var div = $('<div/>', {
@@ -255,7 +262,7 @@ class GalleryViewer extends AbstractViewer {
         });
         div.appendTo($('#gallery #grid'));
 
-        const width = Number.parseInt(this.absZoom * page.width)
+        const width = Math.round(this.absZoom * page.width)
         // Show large image for large width        
         const previewWidth = 522
         let src = encodeURIComponent(viewer.files)
@@ -269,55 +276,71 @@ class GalleryViewer extends AbstractViewer {
             class: "gallery-map-image",
             alt: page.title,
             width: width,
-            height: Number.parseInt(this.absZoom * page.height) + "px",
+            height: Math.round(this.absZoom * page.height) + "px",
             src: src
         });
         img.appendTo(div);
     }
 
     _valueToStyle(styleName, v, absDelta = 0) {
-        return styleName + ": " + Number.parseInt(v * this.absZoom + absDelta) + "px;"
+        return styleName + ": " + Math.round(v * this.absZoom + absDelta) + "px;"
     }
 
 
     _showMapLinks(finalWidth, finalHeight) {
-        // build scene
-        let svg = `
-        <defs>
-            <marker id='head' orient='auto'
-                markerWidth='40' markerHeight='40'
-                refX='0.1' refY='2'>
-            <path d='M0,0 V4 L2,2 Z' fill="red"/>
-            </marker>
-        </defs>
-      `
-        svg += "<svg"
-            + " height='" + Math.abs(Number.parseInt(finalHeight * this.absZoom)) + "'"
-            + " width='" + Math.abs(Number.parseInt(finalWidth * this.absZoom)) + "'"
+        // build scene    
+        let svg = "<svg"
+            + " height='" + Math.abs(Math.round(finalHeight * this.absZoom)) + "'"
+            + " width='" + Math.abs(Math.round(finalWidth * this.absZoom)) + "'"
             + " >"
+        svg += `
+            <defs>
+             <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5"
+                markerWidth="6" markerHeight="6" fill="#F89000"
+                orient="auto">
+                 <path d="M 0 0 L 10 5 L 0 10 z" fill="#F89000"/>
+             </marker>               
+            </defs>
+        `
         //
         let indexCounter = 0
         //
         viewer.userStoryPages.forEach(function (page) {
             /// Show links to other pages
             page.links.forEach(function (l) {
-                var lsx = l.rect.x + l.rect.width / 2 + page.x
-                var lsy = l.rect.y + l.rect.height / 2 + page.y
+                var lsx = l.rect.x + l.rect.width / 2 + page.finalLeft
+                var lsy = l.rect.y + l.rect.height / 2 + page.finalTop
                 //
+                if (l.page == page.index) return
                 const dpage = story.pages[l.page]
                 if (!dpage) return
-                var ldx = dpage.x// + dpage.width / 2
-                var ldy = dpage.y// + dpage.height / 2
-                //            
-                svg += "<path marker-end='url(#head)' id='gmpl" + indexCounter + "' d='M "
-                    + Number.parseInt(lsx * this.absZoom) + " "
-                    + Number.parseInt(lsy * this.absZoom) + " "
+                var ldx0 = dpage.finalLeft
+                var ldx1 = dpage.finalTop + dpage.width
+                var ldy0 = dpage.finalTop
+                var ldx = 0, ldy = 0
+                // find the best target edge to connect with
+                if (ldx0 > lsx) {
+                    ldx = ldx0
+                    ldy = ldy0 + dpage.height / 2
+                    lsx += l.rect.width / 2 // place start to hotspot right edge
+                } else if (lsx > ldx1) {
+                    ldx = ldx1
+                    ldy = ldy0 + dpage.height / 2
+                    lsx -= l.rect.width / 2 // place start to hotspot left edge
+                }
+                //
+                //
+                svg += "<path marker-end='url(#arrow)' id='gmpl" + indexCounter + "' d='M "
+                    + Math.round(lsx * this.absZoom) + " "
+                    + Math.round(lsy * this.absZoom) + " "
                     + "q "
-                    + Number.parseInt((ldx - lsx) / 2 * this.absZoom) + " "
+                    + Math.round((ldx - lsx) / 2 * this.absZoom) + " "
                     + "100 "
-                    + Number.parseInt((ldx - lsx) * this.absZoom) + " "
-                    + Number.parseInt((ldy - lsy) * this.absZoom) + " "
+                    + Math.round((ldx - lsx) * this.absZoom) + " "
+                    + Math.round((ldy - lsy) * this.absZoom) + " "
                     + "'/>"
+                //
+                svg += "<circle cx='" + Math.round(lsx * this.absZoom) + "' cy='" + Math.round(lsy * this.absZoom) + "' r='3'/>"
                 //
                 indexCounter++
             }, this)

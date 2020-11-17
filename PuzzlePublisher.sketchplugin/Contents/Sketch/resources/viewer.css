@@ -362,12 +362,14 @@ select:focus{
 }
 
 #gallery {
-  width: calc(100% - 80px);
-  margin: 80px 40px;
+  width: 100%;
+  margin: 80px 0px;
 }
 
 .gallery-grid {
+    width: calc(100% - 80px);
     max-width: 1200px;
+    margin: 80px 40px;
 }
 
 #gallery-header {
@@ -464,15 +466,19 @@ select:focus{
   transition: all .24s;
 }
 
+.gallery-grid{
+    justify-content: center;
+    margin: 0 -32px 80px -32px;
+}
+
 #gallery #grid {
   display: -webkit-box;
   display: flex;
-  justify-content: center;
   flex-wrap: wrap;
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
   flex-direction: row;
-  margin: 0 -32px 80px -32px;
+  margin: 0 0 80px 0;
 }
 
 .galleryArtboardAbs{
@@ -490,10 +496,19 @@ select:focus{
 #gallery #grid svg{
     z-index:61;
 }
+
+#gallery #grid svg circle{
+    z-index:62;
+    stroke: #F89000;
+    stroke-width:1;
+    fill:white;
+}
+
 #gallery #grid svg path{
-    stroke:rgb(0,200,0);
+    stroke: #F89000;
     stroke-width:1;
     fill:none;
+    z-index:61;
 }
 
 #gallery-header-container #mapControls{
