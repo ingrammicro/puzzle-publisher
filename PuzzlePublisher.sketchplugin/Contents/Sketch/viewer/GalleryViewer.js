@@ -26,24 +26,28 @@ class GalleryViewerMapLink {
         var ldx0 = dpage.finalLeft
         var ldx1 = dpage.finalLeft + dpage.width
         var ldy0 = dpage.finalTop
-        var ldx = 0, ldy = 0
+        var ldx = 0, ldy = 0, dc = 0
         // find the best target edge to connect with
         if (ldx0 > lsx) {
             ldx = ldx0
             ldy = ldy0 + dpage.height / 2
             lsx += l.rect.width / 2 // place start to hotspot right edge
+            dc = 50
         } else if (lsx > ldx1) {
             ldx = ldx1
             ldy = ldy0 + dpage.height / 2
             lsx -= l.rect.width / 2 // place start to hotspot left edge
+            dc = 50
         } else if (ldy0 > lsy) {
             lsy += l.rect.height / 2
             ldx = ldx0 + dpage.width / 2
             ldy = ldy0
+            dc = 0
         } else {
             lsy -= l.rect.height / 2
             ldx = ldx0 + dpage.width / 2
             ldy = ldy0 + dpage.height
+            dc = 0
         }
         //
         //
@@ -52,7 +56,7 @@ class GalleryViewerMapLink {
             + Math.round(lsy * zoom) + " "
             + "q "
             + Math.round((ldx - lsx) / 2 * zoom) + " "
-            + "100 "
+            + dc + " "
             + Math.round((ldx - lsx) * zoom) + " "
             + Math.round((ldy - lsy) * zoom) + " "
             + "'/>"
@@ -380,7 +384,7 @@ class GalleryViewer extends AbstractViewer {
                 // valide destination page
                 if (l.page == page.index) return
                 const dpage = story.pages[l.page]
-                if (!dpage || "external" == dpage.type) return
+                if (!dpage || "external" == dpage.type || "overlay" == dpage.type) return
                 // build SVG coode for the link
                 const link = new GalleryViewerMapLink(indexCounter++, l, page, dpage)
                 svg += link.buildCode(this.absZoom)
