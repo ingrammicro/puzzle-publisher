@@ -167,6 +167,7 @@ class GalleryViewer extends AbstractViewer {
             group.bottom = bottom
             group.left = left
             group.right = right
+            group.height = bottom - top
         }, this);
 
         // Calculate zoom to fit max width
@@ -178,6 +179,7 @@ class GalleryViewer extends AbstractViewer {
 
         // show pages using their coordinates and current zoom
         let deltaY = 0
+        let fullHeight = 0
         story.groups.forEach(function (group) {
             if (group.pages.length == 0) return
             ///
@@ -190,11 +192,14 @@ class GalleryViewer extends AbstractViewer {
                 this.loadOnePageAbs(page, left, top);
             }, this);
             //
-            deltaY += group.bottom + groupSpace
+            fullHeight += group.height
+            //
+            deltaY += group.height + groupSpace
         }, this);
+        fullHeight += groupSpace * (story.groups.length - 1)
 
         //
-        this._showMapLinks(maxGroupWidth, deltaY)
+        this._showMapLinks(maxGroupWidth, fullHeight)
     }
 
     selectPage(index) {
@@ -313,9 +318,10 @@ class GalleryViewer extends AbstractViewer {
                 //
                 if (l.page == page.index) return
                 const dpage = story.pages[l.page]
-                if (!dpage) return
+                if (!dpage || "external" == dpage.type) return
+                //
                 var ldx0 = dpage.finalLeft
-                var ldx1 = dpage.finalTop + dpage.width
+                var ldx1 = dpage.finalLeft + dpage.width
                 var ldy0 = dpage.finalTop
                 var ldx = 0, ldy = 0
                 // find the best target edge to connect with
@@ -327,6 +333,14 @@ class GalleryViewer extends AbstractViewer {
                     ldx = ldx1
                     ldy = ldy0 + dpage.height / 2
                     lsx -= l.rect.width / 2 // place start to hotspot left edge
+                } else if (ldy0 > lsy) {
+                    lsy += l.rect.height / 2
+                    ldx = ldx0 + dpage.width / 2
+                    ldy = ldy0
+                } else {
+                    lsy -= l.rect.height / 2
+                    ldx = ldx0 + dpage.width / 2
+                    ldy = ldy0 + dpage.height
                 }
                 //
                 //
@@ -360,7 +374,7 @@ function searchScreen() {
     viewer.userStoryPages.forEach(function (page) {
         const title = page.title.toLowerCase()
         const div = $("#gallery #grid #" + page.index)
-        if (title.includes(keyword)) {
+        if (title.includes(keyword) || page.image.includes(keyword)) {
             div.show()
             foundScreenAmount++
         } else {

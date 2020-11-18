@@ -362,7 +362,7 @@ select:focus{
 }
 
 #gallery {
-  width: 100%;
+  /*width: 100%;*/
   margin: 80px 0px;
 }
 
@@ -495,6 +495,7 @@ select:focus{
 
 #gallery #grid svg{
     z-index:61;
+    pointer-events: none;
 }
 
 #gallery #grid svg circle{
