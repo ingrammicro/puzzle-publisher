@@ -1,6 +1,68 @@
 const GALLERY_TOP_MARGIN = 80
 
 
+class GalleryViewerMapLink {
+    constructor(index, link, spage, dpage) {
+        this.index = index
+        this.link = link
+        this.spage = spage
+        this.dpage = dpage
+        //
+        if (undefined == spage.slinks) spage.slinks = []
+        if (undefined == dpage.dlinks) dpage.dlinks = []
+        spage.slinks.push(this)
+        dpage.dlinks.push(this)
+    }
+
+    buildCode(zoom) {
+        const page = this.spage
+        const dpage = this.dpage
+        const l = this.link
+        let svg = ""
+        //
+        var lsx = l.rect.x + l.rect.width / 2 + page.finalLeft
+        var lsy = l.rect.y + l.rect.height / 2 + page.finalTop
+        //
+        var ldx0 = dpage.finalLeft
+        var ldx1 = dpage.finalLeft + dpage.width
+        var ldy0 = dpage.finalTop
+        var ldx = 0, ldy = 0
+        // find the best target edge to connect with
+        if (ldx0 > lsx) {
+            ldx = ldx0
+            ldy = ldy0 + dpage.height / 2
+            lsx += l.rect.width / 2 // place start to hotspot right edge
+        } else if (lsx > ldx1) {
+            ldx = ldx1
+            ldy = ldy0 + dpage.height / 2
+            lsx -= l.rect.width / 2 // place start to hotspot left edge
+        } else if (ldy0 > lsy) {
+            lsy += l.rect.height / 2
+            ldx = ldx0 + dpage.width / 2
+            ldy = ldy0
+        } else {
+            lsy -= l.rect.height / 2
+            ldx = ldx0 + dpage.width / 2
+            ldy = ldy0 + dpage.height
+        }
+        //
+        //
+        svg += "<path marker-end='url(#arrow)' id='l" + this.index + "' d='M "
+            + Math.round(lsx * zoom) + " "
+            + Math.round(lsy * zoom) + " "
+            + "q "
+            + Math.round((ldx - lsx) / 2 * zoom) + " "
+            + "100 "
+            + Math.round((ldx - lsx) * zoom) + " "
+            + Math.round((ldy - lsy) * zoom) + " "
+            + "'/>"
+        //
+        svg += "<circle ' id='s" + this.index + "' cx='" + Math.round(lsx * zoom) + "' cy='" + Math.round(lsy * zoom) + "' r='3'/>"
+        //
+        return svg
+    }
+}
+
 class GalleryViewer extends AbstractViewer {
     constructor() {
         super()
@@ -154,6 +216,8 @@ class GalleryViewer extends AbstractViewer {
             let left = null, right = null, top = null, bottom = null
             pages.forEach(function (page) {
                 page.group = group
+                page.slinks = []
+                page.dlinks = []
                 //
                 if (null == top || page.y < top) top = page.y
                 if (null == left || page.x < left) left = page.x
@@ -313,50 +377,13 @@ class GalleryViewer extends AbstractViewer {
         viewer.userStoryPages.forEach(function (page) {
             /// Show links to other pages
             page.links.forEach(function (l) {
-                var lsx = l.rect.x + l.rect.width / 2 + page.finalLeft
-                var lsy = l.rect.y + l.rect.height / 2 + page.finalTop
-                //
+                // valide destination page
                 if (l.page == page.index) return
                 const dpage = story.pages[l.page]
                 if (!dpage || "external" == dpage.type) return
-                //
-                var ldx0 = dpage.finalLeft
-                var ldx1 = dpage.finalLeft + dpage.width
-                var ldy0 = dpage.finalTop
-                var ldx = 0, ldy = 0
-                // find the best target edge to connect with
-                if (ldx0 > lsx) {
-                    ldx = ldx0
-                    ldy = ldy0 + dpage.height / 2
-                    lsx += l.rect.width / 2 // place start to hotspot right edge
-                } else if (lsx > ldx1) {
-                    ldx = ldx1
-                    ldy = ldy0 + dpage.height / 2
-                    lsx -= l.rect.width / 2 // place start to hotspot left edge
-                } else if (ldy0 > lsy) {
-                    lsy += l.rect.height / 2
-                    ldx = ldx0 + dpage.width / 2
-                    ldy = ldy0
-                } else {
-                    lsy -= l.rect.height / 2
-                    ldx = ldx0 + dpage.width / 2
-                    ldy = ldy0 + dpage.height
-                }
-                //
-                //
-                svg += "<path marker-end='url(#arrow)' id='gmpl" + indexCounter + "' d='M "
-                    + Math.round(lsx * this.absZoom) + " "
-                    + Math.round(lsy * this.absZoom) + " "
-                    + "q "
-                    + Math.round((ldx - lsx) / 2 * this.absZoom) + " "
-                    + "100 "
-                    + Math.round((ldx - lsx) * this.absZoom) + " "
-                    + Math.round((ldy - lsy) * this.absZoom) + " "
-                    + "'/>"
-                //
-                svg += "<circle cx='" + Math.round(lsx * this.absZoom) + "' cy='" + Math.round(lsy * this.absZoom) + "' r='3'/>"
-                //
-                indexCounter++
+                // build SVG coode for the link
+                const link = new GalleryViewerMapLink(indexCounter++, l, page, dpage)
+                svg += link.buildCode(this.absZoom)
             }, this)
         }, this)
 
@@ -374,12 +401,21 @@ function searchScreen() {
     viewer.userStoryPages.forEach(function (page) {
         const title = page.title.toLowerCase()
         const div = $("#gallery #grid #" + page.index)
-        if (title.includes(keyword) || page.image.includes(keyword)) {
+        const visible = title.includes(keyword) || page.image.includes(keyword)
+        if (visible) foundScreenAmount++
+        page.visibleInGallery = visible
+        //
+        //if (div.is(':visible') == visible) return
+        //
+        if (visible) {
             div.show()
-            foundScreenAmount++
         } else {
             div.hide()
         }
+    });
+
+    viewer.userStoryPages.forEach(function (page) {
+        page.showHideGalleryLinks()
     });
 
     //load amount of pages to gallery title

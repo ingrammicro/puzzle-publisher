@@ -81,6 +81,26 @@ class ViewerPage {
 
         this.overlayByEvent = undefined
         this.tmpSrcOverlayByEvent = undefined
+
+        this.visibleInGallery = true
+    }
+
+    showHideGalleryLinks() {
+
+        if (this.slinks) this._showHideGalleryLinkSet(this.slinks)
+        if (this.dlinks) this._showHideGalleryLinkSet(this.dlinks)
+    }
+
+    _showHideGalleryLinkSet(links) {
+        links.forEach(function (link) {
+            let show = this.visibleInGallery && link.dpage.visibleInGallery && link.spage.visibleInGallery
+            // hide link
+            const o = $("#gallery #grid svg #l" + link.index)
+            if (show) o.show(); else o.hide()
+            // hide start point
+            const sp = $("#gallery #grid svg #s" + link.index)
+            if (show) sp.show(); else sp.hide()
+        }, this)
     }
 
     getHash() {

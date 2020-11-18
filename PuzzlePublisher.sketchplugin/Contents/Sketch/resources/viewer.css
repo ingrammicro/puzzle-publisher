@@ -496,6 +496,9 @@ select:focus{
 #gallery #grid svg{
     z-index:61;
     pointer-events: none;
+    position:absolute;
+    left:0px;
+    top: 80px;
 }
 
 #gallery #grid svg circle{
