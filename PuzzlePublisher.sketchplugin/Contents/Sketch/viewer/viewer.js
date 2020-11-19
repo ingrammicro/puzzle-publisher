@@ -192,8 +192,10 @@ function createViewer(story, files) {
             if (this.urlParams.get('v') != null && this.versionViewer) {
                 this.versionViewer.toggle()
             }
-            if (this.urlParams.get('g') != null && this.galleryViewer) {
-                this.galleryViewer.toggle()
+            const gParam = this.urlParams.get('g')
+            if (gParam != null && this.galleryViewer) {
+                this.galleryViewer.handleURLParam(gParam)
+                this.galleryViewer.show()
             }
         },
 
@@ -751,7 +753,7 @@ function createViewer(story, files) {
                 newPath += "&e=1"
             }
             if (this.galleryViewer && this.galleryViewer.isVisible()) {
-                newPath += "&g=1"
+                newPath += "&g=" + (this.galleryViewer.isMapMode ? "m" : "g")
             }
 
             if (pushHistory) {

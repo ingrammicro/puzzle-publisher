@@ -77,10 +77,11 @@ class GalleryViewer extends AbstractViewer {
         this.enableTopNavigation = true
         this.mapLinks = null
         this.mapFocusedPage = null
+        this.isMapMode = false
         //
         const restoredMode = window.localStorage.getItem("galleryIsModeAbs") == "true"
-        if (null != restoredMode) this.isModeAbs = restoredMode
-        $("#gallery-header-container #controls #galleryShowMap").prop('checked', this.isModeAbs);
+        if (null != restoredMode) this.isMapMode = restoredMode
+        $("#gallery-header-container #controls #galleryShowMap").prop('checked', this.isMapMode);
         //
         this.isMapLinksVisible = false
         if (window.localStorage.getItem("galleryIsLinkVisible") == "true") this.isMapLinksVisible = true
@@ -97,7 +98,7 @@ class GalleryViewer extends AbstractViewer {
         if (!force && this.inited) return
 
         // adjust main container for current mode
-        if (this.isModeAbs) {
+        if (this.isMapMode) {
             $("#gallery").removeClass("gallery-grid")
         } else {
             $("#gallery").addClass("gallery-grid")
@@ -111,7 +112,7 @@ class GalleryViewer extends AbstractViewer {
 
         // Adjust map zoom
         const zoomContainter = $("#gallery-header-container #mapControls")
-        if (this.isModeAbs) {
+        if (this.isMapMode) {
             if (!skipZoomUpdate) {
                 const zoomControl = $(".mapZoom")
                 zoomControl.val(this.mapZoom * 100)
@@ -153,7 +154,7 @@ class GalleryViewer extends AbstractViewer {
     }
 
     viewerResized() {
-        if (!this.isModeAbs) return
+        if (!this.isMapMode) return
         this.initialize(true)
     }
 
@@ -171,11 +172,21 @@ class GalleryViewer extends AbstractViewer {
         return true
     }
 
+    /// calling from parent
+    handleURLParam(paramValue) {
+        const enableMap = "m" == paramValue
+        if (enableMap != this.isMapMode) {
+            this.enableMapMode(enableMap)
+            $("#galleryShowMap").prop('checked', enableMap);
+        }
+    }
+
     // Calling from UI
     enableMapMode(enabled) {
         window.localStorage.setItem("galleryIsModeAbs", enabled)
-        this.isModeAbs = enabled
+        this.isMapMode = enabled
         this.initialize(true)
+        viewer.refresh_url(viewer.currentPage, "", false)
     }
 
     // Calling from UI
@@ -218,7 +229,7 @@ class GalleryViewer extends AbstractViewer {
 
 
     loadPages() {
-        if (this.isModeAbs) return this.loadPagesAbs()
+        if (this.isMapMode) return this.loadPagesAbs()
         viewer.userStoryPages.forEach(function (page) {
             this.loadOnePage(page);
         }, this);
