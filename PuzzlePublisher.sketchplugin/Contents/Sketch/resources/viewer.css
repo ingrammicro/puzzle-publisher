@@ -497,7 +497,7 @@ select:focus{
     z-index:61;
     pointer-events: none;
     position:absolute;
-    left:0px;
+    left:40px;
     top: 80px;
 }
 

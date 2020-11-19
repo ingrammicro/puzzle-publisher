@@ -1,4 +1,5 @@
 const GALLERY_TOP_MARGIN = 80
+const GALLERY_LEFTRIGH_MARGIN = 40
 
 
 class GalleryViewerMapLink {
@@ -14,7 +15,7 @@ class GalleryViewerMapLink {
         dpage.dlinks.push(this)
     }
 
-    buildCode(zoom) {
+    buildCode(zoom, visible) {
         const page = this.spage
         const dpage = this.dpage
         const l = this.link
@@ -51,7 +52,8 @@ class GalleryViewerMapLink {
         }
         //
         //
-        svg += "<path marker-end='url(#arrow)' id='l" + this.index + "' d='M "
+        const styleCode = visible ? "" : " style='display:none' "
+        svg += "<path " + styleCode + "marker-end='url(#arrow)' id='l" + this.index + "' d='M "
             + Math.round(lsx * zoom) + " "
             + Math.round(lsy * zoom) + " "
             + "q "
@@ -61,7 +63,7 @@ class GalleryViewerMapLink {
             + Math.round((ldy - lsy) * zoom) + " "
             + "'/>"
         //
-        svg += "<circle ' id='s" + this.index + "' cx='" + Math.round(lsx * zoom) + "' cy='" + Math.round(lsy * zoom) + "' r='3'/>"
+        svg += "<circle " + styleCode + "' id='s" + this.index + "' cx='" + Math.round(lsx * zoom) + "' cy='" + Math.round(lsy * zoom) + "' r='3'/>"
         //
         return svg
     }
@@ -73,12 +75,18 @@ class GalleryViewer extends AbstractViewer {
         this.isSidebarChild = false
         this.blockMainNavigation = true
         this.enableTopNavigation = true
-
+        this.mapLinks = null
+        this.mapFocusedPage = null
+        //
         const restoredMode = window.localStorage.getItem("galleryIsModeAbs") == "true"
         if (null != restoredMode) this.isModeAbs = restoredMode
-        //
         $("#gallery-header-container #controls #galleryShowMap").prop('checked', this.isModeAbs);
-        this.absZoom = 0.2
+        //
+        this.isMapLinksVisible = false
+        if (window.localStorage.getItem("galleryIsLinkVisible") == "true") this.isMapLinksVisible = true
+        $("#gallery-header-container #controls #galleryShowMapLinks").prop('checked', this.isMapLinksVisible);
+        //        
+        this.mapZoom = 0.2
         this.isCustomMapZoom = false
         this.currentFullWidth = null
 
@@ -106,7 +114,7 @@ class GalleryViewer extends AbstractViewer {
         if (this.isModeAbs) {
             if (!skipZoomUpdate) {
                 const zoomControl = $(".mapZoom")
-                zoomControl.val(this.absZoom * 100)
+                zoomControl.val(this.mapZoom * 100)
             }
             zoomContainter.show();
         } else {
@@ -121,11 +129,15 @@ class GalleryViewer extends AbstractViewer {
 
         if (27 == event.which) { // esc
             this.toggle()
-        } else if (!this.searchInputFocused && 71 == event.which) { // g
+        } else if (!this.searchInputFocused && 71 == event.which) { // key "g"
             // Key "G" deactivates Symbol Viewer
             this.toggle()
         } else if (this.searchInputFocused) {
             return true
+        } else if (76 == event.which) { // key "l"
+            $("#galleryShowMapLinks").click()
+        } else if (77 == event.which) { // key "m"
+            $("#galleryShowMap").click()
         } else {
             return super.handleKeyDown(jevent)
         }
@@ -135,7 +147,7 @@ class GalleryViewer extends AbstractViewer {
     }
 
     mapZoomChanged(zoomValue) {
-        this.absZoom = zoomValue / 100
+        this.mapZoom = zoomValue / 100
         this.isCustomMapZoom = true
         this.initialize(true, true)
     }
@@ -164,6 +176,13 @@ class GalleryViewer extends AbstractViewer {
         window.localStorage.setItem("galleryIsModeAbs", enabled)
         this.isModeAbs = enabled
         this.initialize(true)
+    }
+
+    // Calling from UI
+    showMapLinks(visible) {
+        window.localStorage.setItem("galleryIsLinkVisible", visible)
+        this.isMapLinksVisible = visible
+        this._showHideMapLinks(visible ? null : false)
     }
 
     // Calling from UI
@@ -240,8 +259,8 @@ class GalleryViewer extends AbstractViewer {
 
         // Calculate zoom to fit max width
         if (!this.isCustomMapZoom) {
-            this.absZoom = viewer.fullWidth / maxGroupWidth
-            if (this.absZoom > 0.6) this.absZoom = 0.6
+            this.mapZoom = (viewer.fullWidth - GALLERY_LEFTRIGH_MARGIN * 2) / maxGroupWidth
+            if (this.mapZoom > 0.6) this.mapZoom = 0.6
         }
         this.currentFullWidth = viewer.fullWidth
 
@@ -267,13 +286,23 @@ class GalleryViewer extends AbstractViewer {
         fullHeight += groupSpace * (story.groups.length - 1)
 
         //
-        this._showMapLinks(maxGroupWidth, fullHeight)
+        this._buildMapLinks(maxGroupWidth, fullHeight)
     }
 
     selectPage(index) {
         this.hide()
         viewer.goToPage(index)
     }
+
+    mouseEnterPage(index) {
+        if (this.isMapLinksVisible) return
+        //
+        if (this.mapFocusedPage) this.mapFocusedPage.showHideGalleryLinks(false)
+        const page = story.pages[index]
+        page.showHideGalleryLinks(true)
+        this.mapFocusedPage = page
+    }
+
 
     loadOnePage(page) {
         var imageURI = page.image
@@ -321,7 +350,7 @@ class GalleryViewer extends AbstractViewer {
         page.finalTop = pageTop + page.y
         page.finalLeft = page.x - pageLeft
 
-        let style = this._valueToStyle("left", page.finalLeft) + this._valueToStyle("top", page.finalTop, GALLERY_TOP_MARGIN)
+        let style = this._valueToStyle("left", page.finalLeft, GALLERY_LEFTRIGH_MARGIN) + this._valueToStyle("top", page.finalTop, GALLERY_TOP_MARGIN)
             + this._valueToStyle("width", page.width) + this._valueToStyle("height", page.height)
 
         var div = $('<div/>', {
@@ -333,9 +362,12 @@ class GalleryViewer extends AbstractViewer {
         div.click(function (e) {
             viewer.galleryViewer.selectPage(parseInt(this.id));
         });
+        div.mouseenter(function () {
+            viewer.galleryViewer.mouseEnterPage(this.id)
+        })
         div.appendTo($('#gallery #grid'));
 
-        const width = Math.round(this.absZoom * page.width)
+        const width = Math.round(this.mapZoom * page.width)
         // Show large image for large width        
         const previewWidth = 522
         let src = encodeURIComponent(viewer.files)
@@ -349,22 +381,29 @@ class GalleryViewer extends AbstractViewer {
             class: "gallery-map-image",
             alt: page.title,
             width: width,
-            height: Math.round(this.absZoom * page.height) + "px",
+            height: Math.round(this.mapZoom * page.height) + "px",
             src: src
         });
         img.appendTo(div);
     }
 
     _valueToStyle(styleName, v, absDelta = 0) {
-        return styleName + ": " + Math.round(v * this.absZoom + absDelta) + "px;"
+        return styleName + ": " + Math.round(v * this.mapZoom + absDelta) + "px;"
+    }
+
+    _showHideMapLinks(show) {
+        viewer.userStoryPages.forEach(function (page) {
+            page.showHideGalleryLinks(show)
+        });
     }
 
 
-    _showMapLinks(finalWidth, finalHeight) {
+    _buildMapLinks(finalWidth, finalHeight) {
+
         // build scene    
         let svg = "<svg"
-            + " height='" + Math.abs(Math.round(finalHeight * this.absZoom)) + "'"
-            + " width='" + Math.abs(Math.round(finalWidth * this.absZoom)) + "'"
+            + " height='" + Math.abs(Math.round(finalHeight * this.mapZoom)) + "'"
+            + " width='" + Math.abs(Math.round(finalWidth * this.mapZoom)) + "'"
             + " >"
         svg += `
             <defs>
@@ -377,6 +416,7 @@ class GalleryViewer extends AbstractViewer {
         `
         //
         let indexCounter = 0
+        this.mapLinks = []
         //
         viewer.userStoryPages.forEach(function (page) {
             /// Show links to other pages
@@ -387,7 +427,8 @@ class GalleryViewer extends AbstractViewer {
                 if (!dpage || "external" == dpage.type || "overlay" == dpage.type) return
                 // build SVG coode for the link
                 const link = new GalleryViewerMapLink(indexCounter++, l, page, dpage)
-                svg += link.buildCode(this.absZoom)
+                svg += link.buildCode(this.mapZoom, this.isMapLinksVisible)
+                this.mapLinks.push(link)
             }, this)
         }, this)
 
@@ -418,9 +459,7 @@ function searchScreen() {
         }
     });
 
-    viewer.userStoryPages.forEach(function (page) {
-        page.showHideGalleryLinks()
-    });
+    viewer._showHideMapLinks()
 
     //load amount of pages to gallery title
     $("#screensamount").html(foundScreenAmount + " screens")

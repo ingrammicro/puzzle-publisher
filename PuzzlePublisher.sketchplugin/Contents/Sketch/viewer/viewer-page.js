@@ -85,15 +85,15 @@ class ViewerPage {
         this.visibleInGallery = true
     }
 
-    showHideGalleryLinks() {
+    showHideGalleryLinks(show = null) {
 
-        if (this.slinks) this._showHideGalleryLinkSet(this.slinks)
-        if (this.dlinks) this._showHideGalleryLinkSet(this.dlinks)
+        if (this.slinks) this._showHideGalleryLinkSet(this.slinks, show)
+        if (this.dlinks) this._showHideGalleryLinkSet(this.dlinks, show)
     }
 
-    _showHideGalleryLinkSet(links) {
+    _showHideGalleryLinkSet(links, forceShow = null) {
         links.forEach(function (link) {
-            let show = this.visibleInGallery && link.dpage.visibleInGallery && link.spage.visibleInGallery
+            let show = forceShow != null ? forceShow : this.visibleInGallery && link.dpage.visibleInGallery && link.spage.visibleInGallery
             // hide link
             const o = $("#gallery #grid svg #l" + link.index)
             if (show) o.show(); else o.hide()
