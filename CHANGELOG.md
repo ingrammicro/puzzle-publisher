@@ -1,6 +1,12 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 15.1.0 (19 Nov 2020)
+Impoved map view:
+1) Added page interactions
+2) Added own URLs to gallery and map views
+3) Other improvements
+
 ##  Version 15.0.0 (14 Nov 2020)
 Added map view to All Screens page
 Code refactoring
