@@ -186,6 +186,11 @@ class PZLayer {
         if (this.name.indexOf(Constants.INT_LAYER_NAME_SITEICON) >= 0) {
             exporter.siteIconLayer = this
         }
+        // check: if this layer should be hiddden during export
+        if (this.name.indexOf(Constants.INT_LAYER_NAME_SPACER) >= 0) {
+            this.slayer.hidden = true
+        }
+
         // check: if this layer contains special overlay
         if (!this.isArtboard && this.name.indexOf(Constants.INT_LAYER_NAME_REDIRECT) >= 0) {
             this.overlayRedirect = true
@@ -405,6 +410,7 @@ class PZLayer {
         this.c = this.childs
         this.tp = this.isSymbolInstance ? "SI" : this.slayer.type
         if (!this.isSymbolInstance) this.n = this.name
+        if (this.slayer.hidden) this.hd = true
         //
         if ("Text" == this.slayer.type) {
             this.pr = this._buildTextPropsForJSON()

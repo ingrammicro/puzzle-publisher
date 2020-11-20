@@ -33,6 +33,7 @@ const Constants = {
     ///
     INT_LAYER_NAME_BACKCOLOR: "@MainBackground@",
     INT_LAYER_NAME_SITEICON: "@SiteIcon@",
+    INT_LAYER_NAME_SPACER: "@Spacer@",
     INT_LAYER_NAME_REDIRECT: "@Redirect@",
     ARTBOARD_TYPE_REGULAR: 0,
     ARTBOARD_TYPE_MODAL: 1,

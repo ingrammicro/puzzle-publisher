@@ -230,6 +230,7 @@ class SymbolViewer extends AbstractViewer {
     }
 
     _showElement(l, siLayer = null) {
+        if (l.hd) return
 
         if (l.n != null && l.n == "What are you selling") {
             l = l
