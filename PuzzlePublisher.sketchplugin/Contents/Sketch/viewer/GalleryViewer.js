@@ -81,12 +81,12 @@ class GalleryViewer extends AbstractViewer {
         //
         const restoredMode = window.localStorage.getItem("galleryIsModeAbs") == "true"
         if (null != restoredMode) this.isMapMode = restoredMode
-        $("#gallery-header-container #controls #galleryShowMap").prop('checked', this.isMapMode);
+        $("#gallery-header-container #right #galleryShowMap").prop('checked', this.isMapMode);
         //
         this.isMapLinksVisible = false
         if (window.localStorage.getItem("galleryIsLinkVisible") == "true") this.isMapLinksVisible = true
-        $("#gallery-header-container #controls #galleryShowMapLinks").prop('checked', this.isMapLinksVisible);
-        //        
+        $("#map-controls #map-controls-container #galleryShowMapLinks").prop('checked', this.isMapLinksVisible);
+        //
         this.mapZoom = 0.2
         this.isCustomMapZoom = false
         this.currentFullWidth = null
@@ -111,7 +111,7 @@ class GalleryViewer extends AbstractViewer {
         document.getElementById("screensamount").innerHTML = viewer.userStoryPages.length + " screens";
 
         // Adjust map zoom
-        const zoomContainter = $("#gallery-header-container #mapControls")
+        const zoomContainter = $("#map-controls")
         if (this.isMapMode) {
             if (!skipZoomUpdate) {
                 const zoomControl = $(".mapZoom")
@@ -379,7 +379,7 @@ class GalleryViewer extends AbstractViewer {
         div.appendTo($('#gallery #grid'));
 
         const width = Math.round(this.mapZoom * page.width)
-        // Show large image for large width        
+        // Show large image for large width
         const previewWidth = 522
         let src = encodeURIComponent(viewer.files)
         if (width < previewWidth) {
@@ -411,7 +411,7 @@ class GalleryViewer extends AbstractViewer {
 
     _buildMapLinks(finalWidth, finalHeight) {
 
-        // build scene    
+        // build scene
         let svg = "<svg"
             + " height='" + Math.abs(Math.round(finalHeight * this.mapZoom)) + "'"
             + " width='" + Math.abs(Math.round(finalWidth * this.mapZoom)) + "'"
@@ -422,7 +422,7 @@ class GalleryViewer extends AbstractViewer {
                 markerWidth="6" markerHeight="6" fill="#F89000"
                 orient="auto">
                  <path d="M 0 0 L 10 5 L 0 10 z" fill="#F89000"/>
-             </marker>               
+             </marker>
             </defs>
         `
         //

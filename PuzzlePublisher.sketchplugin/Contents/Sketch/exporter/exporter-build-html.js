@@ -134,7 +134,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
     s += `
 <script>
-    function copyToBuffer(elID) {        
+    function copyToBuffer(elID) {
         var copyText = document.getElementById(elID);
 
         var $temp = $("<input>");
@@ -145,7 +145,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
     function showFAIconInfo(code){
         window.open("https://fontawesome.com/icons?d=gallery&q="+code,"_blank")
-    }                         
+    }
 </script > `
     s += '<!--HEAD_INJECT-->\n'
     s += '</head>\n'
@@ -229,19 +229,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     s += '          <div id="gallery-header">\n';
     s += '            <div id="gallery-header-container">\n';
     s += '              <div id="title"><div>' + options.docName + '</div><div id="screensamount"></div></div>\n';
-    s += '              <div id="controls">\n';
-    s += '                 <input type="checkbox" id="galleryShowMap" onclick="viewer.galleryViewer.enableMapMode(this.checked)"/><label for="galleryShowMap">Show map (M)</label>\n';
-    s += '              <div id="mapControls" style="display:none">\n';
-    s += '                 <input type="range" min="0" max="100" value="50" class="mapZoom" onclick="viewer.galleryViewer.mapZoomChanged(this.value)">\n';
-    s += '                 <span onclick="viewer.galleryViewer.resetMapZoom();return false;" class="mapResetZoom">Reset zoom</span>\n';
-    s += '                 <input type="checkbox" id="galleryShowMapLinks" onclick="viewer.galleryViewer.showMapLinks(this.checked)"/><label for="galleryShowMapLinks">Show all links (L)</label>\n';
-    s += '              </div>\n';
-    s += '              </div>\n';
     s += '              <div id="search"><input type="text" placeholder="Search screen..." id="searchInput" onkeyup="searchScreen()"></div>\n';
-    s += '              <div id="closebtn" onclick="viewer.galleryViewer.hide(); return false;"><svg class="svgIcon"><use xlink:href="#icCloseBtn"></use></svg></div>\n';
+    s += '              <div id="right">\n';
+    s += '                <div class="checkbox-container">\n';
+    s += '                  <input type="checkbox" id="galleryShowMap" onclick="viewer.galleryViewer.enableMapMode(this.checked)"/>\n';
+    s += '                  <label for="galleryShowMap"></label>\n';
+    s += '                  <span class="checkbox-label">Show map (M)</span>\n';
+    s += '                </div>\n';
+    s += '                <div id="closebtn" onclick="viewer.galleryViewer.hide(); return false;"><svg class="svgIcon"><use xlink:href="#icCloseBtn"></use></svg></div>\n';
+    s += '              </div>\n';
     s += '            </div>\n';
     s += '          </div>\n';
     s += '          <div id="gallery"><div id="grid"></div></div>\n';
+    s += '          <div id="map-controls">\n';
+    s += '            <div id="map-controls-container">\n';
+    s += '              <div class="checkbox-container">\n';
+    s += '                <input type="checkbox" id="galleryShowMapLinks" onclick="viewer.galleryViewer.showMapLinks(this.checked)"/>\n';
+    s += '                <label for="galleryShowMapLinks"></label>\n';
+    s += '                <span class="checkbox-label">Show all links (L)</span>\n';
+    s += '              </div>\n';
+    s += '              <input type="range" min="0" max="100" value="50" class="mapZoom" onclick="viewer.galleryViewer.mapZoomChanged(this.value)">\n';
+    s += '              <span onclick="viewer.galleryViewer.resetMapZoom();return false;" class="mapResetZoom">Reset zoom</span>\n';
+    s += '            </div>\n';
+    s += '          </div>\n';
     s += '        </div>\n';
 
     s += "    <div id=\"nav\" class=\"" + (options.hideNav ? "hidden" : "nav") + "\">";
