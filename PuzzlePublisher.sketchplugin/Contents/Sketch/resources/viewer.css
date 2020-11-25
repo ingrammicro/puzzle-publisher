@@ -647,6 +647,16 @@ text-overflow: ellipsis;
   /*position: absolute;*/
 }
 
+
+#gallery #grid .groupTitle{
+    position: absolute;
+    width: 100%;
+    height:30px;
+    color: gray;
+    font-size: 20px;
+    text-align: left;
+  }
+
 .grid-cell .div-page-title{
   position: absolute;
   bottom: 0;

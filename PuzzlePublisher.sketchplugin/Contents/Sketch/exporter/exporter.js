@@ -279,6 +279,9 @@ class Exporter {
             this.storyData['iFrameSizeWidth'] = iFrameSize.width
             this.storyData['iFrameSizeHeight'] = iFrameSize.height
         }
+        if ("" != this.backColor) {
+            this.storyData['backColor'] = this.backColor
+        }
 
         // Convert data to JSON
         let jsStory = "var story = " + JSON.stringify(this.storyData, null, ' ')

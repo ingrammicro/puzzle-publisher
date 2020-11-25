@@ -153,7 +153,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     if (options.jsCode != '') {
         s += ' onload="runJSCode()" '
     }
-    s += 'style="background:' + options.backColor + '">\n'
 
     if (options.googleCode != '') {
         if (options.googleCode.startsWith("GTM")) {

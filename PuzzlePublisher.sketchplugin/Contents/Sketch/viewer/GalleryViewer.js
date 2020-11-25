@@ -236,7 +236,7 @@ class GalleryViewer extends AbstractViewer {
     }
 
     loadPagesAbs() {
-        const groupSpace = 40
+        let groupSpace = 80
 
         // find maximum width of Sketch page with artoards
         let maxGroupWidth = null
@@ -278,13 +278,16 @@ class GalleryViewer extends AbstractViewer {
         // show pages using their coordinates and current zoom
         let deltaY = 0
         let fullHeight = 0
+        const groupTitleHeight = 40 / this.mapZoom
         story.groups.forEach(function (group) {
             if (group.pages.length == 0) return
             ///
-            const top = deltaY - group.top
+            let top = deltaY - group.top
             const left = group.left
-            group.finalTop = top
-            //////
+            group.finalTop = deltaY
+            top += groupTitleHeight
+            //// show group title
+            this.addMapPageGroupTitle(group)
             //// show pages
             group.pages.forEach(function (page) {                //
                 this.loadOnePageAbs(page, left, top);
@@ -292,13 +295,28 @@ class GalleryViewer extends AbstractViewer {
             //
             fullHeight += group.height
             //
-            deltaY += group.height + groupSpace
+            deltaY += group.height + groupSpace + groupTitleHeight + 30
         }, this);
-        fullHeight += groupSpace * (story.groups.length - 1)
+        fullHeight = deltaY //+= groupSpace * (story.groups.length - 1)
 
         //
         this._buildMapLinks(maxGroupWidth, fullHeight)
     }
+
+
+    addMapPageGroupTitle(group) {
+        let style = this._valueToStyle("left", 0, GALLERY_LEFTRIGH_MARGIN) + this._valueToStyle("top", group.finalTop, GALLERY_TOP_MARGIN)
+
+        var div = $('<div/>', {
+            id: "g" + group.id,
+            class: "groupTitle",
+            style: style,
+        });
+        div.html(group.name)
+        div.appendTo($('#gallery #grid'));
+
+    }
+
 
     selectPage(index) {
         this.hide()
@@ -357,12 +375,16 @@ class GalleryViewer extends AbstractViewer {
         title.appendTo(divTitle);
         divTitle.appendTo(divMain);
     }
+
     loadOnePageAbs(page, pageLeft, pageTop) {
         page.finalTop = pageTop + page.y
         page.finalLeft = page.x - pageLeft
 
         let style = this._valueToStyle("left", page.finalLeft, GALLERY_LEFTRIGH_MARGIN) + this._valueToStyle("top", page.finalTop, GALLERY_TOP_MARGIN)
             + this._valueToStyle("width", page.width) + this._valueToStyle("height", page.height)
+        if (undefined != story.backColor) {
+            style += "background-color:" + story.backColor + ";"
+        }
 
         var div = $('<div/>', {
             id: page.index,
