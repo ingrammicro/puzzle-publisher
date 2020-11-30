@@ -598,6 +598,8 @@ function createViewer(story, files) {
             this.refresh_switch_modal_layer(newPage);
             if (refreshURL) {
                 this.refresh_url(newPage)
+            } else {
+                this._calcCurrentPageURL(newPage)
             }
             this.refresh_update_navbar(newPage);
 
@@ -740,13 +742,20 @@ function createViewer(story, files) {
             return search
         },
 
-        refresh_url: function (page, extURL = "", pushHistory = true) {
-            if (this.urlLocked) return
-
+        _calcCurrentPageURL: function (page = null, extURL = null) {
+            if (!page) page = this.currentPage
             this.urlLastIndex = page.index
             $(document).attr('title', story.title + ': ' + page.title)
 
             let newPath = this.fullBaseURL + this._getSearchPath(page, extURL)
+            this.fullCurrentPageURL = newPath
+        },
+
+        refresh_url: function (page, extURL = "", pushHistory = true) {
+            if (this.urlLocked) return
+
+            this._calcCurrentPageURL(page, extURL)
+            let newPath = this.fullCurrentPageURL
             this.fullCurrentPageURL = newPath
 
             if (this.isEmbed) {
@@ -771,11 +780,11 @@ function createViewer(story, files) {
                 redirectOverlayLinkIndex: undefined,
             }
             var hash = location.hash;
- 
+     
             if (hash == null || hash.length == 0) {
                 hash = '#'
                 result.reset_url = true
- 
+     
             } else if (hash.indexOf('/') > 0) {
                 // read additonal parameters
                 var args = hash.split('/')
@@ -786,7 +795,7 @@ function createViewer(story, files) {
                 hash = hash.substring(0, hash.indexOf('/'))
                 hash = '#' + hash.replace(/^[^#]*#?(.*)$/, '$1');
             }
- 
+     
             result.page_name = hash
             return result
         },*/

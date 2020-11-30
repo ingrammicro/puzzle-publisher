@@ -492,7 +492,7 @@ function searchScreen() {
         }
     });
 
-    viewer._showHideMapLinks()
+    viewer.galleryViewer._showHideMapLinks()
 
     //load amount of pages to gallery title
     $("#screensamount").html(foundScreenAmount + " screens")
