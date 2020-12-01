@@ -1,9 +1,11 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
-##  Version 15.1.2 (25 Nov 2020)
-Fixed issues with Gallery Viewer and Embedded Mode
+##  Version 15.1.3 (25 Nov 2020)
+Added support for @XSpacer@ and @YSpacer@ layer name magic keys
 
+##  Version 15.1.3 (25 Nov 2020)
+Fixed issues with Gallery Viewer and Embedded Mode
 
 ##  Version 15.1.1 (25 Nov 2020)
 Redesigned map view by @zubr133

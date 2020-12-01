@@ -187,7 +187,13 @@ class PZLayer {
             exporter.siteIconLayer = this
         }
         // check: if this layer should be hiddden during export
-        if (this.name.indexOf(Constants.INT_LAYER_NAME_SPACER) >= 0) {
+        if (this.name.includes(Constants.INT_LAYER_NAME_SPACER_PART)
+            && (
+                this.name.includes(Constants.INT_LAYER_NAME_SPACER)
+                || this.name.includes(Constants.INT_LAYER_NAME_XSPACER)
+                || this.name.includes(Constants.INT_LAYER_NAME_YSPACER)
+            )) {
+            this.isSpacer = true
             this.slayer.hidden = true
         }
 
