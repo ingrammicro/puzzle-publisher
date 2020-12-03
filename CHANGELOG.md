@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 15.1.4 (03 Dec 2020)
+Fixed Miro issues
+
 ##  Version 15.1.3 (25 Nov 2020)
 Added support for @XSpacer@ and @YSpacer@ layer name magic keys
 
