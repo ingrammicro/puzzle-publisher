@@ -267,8 +267,8 @@ class Publisher {
         for (var page of this.story.pages.filter(el => "external" != el.type)) {
             const artboard = jDoc.getLayerWithID(page["id"])
             if (!artboard) {
-                if ("" != errors) errors += "\n"
-                errors += page['title']
+                //if ("" != errors) errors += "\n"
+                //errors += page['title']
                 continue
             }
             var exportInfo = { "artboardID": page["id"], "artboard": artboard.sketchObject, "path": imagePath + page['image'] };
