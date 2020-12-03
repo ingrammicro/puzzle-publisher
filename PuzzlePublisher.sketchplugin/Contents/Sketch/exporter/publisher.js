@@ -502,6 +502,10 @@ class Publisher {
 
                 const currentBoard = input.stringValue() + ""
                 const options = Utils.getMiroBoardsGroupedByProject()
+                if (null == options) {
+                    publisher.UI.alert("Error", "Can not get board list from Miro. Please resubmit Miro creds in Condigure Publishing.")
+                    return false
+                }
                 let currentBoardIndex = currentBoard != "" ? options.indexOf(currentBoard) : 0
                 //if (currentBoardIndex < 0) currentBoardIndex = 0
 

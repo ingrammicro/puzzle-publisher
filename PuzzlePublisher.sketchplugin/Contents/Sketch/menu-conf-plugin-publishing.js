@@ -67,6 +67,7 @@ var onRun = function (context) {
     //dialog.addTextInput("comments","Comments URL (Experimental)", commentsURL)
 
 
+    let resultOk = false
     while (dialog.run()) {
         sshPort = dialog.views['sshPort'].stringValue() + ""
         if (sshPort != "") {
@@ -99,13 +100,15 @@ var onRun = function (context) {
         Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_SECRET, dialog.views['secret'].stringValue() + "")
         Settings.setSettingForKey(SettingKeys.PLUGIN_SERVERTOOLS_PATH, dialog.views['serverToolsPath'].stringValue() + "")
         Settings.setSettingForKey(SettingKeys.PLUGIN_AUTHOR_NAME, dialog.views['authorName'].stringValue() + "")
+        resultOk = true
         break
     }
     dialog.finish()
 
-    // If connection to Miro specified then show a message
-    if (miroEmail != "") {
-        require('sketch/ui').alert('Success', 'Miro credentials have been verified successfully')
+    if (resultOk) {
+        // If connection to Miro specified then show a message
+        if (miroEmail != "") {
+            require('sketch/ui').alert('Success', 'Miro credentials have been verified successfully')
+        }
     }
-
 };

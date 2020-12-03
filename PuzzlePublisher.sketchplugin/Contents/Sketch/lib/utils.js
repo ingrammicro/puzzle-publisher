@@ -245,6 +245,18 @@ class Utils {
     }
 
     static getMiroBoardsGroupedByProject(context) {
+
+        //  Get token
+        var token = api.getToken();
+        if (!token) return null
+        log("publishToMiro: got token")
+
+        // Get request
+        var response = api.authCheckRequest(this.context);
+        if (response && response.success != 1) return null
+
+        log("publishToMiro: established connect")
+
         const boards = api.getBoards()
         let projects = boards.map(el => el["project"]).filter(function (x, i, a) {
             return x != undefined && a.indexOf(x) === i;
