@@ -217,7 +217,6 @@ class Exporter {
 
         if ("" == buildOptions.backColor) buildOptions.backColor = Constants.DEF_BACK_COLOR
 
-
         const s = buildMainHTML(buildOptions);
 
         const filePath = this.prepareFilePath(this._outputPath, 'index.html');

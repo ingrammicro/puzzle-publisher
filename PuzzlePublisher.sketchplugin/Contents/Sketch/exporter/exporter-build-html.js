@@ -149,10 +149,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </script > `
     s += '<!--HEAD_INJECT-->\n'
     s += '</head>\n'
-    s += '<body class="screen" '
+    s += '<body class="screen" style="background:' + options.backColor + '"';
     if (options.jsCode != '') {
         s += ' onload="runJSCode()" '
     }
+    s += ">\n"
 
     if (options.googleCode != '') {
         if (options.googleCode.startsWith("GTM")) {
