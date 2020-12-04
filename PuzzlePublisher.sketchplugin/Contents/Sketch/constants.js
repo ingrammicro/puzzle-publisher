@@ -17,6 +17,8 @@ const Constants = {
     SORT_RULE_REVERSIVE_SKETCH: 2,
     SORT_RULE_Y: 3,
     SORT_RULE_OPTIONS: ["Left-to-right", "Sketch default", "Reversive Sketch default", "Up-to-down"],
+    FONT_SIZE_FORMAT_SKETCH: 0,
+    FONTSIZE_FORMAT_OPTIONS: ["Sketch sizes", "Linux-specific sizes"],
     POSITION_DEFAULT: 0,
     POSITION_TOP: 1,
     POSITION_CENTER: 2,
@@ -134,6 +136,7 @@ const SettingKeys = {
     PLUGIN_EXPORT_MODE: "exportMode",
     PLUGIN_HIDE_NAV: "hideNavigation",
     PLUGIN_SORT_RULE: "pluginSortRule",
+    PLUGIN_FONTSIZE_FORMAT: "PLUGIN_FONTSIZE_FORMAT",
     PLUGIN_DISABLE_HOTSPOTS: "pluginDisableHotspots",
     PLUGIN_ASK_CUSTOM_SIZE: "pluginAskCustomSize",
     PLUGIN_DONT_SAVE_ELEMENTS: "pluginDontSaveElements",
@@ -176,6 +179,7 @@ const SettingKeys = {
     DOC_PUBLISH_REMOTE_FOLDER: "remoteFolder",
     DOC_CUSTOM_HIDE_NAV: "docCustomHideNavigation",
     DOC_CUSTOM_SORT_RULE: "docCustomSortRule", // How to sort artboards
+    DOC_CUSTOM_FONTSIZE_FORMAT: "DOC_CUSTOM_FONTSIZE_FORMAT", // How to show font size in Element Inspector
     DOC_BACK_COLOR: "docBackColor",
     DOC_SKIP_AUTOSYNC: "DOC_SKIP_AUTOSYNC",
 

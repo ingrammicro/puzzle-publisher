@@ -18,6 +18,10 @@ var onRun = function (context) {
     if (customSortRule == undefined) customSortRule = -1 // use "plugin global" setting
     customSortRule++ // take care about the first "plugin global" option
 
+    let customFontSizeFormat = Settings.documentSettingForKey(doc, SettingKeys.DOC_CUSTOM_FONTSIZE_FORMAT)
+    if (customFontSizeFormat == undefined) customFontSizeFormat = -1 // use "plugin global" setting
+    customFontSizeFormat++ // take care about the first "plugin global" option
+
     let backColor = Settings.documentSettingForKey(doc, SettingKeys.DOC_BACK_COLOR)
     if (backColor == undefined) backColor = ''
 
@@ -26,7 +30,7 @@ var onRun = function (context) {
     let skipAutoSync = Settings.documentSettingForKey(doc, SettingKeys.DOC_SKIP_AUTOSYNC) == 1
 
     //
-    const dialog = new UIDialog("Document Settings", NSMakeRect(0, 0, 500, 310), "Save", "Configure settings common for all document artboards. ")
+    const dialog = new UIDialog("Document Settings", NSMakeRect(0, 0, 500, 420), "Save", "Configure settings common for all document artboards. ")
 
     dialog.addLeftLabel("", "Export")
     dialog.addCheckbox("disableFixed", "Disable Fixed Layers", disableFixed)
@@ -40,8 +44,14 @@ var onRun = function (context) {
 
     const sortOptions = Constants.SORT_RULE_OPTIONS.slice()
     sortOptions.splice(0, 0, "(Use plugin settings)")
+    log(sortOptions)
     dialog.addSelect("customSortRule", "Artboards Sort Order", customSortRule, sortOptions, 250)
     dialog.addHint("", "Specify how artboards will sorted in HTML story.")
+
+    const customFontSizeOptions = Constants.FONTSIZE_FORMAT_OPTIONS.slice()
+    customFontSizeOptions.splice(0, 0, "(Use plugin settings)")
+    dialog.addSelect("customFontSizeFormat", "Font Size Inspector Format", customFontSizeFormat, customFontSizeOptions, 250)
+    dialog.addHint("", "Specify how font size will diplayed in Element Inspector.")
 
     dialog.addTextInput("backColor", "Custom Background Color", backColor, 'e.g. #FFFFFF')
     dialog.addHint("", "Default color is " + Constants.DEF_BACK_COLOR, 20)
@@ -58,6 +68,11 @@ var onRun = function (context) {
         // skip back first "plugin global" option to use "custom" option
         customSortRule--
         Settings.setDocumentSettingForKey(doc, SettingKeys.DOC_CUSTOM_SORT_RULE, customSortRule)
+
+        let customFontSizeFormat = dialog.views['customFontSizeFormat'].indexOfSelectedItem()
+        // skip back first "plugin global" option to use "custom" option
+        customFontSizeFormat--
+        Settings.setDocumentSettingForKey(doc, SettingKeys.DOC_CUSTOM_FONTSIZE_FORMAT, customFontSizeFormat)
 
     }
     dialog.finish()

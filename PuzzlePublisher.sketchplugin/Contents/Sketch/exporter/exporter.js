@@ -65,6 +65,13 @@ class Exporter {
         const docCustomSortRule = this.Settings.documentSettingForKey(this.doc, SettingKeys.DOC_CUSTOM_SORT_RULE)
         this.sortRule = undefined == docCustomSortRule || docCustomSortRule < 0 ? pluginSortRule : docCustomSortRule
 
+
+        let fontSizeFormat = this.Settings.settingForKey(SettingKeys.PLUGIN_FONTSIZE_FORMAT)
+        if (undefined == fontSizeFormat) fontSizeFormat = Constants.FONT_SIZE_FORMAT_SKETCH
+        const docCustomFontSize = this.Settings.documentSettingForKey(this.doc, SettingKeys.DOC_CUSTOM_FONTSIZE_FORMAT)
+        this.fontSizeFormat = undefined == docCustomFontSize || docCustomFontSize < 0 ? fontSizeFormat : docCustomFontSize
+
+
         let backColor = this.Settings.documentSettingForKey(this.doc, SettingKeys.DOC_BACK_COLOR)
         if (undefined == backColor) backColor = ""
         this.backColor = backColor
@@ -176,6 +183,7 @@ class Exporter {
             docVersion: Constants.DOCUMENT_VERSION_PLACEHOLDER,
             hasRetina: this.retinaImages,
             serverToolsPath: this.serverTools,
+            fontSizeFormat: this.fontSizeFormat,
             fileType: this.fileType,
             disableHotspots: disableHotspots,
             zoomEnabled: this.Settings.settingForKey(SettingKeys.PLUGIN_DISABLE_ZOOM) != 1,
