@@ -1,6 +1,10 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 15.2.0 (04 Dec 2020)
+Fixed browser page background color
+Added option to see font size adjusted for Linux developers
+
 ##  Version 15.1.4 (03 Dec 2020)
 Fixed Miro issues
 
