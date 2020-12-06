@@ -19,8 +19,7 @@ var onRun = function (context) {
     customSortRule++ // take care about the first "plugin global" option
 
     let customFontSizeFormat = Settings.documentSettingForKey(doc, SettingKeys.DOC_CUSTOM_FONTSIZE_FORMAT)
-    if (customFontSizeFormat == undefined) customFontSizeFormat = -1 // use "plugin global" setting
-    customFontSizeFormat++ // take care about the first "plugin global" option
+    if (customFontSizeFormat == undefined) customFontSizeFormat = 0 // use "plugin global" setting
 
     let backColor = Settings.documentSettingForKey(doc, SettingKeys.DOC_BACK_COLOR)
     if (backColor == undefined) backColor = ''
@@ -44,7 +43,6 @@ var onRun = function (context) {
 
     const sortOptions = Constants.SORT_RULE_OPTIONS.slice()
     sortOptions.splice(0, 0, "(Use plugin settings)")
-    log(sortOptions)
     dialog.addSelect("customSortRule", "Artboards Sort Order", customSortRule, sortOptions, 250)
     dialog.addHint("", "Specify how artboards will sorted in HTML story.")
 
@@ -70,8 +68,6 @@ var onRun = function (context) {
         Settings.setDocumentSettingForKey(doc, SettingKeys.DOC_CUSTOM_SORT_RULE, customSortRule)
 
         let customFontSizeFormat = dialog.views['customFontSizeFormat'].indexOfSelectedItem()
-        // skip back first "plugin global" option to use "custom" option
-        customFontSizeFormat--
         Settings.setDocumentSettingForKey(doc, SettingKeys.DOC_CUSTOM_FONTSIZE_FORMAT, customFontSizeFormat)
 
     }

@@ -65,11 +65,10 @@ class Exporter {
         const docCustomSortRule = this.Settings.documentSettingForKey(this.doc, SettingKeys.DOC_CUSTOM_SORT_RULE)
         this.sortRule = undefined == docCustomSortRule || docCustomSortRule < 0 ? pluginSortRule : docCustomSortRule
 
-
         let fontSizeFormat = this.Settings.settingForKey(SettingKeys.PLUGIN_FONTSIZE_FORMAT)
-        if (undefined == fontSizeFormat) fontSizeFormat = Constants.FONT_SIZE_FORMAT_SKETCH
         const docCustomFontSize = this.Settings.documentSettingForKey(this.doc, SettingKeys.DOC_CUSTOM_FONTSIZE_FORMAT)
-        this.fontSizeFormat = undefined == docCustomFontSize || docCustomFontSize < 0 ? fontSizeFormat : docCustomFontSize
+        if (undefined != docCustomFontSize && docCustomFontSize != 0) fontSizeFormat = docCustomFontSize
+        this.fontSizeFormat = undefined != fontSizeFormat ? fontSizeFormat - 1 : Constants.FONT_SIZE_FORMAT_SKETCH
 
         let backColor = this.Settings.documentSettingForKey(this.doc, SettingKeys.DOC_BACK_COLOR)
         if (undefined == backColor) backColor = ""
