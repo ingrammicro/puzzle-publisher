@@ -71,7 +71,6 @@ class Exporter {
         const docCustomFontSize = this.Settings.documentSettingForKey(this.doc, SettingKeys.DOC_CUSTOM_FONTSIZE_FORMAT)
         this.fontSizeFormat = undefined == docCustomFontSize || docCustomFontSize < 0 ? fontSizeFormat : docCustomFontSize
 
-
         let backColor = this.Settings.documentSettingForKey(this.doc, SettingKeys.DOC_BACK_COLOR)
         if (undefined == backColor) backColor = ""
         this.backColor = backColor
