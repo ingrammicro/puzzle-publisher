@@ -727,6 +727,8 @@ class SymbolViewer extends AbstractViewer {
         if ("font-size" == style && 2 == story.fontSizeFormat) {
             if (styleValue in ELEMENTINSPECTOR_LINUX_FONT_SIZES) {
                 styleValue = ELEMENTINSPECTOR_LINUX_FONT_SIZES[styleValue]
+            } else {
+                styleValue = Math.round(Number(styleValue.replace("px", "")) / 1.333)
             }
         }
         return styleValue
