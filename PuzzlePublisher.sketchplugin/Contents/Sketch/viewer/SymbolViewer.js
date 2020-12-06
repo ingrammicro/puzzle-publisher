@@ -668,7 +668,9 @@ class SymbolViewer extends AbstractViewer {
 
         result += "<hr>" +
             "<div class='block'>" +
-            "<div class='label'>Styles</div > " +
+            "<div class='label'>Styles" +
+            (1 == story.fontSizeFormat ? " (font size adjusted for Linux)" : "") +
+            "</div > " +
             "<div class='value code'>"
 
         css.split("\n").forEach(line => {
@@ -728,7 +730,7 @@ class SymbolViewer extends AbstractViewer {
             if (styleValue in ELEMENTINSPECTOR_LINUX_FONT_SIZES) {
                 styleValue = ELEMENTINSPECTOR_LINUX_FONT_SIZES[styleValue]
             } else {
-                styleValue = Math.round(Number(styleValue.replace("px", "")) / 1.333)
+                styleValue = Math.round(Number(styleValue.replace("px", "")) / 1.333) + "px"
             }
         }
         return styleValue
