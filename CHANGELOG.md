@@ -1,7 +1,7 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
-##  Version 15.2.3 (06 Dec 2020)
+##  Version 15.2.4 (06 Dec 2020)
 Corrected font size for Linux developers
 
 ##  Version 15.2.0 (04 Dec 2020)

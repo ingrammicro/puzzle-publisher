@@ -438,11 +438,13 @@ function createViewer(story, files) {
                 var sidebar = $("#sidebar")
                 var defSidebarWidth = this.defSidebarWidth
 
+                sidebarWidth = defSidebarWidth
+                /* commented because it works in bad way with small artboards and large screen
                 sidebarWidth = Math.round((fullWidth - page.width) / 2)
                 if (sidebarWidth < defSidebarWidth) {
                     sidebarWidth = defSidebarWidth
                     availableWidth = fullWidth - sidebarWidth
-                }
+                }*/
 
                 sidebar.css("margin-left", (fullWidth - sidebarWidth) + "px")
                 sidebar.css("margin-top", (0) + "px")
