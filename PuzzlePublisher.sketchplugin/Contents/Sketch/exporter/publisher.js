@@ -406,7 +406,7 @@ class Publisher {
                 Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_SITEROOT, this.siteRoot)
             }
             if (askMiro) {
-                Settings.setSettingForKey(SettingKeys.DOC_PUBLISH_MIRO_BOARD, this.miroBoard)
+                Settings.setDocumentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_MIRO_BOARD, this.miroBoard)
             }
 
             Settings.setDocumentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_REMOTE_FOLDER, this.remoteFolder)
