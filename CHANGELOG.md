@@ -1,6 +1,10 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 15.2.5 (21 Dec 2020)
+Escaped "," in image file names to be compatible with Miro
+Other fixed for publishing to Miro
+
 ##  Version 15.2.4 (06 Dec 2020)
 Corrected font size for Linux developers
 
