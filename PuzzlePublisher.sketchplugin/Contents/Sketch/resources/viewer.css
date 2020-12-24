@@ -344,7 +344,7 @@ select:focus{
 
 .contentModal {
   z-index: 50;
-  /*position: fixed;*/
+  position: fixed;
   margin: auto;
   max-height: 100%;
   align-items: center;
