@@ -242,8 +242,8 @@ class Publisher {
                 } else {
                     this.UI.alert('Can not open HTML in browser', openResult.output)
                 }
+                require('sketch/ui').alert('Success', 'Published successfully')
             }
-            require('sketch/ui').alert('Success', 'Published successfully')
         }
         catch (error) {
             this.UI.alert('Publishing to Miro failed', error)
