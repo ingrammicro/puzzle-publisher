@@ -1,7 +1,7 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
-##  Version 15.2.6 (28 Dec 2020)
+##  Version 15.2.7 (28 Dec 2020)
 Fixed modal poisitioning on large displays
 
 ##  Version 15.2.5 (21 Dec 2020)
