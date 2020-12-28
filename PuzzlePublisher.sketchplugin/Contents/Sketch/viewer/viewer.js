@@ -501,26 +501,23 @@ function createViewer(story, files) {
             return this.pageHashes;
         },
         getModalFirstParentPageIndex: function (modalIndex) {
-            var page = null;
-            var link = null;
-            for (var i = story.pages.length - 1; i >= 0; i--) {
-                page = story.pages[i];
-                if (page.type === 'modal' || page.type === 'overlay') continue;
-                for (var li = 0; li < page.links.length; li++) {
-                    link = page.links[li];
-                    if (link.page != null && link.page == modalIndex) {
-                        /*// check if the source link is in overlay?
-                        if (page.type === 'overlay') {
-                            // ok, now find the source page for this overlay
-                            return this.getModalFirstParentPageIndex(i)
-                        }*/
-                        // return the page index which has link to modal
-                        return i;
-                    }
+            var foundPageIndex = null
+            // scan all regular pages
+            story.pages.filter(page => "regular" == page.type).some(function (page) {
+                const foundLinks = page.links.filter(link => link.page != null && link.page == modalIndex)
+                if (foundLinks.length != 0) {
+                    // return the page index which has link to modal                    
+                    foundPageIndex = page.index
+                    return true
                 }
-            }
-            // return first prototype page
-            return 0;
+                // save a first regular page as a "found" for case if we will not 
+                // find any page with a link to a specified modal
+                if (null == foundPageIndex) foundPageIndex = page.index
+                return false
+            }, this)
+
+            // ok, we found some regular page which has a link to specified modal ( or it was a fist regular page)
+            return foundPageIndex
         },
         getPageIndex: function (page, defIndex = 0) {
             var index;

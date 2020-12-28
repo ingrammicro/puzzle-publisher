@@ -1,8 +1,14 @@
 /*@import "https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.css";*/
-.image_div {
+#content .image_div {
   margin: 0 auto;
   position: absolute;
 }
+#contentModall .image_div {
+    margin: 0 auto;
+    /* Commented to fix long modals
+    position: absolute;
+    */
+  }
 
 .image_div img {
   /*-webkit-transform:translate3d(0,0,0);*/
