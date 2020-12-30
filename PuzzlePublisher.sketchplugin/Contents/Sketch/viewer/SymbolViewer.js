@@ -455,6 +455,8 @@ class SymbolViewer extends AbstractViewer {
     }
 
     setSelected(event = null, layer = null, a = null, force = false) {
+        const prevClickedLayer = this.lastClickedLayer
+        this.lastClickedLayer = layer
         // reset previous selection        
         if (this.selected) {
             if (!force && event && layer) {
@@ -465,23 +467,33 @@ class SymbolViewer extends AbstractViewer {
                 let foundLayers = []
                 this.findOtherSelection(click, null, foundLayers)
                 if (foundLayers.length > 1) {
-                    // we have several overlaped objects under a cursor
-                    let currentIndex = this.currentSelectedIndex
-                    if (undefined == currentIndex) currentIndex = foundLayers.indexOf(layer)
-                    if (undefined != currentIndex) {
-                        let newIndex = ++currentIndex == foundLayers.length ? 0 : currentIndex
-                        layer = foundLayers[newIndex]
-                        this.currentSelectedIndex = newIndex
+                    let newIndex = undefined
+                    if (undefined != prevClickedLayer && layer.ii != prevClickedLayer.ii) {
+                        // clicked on an other layer, find its index
+                        newIndex = foundLayers.indexOf(layer)
+                    } else if (undefined != selectedLayerIndex) {
+                        // clicked on the some layer, but 
+                        // we have several overlaped objects under a cursor, so switch to the next 
+                        let currentIndex = currentIndexFound >= 0 ? this.selectedLayerIndex : undefined
+                        if (undefined == currentIndex || (undefined != prevClickedLayer && layer.ii != prevClickedLayer.ii)) currentIndex = foundLayers.indexOf(layer)
                     }
-
+                    if (undefined != newIndex) {
+                        let newIndex = (currentIndex + 1) == foundLayers.length ? 0 : currentIndex + 1
+                        layer = foundLayers[newIndex]
+                        this.selectedLayerIndex = newIndex
+                    }
+                    layer = foundLayers[newIndex]
+                    this.selectedLayerIndex = newIndex
                 }
             }
             this.selected.marginDivs.forEach(d => d.remove())
             this.selected.borderDivs.forEach(d => d.remove())
         }
-        if (!layer || (this.selected && layer.infoIndex == this.selected.layer.infoIndex)) {
+
+        if (!layer) {
             this.selected = null
-            this.currentSelectedIndex = undefined
+            this.lastClickedLayer = undefined
+            this.selectedLayerIndex = undefined
             return
         }
         // select new

@@ -7,6 +7,8 @@ var Flow = require('sketch/dom').Flow
 var Text = require('sketch/dom').Text
 var Style = require('sketch/dom').Style
 
+var LAYER_COUNTER = 0
+
 var ResizingConstraint = {
     NONE: 0,
     RIGHT: 1 << 0,
@@ -52,6 +54,7 @@ class PZLayer {
         this.name = sLayer.name
         this.parent = myParent
         this.objectID = String(sLayer.id)
+        this.ii = LAYER_COUNTER++
         this.originalID = undefined
         this.slayer = sLayer
         this.artboard = myParent ? myParent.artboard : this
