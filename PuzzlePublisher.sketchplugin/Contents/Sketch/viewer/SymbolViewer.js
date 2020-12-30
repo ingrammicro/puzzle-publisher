@@ -455,15 +455,16 @@ class SymbolViewer extends AbstractViewer {
     setSelected(event = null, layer = null, a = null, force = false) {
         const prevClickedLayer = this.lastClickedLayer
         this.lastClickedLayer = layer
-        // reset previous selection        
+        //
+        const click = {
+            x: event.offsetX * viewer.currentZoom + layer.finalX,
+            y: event.offsetY * viewer.currentZoom + layer.finalY
+        }
+        let foundLayers = []
+        this.findOtherSelection(click, null, foundLayers)
+        // reset previous selection                
         if (this.selected) {
             if (!force && event && layer) {
-                const click = {
-                    x: event.offsetX * viewer.currentZoom + layer.finalX,
-                    y: event.offsetY * viewer.currentZoom + layer.finalY
-                }
-                let foundLayers = []
-                this.findOtherSelection(click, null, foundLayers)
                 if (foundLayers.length > 1) {
                     let newIndex = undefined
                     if (undefined != prevClickedLayer && layer.ii != prevClickedLayer.ii) {
@@ -482,6 +483,8 @@ class SymbolViewer extends AbstractViewer {
             }
             this.selected.marginDivs.forEach(d => d.remove())
             this.selected.borderDivs.forEach(d => d.remove())
+        } else {
+            this.selectedLayerIndex = foundLayers.indexOf(layer)
         }
 
         if (!layer) {

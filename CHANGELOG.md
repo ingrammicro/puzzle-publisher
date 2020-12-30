@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 15.3.0 (30 Dec 2020)
+Element Inspector allows to review overlapped layers by multiply clicking
+
 ##  Version 15.2.7 (28 Dec 2020)
 Fixed modal poisitioning on large displays
 
