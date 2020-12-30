@@ -313,8 +313,6 @@ class SymbolViewer extends AbstractViewer {
 
             sv.setSelected(event, topLayer, $(this))
             if (!sv.selected) {
-                $('#symbol_viewer #empty').removeClass("hidden")
-                $("#symbol_viewer_content").addClass("hidden")
                 return false
             }
             const layer = sv.selected.layer // selection can be changed inside setSelected
@@ -471,16 +469,12 @@ class SymbolViewer extends AbstractViewer {
                     if (undefined != prevClickedLayer && layer.ii != prevClickedLayer.ii) {
                         // clicked on an other layer, find its index
                         newIndex = foundLayers.indexOf(layer)
-                    } else if (undefined != selectedLayerIndex) {
+                    } else if (undefined != this.selectedLayerIndex) {
                         // clicked on the some layer, but 
                         // we have several overlaped objects under a cursor, so switch to the next 
-                        let currentIndex = currentIndexFound >= 0 ? this.selectedLayerIndex : undefined
-                        if (undefined == currentIndex || (undefined != prevClickedLayer && layer.ii != prevClickedLayer.ii)) currentIndex = foundLayers.indexOf(layer)
-                    }
-                    if (undefined != newIndex) {
-                        let newIndex = (currentIndex + 1) == foundLayers.length ? 0 : currentIndex + 1
-                        layer = foundLayers[newIndex]
-                        this.selectedLayerIndex = newIndex
+                        newIndex = (this.selectedLayerIndex + 1) >= foundLayers.length ? 0 : this.selectedLayerIndex + 1
+                    } else {
+                        newIndex = foundLayers.indexOf(layer)
                     }
                     layer = foundLayers[newIndex]
                     this.selectedLayerIndex = newIndex
@@ -494,6 +488,10 @@ class SymbolViewer extends AbstractViewer {
             this.selected = null
             this.lastClickedLayer = undefined
             this.selectedLayerIndex = undefined
+            ////
+            $('#symbol_viewer #empty').removeClass("hidden")
+            $("#symbol_viewer_content").addClass("hidden")
+            ////
             return
         }
         // select new
