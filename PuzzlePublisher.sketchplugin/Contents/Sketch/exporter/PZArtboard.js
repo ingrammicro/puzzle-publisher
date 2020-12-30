@@ -267,6 +267,12 @@ class PZArtboard extends PZLayer {
     }
 
 
+    addLayerAsExportableImage(layer) {
+        layer.imageIndex = this.imageLayers.length
+        this.imageLayers.push(layer)
+        if (DEBUG) exporter.logMsg("Add image layer: " + layer.name)
+    }
+
     _getFixedLayersForJSON() {
         let recs = []
 

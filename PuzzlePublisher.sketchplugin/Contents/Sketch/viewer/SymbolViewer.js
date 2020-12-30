@@ -16,6 +16,8 @@ const ELEMENTINSPECTOR_LINUX_FONT_SIZES = {
     "26px": "20px"
 }
 
+const SUPPORT_TYPES = ["Text", "ShapePath", "Image"]
+
 class SymbolViewer extends AbstractViewer {
     constructor() {
         super()
@@ -108,7 +110,7 @@ class SymbolViewer extends AbstractViewer {
         viewer.linksDisabled = false
         $('#symbol_viewer').addClass("hidden")
 
-        this.setSelected(null, null)
+        this.setSelected(null, null, null)
 
         super._hideSelf()
     }
@@ -204,6 +206,7 @@ class SymbolViewer extends AbstractViewer {
 
     _create() {
         const layers = layersData[this.pageIndex].c
+        if (undefined == layers) return
         if (this.showSymbols)
             this._processSymbolList(layers)
         else
@@ -232,27 +235,23 @@ class SymbolViewer extends AbstractViewer {
                     this._showElement(l)
                 }
             }
-            this._processSymbolList(l.c, this.showSymbols && l.s != undefined)
+            if (undefined != l.c)
+                this._processSymbolList(l.c, this.showSymbols && l.s != undefined)
         }
     }
 
     _processLayerList(layers, sSI = null) {
-        const supportedTypes = ["Text", "ShapePath", "Image"]
         for (var l of layers.reverse()) {
-            if (supportedTypes.indexOf(l.tp) >= 0) {
+            if (SUPPORT_TYPES.indexOf(l.tp) >= 0 && undefined == l.ms) {
                 this._showElement(l, sSI)
-            } else {
-                this._processLayerList(l.c, "SI" == l.tp ? l : sSI)
             }
+            if (undefined != l.c)
+                this._processLayerList(l.c, "SI" == l.tp ? l : sSI)
         }
     }
 
     _showElement(l, siLayer = null) {
         if (l.hd) return
-
-        if (l.n != null && l.n == "What are you selling") {
-            l = l
-        }
 
         var currentPanel = this.page
         l.finalX = l.x
@@ -303,16 +302,17 @@ class SymbolViewer extends AbstractViewer {
             si: indexOfSO
         })
 
-        a.click(function () {
+        a.click(function (event) {
             const sv = viewer.symbolViewer
             const pageIndex = $(this).attr("pi")
             const layerIndex = $(this).attr("li")
             const siLayerIndex = $(this).attr("si")
             const pageInfo = sv.createdPages[pageIndex]
-            const layer = pageInfo.layerArray[layerIndex]
+            let topLayer = pageInfo.layerArray[layerIndex]
             const siLayer = siLayerIndex >= 0 ? pageInfo.layerArray[siLayerIndex] : null
 
-            sv.setSelected(layer, $(this))
+            sv.setSelected(event, topLayer, $(this))
+            const layer = sv.selected.layer // selection can be changed inside setSelected
 
             var symName = sv.showSymbols ? layer.s : (siLayer ? siLayer.s : null)
             var styleName = layer.l
@@ -447,14 +447,34 @@ class SymbolViewer extends AbstractViewer {
         symbolDiv.appendTo(a)
     }
 
-    setSelected(layer, a) {
+    setSelected(event = null, layer = null, a = null, force = false) {
         // reset previous selection        
         if (this.selected) {
+            if (!force && event) {
+                const click = {
+                    x: event.pageX * viewer.currentZoom,
+                    y: event.pageY * viewer.currentZoom
+                }
+                let foundLayers = []
+                this.findOtherSelection(click, null, foundLayers)
+                if (foundLayers.length > 1) {
+                    // we have several overlaped objects under a cursor
+                    let currentIndex = this.currentSelectedIndex
+                    if (undefined == currentIndex) currentIndex = foundLayers.indexOf(layer)
+                    if (undefined != currentIndex) {
+                        let newIndex = ++currentIndex == foundLayers.length ? 0 : currentIndex
+                        layer = foundLayers[newIndex]
+                    }
+                    this.currentSelectedIndex = currentIndex
+
+                }
+            }
             this.selected.marginDivs.forEach(d => d.remove())
             this.selected.borderDivs.forEach(d => d.remove())
         }
         if (!layer || (this.selected && layer.infoIndex == this.selected.layer.infoIndex)) {
             this.selected = null
+            this.currentSelectedIndex = undefined
             return
         }
         // select new
@@ -480,6 +500,21 @@ class SymbolViewer extends AbstractViewer {
         this.selected.borderDivs.push(
             this._drawMarginLine(layer.parentPanel, 0, layer.finalY + layer.h, layer.parentPanel.width, 1, "svBorderLineDiv")
         )
+    }
+
+    findOtherSelection(click, layers, foundLayers) {
+        if (null == layers) layers = layersData[this.pageIndex].c
+        if (undefined == layers) return
+        for (var l of layers.reverse()) {
+
+            if (SUPPORT_TYPES.indexOf(l.tp) >= 0 && undefined == l.ms) {
+                if (click.x >= l.finalX && click.x <= (l.finalX + l.w) && click.y >= l.finalY && click.y <= (l.finalY + l.h)) {
+                    foundLayers.push(l)
+                }
+            }
+            if (undefined != l.c)
+                this.findOtherSelection(click, l.c, foundLayers)
+        }
     }
 
 

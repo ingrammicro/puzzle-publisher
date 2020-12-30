@@ -141,11 +141,21 @@ class PZLayer {
             this.comment = comment
         }
 
-        if ("Image" == sLayer.type || (("Group" == sLayer.type || "ShapePath" == sLayer.type) && undefined != sLayer.exportFormats && sLayer.exportFormats.length > 0)) {
-            this.imageIndex = this.artboard.imageLayers.length
-            this.artboard.imageLayers.push(this)
-            if (DEBUG) exporter.logMsg("Add image layer: " + this.name)
+        if (this.nlayer.isMasked()) {
+            if (this.parent && undefined == this.parent.imageIndex) {
+                this.parent.slayer.exportFormats = [{
+                    fileFormat: "png",
+                    size: "1x"
+                }]
+                this.artboard.addLayerAsExportableImage(this.parent)
+            }
+            this.isMasked = true
         }
+
+        if (("Image" == sLayer.type && !this.isMasked) || (("Group" == sLayer.type || "ShapePath" == sLayer.type) && undefined != sLayer.exportFormats && sLayer.exportFormats.length > 0)) {
+            this.artboard.addLayerAsExportableImage(this)
+        }
+
 
         this.childs = []
         this.hotspots = []
@@ -226,9 +236,10 @@ class PZLayer {
         for (const sl of sLayers.filter(l => !l.hidden)) {
             //            
             const al = new PZLayer(sl, this)
+            /*
             if (undefined != al.imageIndex) {
             } else
-                if (al.isGroup) al.childs = al.collectAChilds(sl.layers, space + " ")
+                */if (al.isGroup) al.childs = al.collectAChilds(sl.layers, space + " ")
             aLayers.push(al)
         }
         return aLayers
@@ -413,7 +424,7 @@ class PZLayer {
         this.s = this.smName
         this.l = this.styleName
         this.b = this.sharedLib
-        this.c = this.childs
+        if (this.childs.length) this.c = this.childs
         this.tp = this.isSymbolInstance ? "SI" : this.slayer.type
         if (!this.isSymbolInstance) this.n = this.name
         if (this.slayer.hidden) this.hd = true
@@ -426,6 +437,10 @@ class PZLayer {
         } else if (undefined != this.imageIndex) {
             this.tp = "Image"
             this.iu = this._buildImageURL()
+        }
+        if (this.isMasked) {
+            this.ms = true
+            this.isMasked = undefined
         }
 
         //
