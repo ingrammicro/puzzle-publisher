@@ -141,7 +141,8 @@ class PZLayer {
             this.comment = comment
         }
 
-        if (this.nlayer.isMasked()) {
+        // If the object is mask when we need to setup a parent group as exportable
+        if (this.nlayer.hasClippingMask()) {
             if (this.parent && undefined == this.parent.imageIndex) {
                 this.parent.slayer.exportFormats = [{
                     fileFormat: "png",
@@ -149,10 +150,12 @@ class PZLayer {
                 }]
                 this.artboard.addLayerAsExportableImage(this.parent)
             }
+            sLayer.hidden = false
+            this.hasClippingMask = true
+        } else if ("Image" == sLayer.type && this.nlayer.isMasked()) {
+            // sLayer.hidden = true
             this.isMasked = true
-        }
-
-        if (("Image" == sLayer.type && !this.isMasked) || (("Group" == sLayer.type || "ShapePath" == sLayer.type) && undefined != sLayer.exportFormats && sLayer.exportFormats.length > 0)) {
+        } else if ("Image" == sLayer.type || (("Group" == sLayer.type || "ShapePath" == sLayer.type) && undefined != sLayer.exportFormats && sLayer.exportFormats.length > 0)) {
             this.artboard.addLayerAsExportableImage(this)
         }
 
@@ -233,7 +236,7 @@ class PZLayer {
         if (undefined == sLayers) {
             exporter.logMsg("PZLayer:collectAChilds() empty sLayers. this.name=" + this.name)
         }
-        for (const sl of sLayers.filter(l => !l.hidden)) {
+        for (const sl of sLayers.filter(l => !l.hidden || l.sketchObject.hasClippingMask())) {
             //            
             const al = new PZLayer(sl, this)
             /*
@@ -434,13 +437,20 @@ class PZLayer {
         } else if ("ShapePath" == this.slayer.type || "Shape" == this.slayer.type) {
             this.pr = this._buildShapePropsForJSON()
             this.tp = "ShapePath"
+        } else if ("Image" == this.slayer.type) {
+            if (this.isMasked) {
+                this.hd = true
+                this.isMasked = undefined
+            } else {
+                this.iu = this._buildImageURL()
+            }
         } else if (undefined != this.imageIndex) {
             this.tp = "Image"
             this.iu = this._buildImageURL()
         }
-        if (this.isMasked) {
+        if (this.hasClippingMask) {
             this.ms = true
-            this.isMasked = undefined
+            this.hasClippingMask = undefined
         }
 
         //

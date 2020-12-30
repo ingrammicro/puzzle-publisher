@@ -214,7 +214,7 @@ class SymbolViewer extends AbstractViewer {
     }
 
     _processSymbolList(layers, isParentSymbol = false) {
-        for (var l of layers.reverse()) {
+        for (var l of layers.slice().reverse()) {
             if (this.currentLib != "") {
                 if (this.showSymbols && l.b) {
                     if (l.b == this.currentLib) {
@@ -241,8 +241,8 @@ class SymbolViewer extends AbstractViewer {
     }
 
     _processLayerList(layers, sSI = null) {
-        for (var l of layers.reverse()) {
-            if (SUPPORT_TYPES.indexOf(l.tp) >= 0 && undefined == l.ms) {
+        for (var l of layers.slice().reverse()) {
+            if (SUPPORT_TYPES.indexOf(l.tp) >= 0 && !l.hd) {
                 this._showElement(l, sSI)
             }
             if (undefined != l.c)
@@ -312,6 +312,11 @@ class SymbolViewer extends AbstractViewer {
             const siLayer = siLayerIndex >= 0 ? pageInfo.layerArray[siLayerIndex] : null
 
             sv.setSelected(event, topLayer, $(this))
+            if (!sv.selected) {
+                $('#symbol_viewer #empty').removeClass("hidden")
+                $("#symbol_viewer_content").addClass("hidden")
+                return false
+            }
             const layer = sv.selected.layer // selection can be changed inside setSelected
 
             var symName = sv.showSymbols ? layer.s : (siLayer ? siLayer.s : null)
@@ -429,6 +434,8 @@ class SymbolViewer extends AbstractViewer {
 
             $('#symbol_viewer #empty').addClass("hidden")
             $("#symbol_viewer_content").html(info)
+            $("#symbol_viewer_content").removeClass("hidden")
+
             //alert(info)
             return false
         })
@@ -450,10 +457,10 @@ class SymbolViewer extends AbstractViewer {
     setSelected(event = null, layer = null, a = null, force = false) {
         // reset previous selection        
         if (this.selected) {
-            if (!force && event) {
+            if (!force && event && layer) {
                 const click = {
-                    x: event.pageX * viewer.currentZoom,
-                    y: event.pageY * viewer.currentZoom
+                    x: event.offsetX * viewer.currentZoom + layer.finalX,
+                    y: event.offsetY * viewer.currentZoom + layer.finalY
                 }
                 let foundLayers = []
                 this.findOtherSelection(click, null, foundLayers)
@@ -464,8 +471,8 @@ class SymbolViewer extends AbstractViewer {
                     if (undefined != currentIndex) {
                         let newIndex = ++currentIndex == foundLayers.length ? 0 : currentIndex
                         layer = foundLayers[newIndex]
+                        this.currentSelectedIndex = newIndex
                     }
-                    this.currentSelectedIndex = currentIndex
 
                 }
             }
@@ -505,9 +512,9 @@ class SymbolViewer extends AbstractViewer {
     findOtherSelection(click, layers, foundLayers) {
         if (null == layers) layers = layersData[this.pageIndex].c
         if (undefined == layers) return
-        for (var l of layers.reverse()) {
+        for (var l of layers.slice().reverse()) {
 
-            if (SUPPORT_TYPES.indexOf(l.tp) >= 0 && undefined == l.ms) {
+            if (SUPPORT_TYPES.indexOf(l.tp) >= 0 && !l.hd) {
                 if (click.x >= l.finalX && click.x <= (l.finalX + l.w) && click.y >= l.finalY && click.y <= (l.finalY + l.h)) {
                     foundLayers.push(l)
                 }
