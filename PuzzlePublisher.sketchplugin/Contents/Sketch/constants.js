@@ -1,6 +1,8 @@
 const Constants = {
     DOCUMENT_VERSION: "docVersion",
     DOCUMENT_VERSION_PLACEHOLDER: "V_V_V",
+    DOCUMENT_AUTHOR_NAME_PLACEHOLDER: "V_V_N",
+    DOCUMENT_AUTHOR_EMAIL_PLACEHOLDER: "V_V_E",
     TAB_SIZE: 2,
     HOTSPOT_PADDING: 0,
     LOGGING: false,
@@ -133,6 +135,7 @@ const SettingKeys = {
     PLUGIN_EXPORT_JS_CODE: "pluginExportJSCode",
     PLUGIN_SERVERTOOLS_PATH: "pluginServerToolsPath",
     PLUGIN_AUTHOR_NAME: "pluginAuthorName",
+    PLUGIN_AUTHOR_EMAIL: "pluginAuthorEmail",
     PLUGIN_EXPORT_MODE: "exportMode",
     PLUGIN_HIDE_NAV: "hideNavigation",
     PLUGIN_SORT_RULE: "pluginSortRule",

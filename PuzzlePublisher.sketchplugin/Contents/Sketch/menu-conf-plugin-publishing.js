@@ -35,9 +35,11 @@ var onRun = function (context) {
     if (serverToolsPath == undefined) serverToolsPath = ''
     let authorName = Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_NAME)
     if (authorName == undefined) authorName = ''
+    let authorEmail = Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_EMAIL)
+    if (authorEmail == undefined) authorEmail = ''
 
 
-    const dialog = new UIDialog("Configure Publishing", NSMakeRect(0, 0, 500, 520), "Save", "Edit settings which are common for all documents.")
+    const dialog = new UIDialog("Configure Publishing", NSMakeRect(0, 0, 500, 700), "Save", "Edit settings which are common for all documents.")
 
     dialog.addDivider()
     dialog.addLeftLabel("", "SFTP Server\nCredentials", 40)
@@ -59,12 +61,13 @@ var onRun = function (context) {
     dialog.addHint("siteRootHint", "Specify to open uploaded HTML in web browser automatically")
     dialog.addTextInput("serverToolsPath", "Relative URL to Server Tools", serverToolsPath, '/_tools/')
     dialog.addTextInput("secret", "Site Secret Key", secret, '', 350)
+    dialog.addTextInput("commentsURL", "Commenting URL", commentsURL)
 
     dialog.addDivider()
     dialog.addLeftLabel("", "Author", 40)
 
     dialog.addTextInput("authorName", "Name", authorName, 'John Smith')
-    //dialog.addTextInput("comments","Comments URL (Experimental)", commentsURL)
+    dialog.addTextInput("authorEmail", "Email", authorEmail, 'johns@company.com')
 
 
     let resultOk = false
@@ -89,7 +92,7 @@ var onRun = function (context) {
         }
         //
 
-        //Settings.setSettingForKey(SettingKeys.PLUGIN_COMMENTS_URL, dialog.views['comments'].stringValue()+"")
+        Settings.setSettingForKey(SettingKeys.PLUGIN_COMMENTS_URL, dialog.views['commentsURL'].stringValue() + "")
         Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_LOGIN, dialog.views['login'].stringValue() + "")
         Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_SSH_PORT, sshPort)
 
@@ -100,6 +103,7 @@ var onRun = function (context) {
         Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_SECRET, dialog.views['secret'].stringValue() + "")
         Settings.setSettingForKey(SettingKeys.PLUGIN_SERVERTOOLS_PATH, dialog.views['serverToolsPath'].stringValue() + "")
         Settings.setSettingForKey(SettingKeys.PLUGIN_AUTHOR_NAME, dialog.views['authorName'].stringValue() + "")
+        Settings.setSettingForKey(SettingKeys.PLUGIN_AUTHOR_EMAIL, dialog.views['authorEmail'].stringValue() + "")
         resultOk = true
         break
     }

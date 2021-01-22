@@ -179,6 +179,8 @@ class Exporter {
             docName: Utils.toFilename(this.docName),
             docPath: "P_P_P",
             docVersion: Constants.DOCUMENT_VERSION_PLACEHOLDER,
+            authorName: Constants.DOCUMENT_AUTHOR_NAME_PLACEHOLDER,
+            authorEmail: Constants.DOCUMENT_AUTHOR_EMAIL_PLACEHOLDER,
             hasRetina: this.retinaImages,
             serverToolsPath: this.serverTools,
             fontSizeFormat: this.fontSizeFormat,
