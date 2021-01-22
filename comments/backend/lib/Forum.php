@@ -60,8 +60,8 @@ const DEF_PAGE_INFO = [
 class Page
 {
     private $info =  [];
-    private $intID = 0;
-    public $lastError = "";
+    private $intID = null;
+    public  $lastError = "";
     private $pagePath = "";
 
     public static function build($pubID){
@@ -90,6 +90,8 @@ class Page
     }
 
     public function addComment(){
+        // Load page
+        if(!$this->load()) return False;
         // Validate user
         $userID = $this->getUserID();
         if(False==$userID) return False;
@@ -109,6 +111,11 @@ class Page
     }
 
     public function getExtendedComments(){
+        // return empty data for non-created page
+        if(null==$this->intID) return [];
+        // load data for existing page
+        if(False==$this->load()) return False;
+        //        
         $comments = $this->info['comments'];
         //
         $usersInfo = Forum::$o->loadUsersInfo();
@@ -149,6 +156,16 @@ class Page
     protected function init(){
         $forum  = Forum::$o;
          // Check data
+         if("" == $this->pubID) return $this->setError(ERROR_PAGE_EMPTY_ID);
+        //        
+        $this->intID = $forum->getPageIntIDByPubID($this->pubID);
+        if(False==$this->intID) $this->intID = null;
+        return True;
+    }
+
+    protected function load(){
+        $forum  = Forum::$o;
+         // Check data
         if("" == $this->pubID) return $this->setError(ERROR_PAGE_EMPTY_ID);
         
         // find page data in forum config   
@@ -157,21 +174,25 @@ class Page
             // create new page
             $this->intID = $forum->generatePageIntIDForPubID($this->pubID);
             $this->info = DEF_PAGE_INFO;                        
-            if(False===$this->save())
+            if(False===$this->saveToJSON())
                 return $this->setError(ERROR_CANT_SAVE_PAGE);            
         }else{
-            $this->info = $this->load();
+            $this->info = $this->loadJSON();
             if(""!=$this->lastError) return False;
         }
         //        
         return True;
     }
 
+    protected function save(){
+        return $this->saveToJSON();
+    }
+
     private function getJSONPath(){
         return  Forum::$o->getBasePage()."/page-".$this->intID.".config";
     }
 
-    protected function load(){        
+    protected function loadJSON(){        
         $content = file_get_contents($this->getJSONPath());
         if($content===FALSE){
             $this->setError(ERROR_CANT_LOAD_COMMENTS);
@@ -187,7 +208,7 @@ class Page
         return $json;
     }
 
-    protected function save(){
+    protected function saveToJSON(){
          // encode an array into a json
          $text = json_encode($this->info);
          if($text===False){
@@ -357,8 +378,7 @@ class Forum
         if($content===FALSE){
             $this->setError(ERROR_CANT_LOAD_SERVERCONFIG);
             return [];
-        }               
-        var_dump($content);
+        }                       
         // decode a text config into a array
         $config = json_decode( $content, true );
         if($config==NULL){

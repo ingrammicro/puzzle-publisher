@@ -141,6 +141,7 @@ function createViewer(story, files) {
         allChilds: [], // list of all inited instances of Viewer
         symbolViewer: null,
         versionViewer: null,
+        commentsViewer: null,
 
         defSidebarWidth: 400,
 
@@ -180,6 +181,11 @@ function createViewer(story, files) {
                 $("#menu_version_viewer").removeClass("hidden");
                 this.allChilds.push(this.versionViewer)
             }
+            if (story.commentsURL != 'V_V_C') {
+                this.commentsViewer = new CommentsViewer()
+                $("#menu_comments_viewer").removeClass("hidden");
+                this.allChilds.push(this.commentsViewer)
+            }
 
             $("body").keydown(function (event) {
                 viewer.handleKeyDown(event)
@@ -191,6 +197,9 @@ function createViewer(story, files) {
 
             if (this.urlParams.get('v') != null && this.versionViewer) {
                 this.versionViewer.toggle()
+            }
+            if (this.urlParams.get('c') != null && this.commentsViewer) {
+                this.commentsViewer.toggle()
             }
             const gParam = this.urlParams.get('g')
             if (gParam != null && this.galleryViewer) {

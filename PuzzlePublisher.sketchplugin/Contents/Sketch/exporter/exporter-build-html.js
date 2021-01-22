@@ -88,6 +88,7 @@ function buildMainHTML(options) {
     s += '<script type="text/javascript" src="viewer/story.js' + verPostfix + '" charset="UTF-8"></script>\n';
     s += '<script type="text/javascript" src="viewer/viewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
     s += '<script type="text/javascript" src="viewer/AbstractViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
+    s += '<script type="text/javascript" src="viewer/CommentsViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
     s += '<script type="text/javascript" src="viewer/GalleryViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
     if (options.loadLayers) {
         s += '<script type="text/javascript" src="viewer/LayersData.js' + verPostfix + '" charset="UTF-8"></script>\n';
@@ -95,19 +96,11 @@ function buildMainHTML(options) {
         s += '<link rel="stylesheet" type="text/css" href="resources/viewer-fonts.css' + verPostfix + '">\n';
     }
     s += '<script type="text/javascript" src="viewer/VersionViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
-    if (options.commentsURL != '') {
-        s += '<link rel="stylesheet" type="text/css" href="' + options.commentsURL + '/EasyPageComments.css' + verPostfix + '"/>\n';
-        s += '<script type="text/javascript" src="' + options.commentsURL + '/EasyPageComments.js' + verPostfix + '"></script>\n';
-        s += '<script type="text/javascript" src="' + options.commentsURL + '/comments.js' + verPostfix + '" charset="UTF-8"></script>\n';
-    }
     s += '<script type="text/javascript">\n';
     if (options.jsCode != '') {
         s += 'function runJSCode(){' + options.jsCode + '}\n'
     }
     s += '  var viewer = createViewer(story, "images");\n';
-    if (options.commentsURL != '') {
-        s += '  var comments = createComments();\n';
-    }
     s += '</script>\n';
 
     if (options.googleCode != '') {
@@ -167,202 +160,186 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
 
     s += buildMainHTML_NavigationIcons(options)
-    //s += `<input id="__focusInput" type="text" style="width:0px;height:0px;"/><script>$( "#__focusInput" ).focus()</script>`
-    s += '<!-- load indicator -->\n';
-    s += '<div id="loading" >\n';
-    s += '\
-    <div class="shaft1"></div><div class="shaft2"></div><div class="shaft3"></div>\
-    <div class="shaft4"></div><div class="shaft5"></div><div class="shaft6"></div><div class="shaft7"></div>\
-  </div>    \
-  <!--/load indicator-->\
-     <div id="container">\
-        <div id="marker"></div>\
-        <div id="content" onclick="viewer.onContentClick()"></div>\
-        <div id="sidebar" class="hidden">\
-            <div id="symbol_viewer" class="hidden">\
-                <div class="title">\
-                  <div style="width:100%;">Element Inspector</div>\
-                  <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.symbolViewer.toggle();  return false;">\
-                    <svg class="svgIcon"><use xlink:href="#icClose"></use></svg>\
-                  </div>\
-                </div>\
-                <div class="checkbox-container" style="margin-top:62px;">\
-                  <input type="checkbox" id="symbol_viewer_symbols" />\
-                  <label for="symbol_viewer_symbols"></label>\
-                  <span class="checkbox-label">Show symbols&nbsp;&nbsp;</span>\
-                  <select id="lib_selector" style="width:200px;display:none;"></select>\
-                </div>\
-                <div id="empty" style="padding: 16px 20px 0 20px;margin-top:20px;">Click any element to inspect</div>\
-                <div id="symbol_viewer_content" style="margin-top:20px;">\
-                </div>\
-            </div>\
-             <div id="version_viewer" class="hidden">\
-                <div class="title">\
-                  <div style="width:100%;">Version Inspector</div>\
-                  <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.versionViewer.toggle();  return false;">\
-                    <svg class="svgIcon"><use xlink:href="#icClose"></use></svg>\
-                  </div>\
-                </div>\
-            <div style="padding: 72px 20px 0 20px">\
-                   Mode:<br />\
-                  <input type="radio" name="version_viewer_mode" id="version_viewer_mode_diff" value="diff" checked onclick="viewer.versionViewer.pageChanged()" disabled /><label for="version_viewer_mode_diff">Differences</label><br />\
-                  <input type="radio" name="version_viewer_mode" id="version_viewer_mode_prev" value="prev" onclick="viewer.versionViewer.pageChanged()" disabled><label for="version_viewer_mode_prev">Prev version</label><br />\
-                  <input type="radio" name="version_viewer_mode" id="version_viewer_mode_new" value="new" onclick="viewer.versionViewer.pageChanged()" disabled><label for="version_viewer_mode_new">New version</label><br />\
-                </div>\
-                <div id="version_viewer_content" style="padding: 72px 20px 0 20px"></div>\
-            </div>\
-        </div>\
-    <div id="content-shadow" class="hidden" onclick="viewer.onContentClick()"></div>\
-    <div id="content-modal" class="contentModal hidden" onclick="viewer.onModalClick()"></div>\
-    ';
-    if (options.commentsURL != '') {
-        s += ' <div id="commenting" class="hidden">\n';
-        s += '  <h1>EasyPageComments example page</h1>\n';
-        s += '  <h2>Comments</h2>\n';
-        s += '  <div id="Comments"></div>\n';
-        s += '    <h2>Leave a comment</h2>\n';
-        s += '  <div id="CommentForm"></div>\n';
-        s += ' </div>\n';
-    }
-
-    s += '        <div id="gallery-modal" class="hidden">\n';
-    s += '          <div id="gallery-header">\n';
-    s += '            <div id="gallery-header-container">\n';
-    s += '              <div id="title"><div>' + options.docName + '</div><div id="screensamount"></div></div>\n';
-    s += '              <div id="search"><input type="text" placeholder="Search screen..." id="searchInput" onkeyup="searchScreen()"></div>\n';
-    s += '              <div id="right">\n';
-    s += '                <div class="checkbox-container">\n';
-    s += '                  <input type="checkbox" id="galleryShowMap" onclick="viewer.galleryViewer.enableMapMode(this.checked)"/>\n';
-    s += '                  <label for="galleryShowMap"></label>\n';
-    s += '                  <span class="checkbox-label">Show map (M)</span>\n';
-    s += '                </div>\n';
-    s += '                <div id="closebtn" onclick="viewer.galleryViewer.hide(); return false;"><svg class="svgIcon"><use xlink:href="#icCloseBtn"></use></svg></div>\n';
-    s += '              </div>\n';
-    s += '            </div>\n';
-    s += '          </div>\n';
-    s += '          <div id="gallery"><div id="grid"></div></div>\n';
-    s += '          <div id="map-controls">\n';
-    s += '            <div id="map-controls-container">\n';
-    s += '              <div class="checkbox-container">\n';
-    s += '                <input type="checkbox" id="galleryShowMapLinks" onclick="viewer.galleryViewer.showMapLinks(this.checked)"/>\n';
-    s += '                <label for="galleryShowMapLinks"></label>\n';
-    s += '                <span class="checkbox-label">Show all links (L)</span>\n';
-    s += '              </div>\n';
-    s += '              <input type="range" min="0" max="100" value="50" class="mapZoom" onclick="viewer.galleryViewer.mapZoomChanged(this.value)">\n';
-    s += '              <span onclick="viewer.galleryViewer.resetMapZoom();return false;" class="mapResetZoom">Reset zoom</span>\n';
-    s += '            </div>\n';
-    s += '          </div>\n';
-    s += '        </div>\n';
-
-    s += "    <div id=\"nav\" class=\"" + (options.hideNav ? "hidden" : "nav") + "\">";
-    s += "            <div class=\"navLeft\">";
-    s += "                <div id=\"menu\" class=\"menu\">";
-    s += "                            <div class=\"groupe\">";
-    s += "                                <div id=\"links\" class=\"item\" onclick=\"viewer.toggleLinks(); addRemoveClass('class','menu','active'); return false;\">";
-    s += "                                    <svg class='svgIcon'><use xlink:href=\"#icPointer\"><\/use><\/svg>";
-    s += "                                    <span>Hot Spots<\/span>";
-    s += "                                    <div class=\"tips\">⇧<\/div>";
-    s += "                                <\/div>";
-    s += "                                <div  id=\"zoom\" class=\"item\" onclick=\"viewer.toggleZoom(); addRemoveClass('class','menu','active'); return false;\">";
-    s += "                                    <svg class='svgIcon'><use xlink:href=\"#icResize\"><\/use><\/svg>";
-    s += "                                    <span>Toogle Auto-Scale<\/span>";
-    s += "                                    <div class=\"tips\">Z<\/div>";
-    s += "                                <\/div>";
-    s += "                                <div  id=\"embed\" class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.share();  return false;\">";
-    s += "                                    <svg class='svgIcon'><use xlink:href=\"#icEmbed\"><\/use><\/svg>";
-    s += "                                    <span>Show Embed Code<\/span>";
-    s += "                                    <div class=\"tips\">E<\/div>";
-    s += "                                <\/div>";
-    s += "                                <div  id=\"grid\" class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.toogleLayout();  return false;\">";
-    s += "                                    <svg class='svgIcon'><use xlink:href=\"#icGridLayout\"><\/use><\/svg>";
-    s += "                                    <span>Toogle Grid Layout<\/span>";
-    s += "                                    <div class=\"tips\">L<\/div>";
-    s += "                                <\/div>";
+    s += `
+    <!-- load indicator -->
+    <div id="loading" >
+    <div class="shaft1"></div><div class="shaft2"></div><div class="shaft3"></div>
+    <div class="shaft4"></div><div class="shaft5"></div><div class="shaft6"></div><div class="shaft7"></div>
+  </div>    
+  <!--/load indicator-->
+     <div id="container">
+        <div id="marker"></div>
+        <div id="content" onclick="viewer.onContentClick()"></div>
+        <div id="sidebar" class="hidden">
+            <div id="symbol_viewer" class="hidden">
+                <div class="title">
+                  <div style="width:100%;">Element Inspector</div>
+                  <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.symbolViewer.toggle();  return false;">
+                    <svg class="svgIcon"><use xlink:href="#icClose"></use></svg>
+                  </div>
+                </div>
+                <div class="checkbox-container" style="margin-top:62px;">
+                  <input type="checkbox" id="symbol_viewer_symbols" />
+                  <label for="symbol_viewer_symbols"></label>
+                  <span class="checkbox-label">Show symbols&nbsp;&nbsp;</span>
+                  <select id="lib_selector" style="width:200px;display:none;"></select>
+                </div>
+                <div id="empty" style="padding: 16px 20px 0 20px;margin-top:20px;">Click any element to inspect</div>
+                <div id="symbol_viewer_content" style="margin-top:20px;">
+                </div>
+            </div>
+             <div id="version_viewer" class="hidden">
+                <div class="title">
+                  <div style="width:100%;">Version Inspector</div>
+                  <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.versionViewer.toggle();  return false;">
+                    <svg class="svgIcon"><use xlink:href="#icClose"></use></svg>
+                  </div>
+                </div>
+            <div id="comments_viewer" class="hidden">
+                <div class="title">
+                    <div style="width:100%;">Comments</div>
+                    <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.commentsViewer.toggle();  return false;">
+                    <svg class="svgIcon"><use xlink:href="#icAnnotation"></use></svg>
+                </div>
+            </div>
+            <div style="padding: 72px 20px 0 20px">
+                   Mode:<br/>
+                  <input type="radio" name="version_viewer_mode" id="version_viewer_mode_diff" value="diff" checked onclick="viewer.versionViewer.pageChanged()" disabled /><label for="version_viewer_mode_diff">Differences</label><br />
+                  <input type="radio" name="version_viewer_mode" id="version_viewer_mode_prev" value="prev" onclick="viewer.versionViewer.pageChanged()" disabled><label for="version_viewer_mode_prev">Prev version</label><br />
+                  <input type="radio" name="version_viewer_mode" id="version_viewer_mode_new" value="new" onclick="viewer.versionViewer.pageChanged()" disabled><label for="version_viewer_mode_new">New version</label><br />
+                </div>
+                <div id="version_viewer_content" style="padding: 72px 20px 0 20px"></div>
+            </div>
+        </div>
+    <div id="content-shadow" class="hidden" onclick="viewer.onContentClick()"></div>
+    <div id="content-modal" class="contentModal hidden" onclick="viewer.onModalClick()"></div>
+        < div id = "gallery-modal" class="hidden" >
+              <div id="gallery-header">
+                <div id="gallery-header-container">
+                  <div id="title"><div>' + options.docName + '</div><div id="screensamount"></div></div>
+                  <div id="search"><input type="text" placeholder="Search screen..." id="searchInput" onkeyup="searchScreen()"></div>
+                  <div id="right">
+                    <div class="checkbox-container">
+                      <input type="checkbox" id="galleryShowMap" onclick="viewer.galleryViewer.enableMapMode(this.checked)"/>
+                      <label for="galleryShowMap"></label>
+                      <span class="checkbox-label">Show map (M)</span>
+                    </div>
+                    <div id="closebtn" onclick="viewer.galleryViewer.hide(); return false;"><svg class="svgIcon"><use xlink:href="#icCloseBtn"></use></svg></div>
+                  </div>
+                </div>
+              </div>
+              <div id="gallery"><div id="grid"></div></div>
+              <div id="map-controls">
+                <div id="map-controls-container">
+                  <div class="checkbox-container">
+                    <input type="checkbox" id="galleryShowMapLinks" onclick="viewer.galleryViewer.showMapLinks(this.checked)"/>
+                    <label for="galleryShowMapLinks"></label>
+                    <span class="checkbox-label">Show all links (L)</span>
+                  </div>
+                  <input type="range" min="0" max="100" value="50" class="mapZoom" onclick="viewer.galleryViewer.mapZoomChanged(this.value)">
+                  <span onclick="viewer.galleryViewer.resetMapZoom();return false;" class="mapResetZoom">Reset zoom</span>
+                </div>
+              </div>
+            </div>
+           < div id ="nav" class="" + (options.hideNav ? "hidden" : "nav") + "" >
+            <div class="navLeft">
+                <div id="menu" class="menu">
+                    <div class="groupe">
+                        <div id="links" class="item" onclick="viewer.toggleLinks(); addRemoveClass('class','menu','active'); return false;">
+                            <svg class='svgIcon'><use xlink: <\/use><\/svg>
+                                        <span>Hot Spots<\/span>
+                                        <div class="tips">⇧<\/div>
+                                    <\/div>
+                                    <div id="zoom" class="item" onclick="viewer.toggleZoom(); addRemoveClass('class','menu','active'); return false;">
+                                            <svg class='svgIcon'><use xlink: <\/use><\/svg>
+                                        <span>Toogle Auto-Scale<\/span>
+                                        <div class="tips">Z<\/div>
+                                    <\/div>
+                                    <div id="embed" class="item" onclick="addRemoveClass('class','menu','active'); viewer.share();  return false;">
+                                                            <svg class='svgIcon'><use xlink: <\/use><\/svg>
+                                        <span>Show Embed Code<\/span>
+                                        <div class="tips">E<\/div>
+                                    <\/div>
+                                    <div id="grid" class="item" onclick="addRemoveClass('class','menu','active'); viewer.toogleLayout();  return false;">
+                                                                            <svg class='svgIcon'><use xlink: <\/use><\/svg>
+                                        <span>Toogle Grid Layout<\/span>"
+                                        <div class="tips">L<\/div>
+                                    <\/div>
+    `
     if (options.loadLayers) {
-        s += "                            <div  id=\"symbols\"  class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.symbolViewer.toggle();  return false;\">";
-        s += "                                <svg class='svgIcon'><use xlink:href=\"#icElementInspector\"><\/use><\/svg>";
-        s += "                                <span>Elements Inspector<\/span>";
-        s += "                                <div class=\"tips\">M<\/div>";
-        s += "                            <\/div>";
+        s += `
+                                    <div  id="symbols"  class="item" onclick="addRemoveClass('class','menu','active'); viewer.symbolViewer.toggle();  return false;">
+                                        <svg class='svgIcon'><use xlink:href="#icElementInspector"><\/use><\/svg>
+                                        <span>Elements Inspector<\/span>
+                                        <div class="tips">M<\/div>
+                                    <\/div>
+           `
     }
-    s += "                                <div id=\"menu_version_viewer\" class=\"hidden item\" onclick=\"addRemoveClass('class','menu','active'); viewer.versionViewer.toggle();  return false;\">";
-    s += "                                    <svg class='svgIcon'><use xlink:href=\"#icVersionInspector\"><\/use><\/svg>";
-    s += "                                    <span>Version Inspector<\/span>";
-    s += "                                    <div class=\"tips\">V<\/div>";
-    s += "                                <\/div>";
-    /*
-    s += "                                <div class=\"item disabled\" onclick=\"addRemoveClass('class','annotation','active'); addRemoveClass('class','menu','active');\">";
-    s += "                                    <svg class='svgIcon'><use xlink:href=\"#icAnnotation\"><\/use><\/svg>";
-    s += "                                    <span>Annotation<\/span>";
-    s += "                                    <div class=\"tips\">⌘A<\/div>";
-    s += "                                <\/div>";
-    */
-    if (options.commentsURL != '') {
-        s += "                                <div class=\"item\" onclick=\"comments.switch(); return false;\">";
-        s += "                                    <svg class='svgIcon'><use xlink:href=\"#icAnnotation\"><\/use><\/svg>";
-        s += "                                    <span>Comments<\/span>";
-        s += "                                <\/div>";
-    }
-    s += "                            <\/div>";
+    s += `
+                                  <div id="menu_version_viewer" class="hidden item" onclick="addRemoveClass('class','menu','active'); viewer.versionViewer.toggle();  return false;">
+                                                                                            <svg class='svgIcon'><use xlink: <\/use><\/svg>
+                                      <span>Version Inspector<\/span>
+                                      <div class="tips">V<\/div>
+                                  <\/div>
+                                  <div class="item" onclick="viewer.commentViewer.toggle(); return false;">
+                                                                                                            <svg class='svgIcon'><use xlink: <\/use><\/svg>
+                                      <span>Comments<\/span>
+                                  <\/div>
+                              <\/div>
+    `
     if (options.serverTools != '') {
-        s += "                            <hr>";
-        s += "                            <div class=\"groupe\">";
-        s += "                                <div class=\"item\" onclick=\"viewer.increaseVersion(); addRemoveClass('class','menu','active'); return false;\">";
-        s += "                                    <svg class='svgIcon'><use xlink:href=\"#icIncreaseVersion\"><\/use><\/svg>";
-        s += "                                    <span>Version Up<\/span>";
-        s += "                                    <div class=\"tips\">⇧ ↑<\/div>";
-        s += "                                <\/div>";
-        s += "                                <div class=\"item\" onclick=\"viewer.decreaseVersion(); addRemoveClass('class','menu','active'); return false;\">";
-        s += "                                    <svg class='svgIcon'><use xlink:href=\"#icDecreaseVersion\"><\/use><\/svg>";
-        s += "                                    <span>Version Down<\/span>";
-        s += "                                    <div class=\"tips\">⇧ ↓<\/div>";
-        s += "                                <\/div>";
-        s += "                            <\/div>";
+        s += `
+                                  <hr/>
+                                  <div class="groupe">
+                                      <div class="item" onclick="viewer.increaseVersion(); addRemoveClass('class','menu','active'); return false;">
+                                          <svg class='svgIcon'><use xlink:href="#icIncreaseVersion"><\/use><\/svg>
+                                          <span>Version Up<\/span>
+                                          <div class="tips">⇧ ↑<\/div>
+                                      <\/div>
+                                      <div class="item" onclick="viewer.decreaseVersion(); addRemoveClass('class','menu','active'); return false;">
+                                          <svg class='svgIcon'><use xlink:href="#icDecreaseVersion"><\/use><\/svg>
+                                          <span>Version Down<\/span>
+                                          <div class="tips">⇧ ↓<\/div>
+                                      <\/div>
+                                  <\/div>
+        `
     }
-    s += "                            <hr>";
-    s += "                            <div  id=\"viewall\" class=\"groupe\">";
-    s += "                                <div class=\"item\" onclick=\"viewer.galleryViewer.show(); addRemoveClass('class','menu','active'); return false;\">";
-    s += "                                    <svg class='svgIcon'><use xlink:href=\"#icGrid\"><\/use><\/svg>";
-    s += "                                    <span>View All Screens<\/span>";
-    s += "                                    <div class=\"tips\">G<\/div>";
-    s += "                                <\/div>";
-    s += "                                <div  id=\"start\"  class=\"item\" onclick=\"viewer.goToPage(0); addRemoveClass('class','menu','active'); return false;\">";
-    s += "                                    <svg class='svgIcon'><use xlink:href=\"#icBack\"><\/use><\/svg>";
-    s += "                                    <span>Go To Start<\/span>";
-    s += "                                    <div class=\"tips\">S<\/div>";
-    s += "                                <\/div>";
-    s += "                            <\/div>";
-    /*
-    s += "                            <hr>";
-    s += "                            <div class=\"groupe\">";
-    s += "                                <div class=\"item\" onclick=\"addRemoveClass('class','menu','active');\">";
-    s += "                                    <svg><use xlink:href=\"#icHeart\"><\/use><\/svg>";
-    s += "                                    <span>About<\/span>";
-    s += "                                <\/div>";
-    s += "                            <\/div>";
-    */
-    s += "                <\/div>";
-    s += "                <div id=\"btnMenu\" class=\"btnMenu\" onclick=\"addRemoveClass('class', 'menu', 'active')\">";
-    s += "                    <svg class='svgIcon'><use xlink:href=\"#icMenu\"><\/use><\/svg>";
-    s += "                <\/div>";
-    s += "                <div id=\"btnOpenNew\" style='display:none' class=\"btnMenu\" onclick=\"viewer.openNewWindow();return false;\">";
-    s += "                    <svg class='svgIcon'><use xlink:href=\"#icResize\"><\/use><\/svg>";
-    s += "                <\/div>";
-    s += "                <div class=\"navPreviewNext\">";
-    s += "                    <div id=\"nav-left-prev\" class=\"btnPreview\" onclick=\"viewer.previous(); return false;\" title=\"Previous screen\">";
-    s += "                        <svg class='svgIcon'><use xlink:href=\"#icArrwLeft\"><\/use><\/svg>";
-    s += "                    <\/div>";
-    s += "                    <div id=\"nav-left-next\" class=\"btnNext\" onclick=\"viewer.next(); return false;\" title=\"Next screen\"><svg class='svgIcon'><use xlink:href=\"#icArrwRight\"><\/use><\/svg><\/div>";
-    s += "                <\/div>";
-    s += "            <\/div>";
-    s += "            <div class=\"navCenter\"><div class=\"pageName title\">Default button<\/div><\/div>";
-    s += "            <div class=\"navRight\">";
-    s += "            <\/div>";
-    s += "        <\/div>";
-
-    s += ' </div>\n';
-    s += '</body>\n';
-    s += '</html>\n';
-
+    s += `
+                               <hr>
+                                                                                                                        <div id="viewall" class="groupe">
+                                                                                                                            <div class="item" onclick="viewer.galleryViewer.show(); addRemoveClass('class','menu','active'); return false;">
+                                                                                                                                <svg class='svgIcon'><use xlink: <\/use><\/svg>
+                                       <span>View All Screens<\/span>
+                                       <div class="tips">G<\/div>
+                                   <\/div>
+                                   <div id="start" class="item" onclick="viewer.goToPage(0); addRemoveClass('class','menu','active'); return false;">
+                                                                                                                                                <svg class='svgIcon'><use xlink: <\/use><\/svg>
+                                       <span>Go To Start<\/span>
+                                       <div class="tips">S<\/div>
+                                   <\/div>
+                               <\/div>
+                   <\/div>
+                   <div id="btnMenu" class="btnMenu" onclick="addRemoveClass('class', 'menu', 'active')">
+                                                                                                                                                                <svg class='svgIcon'><use xlink: <\/use><\/svg>
+                   <\/div>
+                   <div id="btnOpenNew" style='display:none' class="btnMenu" onclick="viewer.openNewWindow();return false;">
+                                                                                                                                                                        <svg class='svgIcon'><use xlink: <\/use><\/svg>
+                   <\/div>
+                   <div class="navPreviewNext">
+                                                                                                                                                                                <div id="nav-left-prev" class="btnPreview" onclick="viewer.previous(); return false;" title="Previous screen">
+                                                                                                                                                                                    <svg class='svgIcon'><use xlink: <\/use><\/svg>
+                       <\/div>
+                       <div id="nav-left-next" class="btnNext" onclick="viewer.next(); return false;" title="Next screen"><svg class='svgIcon'><use xlink: <\/use><\/svg><\/div>
+                   <\/div>
+               <\/div>
+               <div class="navCenter"><div class="pageName title">Default button<\/div><\/div>
+               <div class="navRight">
+                                                                                                                                                                                                    <\/div>
+           <\/div>
+        </div>
+        </body>
+    </html>
+    `
     return s;
+
 };

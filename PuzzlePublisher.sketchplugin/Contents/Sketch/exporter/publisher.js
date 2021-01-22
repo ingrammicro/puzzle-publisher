@@ -29,6 +29,7 @@ class Publisher {
         this.serverToolsPath = this.Settings.settingForKey(SettingKeys.PLUGIN_SERVERTOOLS_PATH) + ""
         this.authorName = this.Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_NAME) + ""
         this.authorEmail = this.Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_EMAIL) + ""
+        this.commentsURL = this.Settings.settingForKey(SettingKeys.PLUGIN_COMMENTS_URL) + ""
 
         this.docFolder = this.doc.cloudName();
         let posSketch = this.docFolder.indexOf(".sketch")
@@ -80,9 +81,12 @@ class Publisher {
         if (this.miroPassword == undefined || this.miroPassword == null) this.miroPassword = ''
 
         this.authorName = Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_NAME)
-        if (this.authorName == undefined) this.authorName = ''
+        if (this.authorName == undefined || this.authorName == '') this.authorName = 'None'
         this.authorEmail = Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_EMAIL)
-        if (this.authorEmail == undefined) this.authorEmail = ''
+        if (this.authorEmail == undefined || this.authorEmail == '') this.authorEmail = 'None'
+
+        this.commentsURL = Settings.settingForKey(SettingKeys.PLUGIN_COMMENTS_URL)
+        if (this.commentsURL == undefined) this.commentsURL = ''
 
     }
 
@@ -548,6 +552,7 @@ class Publisher {
         args.push(this.sshPort)
         args.push(this.authorName)
         args.push(this.authorEmail)
+        args.push(this.commentsURL)
         //args.push(Constants.MIRROR2)        
         return this.runScriptWithArgs("publish.sh", args)
     }
