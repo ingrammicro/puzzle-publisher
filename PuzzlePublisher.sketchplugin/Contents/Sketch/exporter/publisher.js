@@ -552,7 +552,7 @@ class Publisher {
         args.push(this.sshPort)
         args.push(this.authorName)
         args.push(this.authorEmail)
-        args.push(this.commentsURL)
+        args.push(this.commentsURL.replace(/(\/)/g, '\\/'))
         //args.push(Constants.MIRROR2)        
         return this.runScriptWithArgs("publish.sh", args)
     }
@@ -561,7 +561,9 @@ class Publisher {
     runScriptWithArgs(scriptName, args) {
         const scriptPath = this.allMockupsdDir + "/" + scriptName
         args.unshift(scriptPath) // add script itself as a first argument
+        log(args)
         const res = Utils.runCommand('/bin/bash', args)
+        log(res)
 
         // delete script
         Utils.deleteFile(scriptPath)

@@ -9,7 +9,7 @@ mirror1="$6"
 sshPort="$7"
 authorName="$8"
 authorEmail="$9"
-commentsURL="$10"
+commentsURL=${10}
 
 skipLive=""
 
@@ -27,6 +27,7 @@ mkdir -p "${tmpFolder}"
 
 storyVerPlaceholderCode="VERSION_INJECT=' "
 
+echo "$commentsURL"
 echo "$tmpFolder"
 
 waitCompressor(){
