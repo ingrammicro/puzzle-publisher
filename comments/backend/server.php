@@ -9,6 +9,7 @@ function exitError($errorCode)
 {
     $res =[
         'status'=> 'error',
+        'message'=>'Error '.$errorCode.' occured',
         'errorCode'=>$errorCode
     ];    
 	echo json_encode($res);
@@ -46,28 +47,40 @@ if(is_string($forum)){
 
 /// PROCESS INCOMING COMMANDS
 $cmd = $_GET['cmd'];
-if('listComments'==$cmd){
+if('addComment'==$cmd){
     $page = $forum->buildPage();
     if(is_string($page)) exitError($page);
-
-    $commentsInfo = $page->getExtendedComments();
-    if(False===$commentsInfo) exitError($page->lastError);
-    exitSuccess("",$commentsInfo);    
-}else if('addComment'==$cmd){
-    $page = $forum->buildPage();
-    if(is_string($page)) exitError($page);
-
     if(False===$page->addComment()) exitError($page->lastError);
-    exitSuccess("Added new comment");    
-}if('buildCommentsHTML'==$cmd){
-    $page = $forum->buildPage();
-    if(is_string($page)) exitError($page);
-
+    // load updated comments
     $commentsInfo = $page->getExtendedComments();
     if(False===$commentsInfo) exitError($page->lastError);
-    $html = Frontend::buildCommentsHTML( $page,$commentsInfo);    
-    echo $html;
-    exit;    
+    // build HTML
+    $html = "";
+    $html .= Frontend::buildCommentListHTML($page,$commentsInfo); 
+    //
+    exitSuccess("Added new comment",$html);
+}else if('buildFullHTML'==$cmd){
+    $page = $forum->buildPage();
+    if(is_string($page)) exitError($page);
+    // load data
+    $commentsInfo = $page->getExtendedComments();
+    if(False===$commentsInfo) exitError($page->lastError);
+    // build html
+    $html = "";
+    $html .= Frontend::buildFullHTML( $forum,$page,$commentsInfo); 
+    //
+    exitSuccess("",$html);
+}else if('buildCommentsHTML'==$cmd){
+    $page = $forum->buildPage();
+    if(is_string($page)) exitError($page);
+    // load data
+    $commentsInfo = $page->getExtendedComments();
+    if(False===$commentsInfo) exitError($page->lastError);
+    // build html
+    $html = "";
+    $html .= Frontend::buildCommentListHTML( $forum,$page,$commentsInfo); 
+    //
+    exitSuccess("",$html);
 }
 else{
     exitError(ERROR_UNKNOWN_CMD);

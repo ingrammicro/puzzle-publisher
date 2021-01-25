@@ -17,6 +17,7 @@ const ERROR_CANT_PARSE_FORUMCONFIG          = "#003.003";
 // 004. SAVE FORUM CONFIG
 const ERROR_CANT_ENCODE_FORUMCONFIG         = "#004.001";
 const ERROR_CANT_SAVE_FORUMCONFIG           = "#004.002";
+const ERROR_CANT_CREATE_FORUM_FOLDER        = "#004.003";
 
 // 005. PAGE SAVE/LOAD
 const ERROR_PAGE_EMPTY_ID                   = "#005.001";
@@ -109,10 +110,13 @@ class Page
         if(!$this->save()) return False;
         return True;
     }
-
+    
     public function getExtendedComments(){
         // return empty data for non-created page
-        if(null==$this->intID) return [];
+        if(null==$this->intID) return [
+            'comments'=>[],
+            'users'=>[]
+        ];
         // load data for existing page
         if(False==$this->load()) return False;
         //        
@@ -259,6 +263,10 @@ class Forum
         }
     }
 
+    public function forumID(){
+        return $this->forumID;
+    }
+
     public function generatePageIntIDForPubID($pagePubID){
         $newIntID = $this->config['pageCounter']++;
         $this->config['pages'][  $pagePubID ] = $newIntID;
@@ -320,7 +328,7 @@ class Forum
             $this->usersFilePath = $this->basePath."/users.config";
 
             $this->config = $this->loadForumConfig();
-            if($this->lastError!="") return False;
+            if($this->lastError!="")return False;
 
             // Create new config
             if(False==$this->config){                
@@ -430,7 +438,10 @@ class Forum
         if($isNewForum){
             // init new config
             echo $this->basePath;
-            mkdir($this->basePath);
+            if(False==mkdir($this->basePath)){
+                $this->setError(ERROR_CANT_CREATE_FORUM_FOLDER);       
+                return False;
+            }
         }
 
          // encode an array into a json
