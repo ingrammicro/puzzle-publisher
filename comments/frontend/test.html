@@ -28,17 +28,17 @@
 
 </head>
 <script>
-    var baseURL = "https://uxteam.int.zone/tmp/comments/backend/server.php"
-    
+    var baseURL = "https://teplo500.ru/comments/backend/server.php"
+
     var forumID = "1234567890"
-    function addComment(text){
+    function addComment(text) {
         var formData = new FormData();
         formData.append("msg", text);
         formData.append("email", "max@bazarov.ru");
         formData.append("name", "Max Bazarov");
         //
         var xhr = new XMLHttpRequest()
-        xhr.open('POST', baseURL + "?fid="+forumID+"&cmd=addComment", true);
+        xhr.open('POST', baseURL + "?fid=" + forumID + "&cmd=addComment", true);
         xhr.onload = function () {
             // do something to response
             var result = this.responseText.replace("\n", "")
@@ -54,46 +54,46 @@
             return
             //                
         };
-        xhr.send(formData);            
+        xhr.send(formData);
     }
-    function listComments(){
+    function listComments() {
         var formData = new FormData();
         //
         var xhr = new XMLHttpRequest()
-        xhr.open('GET', baseURL + "?fid="+forumID+"&cmd=listComments", true);
+        xhr.open('GET', baseURL + "?fid=" + forumID + "&cmd=listComments", true);
         xhr.onload = function () {
             // do something to response
             var result = this.responseText.replace("\n", "")
-            console.log(result)           
+            console.log(result)
             return
         };
-        xhr.send(formData);            
+        xhr.send(formData);
     }
-    function buildCommentsHTML(){
+    function buildCommentsHTML() {
         var formData = new FormData();
         //
         var xhr = new XMLHttpRequest()
-        xhr.open('GET', baseURL + "?fid="+forumID+"&cmd=buildCommentsHTML", true);
+        xhr.open('GET', baseURL + "?fid=" + forumID + "&cmd=buildCommentsHTML", true);
         xhr.onload = function () {
             // do something to response
-            $('#output').html(this.responseText);            
+            $('#output').html(this.responseText);
             var result = this.responseText;//.replace("\n", "")
-            console.log(result)           
+            console.log(result)
             return
         };
-        xhr.send(formData);            
+        xhr.send(formData);
     }
 </script>
+
 <body>
-<a href="#" onclick="addComment('Test')">Add comment</a>
-<br/><br/>
-<a href="#" onclick="listComments()">List comments</a>
-<br/><br/>
-<a href="#" onclick="buildCommentsHTML()">Build comments HTML</a>
-<br/><br/>
-<br/><br/>
-<br/><br/>
-Result:
-<div id="output"></div>
+    <a href="#" onclick="addComment('Test')">Add comment</a>
+    <br /><br />
+    <a href="#" onclick="listComments()">List comments</a>
+    <br /><br />
+    <a href="#" onclick="buildCommentsHTML()">Build comments HTML</a>
+    <br /><br />
+    <br /><br />
+    <br /><br />
+    Result:
+    <div id="output"></div>
 </body>
-            
