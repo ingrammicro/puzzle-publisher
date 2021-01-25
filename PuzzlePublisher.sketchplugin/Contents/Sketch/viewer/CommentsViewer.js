@@ -1,4 +1,4 @@
-function getVersionInfoRequest() {
+function handleCommentsRequest() {
     var resp = this
     if (resp.readyState == resp.DONE) {
         if (resp.status == 200 && resp.responseText != null) {
@@ -24,7 +24,6 @@ class CommentsViewer extends AbstractViewer {
 
         // init document common data here
         this._showLoadingMessage()
-        this._askServerTools();
 
         this.inited = true
     }
@@ -42,6 +41,12 @@ class CommentsViewer extends AbstractViewer {
 
     /////////////////////////////////////////////////
 
+    _askServerComments() {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = handleCommentsRequest;
+        xhr.open("GET", story.commentsURL, true);
+        xhr.send(null);
+    }
 
 
     _showSelf() {
@@ -52,7 +57,6 @@ class CommentsViewer extends AbstractViewer {
     }
 
     _showLoadingMessage() {
-        // $("#version_viewer_content").html("Loading...")
-        // $('#version_viewer #empty').removeClass("hidden")
+        $("#comments_viewer #content").html("Loading...")
     }
 }

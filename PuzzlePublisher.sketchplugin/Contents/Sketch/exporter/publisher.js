@@ -561,9 +561,7 @@ class Publisher {
     runScriptWithArgs(scriptName, args) {
         const scriptPath = this.allMockupsdDir + "/" + scriptName
         args.unshift(scriptPath) // add script itself as a first argument
-        log(args)
         const res = Utils.runCommand('/bin/bash', args)
-        log(res)
 
         // delete script
         Utils.deleteFile(scriptPath)

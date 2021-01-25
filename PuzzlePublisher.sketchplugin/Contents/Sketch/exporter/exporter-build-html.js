@@ -193,18 +193,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <div class="title">\
                     <div style="width:100%;">Comments</div>\
                     <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.commentsViewer.toggle();  return false;">\
-                        <svg class="svgIcon"><use xlink:href="#icAnnotation"></use></svg>\
+                        <svg class="svgIcon"><use xlink:href="#icClose"></use></svg>\
                     </div>\
                 </div>\
-            </div>\
-             <div id="version_viewer" class="hidden">\
+                <div id="content" style="margin-top:20px;">\
+                </div>\
+            </div >\
+            <div id="version_viewer" class="hidden">\
                 <div class="title">\
                   <div style="width:100%;">Version Inspector</div>\
                   <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.versionViewer.toggle();  return false;">\
                     <svg class="svgIcon"><use xlink:href="#icClose"></use></svg>\
                   </div>\
                 </div>\
-            <div style="padding: 72px 20px 0 20px">\
+    <div style="padding: 72px 20px 0 20px">\
                    Mode:<br />\
                   <input type="radio" name="version_viewer_mode" id="version_viewer_mode_diff" value="diff" checked onclick="viewer.versionViewer.pageChanged()" disabled /><label for="version_viewer_mode_diff">Differences</label><br />\
                   <input type="radio" name="version_viewer_mode" id="version_viewer_mode_prev" value="prev" onclick="viewer.versionViewer.pageChanged()" disabled><label for="version_viewer_mode_prev">Prev version</label><br />\
@@ -249,6 +251,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     s += "            <div class=\"navLeft\">";
     s += "                <div id=\"menu\" class=\"menu\">";
     s += "                            <div class=\"groupe\">";
+    s += "                                <div id=\"menu_comments_viewer\" class=\"hidden item\" onclick=\"viewer.commentsViewer.toggle(); addRemoveClass('class','menu','active'); return false;\">";
+    s += "                                    <svg class='svgIcon'><use xlink:href=\"#icAnnotation\"><\/use><\/svg>";
+    s += "                                    <span>Comments<\/span>";
+    s += "                                    <div class=\"tips\">C<\/div>";
+    s += "                                <\/div>";
     s += "                                <div id=\"links\" class=\"item\" onclick=\"viewer.toggleLinks(); addRemoveClass('class','menu','active'); return false;\">";
     s += "                                    <svg class='svgIcon'><use xlink:href=\"#icPointer\"><\/use><\/svg>";
     s += "                                    <span>Hot Spots<\/span>";

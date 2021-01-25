@@ -124,6 +124,7 @@
     color:white;
 }
 
+#comments_viewer,
 #symbol_viewer,
 #version_viewer {
   width: 100%;
@@ -239,7 +240,9 @@ select:focus{
   margin-right: 40px;
 }
 
-#symbol_viewer .title, #version_viewer .title {
+#comments_viewer .title, 
+#symbol_viewer .title, 
+#version_viewer .title {
   height: 56px;
   display: flex;
   align-items: center;

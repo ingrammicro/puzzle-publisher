@@ -39,12 +39,12 @@ var onRun = function (context) {
     if (authorEmail == undefined) authorEmail = ''
 
 
-    const dialog = new UIDialog("Configure Publishing", NSMakeRect(0, 0, 500, 700), "Save", "Edit settings which are common for all documents.")
+    const dialog = new UIDialog("Configure Publishing", NSMakeRect(0, 0, 700, 700), "Save", "Edit settings which are common for all documents.")
 
     dialog.addDivider()
     dialog.addLeftLabel("", "SFTP Server\nCredentials", 40)
 
-    dialog.addTextInput("login", "Login", login, 'html@mysite.com:/var/www/html/', 350)
+    dialog.addTextInput("login", "Login", login, 'html@mysite.com:/var/www/html/', 500)
     dialog.addHint("loginHint", "SSH key should be uploaded to the site already")
 
     dialog.addTextInput("sshPort", "SSH Port", sshPort, '22', 350)
@@ -61,7 +61,7 @@ var onRun = function (context) {
     dialog.addHint("siteRootHint", "Specify to open uploaded HTML in web browser automatically")
     dialog.addTextInput("serverToolsPath", "Relative URL to Server Tools", serverToolsPath, '/_tools/')
     dialog.addTextInput("secret", "Site Secret Key", secret, '', 350)
-    dialog.addTextInput("commentsURL", "Commenting URL", commentsURL)
+    dialog.addTextInput("commentsURL", "Commenting URL", commentsURL, '', 500)
 
     dialog.addDivider()
     dialog.addLeftLabel("", "Author", 40)
