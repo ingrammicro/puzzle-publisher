@@ -16,7 +16,7 @@ class Frontend
                     let name = window.localStorage.getItem("commentsUserName")
                     let email = window.localStorage.getItem("commentsUserEmail")
                     this.comment={
-                        name:name!=null?name:"",
+                        name:name!=null?name:"", 
                         email:email!=null?email:"",
                         msg:""
                     }
@@ -82,6 +82,9 @@ class Frontend
                     if(!this.checkComment()) return false;
                     ///
                     var formData = new FormData();
+                    formData.append("pageOwnerName", story.authorName);
+                    formData.append("pageOwnerEmail", story.authorEmail);
+                    //
                     formData.append("name", this.comment.name);
                     formData.append("email", this.comment.email);
                     formData.append("msg", this.comment.msg);
@@ -101,6 +104,25 @@ class Frontend
                     }                
                     //    
                     return comments.sendCommand("addComment", formData,handler);
+                }
+                reloadComments(){
+                    $("#comments_viewer #comments").html("Loading...");
+                    var handler =function () {
+                        var result =  JSON.parse(this.responseText);
+                        //
+                        console.log(this.responseText); 
+                        if(result.status!='ok'){
+                            comments.showError(result.message);
+                        }else{
+                            console.log(result); 
+                            $("#comments_viewer #comments").html(result.data);
+                            comments.comment.msg = ""
+                            comments.fillComment()
+                        }
+                    }                
+                    //    
+                    var formData = new FormData();
+                    return comments.sendCommand("buildCommentsHTML", formData,handler);
                 }
             }
             comments = new Comments();
@@ -125,8 +147,8 @@ EOL;
             }else{
                 $res .= "<br/>";
             }
-            ///
-            $user = &$commentsInfo['users'][$comment['uid']];
+            ///            
+            $user = $commentsInfo['users'][$comment['uid']];
             $commentID = $comment['created']."-".$comment['uid'];
             //
             $res.=<<<EOL
@@ -155,13 +177,13 @@ EOL;
             <div id="error" style="color:red">
             </div>
             <div id="name">
-                <input id="nameField" {$inputStyle} placeholder="Name" style="font-size:12px;" value=""/>
+                <input id="nameField" {$inputStyle} placeholder="Your name" style="font-size:12px;"/>
             </div>
             <div id="email">
-                <input id="emailField" {$inputStyle} placeholder="Email Address"/>
+                <input id="emailField" {$inputStyle} placeholder="Your email"/>
             </div>
             <div id="msg">
-                <textarea id="msgField" {$inputStyle} rows="5" cols="20"></textarea>
+                <textarea id="msgField" {$inputStyle} rows="5" cols="20" placeholder="Text"></textarea>
             </div>
             <div id="buttons">
                 <input id="send" type="button" onclick="comments.submitComment();return false;" value="Send"/>

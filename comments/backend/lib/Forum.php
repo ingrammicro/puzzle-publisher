@@ -54,6 +54,8 @@ const DEF_COMMENT_DATA = [
 
 const DEF_PAGE_INFO = [
     "created"=>"",
+    "ownerName"=>"",
+    "ownerEmail"=>"",
     "commentCounter"=>1,
     "comments"=>[],
 ];
@@ -108,7 +110,13 @@ class Page
         array_push($this->info['comments'],$comment);
         /// Save 
         if(!$this->save()) return False;
-        return True;
+        /// Send notification
+        $this->notify();
+        return True;        
+    }
+
+    private function notifiy(){
+        
     }
     
     public function getExtendedComments(){
@@ -123,8 +131,10 @@ class Page
         $comments = $this->info['comments'];
         //
         $usersInfo = Forum::$o->loadUsersInfo();
-        if(False===$usersInfo) return False;
-        
+        if(False===$usersInfo){
+            $this->setError(Forum::$o->lastError);
+            return False;        
+        }
         //          
         $userList = [];
         foreach ($comments as &$comment) {
@@ -132,28 +142,21 @@ class Page
             $uid = $comment['uid'];
             $email = "";
             $user = null;
-            if(!array_key_exists($uid,$userList)){                
-                $foundUsers = array_filter(array_values($usersInfo['list']),function($user) use ($uid){                    
-                    return $user['id']===$uid;
-                });
-                if(count($foundUsers)!=0){
-                    $user = $foundUsers[0];
-                }else{
-                    $user = [
-                        'id'=>$uid,
-                        'email'=>'',
-                        'name'=>'Deleted user #'.$uid
-                    ];
-                }
-                $userList[$uid] = $user;
+            if(!array_key_exists($uid,$usersInfo['list'])){    
+                $user = [
+                    'id'=>$uid,
+                    'email'=>'',
+                    'name'=>'Deleted user #'.$uid.json_encode($usersInfo)
+                ];
             }else{
-                $user = $userList[$uid];
-            }
+                $user = $usersInfo['list'][$uid];
+            }            
+            $userList[$uid] = $user;            
             //            
         }
         return [
-            'comments'=>&$comments,
-            'users'=>&$userList
+            'comments'=>$comments,
+            'users'=>$userList
         ];
     }
 
@@ -178,6 +181,8 @@ class Page
             // create new page
             $this->intID = $forum->generatePageIntIDForPubID($this->pubID);
             $this->info = DEF_PAGE_INFO;                        
+            $this->info['ownerName'] =  http_post_param("pageOwnerNam");
+            $this->info['ownerEmail'] =  http_post_param("pageOwnerEmail");
             if(False===$this->saveToJSON())
                 return $this->setError(ERROR_CANT_SAVE_PAGE);            
         }else{
@@ -197,9 +202,12 @@ class Page
     }
 
     protected function loadJSON(){        
+        // check if page config exists
+        if(!file_exists($this->getJSONPath())) return DEF_PAGE_INFO;       
+
         $content = file_get_contents($this->getJSONPath());
         if($content===FALSE){
-            $this->setError(ERROR_CANT_LOAD_COMMENTS);
+            $this->setError(ERROR_CANT_LOAD_COMMENTS);        
             return [];
         }               
         // decode a text config into a array
@@ -292,15 +300,24 @@ class Forum
         $usersInfo = $this->loadUsersInfo();
         if(False===$usersInfo) return False;
         //
-        if(!array_key_exists($email, $usersInfo['list']) ){
-            $usersInfo['list'][$email] = [
-                "id"=>$usersInfo['userCounter']++,
+        $uid = $this->findUserIDByEmail($usersInfo,$email);
+        if(False==$uid){
+            $uid = $usersInfo['userCounter']++;
+            $usersInfo['list'][$uid] = [
+                "id"=>$uid,
                 "email"=>$email,
                 "name"=>$name,
             ];
-            if(False===$this->saveUsersInfo($usersInfo)) return False;
+            if(False===$this->saveUsersInfo($usersInfo)) return False;                    
         }
-        return $usersInfo['list'][$email]['id'];
+        return $uid;
+    }
+
+    private function findUserIDByEmail(&$usersInfo,$email){
+        $foundUsers = array_filter(array_values($usersInfo['list']),function($u) use ($email){
+            return $u['email']==$email;
+        });
+        return count( $foundUsers )>0? $foundUsers[0]['id']:False;
     }
 
     protected function init(){
@@ -347,6 +364,14 @@ class Forum
         return $this->basePath;
     }
 
+    /*
+        Result: [
+            "userCounter"=>1,
+            "list":[
+                {id=>2,name=>"sddd",email=>"dddd}
+            ]
+        ]
+    */
     public function loadUsersInfo(){
         if(!file_exists($this->usersFilePath)) return [
             "userCounter"=>1,
@@ -437,7 +462,6 @@ class Forum
         $isNewForum = !file_exists($this->forumConfigPath);
         if($isNewForum){
             // init new config
-            echo $this->basePath;
             if(False==mkdir($this->basePath)){
                 $this->setError(ERROR_CANT_CREATE_FORUM_FOLDER);       
                 return False;

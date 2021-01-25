@@ -772,6 +772,9 @@ function createViewer(story, files) {
             if (this.galleryViewer && this.galleryViewer.isVisible()) {
                 newPath += "&g=" + (this.galleryViewer.isMapMode ? "m" : "g")
             }
+            if (this.commentsViewer && this.commentsViewer.isVisible()) {
+                newPath += "&c=1"
+            }
 
             if (pushHistory) {
                 window.history.pushState(newPath, page.title, newPath);

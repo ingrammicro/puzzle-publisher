@@ -256,6 +256,15 @@ select:focus{
   z-index: 10;
 }
 
+#comments_viewer_content{
+  padding: 72px 20px 0 20px;
+}
+
+#comments_viewer_content .block{
+  padding:: 16px 20px 0 20px;
+}
+
+
 #symbol_viewer_content .block{
   padding: 16px 20px 0 20px;
 }
@@ -496,7 +505,7 @@ text-overflow: ellipsis;
   outline: none;
 }
 
-::placeholder {
+#searchInput::placeholder {
   color: white;
   opacity: .5;
 }

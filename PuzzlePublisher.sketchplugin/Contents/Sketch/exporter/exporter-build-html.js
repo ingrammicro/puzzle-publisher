@@ -196,7 +196,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         <svg class="svgIcon"><use xlink:href="#icClose"></use></svg>\
                     </div>\
                 </div>\
-                <div id="content" style="margin-top:20px;">\
+                <div id="comments_viewer_content">\
                 </div>\
             </div >\
             <div id="version_viewer" class="hidden">\

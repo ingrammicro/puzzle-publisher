@@ -611,7 +611,7 @@ class ViewerPage {
         }).attr('width', sizeSrc.width).attr('height', sizeSrc.height);
 
         img.preload(function (perc, done) {
-            console.log(perc, done);
+            //console.log(perc, done);
         });
         return img;
     }

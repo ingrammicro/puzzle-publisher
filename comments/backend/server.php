@@ -61,7 +61,7 @@ if('addComment'==$cmd){
     exitSuccess("Added new comment",$html);
 }else if('buildFullHTML'==$cmd){
     $page = $forum->buildPage();
-    if(is_string($page)) exitError($page);
+    if(is_string($page)) exitError($page); 
     // load data
     $commentsInfo = $page->getExtendedComments();
     if(False===$commentsInfo) exitError($page->lastError);
@@ -78,7 +78,7 @@ if('addComment'==$cmd){
     if(False===$commentsInfo) exitError($page->lastError);
     // build html
     $html = "";
-    $html .= Frontend::buildCommentListHTML( $forum,$page,$commentsInfo); 
+    $html .= Frontend::buildCommentListHTML($page,$commentsInfo); 
     //
     exitSuccess("",$html);
 }
