@@ -322,21 +322,20 @@ class Forum
 
         $data = [
             "personalizations"=>[[
-                "subject"=>$email['subject'],            
-                "from"=> [
-                    "email"=> "maxim.bazarov@ingrammicro.com"
-                ],    
-                "content"=>[
-                    [
-                        "type"=> "text/plain",
-                        "value"=> $email['body']
-                    ]
-                ],
                 "to" => $this->_sendEmail_uidsTo( $email['toUserIDs'] ),
-            ]]
+            ]],
+            "subject"=>$email['subject'],            
+            "from"=> [
+                "email"=> "maxim.bazarov@ingrammicro.com"
+            ],    
+            "content"=>[
+                [
+                    "type"=> "text/plain",
+                    "value"=> $email['body']
+                ]
+            ],                
         ];
-        $dataStr = json_encode($data);        
-
+        $dataStr = str_replace("\/","/",json_encode($data));
         // Use sendgrid service
         $sgKey =  $serverForumConfig['email']['sendgrid-key'];
         if(null!=$sgKey){
