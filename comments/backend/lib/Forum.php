@@ -115,7 +115,7 @@ class Page
         return True;        
     }
 
-    private function notifiy(){
+    private function notify(){
         
     }
     
@@ -314,9 +314,9 @@ class Forum
     }
 
     private function findUserIDByEmail(&$usersInfo,$email){
-        $foundUsers = array_filter(array_values($usersInfo['list']),function($u) use ($email){
+        $foundUsers = array_values(array_filter(array_values($usersInfo['list']),function($u) use ($email){
             return $u['email']==$email;
-        });
+        }));
         return count( $foundUsers )>0? $foundUsers[0]['id']:False;
     }
 

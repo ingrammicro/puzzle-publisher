@@ -90,8 +90,9 @@ class Frontend
                     formData.append("msg", this.comment.msg);
                     //
                     var handler =function () {
+                        //alert(this.responseText)
                         var result =  JSON.parse(this.responseText);
-                        //
+                        //                        
                         console.log(this.responseText); 
                         if(result.status!='ok'){
                             comments.showError(result.message);
