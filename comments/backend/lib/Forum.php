@@ -39,7 +39,6 @@ const ERROR_USER_EMAIL_EMPTY                = "#008.005";
 const ERROR_USER_NAME_EMPTY                 = "#008.006";
 
 ////////////////////////////////////////////////////////////////
-
 const DEF_USER_INFO = [
     "name"=>"",    
     "email"=>""
@@ -108,7 +107,7 @@ class Page
         //
         $comment['id'] = $this->info['commentCounter']++;
         array_push($this->info['comments'],$comment);
-        /// Save 
+        /// Save  
         if(!$this->save()) return False;
         /// Send notification
         $this->notify();
@@ -116,7 +115,28 @@ class Page
     }
 
     private function notify(){
+        $email = [
+            "to"=>[
+                [ // add page owner
+                    "email"=>$this->info['ownerEmail'],
+                    "name"=>$this->info['ownerName'],
+                ]            
+            ],
+            "toUserIDs"=>[],
+            "subject"=>"New comment added",
+            "body"=>"test"
+        ];  
+        $email['toUserIDs'] = array_values(
+                array_unique(
+                    array_values(
+                        array_map(
+                            function ($user){return $user['uid'];},$this->info['comments']
+                        )
+                    )
+                )
+        );
         
+        Forum::$o->sendEmail($email);
     }
     
     public function getExtendedComments(){
@@ -293,6 +313,62 @@ class Forum
     public function buildPage(){
         $pagePubID = $_SERVER['HTTP_REFERER'];
         return Page::build($pagePubID);
+    }
+
+    public function sendEmail($email){
+        $serverForumConfig = $this->serverConfig[$this->forumID];
+        // Check if email configured in server config
+        if(!array_key_exists("email",$serverForumConfig)) return;
+
+        $data = [
+            "personalizations"=>[[
+                "subject"=>$email['subject'],            
+                "from"=> [
+                    "email"=> "maxim.bazarov@ingrammicro.com"
+                ],    
+                "content"=>[
+                    [
+                        "type"=> "text/plain",
+                        "value"=> $email['body']
+                    ]
+                ],
+                "to" => $this->_sendEmail_uidsTo( $email['toUserIDs'] ),
+            ]]
+        ];
+        $dataStr = json_encode($data);        
+
+        // Use sendgrid service
+        $sgKey =  $serverForumConfig['email']['sendgrid-key'];
+        if(null!=$sgKey){
+            $cmd = <<<EOL
+curl --request POST --url https://api.sendgrid.com/v3/mail/send --header "Authorization: Bearer {$sgKey}" --header 'Content-Type: application/json' --data '{$dataStr}'
+EOL;
+    var_dump($cmd);
+            $res = shell_exec($cmd);
+            var_dump($res);
+      }
+    }
+
+    private function _sendEmail_uidsTo($uids){
+        $usersInfo = $this->loadUsersInfo();
+        if(False===$usersInfo){
+            $this->setError(Forum::$o->lastError);
+            return False;        
+        }
+        return array_map(function($uid) use ( $usersInfo){
+            if(!array_key_exists($uid,$usersInfo['list'])){    
+                return [
+                    'email'=>'',
+                    'name'=>'Deleted user #'.$uid
+                ];
+            }else{                
+                $user = $usersInfo['list'][$uid];
+                return [
+                    'email'=>$user['email'],
+                    'name'=>$user['name']
+                ];
+            }  
+        },$uids);
     }
 
 
