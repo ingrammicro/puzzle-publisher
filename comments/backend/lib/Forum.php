@@ -110,11 +110,18 @@ class Page
         /// Save  
         if(!$this->save()) return False;
         /// Send notification
-        $this->notify();
+        $this->notify($comment);
         return True;        
     }
 
-    private function notify(){
+    private function notify($comment){
+        $uid= $comment['uid'];
+        $user = Forum::$o->getUserByID($uid);
+        $userName = False==$user?"Unknown user":$user['name'];
+        $userEmail = False==$user?"":$user['email'];
+        $pageURL = $_SERVER['HTTP_REFERER'];
+        $message = $comment['msg'];
+
         $email = [
             "to"=>[
                 [ // add page owner
@@ -123,18 +130,26 @@ class Page
                 ]            
             ],
             "toUserIDs"=>[],
-            "subject"=>"New comment added",
-            "body"=>"test"
+            "subject"=>"New comment added by {$userName}",
+            "body"=> <<<EOL
+            {$userName} commented: {$message}<br/>
+            <br/>
+            View <a href="{$pageURL}">comments</>
+EOL
         ];  
         $email['toUserIDs'] = array_values(
-                array_unique(
-                    array_values(
-                        array_map(
-                            function ($user){return $user['uid'];},$this->info['comments']
-                        )
+            array_unique(
+                array_values(
+                    array_map(
+                        function ($user){return $user['uid'];},$this->info['comments']
                     )
                 )
+            )
         );
+        $email['toUserIDs'] = array_values(array_filter( // exclude current comment author
+            $email['toUserIDs'],function($userID) use ($uid){return $userID!=$uid;}
+        ));
+
         
         Forum::$o->sendEmail($email);
     }
@@ -218,7 +233,7 @@ class Page
     }
 
     private function getJSONPath(){
-        return  Forum::$o->getBasePage()."/page-".$this->intID.".config";
+        return  Forum::$o->getBasePage()."/page-".$this->intID.".json";
     }
 
     protected function loadJSON(){        
@@ -263,7 +278,6 @@ class Page
 
 const DEF_FORUM_CONFIG = [
     "name"=> "default",
-    "created"=>"",
     "pageCounter"=>1,
     "pages"=>[],    
 ];
@@ -326,11 +340,11 @@ class Forum
             ]],
             "subject"=>$email['subject'],            
             "from"=> [
-                "email"=> "maxim.bazarov@ingrammicro.com"
+                "email"=> $serverForumConfig["email"]["from-email"]
             ],    
             "content"=>[
                 [
-                    "type"=> "text/plain",
+                    "type"=> "text/html",
                     "value"=> $email['body']
                 ]
             ],                
@@ -342,9 +356,7 @@ class Forum
             $cmd = <<<EOL
 curl --request POST --url https://api.sendgrid.com/v3/mail/send --header "Authorization: Bearer {$sgKey}" --header 'Content-Type: application/json' --data '{$dataStr}'
 EOL;
-    var_dump($cmd);
             $res = shell_exec($cmd);
-            var_dump($res);
       }
     }
 
@@ -388,6 +400,14 @@ EOL;
         return $uid;
     }
 
+    public function getUserByID($uid){
+        $usersInfo = $this->loadUsersInfo();
+        if(False===$usersInfo) return False;
+        //
+        if(!array_key_exists($uid,$usersInfo['list'])) return False;
+        return $usersInfo['list'][$uid];
+    }
+
     private function findUserIDByEmail(&$usersInfo,$email){
         $foundUsers = array_values(array_filter(array_values($usersInfo['list']),function($u) use ($email){
             return $u['email']==$email;
@@ -415,9 +435,9 @@ EOL;
         }
         // Load forum config
         {
-            $this->basePath = 'config/forums/'.$this->forumID;
-            $this->forumConfigPath = $this->basePath."/forum.config";
-            $this->usersFilePath = $this->basePath."/users.config";
+            $this->basePath = 'data/'.$this->forumID;
+            $this->forumConfigPath = $this->basePath."/forum.json";
+            $this->usersFilePath = $this->basePath."/users.json";
 
             $this->config = $this->loadForumConfig();
             if($this->lastError!="")return False;
@@ -425,7 +445,6 @@ EOL;
             // Create new config
             if(False==$this->config){                
                 $this->config = DEF_FORUM_CONFIG;
-                $this->config['created'] = date("Y-m-d H:i:s");
                 if(False===$this->saveForumConfig()) return False;
             }
     
@@ -479,7 +498,7 @@ EOL;
 
 
     protected function loadServerConfig(){
-        $configPath = "config/server.config";
+        $configPath = "config/forums.json";
 
         // read existing test onfig
         $content = file_get_contents($configPath);

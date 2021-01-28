@@ -27,6 +27,7 @@ class Frontend
                 }
                 sendCommand(cmd,formData,handler) {
                     var xhr = new XMLHttpRequest()
+                    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
                     xhr.open('POST',this.url + "?fid="+this.forumID+"&cmd="+cmd, true)
                     xhr.onload = handler
                     xhr.send(formData);
@@ -90,7 +91,6 @@ class Frontend
                     formData.append("msg", this.comment.msg);
                     //
                     var handler =function () {
-                        alert(this.responseText)
                         var result =  JSON.parse(this.responseText);
                         //                        
                         console.log(this.responseText); 
@@ -111,11 +111,9 @@ class Frontend
                     var handler =function () {
                         var result =  JSON.parse(this.responseText);
                         //
-                        console.log(this.responseText); 
                         if(result.status!='ok'){
                             comments.showError(result.message);
                         }else{
-                            console.log(result); 
                             $("#comments_viewer #comments").html(result.data);
                             comments.comment.msg = ""
                             comments.fillComment()

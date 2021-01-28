@@ -1,0 +1,11 @@
+{
+	"1234567890":
+	{
+		"name": 		"Baza's test",
+		"email":		
+		{
+			"from-email": 		"ux-notifications@cloudblue.com",
+			"sendgrid-key":		"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"
+		}
+	}
+}
