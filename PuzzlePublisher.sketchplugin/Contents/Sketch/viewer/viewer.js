@@ -334,6 +334,7 @@ function createViewer(story, files) {
 
         _setupFolderinfoRequest: function (func) {
             var xhr = new XMLHttpRequest();
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
             xhr.onreadystatechange = func;
             xhr.open("GET", story.serverToolsPath + "folder_info.php", true);
             xhr.send(null);

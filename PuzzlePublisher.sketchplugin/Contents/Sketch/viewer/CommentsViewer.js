@@ -19,7 +19,7 @@ class CommentsViewer extends AbstractViewer {
 
 
     _hideSelf() {
-        $('#comments_viewer').addClass("hidden")        
+        $('#comments_viewer').addClass("hidden")
         super._hideSelf()
         viewer.refresh_url(viewer.currentPage, "", false)
     }
@@ -39,7 +39,7 @@ class CommentsViewer extends AbstractViewer {
     }
 
     pageChanged() {
-        if(! this.inited ) return this.initialize();        
+        if (!this.inited) return this.initialize();
         comments.reloadComments()
     }
 
@@ -55,7 +55,7 @@ class CommentsViewer extends AbstractViewer {
             this.toggle()
         } else if (comments.inputFocused) {
             return true
-        }else {
+        } else {
             return super.handleKeyDown(jevent)
         }
 
@@ -67,15 +67,18 @@ class CommentsViewer extends AbstractViewer {
     _showComments() {
         var formData = new FormData();
         //
+        var uid = window.localStorage.getItem("commentsUserID")
+        if (null != uid) formData.append("uid", uid);
+        //
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", story.commentsURL + "&cmd=buildFullHTML", true);
+        xhr.open("POST", story.commentsURL + "&cmd=buildFullHTML", true);
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
         xhr.onload = function () {
-            console.log(this.responseText)
             var result = JSON.parse(this.responseText);
             //
-            if("ok"==result.status){
+            if ("ok" == result.status) {
                 $('#comments_viewer_content').html(result.data);
-            }else{
+            } else {
                 $('#comments_viewer_content').html(result.message);
             }
             return

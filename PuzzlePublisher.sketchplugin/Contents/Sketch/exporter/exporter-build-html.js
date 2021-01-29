@@ -65,7 +65,6 @@ function buildMainHTML(options) {
     s += '<meta name="generator" content="Generated using Puzzle Publisher ' + manifest.version + ' plugin for Sketch.app - https://github.com/ingrammicro/puzzle-publisher">\n';
     s += '<title>' + options.docName + '</title>\n';
     s += '<link rel="shortcut icon"  type="image/png?" href="resources/icon.png' + verPostfix + '">\n';
-    // s += '<link rel="mask-icon" href="https://sketch.cloud/favicon.svg?v=4" color="rgb(252, 177, 0)">\n';
     s += '<link rel="stylesheet" type="text/css" href="resources/viewer.css' + verPostfix + '">\n';
     if (options.enableAnimations) {
         s += '<link rel="stylesheet" type="text/css" href="resources/animations.css' + verPostfix + '">\n';

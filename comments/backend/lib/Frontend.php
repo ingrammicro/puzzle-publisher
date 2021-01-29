@@ -6,7 +6,7 @@ class Frontend
         $url =  ($_SERVER['HTTPS']=="on"?"https://":"http://").$_SERVER['SERVER_NAME'].":".$_SERVER['SERVER_PORT'].$_SERVER['SCRIPT_NAME'];
         //var_dump($_SERVER);
         $res = <<<EOL
-        <script>
+        <script>    
             class Comments {
                 constructor() {
                     this.forumID = "{$forum->forumID()}"
@@ -17,59 +17,52 @@ class Frontend
                     this.comment={
                         name:"",
                         email:"",
-                        msg:""
-                    }
-                    this.inputFocused = false                   
+                        msg:"" 
+                    }                
+                    this.inputFocused = false                                       
+                }
+                _tuneInput(input){
+                    input.focusin(function () {
+                        comments.inputFocused = true
+                    })
+                    input.focusout(function () {
+                        comments.inputFocused = false
+                    })
                 }
                 showError(errorText) {
-                    $("#comments_viewer #newForm #error").html(errorText);
+                    $("#comments_viewer #commentForm #error").html(errorText);
                 }
                 sendCommand(cmd,formData,handler) {
-                    var xhr = new XMLHttpRequest()
-                    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+                    var xhr = new XMLHttpRequest()                    
                     xhr.open('POST',this.url + "?fid="+this.forumID+"&cmd="+cmd, true)
+                    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
                     xhr.onload = handler
                     formData.append("uid", this.uid);
                     xhr.send(formData);
                 }
                 //// UI
                 readComment(){
-                    this.comment.name = $("#comments_viewer #newForm #nameField").val();
-                    this.comment.email = $("#comments_viewer #newForm #emailField").val();
-                    this.comment.msg = $("#comments_viewer #newForm #msgField").val();
+                    this.comment.name = $("#comments_viewer #commentForm #nameField").val();
+                    this.comment.email = $("#comments_viewer #commentForm #emailField").val();
+                    this.comment.msg = $("#comments_viewer #commentForm #msgField").val();
                     //
                     if(this.comment.name!="") window.localStorage.setItem("commentsUserName", this.comment.name)
                     if(this.comment.email!="") window.localStorage.setItem("commentsUserEmail", this.comment.email)
                 }
                 fillComment(){
-                    let nameField = $("#comments_viewer #newForm #nameField")
+                    let nameField = $("#comments_viewer #commentForm #nameField")
                     nameField.val(this.comment.name);
-                    nameField.focusin(function () {
-                        comments.inputFocused = true
-                    })
-                    nameField.focusout(function () {
-                        comments.inputFocused = false
-                    })
+                    this._tuneInput(nameField)
                     
-                    let emailField = $("#comments_viewer #newForm #emailField")
+                    let emailField = $("#comments_viewer #commentForm #emailField")
                     emailField.val(this.comment.email);
-                    emailField.focusin(function () {
-                        comments.inputFocused = true
-                    })
-                    emailField.focusout(function () {
-                        comments.inputFocused = false
-                    })
-
-                    let msgField = $("#comments_viewer #newForm #msgField")
+                    this._tuneInput(emailField)
+                 
+                    let msgField = $("#comments_viewer #commentForm #msgField")
                     msgField.val(this.comment.msg);
-                    msgField.focusin(function () {
-                        comments.inputFocused = true
-                    })
-                    msgField.focusout(function () {
-                        comments.inputFocused = false
-                    })
-
-                }
+                    this._tuneInput(msgField)                   
+                }            
+                // Check data
                 checkComment(){
                     if(""==this.comment.name || ""==this.comment.email || ""==this.comment.msg){
                         this.showError("Specify name, email and message");
@@ -123,6 +116,79 @@ class Frontend
                     var formData = new FormData();
                     return comments.sendCommand("buildCommentsHTML", formData,handler);
                 }
+                ////////
+                fillLoginForm(){
+                    let emailField = $("#comments_viewer #loginForm #email")
+                    emailField.val(this.loginForm.email);
+                    this._tuneInput(emailField)    
+                }
+                // Check data
+                checkLoginForm(){
+                    if(""==this.loginForm.email){
+                        this.showError("Specify email");
+                        return false;
+                    }
+                    return true
+                }  
+                readLoginForm(){
+                    this.loginForm.email = $("#comments_viewer #loginForm #email").val();              
+                }
+                submitLoginForm(){
+                    this.readLoginForm();                    
+                    if(!this.checkLoginForm()) return false;
+                    ///
+                    var formData = new FormData();
+                    formData.append("email",  this.loginForm.email);                  
+                    //
+                    var handler =function () {
+                        var result =  JSON.parse(this.responseText);
+                        //                        
+                        console.log(this.responseText); 
+                        if(result.status!='ok'){
+                            comments.showError(result.message);
+                        }else{
+                            console.log(result); 
+                            $("#comments_viewer #loginForm").hide()
+                            $("#comments_viewer #authForm").show()
+                        }
+                    }                
+                    //    
+                    return comments.sendCommand("login", formData,handler);
+                }
+                ////////////////////////// 
+                // Check data
+                readAuthForm(){
+                    this.authForm.code = $("#comments_viewer #authForm #code").val();              
+                }
+                checkAuthForm(){
+                    if(""==this.authForm.code){
+                        this.showError("Specify code");
+                        return false;
+                    }
+                    return true
+                }  
+                submitAuthForm(){
+                    this.readAuthForm();                    
+                    if(!this.checkAuthForm()) return false;
+                    ///
+                    var formData = new FormData();
+                    formData.append("code", this.authForm.code);                  
+                    //
+                    var handler =function () {
+                        var result =  JSON.parse(this.responseText);
+                        //                        
+                        console.log(this.responseText); 
+                        if(result.status!='ok'){
+                            comments.showError(result.message);
+                        }else{
+                            console.log(result); 
+                            $("#comments_viewer #authForm").hide()
+                            $("#comments_viewer #commentForm").hide()
+                        }
+                    }                
+                    //    
+                    return comments.sendCommand("checkAuth", formData,handler);
+                }
             }
             comments = new Comments();
         </script>
@@ -175,15 +241,9 @@ EOL;
         $inputStyle=' style="font-size:12px;"' ;
         //
         $res .= <<<EOL
-        <div id='newForm'>
+        <div id='commentForm'>
             <div id="title" style="font-weight:bold;">Add comment</div>
             <div id="error" style="color:red">
-            </div>
-            <div id="name">
-                <input id="nameField" {$inputStyle} placeholder="Your name" style="font-size:12px;"/>
-            </div>
-            <div id="email">
-                <input id="emailField" {$inputStyle} placeholder="Your email"/>
             </div>
             <div id="msg">
                 <textarea id="msgField" {$inputStyle} rows="5" cols="20" placeholder="Text"></textarea>
@@ -201,24 +261,47 @@ EOL;
     }
 
 
-    public static function buildLoginFormHTML(&$page){
+    public static function buildLoginHTML(&$page){
         $res = "";
         //
         $inputStyle=' style="font-size:12px;"' ;
         //
         $res .= <<<EOL
-        <div id='newForm'>
+        <div id='loginForm'>
             <div id="title" style="font-weight:bold;">Login As</div>
             <div id="error" style="color:red">
             </div>
-            <div id="email">
-                <input id="emailField" {$inputStyle} placeholder="Your email"/>
+            <div>
+                <input id="email" {$inputStyle} placeholder="Your email"/>
             </div>
             <div id="buttons">
-                <input id="send" type="button" onclick="comments.submitLogin();return false;" value="Login"/>
+                <input id="send" type="button" onclick="comments.submitLoginForm();return false;" value="Login"/>
             </div>
         </div>
+        <div id='authForm' style="display:none">
+        <div id="msg>
+            Check new email to get a code
+        </div>
+        <div id="title" style="font-weight:bold;">Confirm login</div>
+        <div id="error" style="color:red">
+        </div>        
+        <div>
+            <input id="code" {$inputStyle} placeholder="Authorization code"/>
+        </div>
+        <div id="buttons">
+            <input id="send" type="button" onclick="comments.submitAuthForm();return false;" value="Login"/>
+        </div>
+    </div>
         <br/>
+        <script>
+            comments.loginForm={
+                email:""
+            }
+            comments.authForm={
+                code:""
+            }        
+            comments.fillLoginForm();
+        </script>
 EOL;
         return $res;
     }

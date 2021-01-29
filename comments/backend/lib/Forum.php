@@ -38,6 +38,14 @@ const ERROR_CANT_ENCODE_USERS               = "#008.004";
 const ERROR_USER_EMAIL_EMPTY                = "#008.005";
 const ERROR_USER_NAME_EMPTY                 = "#008.006";
 
+// 009. AUTH CODES
+const ERROR_CANT_LOAD_AUTH_CODES            = "#009.001";
+const ERROR_CANT_PARSE_AUTH_CODES           = "#009.002";
+const ERROR_CANT_ENCODE_AUTH_CODES          = "#009.003";
+const ERROR_CANT_SAVE_AUTH_CODES            = "#009.004";
+const ERROR_AUTH_CODE_EMPTY_EMAIL            = "#009.005";
+
+
 ////////////////////////////////////////////////////////////////
 const DEF_USER_INFO = [
     "name"=>"",    
@@ -326,6 +334,93 @@ class Forum
         return $this->config['pages'][$pubID];
     }    
     
+    public function login(){
+        $email = http_post_param('email');
+        if(""==$email){            
+            $this->setError(ERROR_AUTH_CODE_EMPTY_EMAIL);       
+            return False;
+        }
+        //
+        $code = $this->_createAuthCode($email);        
+        if(False===$code) return False;
+        if(False===$this->_loginSendCode($email,$code)) return False;    
+        //
+        $usersInfo = $this->loadUsersInfo();
+        if(False===$usersInfo) return False;
+        $uid = $this->findUserIDByEmail($usersInfo,$email);
+
+        $result = [
+            "exists"=>False!==$uid
+        ];
+        //
+        return $result;
+    }
+
+    private function _createAuthCode($email){
+        // Create new code 
+        $code = rand(1000,9999);        
+        // Load existing codes
+        $codes = $this->_loadAuthCodes();
+        if(False===$codes) return False;
+        // Update codes
+        $codes[$email] = $codes;
+        // Saves codes back
+        if(False==-$this->_saveAuthCodes($codes)) return False;
+        return $code;
+    }
+
+    private function _loadAuthCodes(){
+        $codes = [
+            // "test@test.com" => 2323445
+        ];  
+        if(!file_exists($this->authCodesPath)) return $codes;
+
+        // read existing file
+        $content = file_get_contents($this->authCodesPath);
+        if($content===FALSE) return $this->setError(ERROR_CANT_LOAD_AUTH_CODES);
+
+        // decode a text config into a array
+        $codes = json_decode( $content, true );
+        if($codes==NULL) return $this->setError(ERROR_CANT_PARSE_AUTH_CODES);        
+
+        return $codes;
+    }
+
+    protected function _saveAuthCodes($codes){
+         // encode an array into a json
+         $text = json_encode($codes);
+         if($text===False){
+            $this->setError(ERROR_CANT_ENCODE_AUTH_CODES);       
+            return False;
+         }   
+         // save into a file
+         if( False===file_put_contents($this->authCodesPath,$text)){
+            $this->setError(ERROR_CANT_SAVE_AUTH_CODES);       
+            return False;
+         }
+         return True;
+
+    }
+
+    private function _loginSendCode($email,$code){
+        $email = [
+            "to"=>[
+                [ // 
+                    "email"=>$email               
+                ]            
+            ],
+            "toUserIDs"=>[],
+            "subject"=>"Authorization code",
+            "body"=> <<<EOL
+            Put the following code into login form<br/>
+            <b>{$code}</b>
+EOL
+        ];        
+    
+        return Forum::$o->sendEmail($email);
+    }
+
+
     public function buildPage(){
         $pagePubID = $_SERVER['HTTP_REFERER'];
         return Page::build($pagePubID);
@@ -336,9 +431,12 @@ class Forum
         // Check if email configured in server config
         if(!array_key_exists("email",$serverForumConfig)) return;
 
+        $toEmails = array_merge( $email['to'], $this->_sendEmail_uidsTo( $email['toUserIDs'] ));
+
+
         $data = [
             "personalizations"=>[[
-                "to" => $this->_sendEmail_uidsTo( $email['toUserIDs'] ),
+                "to" => $toEmails,
             ]],
             "subject"=>$email['subject'],            
             "from"=> [
@@ -358,8 +456,9 @@ class Forum
             $cmd = <<<EOL
 curl --request POST --url https://api.sendgrid.com/v3/mail/send --header "Authorization: Bearer {$sgKey}" --header 'Content-Type: application/json' --data '{$dataStr}'
 EOL;
-            $res = shell_exec($cmd);
+            $res = shell_exec($cmd);            
       }
+      return True;
     }
 
     private function _sendEmail_uidsTo($uids){
@@ -440,6 +539,7 @@ EOL;
             $this->basePath = 'data/'.$this->forumID;
             $this->forumConfigPath = $this->basePath."/forum.json";
             $this->usersFilePath = $this->basePath."/users.json";
+            $this->authCodesPath = $this->basePath."/auth-codes.json";
 
             $this->config = $this->loadForumConfig();
             if($this->lastError!="")return False;
