@@ -13,11 +13,10 @@ class Frontend
                     this.url = "{$url}"
 
                     // load user data from browser storage   
-                    let name = window.localStorage.getItem("commentsUserName")
-                    let email = window.localStorage.getItem("commentsUserEmail")
+                    this.uid = "{$forum->uid}";
                     this.comment={
-                        name:name!=null?name:"", 
-                        email:email!=null?email:"",
+                        name:"",
+                        email:"",
                         msg:""
                     }
                     this.inputFocused = false                   
@@ -30,6 +29,7 @@ class Frontend
                     xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
                     xhr.open('POST',this.url + "?fid="+this.forumID+"&cmd="+cmd, true)
                     xhr.onload = handler
+                    formData.append("uid", this.uid);
                     xhr.send(formData);
                 }
                 //// UI
@@ -128,7 +128,11 @@ class Frontend
         </script>
 EOL;
         //        
-        $res .= Frontend::buildCommentFormHTML($page);
+        if(""!=$forum->uid){
+            $res .= Frontend::buildCommentFormHTML($page);
+        }else{
+            $res .= Frontend::buildLoginHTML($page);
+        }
         $res .= "<div id='comments'>" . Frontend::buildCommentListHTML($page,$commentsInfo)."</div>";
         return $res;
     }
@@ -192,6 +196,29 @@ EOL;
         <script>
             comments.fillComment();
         </script>
+EOL;
+        return $res;
+    }
+
+
+    public static function buildLoginFormHTML(&$page){
+        $res = "";
+        //
+        $inputStyle=' style="font-size:12px;"' ;
+        //
+        $res .= <<<EOL
+        <div id='newForm'>
+            <div id="title" style="font-weight:bold;">Login As</div>
+            <div id="error" style="color:red">
+            </div>
+            <div id="email">
+                <input id="emailField" {$inputStyle} placeholder="Your email"/>
+            </div>
+            <div id="buttons">
+                <input id="send" type="button" onclick="comments.submitLogin();return false;" value="Login"/>
+            </div>
+        </div>
+        <br/>
 EOL;
         return $res;
     }

@@ -69,7 +69,7 @@ class Page
     public static function build($pubID){
         $obj = new Page();
         $obj->pubID = $pubID;
-        $obj->init();
+        $obj->init();        
         return $obj;
     }
 
@@ -79,10 +79,12 @@ class Page
     }
 
     public function getUserID(){
-        $email = http_post_param('email');
+        $uid = http_post_param('uid');
+        /*$email = http_post_param('email');
         if(''==$email) return $this->setError(ERROR_USER_EMAIL_EMPTY);
         $name = http_post_param('name');
         if(''==$name) return $this->setError(ERROR_USER_NAME_EMPTY);
+        */
         //
         $userID = Forum::$o->getUserID($email,$name);
         if(False==$userID){
@@ -448,6 +450,10 @@ EOL;
                 if(False===$this->saveForumConfig()) return False;
             }
     
+        }
+        // Get user ID  (can be empty)
+        {
+            $this->uid = http_post_param('uid');
         }
         // ok
         Forum::$o = $this;
