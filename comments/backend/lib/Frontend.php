@@ -27,7 +27,8 @@ class Frontend
                 }
                 show(){
                     if(!this.built) this.buildHTML();
-                    $("#comments_viewer #"+this.formName).show()
+                    this.putDataInForm()
+                    $("#comments_viewer #"+this.formName).show()                    
                 }
                 hide(){
                     $("#comments_viewer #"+this.formName).hide()
@@ -48,6 +49,7 @@ class Frontend
                 submit(){
                 }            
             }
+            ////////////////// LOGIN FORM /////////
             class CommentsLoginForm extends CommentsAbstractForm{
                 constructor(){
                     super("loginForm")
@@ -83,7 +85,7 @@ class Frontend
                 <input id="send" type="button" onclick="comments.loginForm.submit();return false;" value="Login"/>
             </div>
         </div>`
-                    $("#comments_viewer #top").html(s);
+                    $("#comments_viewer #top").append(s);
                 }
                 submit(){
                     this.getDataFromForm();                    
@@ -93,19 +95,85 @@ class Frontend
                     formData.append("email",  this.email);                  
                     //
                     var handler =function () {
+                        var form = comments.loginForm
                         var result =  JSON.parse(this.responseText);
                         //                        
                         console.log(this.responseText); 
                         if(result.status!='ok'){
-                            this.showError(result.message);
+                            form.showError(result.message);
                         }else{
                             console.log(result); 
-                            this.hide()
+                            form.hide()
                             comments.authForm.show()
                         }
                     }                
                     //    
                     return comments.sendCommand("login", formData,handler);
+                }
+
+            }
+            ////////////////// AUTH FORM /////////
+            class CommentsAuthForm extends CommentsAbstractForm{
+                constructor(){
+                    super("authForm")
+                    this.code = ""                                        
+                }
+                putDataInForm(){
+                    let codeField = $("#comments_viewer #authForm #code")
+                    codeField.val(this.code);
+                    this._tuneInput(codeField)    
+                }
+                // Check data
+                checkData(){
+                    if(""==this.code){
+                        this.showError("Specify code");
+                        return false;
+                    }
+                    return true
+                }  
+                getDataFromForm(){
+                    this.code = $("#comments_viewer #authForm #code").val();              
+                }
+                buildHTML(){
+                    super.buildHTML()
+                    let s=`
+                <div id='authForm' style="display:none">
+                    <div id="msg>
+                        Check new email to get a code
+                    </div>
+                    <div id="title" style="font-weight:bold;">Confirm login</div>
+                    <div id="error" style="color:red"></div>        
+                    <div>
+                        <input id="code" {$inputStyle} placeholder="Authorization code"/>
+                    </div>
+                    <div id="buttons">
+                        <input id="send" type="button" onclick="comments.authForm.submit();return false;" value="Login"/>
+                    </div>
+                </div>`
+                    $("#comments_viewer #top").append(s);
+                }
+                submit(){
+                    this.getDataFromForm();                    
+                    if(!this.checkData()) return false;
+                    ///
+                    var formData = new FormData();
+                    formData.append("code",  this.code);                  
+                    //
+                    var handler =function () {
+                        var form = comments.authForm
+                        var result =  JSON.parse(this.responseText);
+                        //                        
+                        console.log(this.responseText); 
+                        if(result.status!='ok'){
+                            form.showError(result.message);
+                        }else{
+                            console.log(result); 
+                            form.hide()
+                            comments.commentForm.show()
+                        }
+                    }                
+                    //    
+                    return comments.sendCommand("checkAuth", formData,handler);
                 }
 
             }
@@ -124,7 +192,7 @@ class Frontend
                     }                
                     //
                     this.loginForm =new CommentsLoginForm()
-                    this.authForm = null
+                    this.authForm = new CommentsAuthForm()
                     //
                     this.inputFocused = false                                       
                 }                        
@@ -212,42 +280,7 @@ class Frontend
                     var formData = new FormData();
                     return comments.sendCommand("buildCommentsHTML", formData,handler);
                 }
-                ////////s            
-               
-                ////////////////////////// 
-                // Check data
-                readAuthForm(){
-                    this.authForm.code = $("#comments_viewer #authForm #code").val();              
-                }
-                checkAuthForm(){
-                    if(""==this.authForm.code){
-                        this.showError("Specify code");
-                        return false;
-                    }
-                    return true
-                }  
-                submitAuthForm(){
-                    this.readAuthForm();                    
-                    if(!this.checkAuthForm()) return false;
-                    ///
-                    var formData = new FormData();
-                    formData.append("code", this.authForm.code);                  
-                    //
-                    var handler =function () {
-                        var result =  JSON.parse(this.responseText);
-                        //                        
-                        console.log(this.responseText); 
-                        if(result.status!='ok'){
-                            this.showError(result.message);
-                        }else{
-                            console.log(result); 
-                            $("#comments_viewer #authForm").hide()
-                            $("#comments_viewer #commentForm").hide()
-                        }
-                    }                
-                    //    
-                    return comments.sendCommand("checkAuth", formData,handler);
-                }
+                ////////
                 run(){
                     if(this.uid!=""){
                     }else{
@@ -320,51 +353,6 @@ EOL;
         return $res;
     }
 
-
-    public static function buildLoginHTML(&$page){
-        $res = "";
-        //
-        $inputStyle=' style="font-size:12px;"' ;
-        //
-        $res .= <<<EOL
-        <div id='loginForm'>
-            <div id="title" style="font-weight:bold;">Login As</div>
-            <div id="error" style="color:red">
-            </div>
-            <div>
-                <input id="email" {$inputStyle} placeholder="Your email"/>
-            </div>
-            <div id="buttons">
-                <input id="send" type="button" onclick="comments.submitLoginForm();return false;" value="Login"/>
-            </div>
-        </div>
-        <div id='authForm' style="display:none">
-        <div id="msg>
-            Check new email to get a code
-        </div>
-        <div id="title" style="font-weight:bold;">Confirm login</div>
-        <div id="error" style="color:red">
-        </div>        
-        <div>
-            <input id="code" {$inputStyle} placeholder="Authorization code"/>
-        </div>
-        <div id="buttons">
-            <input id="send" type="button" onclick="comments.submitAuthForm();return false;" value="Login"/>
-        </div>
-    </div>
-        <br/>
-        <script>
-            comments.loginForm={
-                email:""
-            }
-            comments.authForm={
-                code:""
-            }        
-            comments.fillLoginForm();
-        </script>
-EOL;
-        return $res;
-    }
 
 }
 
