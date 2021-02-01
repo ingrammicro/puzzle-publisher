@@ -19,7 +19,7 @@ class Frontend
             comments.run();
         </script>        
 EOL;
-        $res .= "<div id='comments'>" . Frontend::buildCommentListHTML($page,$commentsInfo)."</div>";
+        $res .= "<br/><div id='comments'>" . Frontend::buildCommentListHTML($page,$commentsInfo)."</div>";
         return $res;
     }
 

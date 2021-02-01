@@ -73,7 +73,6 @@ class CommentsViewer extends AbstractViewer {
             formData.append("uid", uid);
             formData.append("sid", sid);
         }
-        formData.append("cmd", buildFullHTML);
         //
         var xhr = new XMLHttpRequest();
         xhr.open("POST", story.commentsURL + "&cmd=buildFullHTML", true);

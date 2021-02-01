@@ -5,7 +5,7 @@ class CommentsAbstractForm {
         //
         this.inputStyle = ' style="font-size:12px;"'
     }
-    _tuneInput(inputName) {
+    _tuneInput(inputName, type = "input") {
         let input = $("#comments_viewer #" + this.formName + " #" + inputName)
         input.focusin(function () {
             comments.inputFocused = true
@@ -13,6 +13,19 @@ class CommentsAbstractForm {
         input.focusout(function () {
             comments.inputFocused = false
         })
+        if ("input" == type) {
+            input.keypress(function (e) {
+                if (e.which == 13) {
+                    comments.currentForm.submit()
+                }
+            });
+        } else if ("textarea" == type) {
+            input.keypress(function (e) {
+                if (e.which == 13 && e.metaKey) {
+                    comments.currentForm.submit()
+                }
+            });
+        }
     }
     _setInputValue(inputName, value) {
         let input = $("#comments_viewer #" + this.formName + " #" + inputName)
@@ -26,6 +39,7 @@ class CommentsAbstractForm {
         if (!this.built) this.buildHTML();
         this.putDataInForm()
         $("#comments_viewer #" + this.formName).show()
+        comments.currentForm = this
     }
     hide() {
         $("#comments_viewer #" + this.formName).hide()
@@ -151,12 +165,12 @@ class CommentsAuthForm extends CommentsAbstractForm {
         <div id="msg">
             Check new email to get a code
         </div>
-        <div id="error" style="color:red"></div> 
-        <div>
-            <input id="name" ${this.inputStyle} placeholder="Your name" />
-        </div>
+        <div id="error" style="color:red"></div>         
         <div>
             <input id="code" ${this.inputStyle} placeholder="Authorization code" />
+        </div>
+        <div>
+            <input id="name" ${this.inputStyle} placeholder="Your name" />
         </div>
         <div id="buttons">
             <input id="send" type="button" onclick="comments.authForm.submit();return false;" value="Confirm" />
@@ -242,20 +256,39 @@ class CommentsCommentForm extends CommentsAbstractForm {
     <div id = 'commentForm'  style="display:none">
         <div id="user">
             ${comments.user.name}&nbsp<a href="#" onclick="comments.logout();return false;">Logout</a>
+            <br/><br/>
         </div>
-        <div id="title" style="font-weight:bold;">Add comment</div>
         <div id="error" style="color:red">
         </div>
         <div>
-            <textarea id="msg" ${this.inputStyle} rows="5" cols="20" placeholder="Text"></textarea>
+            <a href="#" onclick="comments.commentForm.catchMouse();return false">Set position</a>
+        <div>
+        <div>
+            <textarea id="msg" ${this.inputStyle} rows="5" cols="20" placeholder="New comment"></textarea>
         </div>
         <div id="buttons">
             <input id="send" type="button" onclick="comments.commentForm.submit();return false;" value="Send"/>
         </div>
     </div>`
         $("#comments_viewer #top").append(s);
-        this._tuneInput("msg")
+        this._tuneInput("msg", "textarea")
     }
+    catchMouse() {
+        //
+        let svg = "<svg  style='position:absolute;z-index:2;' "
+            + " height='20'"
+            + " width='20'"
+            + " >"
+        svg += "<circle id='commentsCursor' cx='100' cy='100' r='10'/>"
+        svg += "</svg>"
+        $('#content .image_div').append(svg)
+        //
+        //viewer.setMouseMoveHandler(this)
+    }
+    onMouseMove(x, y) {
+
+    }
+
     submit() {
         this.getDataFromForm();
         if (!this.checkData()) return false;
@@ -298,6 +331,7 @@ class Comments {
         this.user = user
 
         //
+        this.currentForm = null
         this.loginForm = new CommentsLoginForm()
         this.authForm = new CommentsAuthForm()
         this.commentForm = new CommentsCommentForm()

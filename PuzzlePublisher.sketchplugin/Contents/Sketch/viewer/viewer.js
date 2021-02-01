@@ -316,7 +316,12 @@ function createViewer(story, files) {
             setTimeout(doBlinkHotspots, 500)
         },
 
+        setMouseMoveHandler: function (obj) {
+            this.mouseMoveHandler = obj
+        },
+
         onMouseMove: function (x, y) {
+            if (this.mouseMoveHandler && this.mouseMoveHandler.onMouseMove(x, y)) return
             if (this.currentPage) this.currentPage.onMouseMove(x, y)
         },
 
