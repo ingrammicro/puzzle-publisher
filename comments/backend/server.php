@@ -59,6 +59,11 @@ if('addComment'==$cmd){
     $html .= Frontend::buildCommentListHTML($page,$commentsInfo); 
     //
     exitSuccess("Added new comment",$html);
+}else if('login'==$cmd){
+    // Send authroization code
+    $res = $forum->login();
+    if(False===$res) exitError($forum->lastError);
+    exitSuccess("Sent authorization code",$res);
 }else if('buildFullHTML'==$cmd){
     $page = $forum->buildPage();
     if(is_string($page)) exitError($page); 
