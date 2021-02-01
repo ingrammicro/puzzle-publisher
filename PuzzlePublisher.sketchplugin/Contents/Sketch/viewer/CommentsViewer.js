@@ -67,8 +67,13 @@ class CommentsViewer extends AbstractViewer {
     _showComments() {
         var formData = new FormData();
         //
-        var uid = window.localStorage.getItem("commentsUserID")
-        if (null != uid) formData.append("uid", uid);
+        var uid = window.localStorage.getItem("comments-uid")
+        var sid = window.localStorage.getItem("comments-sid")
+        if (null != uid && null != sid) {
+            formData.append("uid", uid);
+            formData.append("sid", sid);
+        }
+        formData.append("cmd", buildFullHTML);
         //
         var xhr = new XMLHttpRequest();
         xhr.open("POST", story.commentsURL + "&cmd=buildFullHTML", true);
