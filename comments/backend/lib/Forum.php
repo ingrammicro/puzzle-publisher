@@ -153,8 +153,6 @@ EOL
         $email['toUserIDs'] = array_values(array_filter( // exclude current comment author
             $email['toUserIDs'],function($userID) use ($uid){return $userID!=$uid;}
         ));
-
-        
         Forum::$o->sendEmail($email);
     }
     
@@ -553,6 +551,7 @@ EOL
             $cmd = <<<EOL
 curl --request POST --url https://api.sendgrid.com/v3/mail/send --header "Authorization: Bearer {$sgKey}" --header 'Content-Type: application/json' --data '{$dataStr}'
 EOL;
+        error_log($cmd);
             $res = shell_exec($cmd);            
       }
       return True;

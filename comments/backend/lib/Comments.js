@@ -43,6 +43,8 @@ class CommentsAbstractForm {
     }
     hide() {
         $("#comments_viewer #" + this.formName).hide()
+        this.showError("")
+
     }
     //// to overwrite
     buildHTML() {
@@ -149,6 +151,10 @@ class CommentsAuthForm extends CommentsAbstractForm {
     checkData() {
         if ("" == this.code) {
             this.showError("Specify code");
+            return false;
+        }
+        if (!this.userExists && "" == this.name) {
+            this.showError("Specify your name");
             return false;
         }
         return true
@@ -295,6 +301,8 @@ class CommentsCommentForm extends CommentsAbstractForm {
         ///
         var formData = new FormData();
         formData.append("msg", this.msg);
+        formData.append("pageOwnerName", story.authorName);
+        formData.append("pageOwnerEmail", story.authorEmail);
         //
         var handler = function () {
             var form = comments.loginForm
