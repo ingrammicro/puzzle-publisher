@@ -119,6 +119,8 @@ class Page
     }
 
     private function notify($comment){
+        $forum = Forum::$o;
+
         $uid= $comment['uid'];
         $user = Forum::$o->getUserByUID($uid);
         $userName = False===$user?"Unknown user":$user['name'];
@@ -127,12 +129,7 @@ class Page
         $message = $comment['msg'];
 
         $email = [
-            "to"=>[
-                [ // add page owner
-                    "email"=>$this->info['ownerEmail'],
-                    "name"=>$this->info['ownerName'],
-                ]            
-            ],
+            "to"=>[],
             "toUserIDs"=>[],
             "subject"=>"New comment added by {$userName}",
             "body"=> <<<EOL
@@ -150,7 +147,18 @@ EOL
                 )
             )
         );
-        $email['toUserIDs'] = array_values(array_filter( // exclude current comment author
+        // add page owner to notify
+        if($forum->user['email']!=$this->info['ownerEmail']){
+            $email['to'] = [
+                [ // add page owner
+                    "email"=>$this->info['ownerEmail'],
+                    "name"=>$this->info['ownerName'],
+                ]            
+                ];
+        }
+
+        // exclude current comment author
+        $email['toUserIDs'] = array_values(array_filter( 
             $email['toUserIDs'],function($userID) use ($uid){return $userID!=$uid;}
         ));
         Forum::$o->sendEmail($email);
@@ -526,8 +534,25 @@ EOL
         // Check if email configured in server config
         if(!array_key_exists("email",$serverForumConfig)) return;
 
-        $toEmails = array_merge( $email['to'], $this->_sendEmail_uidsTo( $email['toUserIDs'] ));
+        // Convert user ID list to [["email"=>,"name"=>]]
+        $toEmails = $this->_sendEmail_uidsTo( $email['toUserIDs'] );        
+        if(False===$toEmails) return False;
 
+        if(count($email["to"])>0){
+            // add unique emails to list 
+            foreach ($email["to"] as $to) {
+                $toEmail = $to["email"];
+                if(
+                    count(array_filter(
+                        $toEmails,
+                        function($item) use ($toEmail){
+                            return $item['email']==$toEmail;
+                        }
+                    ))>0
+                ) continue;
+                $toEmails = array_merge($toEmails,[$to]);
+            }
+        }
 
         $data = [
             "personalizations"=>[[
@@ -551,8 +576,8 @@ EOL
             $cmd = <<<EOL
 curl --request POST --url https://api.sendgrid.com/v3/mail/send --header "Authorization: Bearer {$sgKey}" --header 'Content-Type: application/json' --data '{$dataStr}'
 EOL;
-        error_log($cmd);
-            $res = shell_exec($cmd);            
+        //error_log($cmd);
+        $res = shell_exec($cmd);            
       }
       return True;
     }
