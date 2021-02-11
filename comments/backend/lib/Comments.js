@@ -46,6 +46,10 @@ class CommentsAbstractForm {
         this.showError("")
 
     }
+    showViewer() {
+    }
+    hideViewer() {
+    }
     //// to overwrite
     buildHTML() {
         this.built = true
@@ -241,6 +245,7 @@ class CommentsCommentForm extends CommentsAbstractForm {
     constructor() {
         super("commentForm")
         this.msg = ""
+        this.cursorEnabled = false
     }
     putDataInForm() {
         this._setInputValue("msg", this.msg)
@@ -281,18 +286,28 @@ class CommentsCommentForm extends CommentsAbstractForm {
     }
     catchMouse() {
         //
-        let svg = "<svg  style='position:absolute;z-index:2;' "
-            + " height='20'"
-            + " width='20'"
-            + " >"
-        svg += "<circle id='commentsCursor' cx='100' cy='100' r='10'/>"
-        svg += "</svg>"
-        $('#content .image_div').append(svg)
+        let svg = `
+        <svg id='commentsCursorSvg' style='position:absolute;z-index:2;' 
+            height = '${viewer.currentPage.height}'
+            width = '${viewer.currentPage.width}'
+        >
+            <circle id='commentsCursor' cx='15' cy='15' r='14' stroke="black" stroke-width="1" fill="red"/>
+        </svg>
+        `
+        viewer.currentPage.linksDiv.append(svg)
         //
-        //viewer.setMouseMoveHandler(this)
+        this.cursorEnabled = true
+        viewer.setMouseMoveHandler(this)
+    }
+    dropMouse() {
+        $("#commentsCursorSvg").remove()
+        viewer.setMouseMoveHandler(null)
+        this.cursorEnabled = false
     }
     onMouseMove(x, y) {
-
+        let cursor = $("#commentsCursor")
+        cursor.attr("cx", x)
+        cursor.attr("cy", y)
     }
 
     submit() {
@@ -326,6 +341,13 @@ class CommentsCommentForm extends CommentsAbstractForm {
         this.showError("")
         super.clear()
     }
+    hide() {
+        if (this.cursorEnabled) this.dropMouse()
+        super.hide()
+    }
+    hideViewer() {
+        if (this.cursorEnabled) this.dropMouse()
+    }
 }
 ////
 class Comments {
@@ -345,6 +367,7 @@ class Comments {
         this.commentForm = new CommentsCommentForm()
         //
         this.inputFocused = false
+        commentsViewer.comments = this
     }
     clearSession() {
         this.uid = ""
@@ -406,5 +429,12 @@ class Comments {
         } else {
             this.loginForm.show()
         }
+    }
+    //
+    showViewer() {
+
+    }
+    hideViewer() {
+        this.currentForm.hideViewer()
     }
 }

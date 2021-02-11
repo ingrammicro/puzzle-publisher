@@ -1,9 +1,13 @@
 
+let commentsViewer = null;
+
 class CommentsViewer extends AbstractViewer {
     constructor() {
         super()
 
+        this.comments = null
         this.inputFocused = false
+        commentsViewer = this
     }
 
     initialize(force = false) {
@@ -22,6 +26,7 @@ class CommentsViewer extends AbstractViewer {
         $('#comments_viewer').addClass("hidden")
         super._hideSelf()
         viewer.refresh_url(viewer.currentPage, "", false)
+        this.comments.hideViewer()
     }
 
     handleKeyDownWhileInactive(jevent) {
@@ -97,6 +102,7 @@ class CommentsViewer extends AbstractViewer {
         $('#comments_viewer').removeClass("hidden")
         super._showSelf()
         viewer.refresh_url(viewer.currentPage, "", false)
+        this.comments.showViewer()
     }
 
     _showLoadingMessage() {
