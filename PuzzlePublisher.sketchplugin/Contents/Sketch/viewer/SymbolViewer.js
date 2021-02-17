@@ -456,10 +456,10 @@ class SymbolViewer extends AbstractViewer {
         const prevClickedLayer = this.lastClickedLayer
         this.lastClickedLayer = layer
         //
-        const click = {
+        const click = event ? {
             x: event.offsetX * viewer.currentZoom + layer.finalX,
             y: event.offsetY * viewer.currentZoom + layer.finalY
-        }
+        } : {}
         let foundLayers = []
         this.findOtherSelection(click, null, foundLayers)
         // reset previous selection                
