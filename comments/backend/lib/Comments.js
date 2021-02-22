@@ -285,29 +285,29 @@ class CommentsCommentForm extends CommentsAbstractForm {
         this._tuneInput("msg", "textarea")
     }
     catchMouse() {
-        //
-        let svg = `
-        <svg id='commentsCursorSvg' style='position:absolute;z-index:2;' 
-            height = '${viewer.currentPage.height}'
-            width = '${viewer.currentPage.width}'
-        >
-            <circle id='commentsCursor' cx='15' cy='15' r='14' stroke="black" stroke-width="1" fill="red"/>
-        </svg>
-        `
-        viewer.currentPage.linksDiv.append(svg)
+        viewer.currentPage.imageDiv.css("cursor", "url('resources/cursormap.png'), auto")
+        viewer.currentPage.imageDiv.click(function () {
+            commentsViewer.comments.commentForm.clickCursor()
+        })
         //
         this.cursorEnabled = true
         viewer.setMouseMoveHandler(this)
     }
     dropMouse() {
-        $("#commentsCursorSvg").remove()
+        viewer.currentPage.imageDiv.css("cursor", "")
+        viewer.currentPage.imageDiv.off("click")
         viewer.setMouseMoveHandler(null)
         this.cursorEnabled = false
     }
     onMouseMove(x, y) {
-        let cursor = $("#commentsCursor")
-        cursor.attr("cx", x)
-        cursor.attr("cy", y)
+        this.x = Math.round(x / viewer.currentZoom) - viewer.currentPage.currentLeft
+        this.y = Math.round(y / viewer.currentZoom) - viewer.currentPage.currentTop
+    }
+    clickCursor() {
+        this.markX = this.x
+        this.markY = this.y
+        //
+        this.dropMouse()
     }
 
     submit() {
@@ -429,12 +429,32 @@ class Comments {
         } else {
             this.loginForm.show()
         }
+        this._buildScene()
+    }
+    //
+    _buildScene() {
+        let page = viewer.currentPage
+        let width = page.imageDiv.width()
+        let height = page.imageDiv.height()
+
+        let code = `<div id="commentsScene"><svg height="${height}" width="${width}">           
+        </svg>
+        </div>`
+        page.linksDiv.append(code)
+        //
+        this._addCircleToScene("new", 200, 400)
+    }
+    _addCircleToScene(id, x, y, number = "") {
+        let code =
+            `<circle id="${id}" cx="${x}" cy="${y}" r="30" stroke="black" stroke-width="3" fill="red"/>`
+        $('#commentsScene svg').append(code)
+        $('#commentsScene').html($('#commentsScene').html())
     }
     //
     showViewer() {
 
     }
     hideViewer() {
-        this.currentForm.hideViewer()
+        if (this.currentForm) this.currentForm.hideViewer()
     }
 }
