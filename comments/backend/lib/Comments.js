@@ -389,7 +389,8 @@ class Comments {
         this.sid = sid
         this.uid = user.uid
         this.user = user
-
+        //
+        this.commentList = null
         //
         this.currentForm = null
         this.loginForm = new CommentsLoginForm()
@@ -451,18 +452,63 @@ class Comments {
         return this.sendCommand("logout", formData, handler);
     }
     ////////
-    run() {
-        //
-        //
+    build(commentList) {
+        this.commentList = commentList
+        //        
         if (this.sid != "") {
             this.commentForm.show()
         } else {
             this.loginForm.show()
         }
         this._buildScene()
+        this._buildComments(commentList)
+    }
+    //
+    _buildComments(commentList) {
+        let circleStyle = "border-radius: 50%; width: 24px;height: 24px; padding: 6px; background: #fff; border: 2px solid #666; color: #666; text-align: center;"
+        //
+        this._clearScene()
+        let code = ""
+        let prevItem = null
+        let counter = 1;
+        //
+        commentList['comments'].reverse().forEach(function (comment) {
+            if (null == prevItem) {
+                code += `
+                <div id="title" style="font-weight:bold;">Comments</div><br/>
+                `
+            } else {
+                code += "<br/>"
+            }
+            ///            
+            let uid = comment['uid']
+            let user = commentList['users'][uid]
+            let commentID = comment['created'] + "-" + uid
+            //
+            code += `
+                <div id="${commentID}" style="font-size:14px;">
+                <div style="display: grid; gap:10px;grid-auto-rows: minmax(30px, auto); grid-template-columns: 40px auto">
+                    <div style="${circleStyle}">${counter}</div>
+                    <div style="">
+                        ${user['name']}<br />${comment['created']}<br />${comment['msg']}
+                    </div>
+                </div>                
+            </div>
+            `
+            //
+            if (undefined != comment['markX']) {
+                this.addCircleToScene(uid, comment['markX'], comment['markY'], counter)
+            }
+            // finalize item
+            prevItem = comment
+            counter++
+        }, this)
+        $("#comments_viewer #comments").html(code)
     }
     //
     _buildScene() {
+        this._dropScene()
+        //
         let page = viewer.currentPage
         let width = page.imageDiv.width()
         let height = page.imageDiv.height()
@@ -487,6 +533,9 @@ class Comments {
     }
     _dropScene() {
         $('#commentsScene').remove()
+    }
+    _clearScene() {
+        $('#commentsScene svg').html("")
     }
     //
     showViewer() {
