@@ -102,7 +102,11 @@ class CommentsViewer extends AbstractViewer {
         $('#comments_viewer').removeClass("hidden")
         super._showSelf()
         viewer.refresh_url(viewer.currentPage, "", false)
-        this.comments.showViewer()
+        //
+
+        //
+
+        if (this.comments) this.comments.showViewer()
     }
 
     _showLoadingMessage() {
