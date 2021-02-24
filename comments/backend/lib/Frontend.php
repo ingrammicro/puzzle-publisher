@@ -12,6 +12,9 @@ class Frontend
 
         $res = <<<EOL
         <div id="top"/>
+EOL;
+        $res .= "<br/><div id='comments'>" . Frontend::buildCommentListHTML($page,$commentsInfo)."</div>";
+        $res .= <<<EOL
         <script>    
             {$code}            
             comments = new Comments("{$forum->forumID()}","{$url}","{$forum->sid}",{$userInfo});
@@ -19,19 +22,20 @@ class Frontend
             comments.run();
         </script>        
 EOL;
-        $res .= "<br/><div id='comments'>" . Frontend::buildCommentListHTML($page,$commentsInfo)."</div>";
         return $res;
     }
 
     public static function buildCommentListHTML(&$page,&$commentsInfo){
         $res = "";
-        //
         $prevItem = null;
+        $counter=1;
+        //
+        $circleStyle = "border-radius: 50%; width: 24px;height: 24px; padding: 6px; background: #fff; border: 2px solid #666; color: #666; text-align: center;";
         //
         foreach(array_reverse($commentsInfo['comments']) as &$comment){
             if(null==$prevItem){
                 $res .= <<<EOL
-                <div id="title" style="font-weight:bold;">Comments</div>
+                <div id="title" style="font-weight:bold;">Comments</div><br/>
 EOL;
             }else{
                 $res .= "<br/>";
@@ -40,16 +44,19 @@ EOL;
             $user = $commentsInfo['users'][$comment['uid']];
             $commentID = $comment['created']."-".$comment['uid'];
             //
-            $res.=<<<EOL
-            <div id='{$commentID}' style="font-size:12px;">
+            $res .= <<<EOL
+            <div id="{$commentID}" style="font-size:14px;">                
+                <div style="display: grid; gap:10px;grid-auto-rows: minmax(30px, auto); grid-template-columns: 40px auto">
+                    <div style="{$circleStyle}">{$counter}</div>
+                    <div style="">
+                        {$user['name']}<br/>{$comment['created']}<br/>{$comment['msg']}
+                    </div>
+                </div>                
+            </div>
 EOL;
-            //
-            $res .= "<div class='name'>".$user['name']."</div>";
-            $res .= "<div class='posted'>".$comment['created']."</div>";
-            $res .= "<div class='msg'>".$comment['msg']."</div>";
             // finalize item
-            $res.="</div>";
             $prevItem = $comment;
+            $counter++;
         }
         //
         return $res;
@@ -58,4 +65,3 @@ EOL;
 }
 
 ?>
-

@@ -246,6 +246,8 @@ class CommentsCommentForm extends CommentsAbstractForm {
         super("commentForm")
         this.msg = ""
         this.cursorEnabled = false
+        this.markX = null
+        this.markY = null
     }
     putDataInForm() {
         this._setInputValue("msg", this.msg)
@@ -271,9 +273,14 @@ class CommentsCommentForm extends CommentsAbstractForm {
         </div>
         <div id="error" style="color:red">
         </div>
-        <div>
-            <a href="#" onclick="comments.commentForm.catchMouse();return false">Set position</a>
-        <div>
+        <div id="addMarker" >
+            <a href="#" onclick="comments.commentForm.startMarkerMove();return false">Add marker</a>
+        </div>
+        <div id="editMarker" style="display:none">
+            <a href="#" onclick="comments.commentForm.startMarkerMove();return false">Move marker</a>
+            &nbsp;
+            <a href="#" onclick="comments.commentForm.dropMarker();return false">Drop </a>
+        </div>
         <div>
             <textarea id="msg" ${this.inputStyle} rows="5" cols="20" placeholder="New comment"></textarea>
         </div>
@@ -284,16 +291,23 @@ class CommentsCommentForm extends CommentsAbstractForm {
         $("#comments_viewer #top").append(s);
         this._tuneInput("msg", "textarea")
     }
-    catchMouse() {
+    startMarkerMove() {
+        //
+        if (null != this.markX) {
+            commentsViewer.comments.removeCircleOnScene("new")
+            this.markX = null
+            this.markY = null
+        }
+        //
         viewer.currentPage.imageDiv.css("cursor", "url('resources/cursormap.png'), auto")
         viewer.currentPage.imageDiv.click(function () {
-            commentsViewer.comments.commentForm.clickCursor()
+            commentsViewer.comments.commentForm.saveMarker()
         })
         //
         this.cursorEnabled = true
         viewer.setMouseMoveHandler(this)
     }
-    dropMouse() {
+    stopMarkerMove() {
         viewer.currentPage.imageDiv.css("cursor", "")
         viewer.currentPage.imageDiv.off("click")
         viewer.setMouseMoveHandler(null)
@@ -303,13 +317,24 @@ class CommentsCommentForm extends CommentsAbstractForm {
         this.x = Math.round(x / viewer.currentZoom) - viewer.currentPage.currentLeft
         this.y = Math.round(y / viewer.currentZoom) - viewer.currentPage.currentTop
     }
-    clickCursor() {
+    saveMarker() {
+        this.stopMarkerMove()
+        //
         this.markX = this.x
         this.markY = this.y
         //
-        this.dropMouse()
+        commentsViewer.comments.addCircleToScene("new", this.markX, this.markY)
+        $("#comments_viewer #addMarker").hide()
+        $("#comments_viewer #editMarker").show()
     }
-
+    dropMarker() {
+        this.markX = null
+        this.markY = null
+        commentsViewer.comments.removeCircleOnScene("new")
+        //
+        $("#comments_viewer #addMarker").show()
+        $("#comments_viewer #editMarker").hide()
+    }
     submit() {
         this.getDataFromForm();
         if (!this.checkData()) return false;
@@ -318,9 +343,13 @@ class CommentsCommentForm extends CommentsAbstractForm {
         formData.append("msg", this.msg);
         formData.append("pageOwnerName", story.authorName);
         formData.append("pageOwnerEmail", story.authorEmail);
+        if (null != this.markX) {
+            formData.append("markX", this.markX);
+            formData.append("markY", this.markY);
+        }
         //
         var handler = function () {
-            var form = comments.loginForm
+            var form = comments.commentForm
             var result = JSON.parse(this.responseText);
             if (comments.processRequestResult(result)) return
             //                        
@@ -338,15 +367,16 @@ class CommentsCommentForm extends CommentsAbstractForm {
     }
     clear() {
         this.msg = ""
+        this.dropMarker()
         this.showError("")
         super.clear()
     }
     hide() {
-        if (this.cursorEnabled) this.dropMouse()
+        if (this.cursorEnabled) this.stopMarkerMove()
         super.hide()
     }
     hideViewer() {
-        if (this.cursorEnabled) this.dropMouse()
+        if (this.cursorEnabled) this.stopMarkerMove()
     }
 }
 ////
@@ -441,20 +471,29 @@ class Comments {
         </svg>
         </div>`
         page.linksDiv.append(code)
-        //
-        this._addCircleToScene("new", 200, 400)
+        //        
     }
-    _addCircleToScene(id, x, y, number = "") {
+    addCircleToScene(id, x, y, number = "") {
+        let r = 20
+        x += r / 2
+        y += r / 2
         let code =
-            `<circle id="${id}" cx="${x}" cy="${y}" r="30" stroke="black" stroke-width="3" fill="red"/>`
+            `<circle id="${id}" cx="${x}" cy="${y}" r="${r}" stroke="black" stroke-width="3" fill="red"/>`
         $('#commentsScene svg').append(code)
         $('#commentsScene').html($('#commentsScene').html())
     }
+    removeCircleOnScene(id) {
+        $('#commentsScene svg #' + id).remove()
+    }
+    _dropScene() {
+        $('#commentsScene').remove()
+    }
     //
     showViewer() {
-
+        this._buildScene()
     }
     hideViewer() {
         if (this.currentForm) this.currentForm.hideViewer()
+        this._dropScene()
     }
 }
