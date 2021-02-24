@@ -109,6 +109,11 @@ class Page
         $comment['msg'] = http_post_param('msg');
         if(''==$comment['msg']) return $this->setError(ERROR_CANT_ADD_COMMENT_EMPTY_MSG);
         //
+        if(http_post_param('markX')!=""){
+            $comment['markX'] = http_post_param('markX');
+            $comment['markY'] = http_post_param('markY');
+        }
+        //
         $comment['id'] = $this->info['commentCounter']++;
         array_push($this->info['comments'],$comment);
         /// Save  
