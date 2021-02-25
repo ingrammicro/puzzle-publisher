@@ -265,27 +265,35 @@ class CommentsCommentForm extends CommentsAbstractForm {
     }
     buildHTML() {
         super.buildHTML()
+        let borderStyle = "border: none;font-size:14px;background-color:#008CBA;color:white;width:100px;height:30px"
+        let borderSecStyle = "border: none;font-size:14px;background-color:#e7e7e7; color: black;width:100px;height:30px"
+        let textareaStyle = "font-size:14px;width:330px"
         let s = `
-    <div id = 'commentForm'  style="display:none">
+    <div id = 'commentForm'  style="display:none;font-size:14px;">
         <div id="user">
             ${comments.user.name}&nbsp<a href="#" onclick="comments.logout();return false;">Logout</a>
             <br/><br/>
         </div>
         <div id="error" style="color:red">
-        </div>
-        <div id="addMarker" >
-            <a href="#" onclick="comments.commentForm.startMarkerMove();return false">Add marker</a>
-        </div>
-        <div id="editMarker" style="display:none">
-            <a href="#" onclick="comments.commentForm.startMarkerMove();return false">Move marker</a>
-            &nbsp;
-            <a href="#" onclick="comments.commentForm.dropMarker();return false">Drop </a>
-        </div>
+        </div>        
         <div>
-            <textarea id="msg" ${this.inputStyle} rows="5" cols="20" placeholder="New comment"></textarea>
+            <textarea id="msg" style="${textareaStyle}" rows="5" cols="20" placeholder="New comment"></textarea>
         </div>
-        <div id="buttons">
-            <input id="send" type="button" onclick="comments.commentForm.submit();return false;" value="Send"/>
+        <div id="buttons" style="display: grid; gap:10px;grid-auto-rows: minmax(10px, auto); grid-template-columns: 110px auto">
+            <div>
+                <input id="send"  style="${borderStyle}" type="button" onclick="comments.commentForm.submit();return false;" value="Send"/>
+            </div>
+            <div id="addMarker" >
+                <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.startMarkerMove();return false" value="Set Marker"/>
+            </div>
+            <div id="dropMarker" style="display:none">
+                <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.stopMarkerMove();return false" value="Drop Marker"/>
+            </div>
+            <div id="editMarker" style="display:none">
+                <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.startMarkerMove();return false" value="Move Marker"/>
+                &nbsp;
+                <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.dropMarker();return false" value="Drop"/>
+            </div>           
         </div>
     </div>`
         $("#comments_viewer #top").append(s);
@@ -303,6 +311,9 @@ class CommentsCommentForm extends CommentsAbstractForm {
         viewer.currentPage.imageDiv.click(function () {
             commentsViewer.comments.commentForm.saveMarker()
         })
+        $("#comments_viewer #addMarker").hide()
+        $("#comments_viewer #dropMarker").show()
+        $("#comments_viewer #editMarker").hide()
         //
         this.cursorEnabled = true
         viewer.setMouseMoveHandler(this)
@@ -312,6 +323,9 @@ class CommentsCommentForm extends CommentsAbstractForm {
         viewer.currentPage.imageDiv.off("click")
         viewer.setMouseMoveHandler(null)
         this.cursorEnabled = false
+        $("#comments_viewer #addMarker").show()
+        $("#comments_viewer #dropMarker").hide()
+        $("#comments_viewer #editMarker").hide()
     }
     onMouseMove(x, y) {
         this.x = Math.round(x / viewer.currentZoom) - viewer.currentPage.currentLeft
@@ -325,6 +339,7 @@ class CommentsCommentForm extends CommentsAbstractForm {
         //
         commentsViewer.comments.addCircleToScene("new", this.markX, this.markY)
         $("#comments_viewer #addMarker").hide()
+        $("#comments_viewer #dropMarker").hide()
         $("#comments_viewer #editMarker").show()
     }
     dropMarker() {
@@ -334,6 +349,7 @@ class CommentsCommentForm extends CommentsAbstractForm {
         //
         $("#comments_viewer #addMarker").show()
         $("#comments_viewer #editMarker").hide()
+        $("#comments_viewer #dropMarker").hide()
     }
     submit() {
         this.getDataFromForm();
@@ -461,16 +477,16 @@ class Comments {
             this.loginForm.show()
         }
         this._buildScene()
+        this._buildMarkers()
         this._buildComments(commentList)
     }
     //
     _buildComments(commentList) {
-        let circleStyle = "border-radius: 50%; width: 24px;height: 24px; padding: 6px; background: #fff; border: 2px solid #666; color: #666; text-align: center;"
+        let counterStyle = "font-weight:bold;"
         //
-        this._clearScene()
         let code = ""
         let prevItem = null
-        let counter = 1;
+        let counter = this.commentList['comments'].length
         //
         commentList['comments'].reverse().forEach(function (comment) {
             if (null == prevItem) {
@@ -487,23 +503,31 @@ class Comments {
             //
             code += `
                 <div id="${commentID}" style="font-size:14px;">
-                <div style="display: grid; gap:10px;grid-auto-rows: minmax(30px, auto); grid-template-columns: 40px auto">
-                    <div style="${circleStyle}">${counter}</div>
+                <div style="display: grid; gap:10px;grid-auto-rows: minmax(10px, auto); grid-template-columns: 10px auto">
+                    <div style="${counterStyle}">${counter}</div>
                     <div style="">
                         ${user['name']}<br />${comment['created']}<br />${comment['msg']}
                     </div>
                 </div>                
             </div>
             `
-            //
-            if (undefined != comment['markX']) {
-                this.addCircleToScene(uid, comment['markX'], comment['markY'], counter)
-            }
             // finalize item
             prevItem = comment
-            counter++
+            counter--
         }, this)
         $("#comments_viewer #comments").html(code)
+    }
+    _buildMarkers() {
+        this._clearScene()
+        let counter = this.commentList['comments'].length
+        //
+        this.commentList['comments'].reverse().forEach(function (comment) {
+            if (undefined != comment['markX']) {
+                let uid = comment['uid']
+                this.addCircleToScene(uid, comment['markX'], comment['markY'], counter)
+            }
+            counter--
+        }, this)
     }
     //
     _buildScene() {
@@ -521,10 +545,22 @@ class Comments {
     }
     addCircleToScene(id, x, y, number = "") {
         let r = 20
-        x += r / 2
-        y += r / 2
-        let code =
-            `<circle id="${id}" cx="${x}" cy="${y}" r="${r}" stroke="black" stroke-width="3" fill="red"/>`
+        x = Number(x) - 10
+        y = Number(y) - 20
+        let code = `
+        <svg id="${id}" x="${x}" y="${y}" width="42" height="60">
+        <style>
+        .small { font: 13px sans-serif; }
+        </style>
+        <g>        
+        <circle cx="25" cy="20" r="10" fill="white"/>
+        <text x="25" y="18" dy="0" class="small" dominant-baseline="middle" text-anchor="middle">${number}</text>        
+        <path style=" stroke:none;fill-rule:nonzero;fill:rgb(255,79,79);fill-opacity:1;" d="M 25 0 L 25 7.523438 C 30.1875 7.523438 34.394531 11.730469 34.394531 16.917969 C 34.394531 22.105469 30.1875 26.308594 25 26.308594 L 25 50 C 25 50 41.917969 26.257812 41.917969 16.917969 C 41.917969 7.574219 34.34375 0 25 0 Z M 25 0 "/>
+        <path style=" stroke:none;fill-rule:nonzero;fill:rgb(255,179,179);fill-opacity:1;" d="M 25 26.308594 C 19.8125 26.308594 15.605469 22.105469 15.605469 16.917969 C 15.605469 11.730469 19.8125 7.523438 25 7.523438 L 25 0 C 15.65625 0 8.082031 7.574219 8.082031 16.917969 C 8.082031 26.257812 25 50 25 50 Z M 25 26.308594 "/>
+        </g>
+        </svg>
+        `
+        //    `<circle id="${id}" cx="${x}" cy="${y}" r="${r}" stroke="black" stroke-width="3" fill="red"/>`
         $('#commentsScene svg').append(code)
         $('#commentsScene').html($('#commentsScene').html())
     }
@@ -540,6 +576,7 @@ class Comments {
     //
     showViewer() {
         this._buildScene()
+        this._buildMarkers()
     }
     hideViewer() {
         if (this.currentForm) this.currentForm.hideViewer()

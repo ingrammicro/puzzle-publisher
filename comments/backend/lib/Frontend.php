@@ -20,7 +20,7 @@ EOL;
             {$code}            
             let comments = new Comments("{$forum->forumID()}","{$url}","{$forum->sid}",{$userInfo});
             {$codePrerun}            
-            comments.build($commentList);            
+            comments.build(${commentList});            
         //
         </script>        
 EOL;
@@ -29,9 +29,9 @@ EOL;
 
     public static function buildCommentListHTML(&$page,&$commentsInfo){
         $commentList = json_encode($commentsInfo);
-        $res .= <<<EOL
+        $res = <<<EOL
         <script>                          
-            comments.build($commentList);            
+            comments.build(${commentList});            
         //
         </script>        
 EOL;

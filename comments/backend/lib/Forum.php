@@ -153,7 +153,7 @@ EOL
             )
         );
         // add page owner to notify
-        if($forum->user['email']!=$this->info['ownerEmail']){
+        if($this->info['ownerEmail']!="" && $forum->user['email']!=$this->info['ownerEmail']){
             $email['to'] = [
                 [ // add page owner
                     "email"=>$this->info['ownerEmail'],
@@ -228,7 +228,7 @@ EOL
             // create new page
             $this->intID = $forum->generatePageIntIDForPubID($this->pubID);
             $this->info = DEF_PAGE_INFO;                        
-            $this->info['ownerName'] =  http_post_param("pageOwnerNam");
+            $this->info['ownerName'] =  http_post_param("pageOwnerName");
             $this->info['ownerEmail'] =  http_post_param("pageOwnerEmail");
             if(False===$this->saveToJSON())
                 return $this->setError(ERROR_CANT_SAVE_PAGE);            
@@ -582,7 +582,9 @@ EOL
 curl --request POST --url https://api.sendgrid.com/v3/mail/send --header "Authorization: Bearer {$sgKey}" --header 'Content-Type: application/json' --data '{$dataStr}'
 EOL;
         //error_log($cmd);
-        $res = shell_exec($cmd);            
+        $res = shell_exec($cmd);          
+        //error_log($res);
+
       }
       return True;
     }
