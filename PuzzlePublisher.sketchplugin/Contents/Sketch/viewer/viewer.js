@@ -141,6 +141,7 @@ function createViewer(story, files) {
         allChilds: [], // list of all inited instances of Viewer
         symbolViewer: null,
         versionViewer: null,
+        commentsViewer: null,
 
         defSidebarWidth: 400,
 
@@ -180,6 +181,11 @@ function createViewer(story, files) {
                 $("#menu_version_viewer").removeClass("hidden");
                 this.allChilds.push(this.versionViewer)
             }
+            if (story.commentsURL != 'V_V_C') {
+                this.commentsViewer = new CommentsViewer()
+                $("#menu_comments_viewer").removeClass("hidden");
+                this.allChilds.push(this.commentsViewer)
+            }
 
             $("body").keydown(function (event) {
                 viewer.handleKeyDown(event)
@@ -191,6 +197,9 @@ function createViewer(story, files) {
 
             if (this.urlParams.get('v') != null && this.versionViewer) {
                 this.versionViewer.toggle()
+            }
+            if (this.urlParams.get('c') != null && this.commentsViewer) {
+                this.commentsViewer.toggle()
             }
             const gParam = this.urlParams.get('g')
             if (gParam != null && this.galleryViewer) {
@@ -307,7 +316,12 @@ function createViewer(story, files) {
             setTimeout(doBlinkHotspots, 500)
         },
 
+        setMouseMoveHandler: function (obj) {
+            this.mouseMoveHandler = obj
+        },
+
         onMouseMove: function (x, y) {
+            if (this.mouseMoveHandler && this.mouseMoveHandler.onMouseMove(x, y)) return
             if (this.currentPage) this.currentPage.onMouseMove(x, y)
         },
 
@@ -325,6 +339,7 @@ function createViewer(story, files) {
 
         _setupFolderinfoRequest: function (func) {
             var xhr = new XMLHttpRequest();
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
             xhr.onreadystatechange = func;
             xhr.open("GET", story.serverToolsPath + "folder_info.php", true);
             xhr.send(null);
@@ -762,6 +777,9 @@ function createViewer(story, files) {
             }
             if (this.galleryViewer && this.galleryViewer.isVisible()) {
                 newPath += "&g=" + (this.galleryViewer.isMapMode ? "m" : "g")
+            }
+            if (this.commentsViewer && this.commentsViewer.isVisible()) {
+                newPath += "&c=1"
             }
 
             if (pushHistory) {

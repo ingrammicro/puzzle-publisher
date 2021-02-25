@@ -1,0 +1,9 @@
+{
+    "1234567890": {
+        "name": "Forum",
+        "email": {
+            "from-email": "",
+            "sendgrid-key": ""
+        }
+    }
+}

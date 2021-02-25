@@ -179,6 +179,9 @@ class Exporter {
             docName: Utils.toFilename(this.docName),
             docPath: "P_P_P",
             docVersion: Constants.DOCUMENT_VERSION_PLACEHOLDER,
+            authorName: Constants.DOCUMENT_AUTHOR_NAME_PLACEHOLDER,
+            authorEmail: Constants.DOCUMENT_AUTHOR_EMAIL_PLACEHOLDER,
+            commentsURL: Constants.DOCUMENT_COMMENTS_URL_PLACEHOLDER,
             hasRetina: this.retinaImages,
             serverToolsPath: this.serverTools,
             fontSizeFormat: this.fontSizeFormat,
@@ -209,10 +212,6 @@ class Exporter {
 
         const docHideNav = this.Settings.documentSettingForKey(this.doc, SettingKeys.DOC_CUSTOM_HIDE_NAV)
         buildOptions.hideNav = docHideNav == undefined || docHideNav == 0 ? this.Settings.settingForKey(SettingKeys.PLUGIN_HIDE_NAV) == 1 : docHideNav == 2
-
-        let commentsURL = this.Settings.settingForKey(SettingKeys.PLUGIN_COMMENTS_URL)
-        if (commentsURL == undefined) commentsURL = ''
-        buildOptions.commentsURL = commentsURL
 
         let googleCode = this.Settings.settingForKey(SettingKeys.PLUGIN_GOOGLE_CODE)
         if (googleCode == undefined) googleCode = ''

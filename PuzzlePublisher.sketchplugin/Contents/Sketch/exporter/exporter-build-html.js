@@ -65,7 +65,6 @@ function buildMainHTML(options) {
     s += '<meta name="generator" content="Generated using Puzzle Publisher ' + manifest.version + ' plugin for Sketch.app - https://github.com/ingrammicro/puzzle-publisher">\n';
     s += '<title>' + options.docName + '</title>\n';
     s += '<link rel="shortcut icon"  type="image/png?" href="resources/icon.png' + verPostfix + '">\n';
-    // s += '<link rel="mask-icon" href="https://sketch.cloud/favicon.svg?v=4" color="rgb(252, 177, 0)">\n';
     s += '<link rel="stylesheet" type="text/css" href="resources/viewer.css' + verPostfix + '">\n';
     if (options.enableAnimations) {
         s += '<link rel="stylesheet" type="text/css" href="resources/animations.css' + verPostfix + '">\n';
@@ -88,6 +87,7 @@ function buildMainHTML(options) {
     s += '<script type="text/javascript" src="viewer/story.js' + verPostfix + '" charset="UTF-8"></script>\n';
     s += '<script type="text/javascript" src="viewer/viewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
     s += '<script type="text/javascript" src="viewer/AbstractViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
+    s += '<script type="text/javascript" src="viewer/CommentsViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
     s += '<script type="text/javascript" src="viewer/GalleryViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
     if (options.loadLayers) {
         s += '<script type="text/javascript" src="viewer/LayersData.js' + verPostfix + '" charset="UTF-8"></script>\n';
@@ -95,19 +95,11 @@ function buildMainHTML(options) {
         s += '<link rel="stylesheet" type="text/css" href="resources/viewer-fonts.css' + verPostfix + '">\n';
     }
     s += '<script type="text/javascript" src="viewer/VersionViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
-    if (options.commentsURL != '') {
-        s += '<link rel="stylesheet" type="text/css" href="' + options.commentsURL + '/EasyPageComments.css' + verPostfix + '"/>\n';
-        s += '<script type="text/javascript" src="' + options.commentsURL + '/EasyPageComments.js' + verPostfix + '"></script>\n';
-        s += '<script type="text/javascript" src="' + options.commentsURL + '/comments.js' + verPostfix + '" charset="UTF-8"></script>\n';
-    }
     s += '<script type="text/javascript">\n';
     if (options.jsCode != '') {
         s += 'function runJSCode(){' + options.jsCode + '}\n'
     }
     s += '  var viewer = createViewer(story, "images");\n';
-    if (options.commentsURL != '') {
-        s += '  var comments = createComments();\n';
-    }
     s += '</script>\n';
 
     if (options.googleCode != '') {
@@ -196,14 +188,24 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <div id="symbol_viewer_content" style="margin-top:20px;">\
                 </div>\
             </div>\
-             <div id="version_viewer" class="hidden">\
+            <div id="comments_viewer" class="hidden">\
+                <div class="title">\
+                    <div style="width:100%;">Comments</div>\
+                    <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.commentsViewer.toggle();  return false;">\
+                        <svg class="svgIcon"><use xlink:href="#icClose"></use></svg>\
+                    </div>\
+                </div>\
+                <div id="comments_viewer_content">\
+                </div>\
+            </div >\
+            <div id="version_viewer" class="hidden">\
                 <div class="title">\
                   <div style="width:100%;">Version Inspector</div>\
                   <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.versionViewer.toggle();  return false;">\
                     <svg class="svgIcon"><use xlink:href="#icClose"></use></svg>\
                   </div>\
                 </div>\
-            <div style="padding: 72px 20px 0 20px">\
+    <div style="padding: 72px 20px 0 20px">\
                    Mode:<br />\
                   <input type="radio" name="version_viewer_mode" id="version_viewer_mode_diff" value="diff" checked onclick="viewer.versionViewer.pageChanged()" disabled /><label for="version_viewer_mode_diff">Differences</label><br />\
                   <input type="radio" name="version_viewer_mode" id="version_viewer_mode_prev" value="prev" onclick="viewer.versionViewer.pageChanged()" disabled><label for="version_viewer_mode_prev">Prev version</label><br />\
@@ -215,16 +217,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <div id="content-shadow" class="hidden" onclick="viewer.onContentClick()"></div>\
     <div id="content-modal" class="contentModal hidden" onclick="viewer.onModalClick()"></div>\
     ';
-    if (options.commentsURL != '') {
-        s += ' <div id="commenting" class="hidden">\n';
-        s += '  <h1>EasyPageComments example page</h1>\n';
-        s += '  <h2>Comments</h2>\n';
-        s += '  <div id="Comments"></div>\n';
-        s += '    <h2>Leave a comment</h2>\n';
-        s += '  <div id="CommentForm"></div>\n';
-        s += ' </div>\n';
-    }
-
     s += '        <div id="gallery-modal" class="hidden">\n';
     s += '          <div id="gallery-header">\n';
     s += '            <div id="gallery-header-container">\n';
@@ -258,6 +250,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     s += "            <div class=\"navLeft\">";
     s += "                <div id=\"menu\" class=\"menu\">";
     s += "                            <div class=\"groupe\">";
+    s += "                                <div id=\"menu_comments_viewer\" class=\"hidden item\" onclick=\"viewer.commentsViewer.toggle(); addRemoveClass('class','menu','active'); return false;\">";
+    s += "                                    <svg class='svgIcon'><use xlink:href=\"#icAnnotation\"><\/use><\/svg>";
+    s += "                                    <span>Comments<\/span>";
+    s += "                                    <div class=\"tips\">C<\/div>";
+    s += "                                <\/div>";
     s += "                                <div id=\"links\" class=\"item\" onclick=\"viewer.toggleLinks(); addRemoveClass('class','menu','active'); return false;\">";
     s += "                                    <svg class='svgIcon'><use xlink:href=\"#icPointer\"><\/use><\/svg>";
     s += "                                    <span>Hot Spots<\/span>";
@@ -290,19 +287,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     s += "                                    <span>Version Inspector<\/span>";
     s += "                                    <div class=\"tips\">V<\/div>";
     s += "                                <\/div>";
-    /*
-    s += "                                <div class=\"item disabled\" onclick=\"addRemoveClass('class','annotation','active'); addRemoveClass('class','menu','active');\">";
-    s += "                                    <svg class='svgIcon'><use xlink:href=\"#icAnnotation\"><\/use><\/svg>";
-    s += "                                    <span>Annotation<\/span>";
-    s += "                                    <div class=\"tips\">⌘A<\/div>";
-    s += "                                <\/div>";
-    */
-    if (options.commentsURL != '') {
-        s += "                                <div class=\"item\" onclick=\"comments.switch(); return false;\">";
-        s += "                                    <svg class='svgIcon'><use xlink:href=\"#icAnnotation\"><\/use><\/svg>";
-        s += "                                    <span>Comments<\/span>";
-        s += "                                <\/div>";
-    }
     s += "                            <\/div>";
     if (options.serverTools != '') {
         s += "                            <hr>";

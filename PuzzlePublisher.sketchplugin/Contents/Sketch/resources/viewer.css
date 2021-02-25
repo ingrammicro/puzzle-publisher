@@ -124,6 +124,7 @@
     color:white;
 }
 
+#comments_viewer,
 #symbol_viewer,
 #version_viewer {
   width: 100%;
@@ -239,7 +240,9 @@ select:focus{
   margin-right: 40px;
 }
 
-#symbol_viewer .title, #version_viewer .title {
+#comments_viewer .title, 
+#symbol_viewer .title, 
+#version_viewer .title {
   height: 56px;
   display: flex;
   align-items: center;
@@ -252,6 +255,15 @@ select:focus{
   border-bottom: solid 1px var(--color-border);
   z-index: 10;
 }
+
+#comments_viewer_content{
+  padding: 72px 20px 0 20px;
+}
+
+#comments_viewer_content .block{
+  padding:: 16px 20px 0 20px;
+}
+
 
 #symbol_viewer_content .block{
   padding: 16px 20px 0 20px;
@@ -493,7 +505,7 @@ text-overflow: ellipsis;
   outline: none;
 }
 
-::placeholder {
+#searchInput::placeholder {
   color: white;
   opacity: .5;
 }

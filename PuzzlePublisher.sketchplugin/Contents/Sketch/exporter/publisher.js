@@ -28,6 +28,8 @@ class Publisher {
         this.allMockupsdDir = this.Settings.settingForKey(SettingKeys.PLUGIN_EXPORTING_URL)
         this.serverToolsPath = this.Settings.settingForKey(SettingKeys.PLUGIN_SERVERTOOLS_PATH) + ""
         this.authorName = this.Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_NAME) + ""
+        this.authorEmail = this.Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_EMAIL) + ""
+        this.commentsURL = this.Settings.settingForKey(SettingKeys.PLUGIN_COMMENTS_URL) + ""
 
         this.docFolder = this.doc.cloudName();
         let posSketch = this.docFolder.indexOf(".sketch")
@@ -60,7 +62,6 @@ class Publisher {
         this.sshPort = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_SSH_PORT)
         if (this.sshPort == undefined || this.sshPort == null || this.sshPort == '') this.sshPort = '22'
 
-
         this.siteRoot = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_SITEROOT)
         if (this.siteRoot == undefined || this.siteRoot == null) this.siteRoot = ''
 
@@ -78,6 +79,14 @@ class Publisher {
 
         this.miroPassword = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_MIRO_PASSWORD)
         if (this.miroPassword == undefined || this.miroPassword == null) this.miroPassword = ''
+
+        this.authorName = Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_NAME)
+        if (this.authorName == undefined || this.authorName == '') this.authorName = 'None'
+        this.authorEmail = Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_EMAIL)
+        if (this.authorEmail == undefined || this.authorEmail == '') this.authorEmail = 'None'
+
+        this.commentsURL = Settings.settingForKey(SettingKeys.PLUGIN_COMMENTS_URL)
+        if (this.commentsURL == undefined) this.commentsURL = ''
 
     }
 
@@ -143,10 +152,15 @@ class Publisher {
                     if ('--NOTELE' == this.message) {
                         url += "&NOTELE=1"
                     }
+                    if (DEBUG) {
+                        log(url)
+                    }
                     var nURL = NSURL.URLWithString(url);
                     var data = NSData.dataWithContentsOfURL(nURL);
+
                     //var json = NSJSONSerialization.JSONObjectWithData_options_error(data, 0, nil)
                     //log(json)
+
                 } catch (e) {
                     log("Exception: " + e);
                 }
@@ -536,6 +550,9 @@ class Publisher {
         let args = [version, allMockupsdDir, docFolder, remoteFolder, commentsID]
         args.push(this.login)
         args.push(this.sshPort)
+        args.push(this.authorName)
+        args.push(this.authorEmail)
+        args.push(this.commentsURL.replace(/(\/)/g, '\\/'))
         //args.push(Constants.MIRROR2)        
         return this.runScriptWithArgs("publish.sh", args)
     }
