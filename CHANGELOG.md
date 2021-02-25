@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 16.0.0 (25 Feb 2021)
+Added comments to published mockups
+
 ##  Version 15.3.0 (30 Dec 2020)
 Element Inspector allows to review overlapped layers by multiply clicking
 
