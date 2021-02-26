@@ -54,6 +54,13 @@ const ERROR_AUTH_CANT_READ_SESSION                   = "#010.005";
 const ERROR_AUTH_CANT_SAVE_SESSION                   = "#010.006";
 const ERROR_AUTH_CANT_FIND_USER                   = "#010.007";
 
+// 011 PAGE VISITS
+const ERROR_PAGE_VISITS_CANT_CREATE_FOLDER           = "#011.001";
+const ERROR_PAGE_VISITS_CANT_CREATE_FILE           = "#011.002";
+const ERROR_PAGE_VISITS_CANT_DECODE_FILE           = "#011.003";
+const ERROR_PAGE_VISITS_CANT_ENCODE_FILE           = "#011.004";
+const ERROR_PAGE_VISITS_CANT_SAVE_FILE           = "#011.005";
+
 ////////////////////////////////////////////////////////////////
 const DEF_USER_INFO = [
     "name"=>"",    
@@ -104,7 +111,7 @@ class Page
         // Init new comment
         $comment = DEF_COMMENT_DATA;
         $comment['uid'] = $uid;
-        $comment['created'] =  date("Y-m-d H:i:s");
+        $comment['created'] =  time();
         //
         $comment['msg'] = http_post_param('msg');
         if(''==$comment['msg']) return $this->setError(ERROR_CANT_ADD_COMMENT_EMPTY_MSG);
@@ -177,12 +184,11 @@ EOL
         ];
         // load data for existing page
         if(False===$this->load()) return False;
-        //        
         $comments = $this->info['comments'];
-        //
+        // load users info
         $usersInfo = Forum::$o->loadUsersInfo();
         if(False===$usersInfo) return  $this->setError(Forum::$o->lastError);
-        //          
+        //
         $userList = [];
         foreach ($comments as &$comment) {
             // find user by UID            
@@ -201,10 +207,13 @@ EOL
             $userList[$uid] = $user;            
             //            
         }
+        $visited = $this->getUserVisited(Forum::$o->uid);
         return [
             'comments'=>$comments,
-            'users'=>$userList
+            'users'=>$userList,
+            'visited'=>$visited
         ];
+        error_log($visited);
     }
 
     protected function init(){
@@ -248,6 +257,15 @@ EOL
         return  Forum::$o->getBasePage()."/page-".$this->intID.".json";
     }
 
+
+    private function getUserVisitsBasePath(){
+        return  Forum::$o->getBasePage()."/page-visits";
+    }
+    
+    private function getUserVisitsPath($uid){
+        return $this->getUserVisitsBasePath()."/".$this->intID."-".$uid.".json";
+    }
+
     protected function loadJSON(){        
         // check if page config exists
         if(!file_exists($this->getJSONPath())) return DEF_PAGE_INFO;       
@@ -282,6 +300,44 @@ EOL
          return True;
 
     }
+
+    // return previous visited date and save new
+    protected function getUserVisited($uid){        
+        $visited = time();
+        $data = ["visited"=>$visited];
+        // Check if folder "/page-visits" exists
+        if(!file_exists($this->getUserVisitsBasePath())) {
+            if(False==mkdir($this->getUserVisitsBasePath())) return $this->setError(ERROR_PAGE_VISITS_CANT_CREATE_FOLDER);
+        }
+        // Read existing file
+        $fileName = $this->getUserVisitsPath($uid);
+        if(file_exists($fileName)) {
+            $dataStr = file_get_contents($fileName);
+            $data = json_decode($dataStr,true);
+            if($data===False){
+                $this->setError(ERROR_CANT_ENCODE_USERS);       
+                return False;
+            } 
+            $visited = $data["visited"];       
+        }
+
+        // Save new visited time
+        $data["visited"] = time();
+    
+        // encode an array into a json
+        $dataStr = json_encode($data);
+        if($dataStr===False){
+           $this->setError(ERROR_PAGE_VISITS_CANT_ENCODE_FILE);       
+           return False;
+        }   
+        // save into a file
+        if( False===file_put_contents($fileName,$dataStr)){
+           $this->setError(ERROR_PAGE_VISITS_CANT_SAVE_FILE);       
+           return False;
+        }
+
+        return $visited;
+   }
 
     
 }
@@ -841,9 +897,11 @@ EOL;
         $isNewForum = !file_exists($this->forumConfigPath);
         if($isNewForum){
             // init new config
-            if(False==mkdir($this->basePath)){
-                $this->setError(ERROR_CANT_CREATE_FORUM_FOLDER);       
-                return False;
+            if(!file_exists($this->basePath)){
+                if(False==mkdir($this->basePath)){
+                    $this->setError(ERROR_CANT_CREATE_FORUM_FOLDER);       
+                    return False;
+                }
             }
         }
 

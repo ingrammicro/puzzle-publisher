@@ -486,37 +486,37 @@ class Comments {
     //
     _buildComments(commentList) {
         let counterStyle = "font-weight:bold;"
+        let visited = commentList['visited']
         //
         let code = ""
-        let prevItem = null
-        let counter = this.commentList['comments'].length
         //
-        commentList['comments'].reverse().forEach(function (comment) {
-            if (null == prevItem) {
-                code += `
+        if (commentList['comments'].length > 0) {
+            code += `
                 <div id="title" style="font-weight:bold;">Comments</div><br/>
-                `
-            } else {
-                code += "<br/>"
+            `
+        }
+        commentList['comments'].forEach(function (comment, counter) {
+            ///
+            var createdDate = new Date(comment['created'] * 1000)
+            var createdStr = createdDate.toLocaleDateString() + " " + createdDate.toLocaleTimeString()
+            if (visited < comment['created']) {
+                createdStr += "&nbsp;<b>New</b>"
             }
             ///            
             let uid = comment['uid']
             let user = commentList['users'][uid]
-            let commentID = comment['created'] + "-" + uid
+            let commentID = comment['id']
             //
             code += `
-                <div id="${commentID}" style="font-size:14px;">
+                <div id="${commentID}" style="font-size:14px;margin-top:10px">
                 <div style="display: grid; gap:10px;grid-auto-rows: minmax(10px, auto); grid-template-columns: 10px auto">
-                    <div style="${counterStyle}">${counter}</div>
+                    <div style="${counterStyle}">${counter + 1}</div>
                     <div style="">
-                        ${user['name']}<br />${comment['created']}<br />${comment['msg']}
+                        ${user['name']}<br />${createdStr}<br />${comment['msg']}
                     </div>
                 </div>                
             </div>
             `
-            // finalize item
-            prevItem = comment
-            counter--
         }, this)
         $("#comments_viewer #comments").html(code)
     }
