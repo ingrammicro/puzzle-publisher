@@ -181,7 +181,7 @@ function createViewer(story, files) {
                 $("#menu_version_viewer").removeClass("hidden");
                 this.allChilds.push(this.versionViewer)
             }
-            if (story.commentsURL != 'V_V_C') {
+            if (story.commentsURL != 'V_V_C' && story.commentsURL != "") {
                 this.commentsViewer = new CommentsViewer()
                 $("#menu_comments_viewer").removeClass("hidden");
                 this.allChilds.push(this.commentsViewer)
