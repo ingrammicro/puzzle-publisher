@@ -405,6 +405,9 @@ class Comments {
         this.sid = sid
         this.uid = user.uid
         this.user = user
+        if ("" != this.sid) {
+            this.saveSessionInBrowser()
+        }
         //
         this.commentList = null
         //
@@ -429,8 +432,8 @@ class Comments {
         this.loginForm.show()
     }
     saveSessionInBrowser() {
-        window.localStorage.setItem("comments-uid", comments.uid)
-        window.localStorage.setItem("comments-sid", comments.sid)
+        window.localStorage.setItem("comments-uid", this.uid)
+        window.localStorage.setItem("comments-sid", this.sid)
     }
     processRequestResult(result) {
         console.log(result)

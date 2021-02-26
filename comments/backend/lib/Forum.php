@@ -584,9 +584,7 @@ EOL
 curl --request POST --url https://api.sendgrid.com/v3/mail/send --header "Authorization: Bearer {$sgKey}" --header 'Content-Type: application/json' --data '{$dataStr}'
 EOL;
         //error_log($cmd);
-        $res = shell_exec($cmd);          
-        //error_log($res);
-
+        $res = shell_exec($cmd);            
       }
       return True;
     }
@@ -686,6 +684,7 @@ EOL;
         // Clear context
         $this->uid = "";
         $this->sid = "";
+        $this->authDone = False;
         
         // ok
         Forum::$o = $this;
@@ -698,18 +697,45 @@ EOL;
                 $checkUID = $this->_getSessionUID($sid);
                 if(False===$checkUID || $checkUID!=$uid) return False;
                 $user = $this->getUserByUID($uid);                
-                if(False!==$user){
+                if(False!==$user){ 
                     // Ok, user context restored
                     $this->uid = $uid;
                     $this->sid = $sid;                                 
                     $this->user = $user;
                 }
+            }else{
+                $headers = getallheaders();
+                while(True){
+                    if(!array_key_exists("OIDC_userinfo_json",$headers)) break;
+                    $oidcJSON = $headers['OIDC_userinfo_json'];
+                    $oidc = json_decode( $oidcJSON, true );
 
+                    $name = $oidc['name'];
+                    $email = $oidc['email'];
+                    if($name==="" || $email==="") break;
+
+                    $user = $this->_findUserByODC($name,$email);
+                    if(False===$user) break;
+                    $uid = $user['uid'];
+
+                    $sid = $this->_createSession($uid);
+                    if(False===$sid) break;
+
+                    $this->uid = $uid;
+                    $this->sid = $sid;
+                    $this->user = $user;
+                    break;                    
+                }
             }
         }
 
 
         return True;
+    }
+
+    private function _findUserByODC($name,$email){
+        $user = $this->getUserByEmail($email,$name);
+        if(False!==$user) return $user;
     }
 
     public function getBasePage(){
