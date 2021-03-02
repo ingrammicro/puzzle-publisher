@@ -601,8 +601,8 @@ EOL
 
     public function buildPage(){
         $pagePubID = $_SERVER['HTTP_REFERER'];
-        $pattern = '/\/(\d+)\//i';
-        $pagePubID = preg_replace($pattern, $pagePubID, "/live/");
+        $pattern = '/(.+)\/(\d+)\/(.+)/i';
+        $pagePubID = preg_replace($pattern, "$1/live/$3",$pagePubID);
         return Page::build($pagePubID);
     }
 
