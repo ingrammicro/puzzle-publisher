@@ -5,6 +5,7 @@ class AbstractViewer {
         this.isSidebarChild = true
         this.blockMainNavigation = false
         this.enableTopNavigation = false
+        this.alwaysHandlePageChanged = false
 
         // internal viewer props, can be read by child 
         this.inited = false

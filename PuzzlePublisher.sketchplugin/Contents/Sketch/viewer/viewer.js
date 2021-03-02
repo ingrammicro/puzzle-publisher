@@ -640,6 +640,9 @@ function createViewer(story, files) {
 
             if (refreshURL) {
                 if (this.child) this.child.pageChanged()
+                this.allChilds.filter(c => c.alwaysHandlePageChanged).forEach(function (c) {
+                    c.pageChanged()
+                })
             }
 
         },

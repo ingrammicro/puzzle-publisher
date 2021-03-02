@@ -316,15 +316,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     s += "                                    <div class=\"tips\">S<\/div>";
     s += "                                <\/div>";
     s += "                            <\/div>";
-    /*
-    s += "                            <hr>";
-    s += "                            <div class=\"groupe\">";
-    s += "                                <div class=\"item\" onclick=\"addRemoveClass('class','menu','active');\">";
-    s += "                                    <svg><use xlink:href=\"#icHeart\"><\/use><\/svg>";
-    s += "                                    <span>About<\/span>";
-    s += "                                <\/div>";
-    s += "                            <\/div>";
-    */
     s += "                <\/div>";
     s += "                <div id=\"btnMenu\" class=\"btnMenu\" onclick=\"addRemoveClass('class', 'menu', 'active')\">";
     s += "                    <svg class='svgIcon'><use xlink:href=\"#icMenu\"><\/use><\/svg>";
@@ -339,7 +330,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     s += "                    <div id=\"nav-left-next\" class=\"btnNext\" onclick=\"viewer.next(); return false;\" title=\"Next screen\"><svg class='svgIcon'><use xlink:href=\"#icArrwRight\"><\/use><\/svg><\/div>";
     s += "                <\/div>";
     s += "            <\/div>";
-    s += "            <div class=\"navCenter\"><div class=\"pageName title\">Default button<\/div><\/div>";
+    s += "            <div class=\"navCenter\"><div class=\"pageName title\">Default button<\/div><div class=\"pageComments\" style='display:none'><\/div><\/div>";
     s += "            <div class=\"navRight\">";
     s += "            <\/div>";
     s += "        <\/div>";

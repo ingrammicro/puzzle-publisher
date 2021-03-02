@@ -5,6 +5,8 @@ class CommentsViewer extends AbstractViewer {
     constructor() {
         super()
 
+        this.alwaysHandlePageChanged = true
+
         this.comments = null
         this.inputFocused = false
         commentsViewer = this
@@ -44,6 +46,10 @@ class CommentsViewer extends AbstractViewer {
     }
 
     pageChanged() {
+        if (!this.visible) {
+
+            return
+        }
         if (!this.inited) return this.initialize();
         comments.reloadComments()
     }

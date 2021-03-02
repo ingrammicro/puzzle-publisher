@@ -817,9 +817,10 @@ body {
   justify-content: center;
 }
 
-.btnMenu,
-.navPreviewNext,
-.pageName {
+.nav .btnMenu,
+.nav .navPreviewNext,
+.nav .pageComments,
+.nav .pageName {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -856,9 +857,12 @@ body {
   height: 36px;
 }
 
-.pageName {
+.nav .pageName {
   padding: 0 12px;
 }
+.nav .pageComments {
+    padding: 0 12px;
+  }
 
 .btnMenu:hover,
 .btnPreview:hover,
