@@ -316,6 +316,8 @@ EOL
     // return previous visited date and save new
     protected function getUserVisited($uid){        
         $visited = time();
+        if(""==$uid) return $visited;
+        ///
         $data = ["visited"=>$visited];
         // Check if folder "/page-visits" exists
         if(!file_exists($this->getUserVisitsBasePath())) {
