@@ -862,7 +862,9 @@ body {
 }
 .nav .pageComments {
     padding: 0 12px;
-  }
+    background: #E0E1E1;
+    cursor: pointer;
+}
 
 .btnMenu:hover,
 .btnPreview:hover,

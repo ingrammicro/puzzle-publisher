@@ -188,6 +188,21 @@ EOL
         Forum::$o->sendEmail($email);
     }
     
+    public function getInfo(){
+        // return empty data for non-created page
+        $res = [
+            'commentsTotal'=>0,
+            'commentsNew'=>0
+        ];
+        if(null==$this->intID) return $res;
+        //
+        // load data for existing page
+        if(False===$this->load()) return False;
+        //
+        $res['commentsTotal'] = count($this->info['comments']);
+        return $res;
+    }
+
     public function getExtendedComments(){
         // return empty data for non-created page
         if(null==$this->intID) return [
@@ -225,7 +240,6 @@ EOL
             'users'=>$userList,
             'visited'=>$visited
         ];
-        error_log($visited);
     }
 
     protected function init(){
@@ -234,7 +248,6 @@ EOL
          if("" == $this->pubID) return $this->setError(ERROR_PAGE_EMPTY_ID);
         //        
         $this->intID = $forum->getPageIntIDByPubID($this->pubID);
-        if(False===$this->intID) $this->intID = null;
         return True;
     }
 
@@ -244,7 +257,6 @@ EOL
         if("" == $this->pubID) return $this->setError(ERROR_PAGE_EMPTY_ID);
         
         // find page data in forum config   
-        $this->intID = $forum->getPageIntIDByPubID($this->pubID);
         if(False===$this->intID){
             // create new page
             $this->intID = $forum->generatePageIntIDForPubID($this->pubID);
@@ -601,8 +613,10 @@ EOL
 
     public function buildPage(){
         $pagePubID = $_SERVER['HTTP_REFERER'];
+        error_log($pagePubID);
         $pattern = '/(.+)\/(\d+)\/(.+)/i';
         $pagePubID = preg_replace($pattern, "$1/live/$3",$pagePubID);
+        error_log($pagePubID);
         return Page::build($pagePubID);
     }
 

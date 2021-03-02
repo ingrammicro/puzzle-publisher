@@ -65,7 +65,15 @@ if('login'==$cmd){
     // Send authroization code
     $res = $forum->auth();
     if(False===$res) exitError($forum->lastError);
-    exitSuccess("User authorized and logged",$res);
+    exitSuccess("User authorized and logged",$res);    
+}else if('getInfo'==$cmd){
+    $page = $forum->buildPage();
+    if($page->lastError!="") exitError($page->lastError);
+    // load data
+    $info = $page->getInfo();
+    if(False===$info) exitError($page->lastError);
+    // build result
+    exitSuccess("Info loaded",$info);
 }else if('buildFullHTML'==$cmd){
     $page = $forum->buildPage();
     if($page->lastError!="") exitError($page->lastError);

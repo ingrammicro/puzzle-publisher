@@ -46,8 +46,8 @@ class CommentsViewer extends AbstractViewer {
     }
 
     pageChanged() {
+        this._showCommentCounter()
         if (!this.visible) {
-
             return
         }
         if (!this.inited) return this.initialize();
@@ -74,6 +74,33 @@ class CommentsViewer extends AbstractViewer {
         return true
     }
     /////////////////////////////////////////////////
+
+    _showCommentCounter() {
+        var formData = new FormData();
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", story.commentsURL + "&cmd=getInfo", true);
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.onload = function () {
+            var result = JSON.parse(this.responseText);
+            //
+            if ("ok" == result.status) {
+                var div = $('#nav .navCenter .pageComments')
+                if (result.data.commentsTotal > 0) {
+                    div.html(result.data.commentsTotal);
+                    div.show()
+                } else {
+                    div.hide()
+                }
+            } else {
+                console.log(result.message);
+            }
+            return
+
+        };
+        xhr.send(formData);
+
+    }
 
     _showComments() {
         var formData = new FormData();

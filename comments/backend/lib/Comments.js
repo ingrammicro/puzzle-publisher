@@ -471,6 +471,23 @@ class Comments {
         return this.sendCommand("logout", formData, handler);
     }
     ////////
+    reloadComments() {
+        ///
+        var formData = new FormData();
+        var handler = function () {
+            var result = JSON.parse(this.responseText);
+            if (comments.processRequestResult(result)) return
+            //                        
+            if (result.status != 'ok') {
+                console.log(result.message)
+            } else {
+                $("#comments_viewer #comments").html(result.data)
+            }
+        }
+        //    
+        return comments.sendCommand("buildCommentsHTML", formData, handler);
+    }
+    ///////
     build(commentList) {
         this.commentList = commentList
         //        
