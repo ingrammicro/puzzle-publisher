@@ -114,9 +114,15 @@ class Page
     }
 
     public function addComment(){
+        error_log("intID=".$this->intID);
         $forum = Forum::$o;
         // Load page
         if(!$this->load()) return False;
+        // Create if required        
+        if(False==$this->intID && !$this->create()) return False;
+
+        error_log("intID=".$this->intID);
+
         // Validate user
         $uid = $forum->uid;
         if(False===$uid) return False;
@@ -253,24 +259,31 @@ EOL
 
     protected function load(){
         $forum  = Forum::$o;
-         // Check data
+
+         // Check ID
         if("" == $this->pubID) return $this->setError(ERROR_PAGE_EMPTY_ID);
         
         // find page data in forum config   
         if(False===$this->intID){
-            // create new page
-            $this->intID = $forum->generatePageIntIDForPubID($this->pubID);
-            $this->info = DEF_PAGE_INFO;                        
-            $this->info['ownerName'] =  http_post_param("pageOwnerName");
-            $this->info['ownerEmail'] =  http_post_param("pageOwnerEmail");
-            if(False===$this->saveToJSON())
-                return $this->setError(ERROR_CANT_SAVE_PAGE);            
+            return True;
         }else{
             $this->info = $this->loadJSON();
             if(""!=$this->lastError) return False;
         }
         //        
         return True;
+    }
+
+    protected function create(){
+     
+        // create new page
+        $this->intID = Forum::$o->generatePageIntIDForPubID($this->pubID);
+        $this->info = DEF_PAGE_INFO;                        
+        $this->info['ownerName'] =  http_post_param("pageOwnerName");
+        $this->info['ownerEmail'] =  http_post_param("pageOwnerEmail");
+        if(False===$this->saveToJSON())
+            return $this->setError(ERROR_CANT_SAVE_PAGE);         
+        return True;   
     }
 
     protected function save(){
@@ -407,7 +420,7 @@ class Forum
         
         if(False===$this->saveForumConfig()) return False;
 
-        return True;
+        return $newIntID;
     }
     public function getPageIntIDByPubID($pubID){
         if(!array_key_exists($pubID,$this->config['pages'])){
@@ -613,10 +626,9 @@ EOL
 
     public function buildPage(){
         $pagePubID = $_SERVER['HTTP_REFERER'];
-        error_log($pagePubID);
         $pattern = '/(.+)\/(\d+)\/(.+)/i';
         $pagePubID = preg_replace($pattern, "$1/live/$3",$pagePubID);
-        error_log($pagePubID);
+        $pagePubID = preg_replace('/(.+)\&(.+)/', "$1",$pagePubID);
         return Page::build($pagePubID);
     }
 

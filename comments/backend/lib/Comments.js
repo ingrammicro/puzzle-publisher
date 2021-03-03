@@ -400,6 +400,7 @@ class Comments {
     constructor(forumID, url, sid, user) {
         this.forumID = forumID
         this.url = url
+        this.currentPage = null
 
         // load user data from browser storage   
         this.sid = sid
@@ -481,11 +482,11 @@ class Comments {
             if (result.status != 'ok') {
                 console.log(result.message)
             } else {
-                $("#comments_viewer #comments").html(result.data)
+                comments.build(result.data)
             }
         }
         //    
-        return comments.sendCommand("buildCommentsHTML", formData, handler);
+        return comments.sendCommand("getComments", formData, handler);
     }
     ///////
     build(commentList) {
@@ -544,6 +545,7 @@ class Comments {
         this.commentList['comments'].reverse().forEach(function (comment) {
             if (undefined != comment['markX']) {
                 let uid = comment['uid']
+                console.log(counter)
                 this.addCircleToScene(uid, comment['markX'], comment['markY'], counter)
             }
             counter--
@@ -562,6 +564,7 @@ class Comments {
         </div>`
         page.linksDiv.append(code)
         //        
+        this.currentPage = page
     }
     addCircleToScene(id, x, y, number = "") {
         let r = 20

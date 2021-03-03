@@ -85,6 +85,15 @@ if('login'==$cmd){
     $html .= Frontend::buildFullHTML( $forum,$page,$commentsInfo); 
     //
     exitSuccess("",$html);
+}else if('getComments'==$cmd){
+    $page = $forum->buildPage();
+    if($page->lastError!="") exitError($page->lastError);
+    // load data
+    $commentsInfo = $page->getExtendedComments();
+    if(False===$commentsInfo) exitError($page->lastError);
+    // build html    
+    //
+    exitSuccess("",$commentsInfo);
 }else if('buildCommentsHTML'==$cmd){
     $page = $forum->buildPage();
     if($page->lastError!="") exitError($page->lastError);
