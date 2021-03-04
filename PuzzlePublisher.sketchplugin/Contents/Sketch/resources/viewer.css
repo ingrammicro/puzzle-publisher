@@ -261,7 +261,7 @@ select:focus{
 }
 
 #comments_viewer_content .block{
-  padding:: 16px 20px 0 20px;
+  padding: 16px 20px 0 20px;
 }
 
 
@@ -804,7 +804,8 @@ body {
   display: flex;
 }
 
-.navLeft {
+.navLeft,
+.nav .pageComments {
   pointer-events: all;
 }
 
@@ -838,6 +839,7 @@ body {
 }
 
 .btnMenu,
+.nav .pageComments,
 .btnPreview,
 .btnNext {
   cursor: pointer;
@@ -863,10 +865,10 @@ body {
 .nav .pageComments {
     padding: 0 12px;
     background: #E0E1E1;
-    cursor: pointer;
 }
 
 .btnMenu:hover,
+.nav .pageComments:hover,
 .btnPreview:hover,
 .btnNext:hover {
   background: var(--color-hover);
@@ -875,6 +877,7 @@ body {
 }
 
 .btnMenu:active,
+.nav .pageComments:active,
 .btnPreview:active,
 .btnNext:active {
   background: var(--color-active);
@@ -964,7 +967,7 @@ hr {
 }
 
 area {
-  cursor: hand;
+  cursor: pointer;
 }
 
 /*** OVERLAYS ***/

@@ -330,7 +330,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     s += "                    <div id=\"nav-left-next\" class=\"btnNext\" onclick=\"viewer.next(); return false;\" title=\"Next screen\"><svg class='svgIcon'><use xlink:href=\"#icArrwRight\"><\/use><\/svg><\/div>";
     s += "                <\/div>";
     s += "            <\/div>";
-    s += "            <div class=\"navCenter\"><div class=\"pageName title\">Default button<\/div><div class=\"pageComments\" onclick=\"viewer.commentsViewer.toggle(); return false;\" style='display:none'><\/div><\/div>";
+    s += "            <div class=\"navCenter\"><div class=\"pageName title\">Default button<\/div><div class=\"pageComments\" onclick=\"commentsViewer.toggle(); return false;\" style='display:none'><\/div><\/div>";
     s += "            <div class=\"navRight\">";
     s += "            <\/div>";
     s += "        <\/div>";

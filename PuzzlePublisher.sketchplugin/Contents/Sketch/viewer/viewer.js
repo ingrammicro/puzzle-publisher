@@ -152,6 +152,24 @@ function createViewer(story, files) {
             this.buildUserStory();
             this.initializeHighDensitySupport();
             this.initAnimations()
+
+            /// Init Viewers
+            this.galleryViewer = new GalleryViewer()
+
+            if (story.layersExist) {
+                this.symbolViewer = new SymbolViewer()
+
+            }
+            // Create Version Viewer for published mockups with some version specified
+            if (story.docVersion != 'V_V_V') {
+                this.versionViewer = new VersionViewer()
+                $("#menu_version_viewer").removeClass("hidden");
+            }
+            if (story.commentsURL != 'V_V_C' && story.commentsURL != "") {
+                this.commentsViewer = new CommentsViewer()
+                $("#menu_comments_viewer").removeClass("hidden");
+            }
+
         },
 
         initAnimations: function () {
@@ -167,25 +185,6 @@ function createViewer(story, files) {
         },
 
         initializeLast: function () {
-            this.galleryViewer = new GalleryViewer()
-            this.allChilds.push(this.galleryViewer)
-
-            if (story.layersExist) {
-                this.symbolViewer = new SymbolViewer()
-                this.allChilds.push(this.symbolViewer)
-
-            }
-            // Create Version Viewer for published mockups with some version specified
-            if (story.docVersion != 'V_V_V') {
-                this.versionViewer = new VersionViewer()
-                $("#menu_version_viewer").removeClass("hidden");
-                this.allChilds.push(this.versionViewer)
-            }
-            if (story.commentsURL != 'V_V_C' && story.commentsURL != "") {
-                this.commentsViewer = new CommentsViewer()
-                $("#menu_comments_viewer").removeClass("hidden");
-                this.allChilds.push(this.commentsViewer)
-            }
 
             $("body").keydown(function (event) {
                 viewer.handleKeyDown(event)
@@ -638,12 +637,10 @@ function createViewer(story, files) {
                 window.scrollTo(0, 0)
             }
 
-            if (refreshURL) {
-                if (this.child) this.child.pageChanged()
-                this.allChilds.filter(c => c.alwaysHandlePageChanged).forEach(function (c) {
-                    c.pageChanged()
-                })
-            }
+            if (this.child) this.child.pageChanged()
+            this.allChilds.filter(c => c.alwaysHandlePageChanged).forEach(function (c) {
+                c.pageChanged()
+            })
 
         },
         _setupTransNext: function (msecs) {

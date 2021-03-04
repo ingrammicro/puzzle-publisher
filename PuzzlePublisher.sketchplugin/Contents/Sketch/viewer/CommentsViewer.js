@@ -85,13 +85,7 @@ class CommentsViewer extends AbstractViewer {
             var result = JSON.parse(this.responseText);
             //
             if ("ok" == result.status) {
-                var div = $('#nav .navCenter .pageComments')
-                if (result.data.commentsTotal > 0) {
-                    div.html(result.data.commentsTotal);
-                    div.show()
-                } else {
-                    div.hide()
-                }
+                commentsViewer.updateCommentCounter(result.data.commentsTotal)
             } else {
                 console.log(result.message);
             }
@@ -99,7 +93,16 @@ class CommentsViewer extends AbstractViewer {
 
         };
         xhr.send(formData);
+    }
 
+    updateCommentCounter(total) {
+        var div = $('#nav .navCenter .pageComments')
+        if (total > 0) {
+            div.html(total);
+            div.show()
+        } else {
+            div.hide()
+        }
     }
 
     _showComments() {

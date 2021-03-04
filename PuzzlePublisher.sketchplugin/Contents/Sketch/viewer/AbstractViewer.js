@@ -10,6 +10,9 @@ class AbstractViewer {
         // internal viewer props, can be read by child 
         this.inited = false
         this.visible = false
+
+        //
+        viewer.allChilds.push(this)
     }
 
 

@@ -537,6 +537,8 @@ class Comments {
             `
         }, this)
         $("#comments_viewer #comments").html(code)
+        //
+        commentsViewer.updateCommentCounter(commentList['comments'].length)
     }
     _buildMarkers() {
         this._clearScene()
