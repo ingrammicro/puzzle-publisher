@@ -513,7 +513,8 @@ class Comments {
                 <div id="title" style="font-weight:bold;">Comments</div><br/>
             `
         }
-        commentList['comments'].forEach(function (comment, counter) {
+        let counter = commentList['comments'].length
+        commentList['comments'].forEach(function (comment) {
             ///
             var createdDate = new Date(comment['created'] * 1000)
             var createdStr = createdDate.toLocaleDateString() + " " + createdDate.toLocaleTimeString()
@@ -528,13 +529,14 @@ class Comments {
             code += `
                 <div id="${commentID}" style="font-size:14px;margin-top:10px">
                 <div style="display: grid; gap:10px;grid-auto-rows: minmax(10px, auto); grid-template-columns: 10px auto">
-                    <div style="${counterStyle}">${counter + 1}</div>
+                    <div style="${counterStyle}">${counter}</div>
                     <div style="">
                         ${user['name']}<br />${createdStr}<br />${comment['msg']}
                     </div>
                 </div>                
             </div>
             `
+            counter--
         }, this)
         $("#comments_viewer #comments").html(code)
         //
@@ -587,6 +589,7 @@ class Comments {
         `
         //    `<circle id="${id}" cx="${x}" cy="${y}" r="${r}" stroke="black" stroke-width="3" fill="red"/>`
         $('#commentsScene svg').append(code)
+        console.log(code)
         $('#commentsScene').html($('#commentsScene').html())
     }
     removeCircleOnScene(id) {
