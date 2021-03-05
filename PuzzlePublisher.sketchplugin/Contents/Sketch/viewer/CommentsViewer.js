@@ -28,7 +28,7 @@ class CommentsViewer extends AbstractViewer {
         $('#comments_viewer').addClass("hidden")
         super._hideSelf()
         viewer.refresh_url(viewer.currentPage, "", false)
-        viewer.currentPage.linksDiv.show()
+        viewer.currentPage.linksDiv.children("a").show()
         this.comments.hideViewer()
     }
 
@@ -140,7 +140,7 @@ class CommentsViewer extends AbstractViewer {
         super._showSelf()
         //
         viewer.refresh_url(viewer.currentPage, "", false)
-        viewer.currentPage.linksDiv.hide()
+        viewer.currentPage.linksDiv.children("a").hide()
         //
         if (this.comments) this.comments.showViewer()
     }

@@ -260,11 +260,6 @@ select:focus{
   padding: 72px 20px 0 20px;
 }
 
-#comments_viewer_content .block{
-  padding: 16px 20px 0 20px;
-}
-
-
 #symbol_viewer_content .block{
   padding: 16px 20px 0 20px;
 }
@@ -864,7 +859,6 @@ body {
 }
 .nav .pageComments {
     padding: 0 12px;
-    background: #E0E1E1;
 }
 
 .btnMenu:hover,
