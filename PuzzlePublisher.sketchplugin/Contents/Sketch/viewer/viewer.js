@@ -35,8 +35,12 @@ function handleDecreaseVersion() {
 function handleIncreaseVersion() {
     var data = checkFolderInfoRequest(this)
     if (undefined == data) return
-    if ('' == data.link_up) return showMessage('This is the newest version.')
-    window.open(data.link_up + '?' + encodeURIComponent(viewer.currentPage.getHash()), "_self");
+    let link = data.link_up
+    if ('' == link) {
+        if (!window.confirm('This is the newest version. Go to live version?')) return
+        link = data.link_live
+    }
+    window.open(link + '?' + encodeURIComponent(viewer.currentPage.getHash()), "_self");
 }
 
 function doTransNext() {
