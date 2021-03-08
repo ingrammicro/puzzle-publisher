@@ -122,8 +122,12 @@ if('addComment'==$cmd){
     $html .= Frontend::buildCommentListHTML($page,$commentsInfo); 
     //
     exitSuccess("Added new comment",$html);
-}
-else{
+}else if('removeComment'==$cmd){
+    $page = $forum->buildPage();
+    if($page->lastError!="") exitError($page->lastError);
+    if(False===$page->removeComment()) exitError($page->lastError);
+    exitSuccess("Removed comment",""); 
+}else{
     exitError(ERROR_UNKNOWN_CMD);
 }
 

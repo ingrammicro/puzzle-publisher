@@ -488,6 +488,26 @@ class Comments {
         //    
         return comments.sendCommand("getComments", formData, handler);
     }
+    removeComment(commentID) {
+        var formData = new FormData();
+        formData.append("commentID", commentID);
+        var handler = function () {
+            var result = JSON.parse(this.responseText);
+            if (comments.processRequestResult(result)) return
+            //                        
+            if (false && result.status != 'ok') {
+                console.log(result.message)
+            } else {
+                // remove comment
+                $("#comments #" + commentID).remove()
+                // remove marker (if exists)
+                let m = $('#commentsScene svg #' + commentID)
+                if (m) m.remove()
+            }
+        }
+        //    
+        return comments.sendCommand("removeComment", formData, handler);
+    }
     ///////
     build(commentList) {
         this.commentList = commentList
@@ -525,15 +545,19 @@ class Comments {
             let uid = comment['uid']
             let user = commentList['users'][uid]
             let commentID = comment['id']
+            let actions = ""
+            if (uid == this.uid) {
+                actions += `&nbsp;<a href='#' onclick='comments.removeComment("${commentID}");return false'>X</a>`
+            }
             //
             code += `
                 <div id="${commentID}" style="font-size:14px;margin-top:10px">
-                <div style="display: grid; gap:10px;grid-auto-rows: minmax(10px, auto); grid-template-columns: 10px auto">
-                    <div style="${counterStyle}">${counter}</div>
-                    <div style="">
-                        ${user['name']}<br />${createdStr}<br />${comment['msg']}
-                    </div>
-                </div>                
+                    <div style="display: grid; gap:10px;grid-auto-rows: minmax(10px, auto); grid-template-columns: 10px auto">
+                        <div style="${counterStyle}">${counter}</div>
+                        <div style="">
+                            ${user['name']}${actions}<br />${createdStr}<br />${comment['msg']}
+                        </div>
+                    </div>                
             </div>
             `
             counter--
@@ -548,9 +572,8 @@ class Comments {
         //
         this.commentList['comments'].reverse().forEach(function (comment) {
             if (undefined != comment['markX']) {
-                let uid = comment['uid']
-                console.log(counter)
-                this.addCircleToScene(uid, comment['markX'], comment['markY'], counter)
+                let id = comment['id']
+                this.addCircleToScene(id, comment['markX'], comment['markY'], counter)
             }
             counter--
         }, this)
@@ -589,7 +612,6 @@ class Comments {
         `
         //    `<circle id="${id}" cx="${x}" cy="${y}" r="${r}" stroke="black" stroke-width="3" fill="red"/>`
         $('#commentsScene svg').append(code)
-        console.log(code)
         $('#commentsScene').html($('#commentsScene').html())
     }
     removeCircleOnScene(id) {

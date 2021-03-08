@@ -61,6 +61,12 @@ const ERROR_PAGE_VISITS_CANT_DECODE_FILE           = "#011.003";
 const ERROR_PAGE_VISITS_CANT_ENCODE_FILE           = "#011.004";
 const ERROR_PAGE_VISITS_CANT_SAVE_FILE           = "#011.005";
 
+
+// 012.REMOVE COMMENT
+const ERROR_REMOVE_COMMENT_NOPAGE             = "#012.001";
+const ERROR_REMOVE_COMMENT_COMMENTID_EMPTY          ="#012.002";
+
+
 ////////////////////////////////////////////////////////////////
 const DEF_USER_INFO = [
     "name"=>"",    
@@ -114,14 +120,11 @@ class Page
     }
 
     public function addComment(){
-        error_log("intID=".$this->intID);
         $forum = Forum::$o;
         // Load page
         if(!$this->load()) return False;
         // Create if required        
         if(False==$this->intID && !$this->create()) return False;
-
-        error_log("intID=".$this->intID);
 
         // Validate user
         $uid = $forum->uid;
@@ -146,6 +149,26 @@ class Page
         /// Send notification
         $this->notify($comment);
         return True;        
+    }
+
+    public function removeComment(){
+        $forum = Forum::$o;
+        // Load page
+        if(!$this->load()) return False;
+        // Skip non-existing page
+        if(False==$this->intID) return $this->setError(ERROR_REMOVE_COMMENT_NOPAGE);
+
+        // Try to remove the comment by ID
+        $commentID = http_post_param("commentID");
+        if(""==$commentID){
+            return $this->setError(ERROR_REMOVE_COMMENT_COMMENTID_EMPTY);
+        }
+        $this->info['comments'] = array_values(array_filter($this->info['comments'],function($c) use ($commentID){            
+            return $c['id']!=$commentID;
+        }));
+        /// Save  
+        if(!$this->save()) return False;
+        return True;
     }
 
     private function notify($comment){
