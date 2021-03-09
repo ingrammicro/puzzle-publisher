@@ -127,6 +127,11 @@ if('addComment'==$cmd){
     if($page->lastError!="") exitError($page->lastError);
     if(False===$page->removeComment()) exitError($page->lastError);
     exitSuccess("Removed comment",""); 
+}else if('updateComment'==$cmd){
+    $page = $forum->buildPage();
+    if($page->lastError!="") exitError($page->lastError);
+    if(False===$page->updateComment()) exitError($page->lastError);
+    exitSuccess("Comment updated",""); 
 }else{
     exitError(ERROR_UNKNOWN_CMD);
 }

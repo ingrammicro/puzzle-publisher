@@ -68,7 +68,12 @@ const ERROR_REMOVE_COMMENT_COMMENTID_EMPTY          ="#012.002";
 const ERROR_REMOVE_COMMENT_NOCOMMENT                ="#012.003";
 const ERROR_REMOVE_COMMENT_WRONG_OWNER              ="#012.004";
 
-
+// 013.UPDATE COMMENT
+const ERROR_UPDATE_COMMENT_NOPAGE                  = "#013.001";
+const ERROR_UPDATE_COMMENT_COMMENTID_EMPTY          ="#013.002";
+const ERROR_UPDATE_COMMENT_NOCOMMENT                ="#013.003";
+const ERROR_UPDATE_COMMENT_WRONG_OWNER              ="#013.004";
+const ERROR_UPDATE_COMMENT_MSG_EMPTY                ="#013.005";
 ////////////////////////////////////////////////////////////////
 const DEF_USER_INFO = [
     "name"=>"",    
@@ -185,6 +190,44 @@ class Page
         return True;
     }
 
+    public function updateComment(){
+        $forum = Forum::$o;
+        // Load page
+        if(!$this->load()) return False;
+        // Skip non-existing page
+        if(False==$this->intID) return $this->setError(ERROR_UPDATE_COMMENT_NOPAGE);
+
+        // Try to remove the comment by ID
+        $commentID = http_post_param("commentID");
+        if(""==$commentID){
+            return $this->setError(ERROR_UPDATE_COMMENT_COMMENTID_EMPTY);
+        }
+        // Check comment ownership
+        $commentsToUpdate = array_values(array_filter($this->info['comments'],function($c) use ($commentID){            
+            return $c['id']==$commentID;
+        }));
+        if(count( $commentsToUpdate )==0){
+            return $this->setError(ERROR_UPDATE_COMMENT_NOCOMMENT);
+        }
+        $commentToUpdate =  $commentsToUpdate[0];
+        if($commentToUpdate['uid']!=$forum->uid){
+            return $this->setError(ERROR_UPDATE_COMMENT_WRONG_OWNER);
+        }
+        // Check new data
+        $msg = http_post_param("msg");
+        if(""==$commentID){
+            return $this->setError(ERROR_UPDATE_COMMENT_MSG_EMPTY);
+        }
+        // UPDATE
+        array_walk($this->info['comments'],function($c,$key) use ($commentID,$msg){
+            if($c['id']==$commentID)
+                $this->info['comments'][$key]['msg'] = $msg;
+        });
+        /// Save  
+        if(!$this->save()) return False;
+        return True;
+    }
+
     private function notify($comment){
         $forum = Forum::$o;
 
@@ -262,7 +305,7 @@ EOL
         $userList = [];
         foreach ($comments as &$comment) {
             // find user by UID            
-            $uid = $comment['uid'];
+            $uid = $comment['uid'];            
             $email = "";
             $user = null;
             if(!array_key_exists($uid,$usersInfo['list'])){    

@@ -1,3 +1,10 @@
+function commentReplaceEnds(value) {
+    return value.replace(new RegExp('\r?\n', 'g'), '<br/>')
+}
+function commentReplaceBackEnds(value) {
+    return value.replace(/<br ?\/?>/ig, "\n");
+}
+
 class CommentsAbstractForm {
     constructor(formName) {
         this.formName = formName
@@ -240,8 +247,8 @@ class CommentsAuthForm extends CommentsAbstractForm {
     }
 
 }
-////////////////// COMMENT FORM /////////
-class CommentsCommentForm extends CommentsAbstractForm {
+////////////////// NEW COMMENT FORM /////////
+class CommentsNewCommentForm extends CommentsAbstractForm {
     constructor() {
         super("commentForm")
         this.msg = ""
@@ -263,39 +270,42 @@ class CommentsCommentForm extends CommentsAbstractForm {
     getDataFromForm() {
         this.msg = $("#comments_viewer #commentForm #msg").val();
     }
-    buildHTML() {
-        super.buildHTML()
+    getHTML() {
         let borderStyle = "border: none;font-size:14px;background-color:#008CBA;color:white;width:100px;height:30px"
         let borderSecStyle = "border: none;font-size:14px;background-color:#e7e7e7; color: black;width:100px;height:30px"
         let textareaStyle = "font-size:14px;width:330px"
         let s = `
-    <div id = 'commentForm'  style="display:none;font-size:14px;">
-        <div id="user">
-            ${comments.user.name}&nbsp<a href="#" onclick="comments.logout();return false;">Logout</a>
-            <br/><br/>
-        </div>
-        <div id="error" style="color:red">
-        </div>        
-        <div>
-            <textarea id="msg" style="${textareaStyle}" rows="5" cols="20" placeholder="New comment"></textarea>
-        </div>
-        <div id="buttons" style="display: grid; gap:10px;grid-auto-rows: minmax(10px, auto); grid-template-columns: 110px auto">
+        <div id="commentForm" style="display:none;font-size:14px;">
+            <div id="user">
+                ${comments.user.name}&nbsp<a href="#" onclick="comments.logout();return false;">Logout</a>
+                <br/><br/>
+            </div>    
+            <div id="error" style="color:red" ></div>
             <div>
-                <input id="send"  style="${borderStyle}" type="button" onclick="comments.commentForm.submit();return false;" value="Send"/>
+                <textarea id="msg" style="${textareaStyle}" rows="5" cols="20" placeholder="New comment"></textarea>
             </div>
-            <div id="addMarker" >
-                <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.startMarkerMove();return false" value="Set Marker"/>
+            <div id="buttons" style="display: grid; gap:10px;grid-auto-rows: minmax(10px, auto); grid-template-columns: 110px auto">
+                <div>
+                    <input id="send"  style="${borderStyle}" type="button" onclick="comments.commentForm.submit();return false;" value="Send"/>
+                </div>
+                <div id="addMarker" >
+                    <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.startMarkerMove();return false" value="Set Marker"/>
+                </div>
+                <div id="dropMarker" style="display:none">
+                    <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.stopMarkerMove();return false" value="Drop Marker"/>
+                </div>
+                <div id="editMarker" style="display:none">
+                    <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.startMarkerMove();return false" value="Move Marker"/>
+                    &nbsp;
+                    <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.dropMarker();return false" value="Drop"/>
+                </div>           
             </div>
-            <div id="dropMarker" style="display:none">
-                <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.stopMarkerMove();return false" value="Drop Marker"/>
-            </div>
-            <div id="editMarker" style="display:none">
-                <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.startMarkerMove();return false" value="Move Marker"/>
-                &nbsp;
-                <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.dropMarker();return false" value="Drop"/>
-            </div>           
-        </div>
-    </div>`
+        </div> `
+        return s
+    }
+    buildHTML() {
+        super.buildHTML()
+        let s = this.getHTML()
         $("#comments_viewer #top").append(s);
         this._tuneInput("msg", "textarea")
     }
@@ -395,6 +405,184 @@ class CommentsCommentForm extends CommentsAbstractForm {
         if (this.cursorEnabled) this.stopMarkerMove()
     }
 }
+////////////////// EDIT COMMENT FORM /////////
+class CommentsEditCommentForm extends CommentsAbstractForm {
+    constructor(commentID) {
+        super("editCommentForm")
+        this.commentID = ""
+        //
+        this.msg = ""
+        this.cursorEnabled = false
+        this.markX = null
+        this.markY = null
+    }
+    build(commentID) {
+        this.commentID = commentID
+        this.msgDiv = $("#comments #" + this.commentID + " #msg")
+        if (!this.msgDiv) return false
+        this.msg = commentReplaceBackEnds(this.msgDiv.text())
+        //
+        this.buildHTML()
+        this.putDataInForm()
+        //
+        return true
+    }
+    putDataInForm() {
+        this._setInputValue("msg", this.msg)
+    }
+    // Check data
+    checkData() {
+        if ("" == this.msg) {
+            this.showError("Specify message");
+            return false;
+        }
+        return true
+    }
+    cancel() {
+        this.msgDiv.html(this.msg)
+        comments.editCommentForm = null
+    }
+    getDataFromForm() {
+        this.msg = commentReplaceBackEnds($("#comments #" + this.commentID + " #editCommentForm #msg").val())
+    }
+    getHTML() {
+        let borderStyle = "border: none;font-size:14px;background-color:#008CBA;color:white;width:100px;height:30px"
+        let borderSecStyle = "border: none;font-size:14px;background-color:#e7e7e7; color: black;width:100px;height:30px"
+        let textareaStyle = "font-size:14px;width:330px"
+        let s = `
+    <div id = 'editCommentForm'  style="font-size:14px;">        
+        <div id = "error" style = "color:red" ></div>
+        <div>
+            <textarea id="msg" style="${textareaStyle}" rows="5" cols="20" ></textarea>
+        </div>
+        <div id="buttons" style="display: grid; gap:10px;grid-auto-rows: minmax(10px, auto); grid-template-columns: 110px auto">
+            <div>
+                <input id="send"  style="${borderStyle}" type="button" onclick="comments.editCommentForm.submit();return false;" value="Save"/>
+            </div>
+            <div>
+                <input id="send"  style="${borderSecStyle}" type="button" onclick="comments.editCommentForm.cancel();return false;" value="Cancel"/>
+            </div>
+        `/*
+            <div id="addMarker" >
+                <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.startMarkerMove();return false" value="Set Marker"/>
+            </div>
+            <div id="dropMarker" style="display:none">
+                <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.stopMarkerMove();return false" value="Drop Marker"/>
+            </div>
+            <div id="editMarker" style="display:none">
+                <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.startMarkerMove();return false" value="Move Marker"/>
+                &nbsp;
+                <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.dropMarker();return false" value="Drop"/>
+            </div>           
+            */
+        s += `
+        </div>
+    </div > `
+        return s
+    }
+    buildHTML() {
+        super.buildHTML()
+        let s = this.getHTML()
+        this.msgDiv.html(s)
+        this._tuneInput("msg", "textarea")
+        return true
+    }
+    startMarkerMove() {
+        //
+        if (null != this.markX) {
+            commentsViewer.comments.removeCircleOnScene("new")
+            this.markX = null
+            this.markY = null
+        }
+        //
+        viewer.currentPage.imageDiv.css("cursor", "url('resources/cursormap.png'), auto")
+        viewer.currentPage.imageDiv.click(function () {
+            commentsViewer.comments.commentForm.saveMarker()
+        })
+        $("#comments_viewer #addMarker").hide()
+        $("#comments_viewer #dropMarker").show()
+        $("#comments_viewer #editMarker").hide()
+        //
+        this.cursorEnabled = true
+        viewer.setMouseMoveHandler(this)
+    }
+    stopMarkerMove() {
+        viewer.currentPage.imageDiv.css("cursor", "")
+        viewer.currentPage.imageDiv.off("click")
+        viewer.setMouseMoveHandler(null)
+        this.cursorEnabled = false
+        $("#comments_viewer #addMarker").show()
+        $("#comments_viewer #dropMarker").hide()
+        $("#comments_viewer #editMarker").hide()
+    }
+    onMouseMove(x, y) {
+        this.x = Math.round(x / viewer.currentZoom) - viewer.currentPage.currentLeft
+        this.y = Math.round(y / viewer.currentZoom) - viewer.currentPage.currentTop
+    }
+    saveMarker() {
+        this.stopMarkerMove()
+        //
+        this.markX = this.x
+        this.markY = this.y
+        //
+        commentsViewer.comments.addCircleToScene("new", this.markX, this.markY)
+        $("#comments_viewer #addMarker").hide()
+        $("#comments_viewer #dropMarker").hide()
+        $("#comments_viewer #editMarker").show()
+    }
+    dropMarker() {
+        this.markX = null
+        this.markY = null
+        commentsViewer.comments.removeCircleOnScene("new")
+        //
+        $("#comments_viewer #addMarker").show()
+        $("#comments_viewer #editMarker").hide()
+        $("#comments_viewer #dropMarker").hide()
+    }
+    submit() {
+        this.getDataFromForm();
+        if (!this.checkData()) return false;
+        ///
+        var formData = new FormData();
+        formData.append("msg", this.msg);
+        formData.append("commentID", this.commentID);
+        if (null != this.markX) {
+            formData.append("markX", this.markX);
+            formData.append("markY", this.markY);
+        }
+        //
+        var handler = function () {
+            var form = comments.editCommentForm
+            var result = JSON.parse(this.responseText);
+            if (comments.processRequestResult(result)) return
+            //                        
+            console.log(this.responseText)
+            if (result.status != 'ok') {
+                form.showError(result.message)
+            } else {
+                console.log(result)
+                form.cancel()
+                //form.clear()
+                //$("#comments_viewer #comments").html(result.data)
+            }
+        }
+        //    
+        return comments.sendCommand("updateComment", formData, handler);
+    }
+    clear() {
+        this.msg = ""
+        this.dropMarker()
+        this.showError("")
+        super.clear()
+    }
+    hide() {
+        if (this.cursorEnabled) this.stopMarkerMove()
+        super.hide()
+    }
+    hideViewer() {
+        if (this.cursorEnabled) this.stopMarkerMove()
+    }
+}
 ////
 class Comments {
     constructor(forumID, url, sid, user) {
@@ -415,7 +603,8 @@ class Comments {
         this.currentForm = null
         this.loginForm = new CommentsLoginForm()
         this.authForm = new CommentsAuthForm()
-        this.commentForm = new CommentsCommentForm()
+        this.commentForm = new CommentsNewCommentForm()
+        this.editCommentForm = null
         //
         this.inputFocused = false
         commentsViewer.comments = this
@@ -509,6 +698,14 @@ class Comments {
         //    
         return comments.sendCommand("removeComment", formData, handler);
     }
+    editComment(commentID) {
+        // Create edit form
+        this.editCommentForm = new CommentsEditCommentForm()
+        if (!this.editCommentForm.build(commentID)) {
+            this.editCommentForm = null
+            return false
+        }
+    }
     ///////
     build(commentList) {
         this.commentList = commentList
@@ -531,8 +728,8 @@ class Comments {
         //
         if (commentList['comments'].length > 0) {
             code += `
-                <div id="title" style="font-weight:bold;">Comments</div><br/>
-            `
+            <div id = "title" style = "font-weight:bold;" >Comments</div> <br />
+        `
         }
         let counter = commentList['comments'].length
         commentList['comments'].forEach(function (comment) {
@@ -548,17 +745,19 @@ class Comments {
             let commentID = comment['id']
             let actions = ""
             if (uid == this.uid) {
-                actions += `&nbsp;<a href='#' onclick='comments.removeComment("${commentID}");return false'>X</a>`
+                actions += `&nbsp; <a href="#" onclick="comments.editComment('${commentID}');return false">Edit</a>`
+                actions += `&nbsp; <a href="#" onclick="comments.removeComment('${commentID}');return false">Remove</a>`
             }
             //
             code += `
-                <div id="${commentID}" style="font-size:14px;margin-top:10px">
-                    <div style="display: grid; gap:10px;grid-auto-rows: minmax(10px, auto); grid-template-columns: 10px auto">
-                        <div style="${counterStyle}">${counter}</div>
-                        <div style="">
-                            <a href="mailto:${user['email']}">${user['name']}</a>${actions}<br />${createdStr}<br />${comment['msg']}
-                        </div>
-                    </div>                
+            <div id = "${commentID}" style = "font-size:14px;margin-top:10px" >
+                <div style="display: grid; gap:10px;grid-auto-rows: minmax(10px, auto); grid-template-columns: 10px auto">
+                    <div style="${counterStyle}">${counter}</div>
+                    <div style="">
+                        ${user['name']}${actions}<br/>${createdStr}<br/>
+                        <span id="msg">${commentReplaceEnds(comment['msg'])}<span>
+                    </div>                    
+                </div>
             </div>
             `
             counter--
@@ -587,11 +786,11 @@ class Comments {
         let width = page.imageDiv.width()
         let height = page.imageDiv.height()
 
-        let code = `<div id="commentsScene"><svg height="${height}" width="${width}">           
-        </svg>
-        </div>`
+        let code = `<div id="commentsScene"><svg height="${height}" width="${width}">
+                    </svg>
+                    </div>`
         page.linksDiv.append(code)
-        //        
+        //
         this.currentPage = page
     }
     addCircleToScene(id, x, y, number = "") {
@@ -600,18 +799,18 @@ class Comments {
         y = Number(y) - 20
         let code = `
         <svg id="${id}" x="${x}" y="${y}" width="42" height="60">
-        <style>
-        .small { font: 13px sans-serif; }
+                        <style>
+                            .small {font: 13px sans-serif; }
         </style>
-        <g>        
-        <circle cx="25" cy="20" r="10" fill="white"/>
-        <text x="25" y="18" dy="0" class="small" dominant-baseline="middle" text-anchor="middle">${number}</text>        
-        <path style=" stroke:none;fill-rule:nonzero;fill:rgb(255,79,79);fill-opacity:1;" d="M 25 0 L 25 7.523438 C 30.1875 7.523438 34.394531 11.730469 34.394531 16.917969 C 34.394531 22.105469 30.1875 26.308594 25 26.308594 L 25 50 C 25 50 41.917969 26.257812 41.917969 16.917969 C 41.917969 7.574219 34.34375 0 25 0 Z M 25 0 "/>
-        <path style=" stroke:none;fill-rule:nonzero;fill:rgb(255,179,179);fill-opacity:1;" d="M 25 26.308594 C 19.8125 26.308594 15.605469 22.105469 15.605469 16.917969 C 15.605469 11.730469 19.8125 7.523438 25 7.523438 L 25 0 C 15.65625 0 8.082031 7.574219 8.082031 16.917969 C 8.082031 26.257812 25 50 25 50 Z M 25 26.308594 "/>
-        </g>
-        </svg>
+                        <g>
+                            <circle cx="25" cy="20" r="10" fill="white"/>
+                            <text x="25" y="18" dy="0" class="small" dominant-baseline="middle" text-anchor="middle">${number}</text>
+                            <path style=" stroke:none;fill-rule:nonzero;fill:rgb(255,79,79);fill-opacity:1;" d="M 25 0 L 25 7.523438 C 30.1875 7.523438 34.394531 11.730469 34.394531 16.917969 C 34.394531 22.105469 30.1875 26.308594 25 26.308594 L 25 50 C 25 50 41.917969 26.257812 41.917969 16.917969 C 41.917969 7.574219 34.34375 0 25 0 Z M 25 0 " />
+                            <path style=" stroke:none;fill-rule:nonzero;fill:rgb(255,179,179);fill-opacity:1;" d="M 25 26.308594 C 19.8125 26.308594 15.605469 22.105469 15.605469 16.917969 C 15.605469 11.730469 19.8125 7.523438 25 7.523438 L 25 0 C 15.65625 0 8.082031 7.574219 8.082031 16.917969 C 8.082031 26.257812 25 50 25 50 Z M 25 26.308594 " />
+                        </g>
+                    </svg>
         `
-        //    `<circle id="${id}" cx="${x}" cy="${y}" r="${r}" stroke="black" stroke-width="3" fill="red"/>`
+        //    `<circle id="${id}" cx="${x}" cy="${y}" r="${r}" stroke="black" stroke-width="3" fill="red" />`
         $('#commentsScene svg').append(code)
         $('#commentsScene').html($('#commentsScene').html())
     }
