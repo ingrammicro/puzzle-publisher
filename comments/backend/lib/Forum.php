@@ -65,6 +65,8 @@ const ERROR_PAGE_VISITS_CANT_SAVE_FILE           = "#011.005";
 // 012.REMOVE COMMENT
 const ERROR_REMOVE_COMMENT_NOPAGE             = "#012.001";
 const ERROR_REMOVE_COMMENT_COMMENTID_EMPTY          ="#012.002";
+const ERROR_REMOVE_COMMENT_NOCOMMENT                ="#012.003";
+const ERROR_REMOVE_COMMENT_WRONG_OWNER              ="#012.004";
 
 
 ////////////////////////////////////////////////////////////////
@@ -163,6 +165,18 @@ class Page
         if(""==$commentID){
             return $this->setError(ERROR_REMOVE_COMMENT_COMMENTID_EMPTY);
         }
+        // Check comment ownership
+        $commentsToRemove = array_values(array_filter($this->info['comments'],function($c) use ($commentID){            
+            return $c['id']==$commentID;
+        }));
+        if(count( $commentsToRemove )==0){
+            return $this->setError(ERROR_REMOVE_COMMENT_NOCOMMENT);
+        }
+        $commentToRemove =  $commentsToRemove[0];
+        if($commentToRemove['uid']!=$forum->uid){
+            return $this->setError(ERROR_REMOVE_COMMENT_WRONG_OWNER);
+        }
+        // Remove
         $this->info['comments'] = array_values(array_filter($this->info['comments'],function($c) use ($commentID){            
             return $c['id']!=$commentID;
         }));
