@@ -224,9 +224,9 @@ class CommentsAuthForm extends CommentsAbstractForm {
 
                 comments.saveSessionInBrowser()
 
-                console.log(result);
                 form.hide()
                 comments.commentForm.show()
+                comments.reloadComments()
             }
         }
         //    
@@ -495,8 +495,9 @@ class Comments {
             var result = JSON.parse(this.responseText);
             if (comments.processRequestResult(result)) return
             //                        
-            if (false && result.status != 'ok') {
+            if (result.status != 'ok') {
                 console.log(result.message)
+                alert("Can't remove the comment. " + result.message)
             } else {
                 // remove comment
                 $("#comments #" + commentID).remove()
@@ -555,7 +556,7 @@ class Comments {
                     <div style="display: grid; gap:10px;grid-auto-rows: minmax(10px, auto); grid-template-columns: 10px auto">
                         <div style="${counterStyle}">${counter}</div>
                         <div style="">
-                            ${user['name']}${actions}<br />${createdStr}<br />${comment['msg']}
+                            <a href="mailto:${user['email']}">${user['name']}</a>${actions}<br />${createdStr}<br />${comment['msg']}
                         </div>
                     </div>                
             </div>
