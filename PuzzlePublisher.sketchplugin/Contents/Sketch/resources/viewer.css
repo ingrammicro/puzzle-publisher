@@ -693,6 +693,9 @@ text-overflow: ellipsis;
 a,
 a:focus {
   outline: none;
+  color: var(--color-link);
+  text-decoration: none;
+  font-weight: bold;
 }
 
 .transparent {
@@ -719,6 +722,7 @@ a:focus {
   --color-hover-bright: var(--color-active);
   --color-active: #EAEDF0;
   --color-border: var(--color-active);
+  --color-link:    #568AF2;
   --color-background: #FFF;
   --color-background-gallery: var(--color-primary);
   --color-background-gallery-90: rgba(64,75,88,0.90);
@@ -1120,6 +1124,7 @@ area {
     --color-hover-bright: rgba(255,255,255,.12);
     --color-active: #282828;
     --color-border: var(--color-active);
+    --color-link:    #989EA5;
     --color-background: #35363A;
     --color-background-gallery: var(--color-background);
     --color-background-gallery-90: rgba(53,54,58,0.90);
