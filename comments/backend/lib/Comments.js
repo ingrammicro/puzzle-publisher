@@ -2,7 +2,7 @@ function commentReplaceEnds(value) {
     return value.replace(new RegExp('\r?\n', 'g'), '<br/>')
 }
 function commentReplaceBackEnds(value) {
-    return value.replace(/<br ?\/?>/ig, "\n");
+    return value.replace(/<br?\/?>/ig, "\r\n");
 }
 
 class CommentsAbstractForm {
@@ -420,7 +420,8 @@ class CommentsEditCommentForm extends CommentsAbstractForm {
         this.commentID = commentID
         this.msgDiv = $("#comments #" + this.commentID + " #msg")
         if (!this.msgDiv) return false
-        this.msg = commentReplaceBackEnds(this.msgDiv.text())
+        this.msg = commentReplaceBackEnds(this.msgDiv.html())
+        console.log("z" + this.msgDiv.text())
         //
         this.buildHTML()
         this.putDataInForm()
