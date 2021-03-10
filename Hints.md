@@ -32,7 +32,7 @@ But you can follow the another way.
 ## [Hint 3](#hint3): How to set a start/home page for a prototype
 Select "Prototyping > Use Artboard as Start Point" menu item to mark/unmark the selected artboard as home.
 
-## [Hint 4](#hint4): How to export Sketch document to  HTML usigng command line
+## [Hint 4](#hint4): How to export Sketch document to HTML using command line
 Run the following command (don't forget to inject a path to your file into  a "--context" JSON file)
 
 	/Applications/Sketch.app/Contents/Resources/sketchtool/bin/sketchtool --without-activating=YES --new-instance=No run ~/Library/Application\ Support/com.bohemiancoding.sketch3/Plugins/PuzzlePublisher.sketchplugin "cmdRun"  --context='{"file":"/Users/baza/GitHub/puzzle-publisher/tests/Links2.sketch","commands":"sync,export,publish,save"}'
