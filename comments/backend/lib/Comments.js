@@ -10,7 +10,6 @@ class CommentsAbstractForm {
         this.formName = formName
         this.built = false
         //
-        this.inputStyle = ' style="font-size:12px;"'
     }
     _tuneInput(inputName, type = "input") {
         let input = $("#comments_viewer #" + this.formName + " #" + inputName)
@@ -101,10 +100,10 @@ class CommentsLoginForm extends CommentsAbstractForm {
         <div id="title" style="font-weight:bold;">Login As</div>
         <div id="error" style="color:red"></div>
         <div>
-            <input id="email" ${this.inputStyle} placeholder="Your email" />
+            <input id="email" style="${comments.styles.input}" placeholder="Your email" />
         </div>
         <div id="buttons">
-            <input id="send" type="button" onclick="comments.loginForm.submit();return false;" value="Login" />
+            <input style="${comments.styles.buttonPrimary}" id="send" type="button" onclick="comments.loginForm.submit();return false;" value="Login" />
         </div>
     </div>`
         $("#comments_viewer #top").append(s);
@@ -184,14 +183,14 @@ class CommentsAuthForm extends CommentsAbstractForm {
         </div>
         <div id="error" style="color:red"></div>         
         <div>
-            <input id="code" ${this.inputStyle} placeholder="Authorization code" />
+            <input id="code" style="${comments.styles.input}" placeholder="Authorization code" />
         </div>
         <div>
-            <input id="name" ${this.inputStyle} placeholder="Your name" />
+            <input id="name" style="${comments.styles.input}" placeholder="Your name" />
         </div>
         <div id="buttons">
-            <input id="send" type="button" onclick="comments.authForm.submit();return false;" value="Confirm" />
-            <input id="send" type="button" onclick="comments.authForm.cancel();return false;" value="Cancel" />
+            <input id="send" style="${comments.styles.buttonPrimary}" type="button" onclick="comments.authForm.submit();return false;" value="Confirm" />
+            <input id="send" style="${comments.styles.buttonSecondary}" type="button" onclick="comments.authForm.cancel();return false;" value="Cancel" />
         </div>
     </div>`
         $("#comments_viewer #top").append(s);
@@ -271,8 +270,6 @@ class CommentsNewCommentForm extends CommentsAbstractForm {
         this.msg = $("#comments_viewer #commentForm #msg").val();
     }
     getHTML() {
-        let borderStyle = "border: none;font-size:14px;background-color:#008CBA;color:white;width:100px;height:30px"
-        let borderSecStyle = "border: none;font-size:14px;background-color:#e7e7e7; color: black;width:100px;height:30px"
         let textareaStyle = "font-size:14px;width:330px"
         let s = `
         <div id="commentForm" style="display:none;font-size:14px;">
@@ -286,18 +283,18 @@ class CommentsNewCommentForm extends CommentsAbstractForm {
             </div>
             <div id="buttons" style="display: grid; gap:10px;grid-auto-rows: minmax(10px, auto); grid-template-columns: 110px auto">
                 <div>
-                    <input id="send"  style="${borderStyle}" type="button" onclick="comments.commentForm.submit();return false;" value="Send"/>
+                    <input id="send"  style="${comments.styles.buttonPrimary}" type="button" onclick="comments.commentForm.submit();return false;" value="Send"/>
                 </div>
                 <div id="addMarker" >
-                    <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.startMarkerMove();return false" value="Set Marker"/>
+                    <input style="${comments.styles.buttonSecondary}" type="button" onclick="comments.commentForm.startMarkerMove();return false" value="Set Marker"/>
                 </div>
                 <div id="dropMarker" style="display:none">
-                    <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.stopMarkerMove();return false" value="Drop Marker"/>
+                    <input style="${comments.styles.buttonSecondary}" type="button" onclick="comments.commentForm.stopMarkerMove();return false" value="Drop Marker"/>
                 </div>
                 <div id="editMarker" style="display:none">
-                    <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.startMarkerMove();return false" value="Move Marker"/>
+                    <input style="${comments.styles.buttonSecondary}" type="button" onclick="comments.commentForm.startMarkerMove();return false" value="Move Marker"/>
                     &nbsp;
-                    <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.dropMarker();return false" value="Drop"/>
+                    <input style="${comments.styles.buttonSecondary}" type="button" onclick="comments.commentForm.dropMarker();return false" value="Drop"/>
                 </div>           
             </div>
         </div> `
@@ -447,8 +444,6 @@ class CommentsEditCommentForm extends CommentsAbstractForm {
         this.msg = commentReplaceBackEnds($("#comments #" + this.commentID + " #editCommentForm #msg").val())
     }
     getHTML() {
-        let borderStyle = "border: none;font-size:14px;background-color:#008CBA;color:white;width:100px;height:30px"
-        let borderSecStyle = "border: none;font-size:14px;background-color:#e7e7e7; color: black;width:100px;height:30px"
         let textareaStyle = "font-size:14px;width:330px"
         let s = `
     <div id = 'editCommentForm'  style="font-size:14px;">        
@@ -458,22 +453,22 @@ class CommentsEditCommentForm extends CommentsAbstractForm {
         </div>
         <div id="buttons" style="display: grid; gap:10px;grid-auto-rows: minmax(10px, auto); grid-template-columns: 110px auto">
             <div>
-                <input id="send"  style="${borderStyle}" type="button" onclick="comments.editCommentForm.submit();return false;" value="Save"/>
+                <input id="send"  style="${comments.styles.buttonPrimary}" type="button" onclick="comments.editCommentForm.submit();return false;" value="Save"/>
             </div>
             <div>
-                <input id="send"  style="${borderSecStyle}" type="button" onclick="comments.editCommentForm.cancel();return false;" value="Cancel"/>
+                <input id="send"  style="${comments.styles.buttonSecondary}" type="button" onclick="comments.editCommentForm.cancel();return false;" value="Cancel"/>
             </div>
         `/*
             <div id="addMarker" >
-                <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.startMarkerMove();return false" value="Set Marker"/>
+                <input style="${comments.styles.buttonSecondary}" type="button" onclick="comments.commentForm.startMarkerMove();return false" value="Set Marker"/>
             </div>
             <div id="dropMarker" style="display:none">
-                <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.stopMarkerMove();return false" value="Drop Marker"/>
+                <input style="${comments.styles.buttonSecondary}" type="button" onclick="comments.commentForm.stopMarkerMove();return false" value="Drop Marker"/>
             </div>
             <div id="editMarker" style="display:none">
-                <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.startMarkerMove();return false" value="Move Marker"/>
+                <input style="${comments.styles.buttonSecondary}" type="button" onclick="comments.commentForm.startMarkerMove();return false" value="Move Marker"/>
                 &nbsp;
-                <input style="${borderSecStyle}" type="button" onclick="comments.commentForm.dropMarker();return false" value="Drop"/>
+                <input style="${comments.styles.buttonSecondary}" type="button" onclick="comments.commentForm.dropMarker();return false" value="Drop"/>
             </div>           
             */
         s += `
@@ -609,7 +604,14 @@ class Comments {
         //
         this.inputFocused = false
         commentsViewer.comments = this
+        //
+        this.styles = {
+            buttonPrimary: "margin-top:4px;border: none;border-radius:4px;font-size:14px;background-color:#008CBA;color:white;width:100px;height:30px",
+            buttonSecondary: "margin-top:4px;border: none;border-radius:4px;font-size:14px;background-color:#e7e7e7; color: black;width:100px;height:30px",
+            input: "font-size:16px;margin-left:0px;padding: 0.25em 0.5em;background-color:var(--color-background);border:2px solid var(--color-border);border-radius:4px;"
+        }
     }
+
     clearSession() {
         this.uid = ""
         this.sid = ""
