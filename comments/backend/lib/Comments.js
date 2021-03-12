@@ -1,9 +1,6 @@
 function commentReplaceEnds(value) {
     return value.replace(new RegExp('\r?\n', 'g'), '<br/>')
 }
-function commentReplaceBackEnds(value) {
-    return value.replace(/<br?\/?>/ig, "\r\n");
-}
 
 class CommentsAbstractForm {
     constructor(formName) {
@@ -415,10 +412,13 @@ class CommentsEditCommentForm extends CommentsAbstractForm {
     }
     build(commentID) {
         this.commentID = commentID
+
         this.msgDiv = $("#comments #" + this.commentID + " #msg")
         if (!this.msgDiv) return false
-        this.msg = commentReplaceBackEnds(this.msgDiv.html())
-        console.log("z" + this.msgDiv.text())
+
+        const comment = comments.getCommentByID(commentID)
+        if (undefined == comment) return false
+        this.msg = comment['msg']
         //
         this.buildHTML()
         this.putDataInForm()
@@ -437,11 +437,11 @@ class CommentsEditCommentForm extends CommentsAbstractForm {
         return true
     }
     cancel() {
-        this.msgDiv.html(this.msg)
+        this.msgDiv.html(commentReplaceEnds(this.msg))
         comments.editCommentForm = null
     }
     getDataFromForm() {
-        this.msg = commentReplaceBackEnds($("#comments #" + this.commentID + " #editCommentForm #msg").val())
+        this.msg = $("#comments #" + this.commentID + " #editCommentForm #msg").val()
     }
     getHTML() {
         let textareaStyle = "font-size:14px;width:330px"
@@ -708,6 +708,10 @@ class Comments {
             this.editCommentForm = null
             return false
         }
+    }
+    getCommentByID(commentID) {
+        const found = this.commentList['comments'].find(c => c['id'] == commentID)
+        return found
     }
     ///////
     build(commentList) {
