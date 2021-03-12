@@ -758,10 +758,13 @@ class Comments {
             //
             code += `
             <div id = "${commentID}" style = "font-size:14px;margin-top:10px" >
-                <div style="display: grid; gap:10px;grid-auto-rows: minmax(10px, auto); grid-template-columns: 10px auto">
-                    <div style="${counterStyle}">${counter}</div>
+                <div style="display: grid; gap:10px;grid-auto-rows: minmax(10px, auto); grid-template-columns: 10px auto auto">
+                    <div style="${counterStyle}">${counter}</div>                    
                     <div style="">
-                        ${user['name']}${actions}<br/>${createdStr}<br/>
+                        <div class="tooltip">${user['name']}
+                            <span class="tooltiptext">${user['email']}</span>
+                        </div>
+                        ${actions}<br/>${createdStr}<br/>
                         <span id="msg">${commentReplaceEnds(comment['msg'])}<span>
                     </div>                    
                 </div>
