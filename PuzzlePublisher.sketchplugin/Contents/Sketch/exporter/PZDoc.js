@@ -272,6 +272,7 @@ class PZDoc {
 
     // return Sketch native object
     _findLibraryArtboardByID(artboardID) {
+        if (exporter.ignoreLibArtboards) return false
         if (DEBUG) exporter.logMsg("findLibraryArtboardByID running...  artboardID:" + artboardID)
         // find Sketch Artboard
         var sArtboard = undefined

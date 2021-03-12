@@ -85,6 +85,8 @@ class Exporter {
         // To know do we need full-size images or not
         const miroEmail = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_MIRO_EMAIL)
         this.exportFullImages = !(miroEmail == undefined || miroEmail == null)
+
+        this.ignoreLibArtboards = this.Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_DISABLE_LIB_ARTBOARDS) == 1
     }
 
     getManifest() {

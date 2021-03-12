@@ -34,6 +34,7 @@ var onRun = function (context) {
     const disableHotspots = Settings.settingForKey(SettingKeys.PLUGIN_DISABLE_HOTSPOTS) == 1
     const dontSaveElements = Settings.settingForKey(SettingKeys.PLUGIN_DONT_SAVE_ELEMENTS) == 1
     const askCustomSize = Settings.settingForKey(SettingKeys.PLUGIN_ASK_CUSTOM_SIZE) == 1
+    const disableLibArtboards = Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_DISABLE_LIB_ARTBOARDS) == 1
 
 
     let googleCode = Settings.settingForKey(SettingKeys.PLUGIN_GOOGLE_CODE)
@@ -58,6 +59,7 @@ var onRun = function (context) {
     dialog.addLeftLabel("", "Artboards")
 
     dialog.addCheckbox("askCustomSize", "Ask custom artboard Size", askCustomSize)
+    dialog.addCheckbox("disableLibArtboards", "Ignore library artboards", disableLibArtboards)
     //dialog.addSelect("position", "Position on Browser Page", position, ["Default (Top)", "Top", "Center"], 150)
     //dialog.addHint("", "Specify how artboard will be aligned in browser page")
 
@@ -72,7 +74,7 @@ var onRun = function (context) {
     dialog.addCheckbox("disableHotspots", "Highlight hotspots on mouse over", !disableHotspots)
     dialog.addTextInput("jsCode", "Custom JS Code", jsCode, 'e.g. alert("Hello")')
     dialog.addTextInput("googleCode", "Google Code", googleCode, 'e.g. UA-XXXXXXXX-X')
-    dialog.addTextInput("shareiFrameSize", "Embed Code iFrame Size", shareiFrameSize, 'e.g. 400:225')
+    dialog.addTextInput("shareiFrameSize", "Embed Code iFrame Size", shareiFrameSize)
     dialog.addHint("", "Use width:height format")
 
 
@@ -98,6 +100,7 @@ var onRun = function (context) {
         Settings.setSettingForKey(SettingKeys.PLUGIN_DISABLE_HOTSPOTS, dialog.views['disableHotspots'].state() != 1)
         Settings.setSettingForKey(SettingKeys.PLUGIN_DONT_SAVE_ELEMENTS, dialog.views['dontSaveElements'].state() == 1)
         Settings.setSettingForKey(SettingKeys.PLUGIN_ASK_CUSTOM_SIZE, dialog.views['askCustomSize'].state() == 1)
+        Settings.setSettingForKey(SettingKeys.PLUGIN_EXPORT_DISABLE_LIB_ARTBOARDS, dialog.views['disableLibArtboards'].state() == 1)
 
         // convert position in FILE_TYPES to file type string
         fileType = dialog.views['fileType'].indexOfSelectedItem()

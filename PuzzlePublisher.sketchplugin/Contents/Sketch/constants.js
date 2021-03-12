@@ -143,6 +143,7 @@ const SettingKeys = {
     PLUGIN_FONTSIZE_FORMAT: "PLUGIN_FONTSIZE_FORMAT",
     PLUGIN_DISABLE_HOTSPOTS: "pluginDisableHotspots",
     PLUGIN_ASK_CUSTOM_SIZE: "pluginAskCustomSize",
+    PLUGIN_EXPORT_DISABLE_LIB_ARTBOARDS: "pluginAskCustomSize",
     PLUGIN_DONT_SAVE_ELEMENTS: "pluginDontSaveElements",
     PLUGIN_PUBLISH_LOGIN: "publishLogin",
     PLUGIN_PUBLISH_SITEROOT: "publishSiteRoot",
