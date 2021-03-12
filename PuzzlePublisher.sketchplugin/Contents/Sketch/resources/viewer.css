@@ -1,4 +1,32 @@
 /*@import "https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.css";*/
+
+/* Tooltip container */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  /*border-bottom: 1px dotted black; */
+  cursor: pointer;
+}
+
+/* Tooltip text */
+.tooltip .tooltiptext {
+  visibility: hidden;
+  background-color:  var(--color-primary);
+  color: var(--color-background);
+  text-align: center;
+  padding: 10px 10px;
+  border-radius: 4px;
+ 
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
 #content .image_div {
   margin: 0 auto;
   position: absolute;
