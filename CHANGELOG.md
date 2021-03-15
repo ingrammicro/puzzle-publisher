@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 16.1.1 (15 Mar 2021)
+Fixed Version Viewer
+
 ##  Version 16.1.0 (12 Mar 2021)
 Added ability to ignore links to library internal artboards (see Configure Exporting - Artboards)
 

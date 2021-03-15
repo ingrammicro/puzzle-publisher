@@ -207,9 +207,9 @@ class VersionViewer extends AbstractViewer {
 
     _askServerTools() {
         var xhr = new XMLHttpRequest();
+        xhr.open("GET", story.serverToolsPath + "version_info.php?ver=" + story.docVersion, true);
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
         xhr.onreadystatechange = getVersionInfoRequest;
-        xhr.open("GET", story.serverToolsPath + "version_info.php?ver=" + story.docVersion, true);
         xhr.send(null);
     }
 
