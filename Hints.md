@@ -43,3 +43,6 @@ Run the following command (don't forget to inject a path to your file into  a "-
 
 ## [Hint 6](#hint6): How to change a browser page background for all documents
  Add "@MainBackground@" magic string to any libary symbol layer name to use its background color as a default color for browser pages
+
+## [Hint 7](#hint7): How to treat symbols as artboards 
+See discission [here](https://github.com/ingrammicro/puzzle-publisher/discussions/34)
