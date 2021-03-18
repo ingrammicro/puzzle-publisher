@@ -1060,61 +1060,44 @@ area {
 }
 **/
 /*** LOADING INDICATOR ***/
-#nav #loading div {
-  float: left;
-  width: 6px;
-  height: 6px;
-  border-radius: 100%;
-  margin: 10px 1px 10px 1px;
-  background-color: #ffffff;
-  -webkit-animation: loading 1s ease-in-out infinite;
-  animation: loading 1s ease-in-out infinite;
-}
-
-#nav #loading .shaft1 {
-  -webkit-animation-delay: 0.1s;
-}
-
-#nav #loading .shaft2 {
-  -webkit-animation-delay: 0.2s;
-}
-
-#nav #loading .shaft3 {
-  -webkit-animation-delay: 0.3s;
-}
-
-#nav #loading .shaft4 {
-  -webkit-animation-delay: 0.4s;
-}
-
-#nav #loading .shaft5 {
-  -webkit-animation-delay: 0.5s;
-}
-
-#nav #loading .shaft6 {
-  -webkit-animation-delay: 0.6s;
-}
-
-#nav #loading .shaft7 {
-  -webkit-animation-delay: 0.7s;
-}
-
-/*loading*/
-@-webkit-keyframes loading {
-  0% {
-    -webkit-transform: translateX(-6px);
-    background-color: #ffffff;
+#nav #loading {
+    width: 40px;
   }
 
-  50% {
-    -webkit-transform: translateX(6px);
-    background-color: #2F75BB;
-  }
-
-  100% {
-    -webkit-transform: translateX(-6px);
-    background-color: #ffffff;
-  }
+.lds-ring {
+    display: inline-block;
+    position: relative;
+    width: 36px;
+    height: 28px;
+    margin-top: 4px;
+}
+.lds-ring div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--color-secondary) ;
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: var(--color-secondary) transparent transparent transparent;        
+}
+.lds-ring div:nth-child(1) {
+    animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+    animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+    animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .version-screen-div {
