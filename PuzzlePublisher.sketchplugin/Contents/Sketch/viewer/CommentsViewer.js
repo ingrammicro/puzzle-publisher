@@ -97,7 +97,7 @@ class CommentsViewer extends AbstractViewer {
     }
 
     updateCommentCounter(total) {
-        var div = $('#nav .navCenter .pageComments')
+        var div = $('#nav #pageComments #counter')
         if (total > 0) {
             div.html(total);
             div.show()

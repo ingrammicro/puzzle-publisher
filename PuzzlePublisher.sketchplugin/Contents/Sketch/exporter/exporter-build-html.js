@@ -52,7 +52,10 @@ function buildMainHTML_NavigationIcons(options) {
     <symbol id="icCloseBtn" viewBox="0 0 24 24">\
       <path fill="#FFFFFF" d="M4.29289322,4.29289322 C4.68341751,3.90236893 5.31658249,3.90236893 5.70710678,4.29289322 L5.70710678,4.29289322 L12,10.585 L18.2928932,4.29289322 C18.6533772,3.93240926 19.2206082,3.90467972 19.6128994,4.20970461 L19.7071068,4.29289322 C20.0976311,4.68341751 20.0976311,5.31658249 19.7071068,5.70710678 L19.7071068,5.70710678 L13.415,12 L19.7071068,18.2928932 C20.0675907,18.6533772 20.0953203,19.2206082 19.7902954,19.6128994 L19.7071068,19.7071068 C19.3165825,20.0976311 18.6834175,20.0976311 18.2928932,19.7071068 L18.2928932,19.7071068 L12,13.415 L5.70710678,19.7071068 C5.34662282,20.0675907 4.77939176,20.0953203 4.38710056,19.7902954 L4.29289322,19.7071068 C3.90236893,19.3165825 3.90236893,18.6834175 4.29289322,18.2928932 L4.29289322,18.2928932 L10.585,12 L4.29289322,5.70710678 C3.93240926,5.34662282 3.90467972,4.77939176 4.20970461,4.38710056 Z" />\
     </symbol>\
-    </svg></div>\n';
+    <symbol id="icAddComment" viewBox="0 0 24 24">\
+        <path d="M22,4 C22,2.9 21.1,2 20,2 L4,2 C2.9,2 2,2.9 2,4 L2,16 C2,17.1 2.9,18 4,18 L18,18 L22,22 L22,4 Z M20,17.17 L18.83,16 L4,16 L4,4 L20,4 L20,17.17 Z M13,5 L11,5 L11,9 L7,9 L7,11 L11,11 L11,15 L13,15 L13,11 L17,11 L17,9 L13,9 L13,5 Z"></path>\
+    </symbol >\
+    </svg ></div >\n';
 }
 
 function buildMainHTML(options) {
@@ -159,9 +162,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
 
     s += buildMainHTML_NavigationIcons(options)
-    //s += `<input id="__focusInput" type="text" style="width:0px;height:0px;"/><script>$( "#__focusInput" ).focus()</script>`
-    s += '<!-- load indicator -->\n';
-    s += '<div id="loading" >\n';
     s += '\
     <div class="shaft1"></div><div class="shaft2"></div><div class="shaft3"></div>\
     <div class="shaft4"></div><div class="shaft5"></div><div class="shaft6"></div><div class="shaft7"></div>\
@@ -330,9 +330,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     s += "                    <div id=\"nav-left-next\" class=\"btnNext\" onclick=\"viewer.next(); return false;\" title=\"Next screen\"><svg class='svgIcon'><use xlink:href=\"#icArrwRight\"><\/use><\/svg><\/div>";
     s += "                <\/div>";
     s += "            <\/div>";
-    s += "            <div class=\"navCenter\"><div class=\"pageName title\">Default button<\/div><div class=\"pageComments\" onclick=\"commentsViewer.toggle(); return false;\" style='display:none'><\/div><\/div>";
-    s += "            <div class=\"navRight\">";
-    s += "            <\/div>";
+    s += "            <div class=\"navCenter\"><div class=\"pageName title\">Default button<\/div><\/div>";
+    s += '            <div class="navRight">\
+                        <div id="loading" class="hidden"><div></div></div>\
+                        <div id="pageComments" onclick="commentsViewer.toggle(); return false;" class="">\
+                            <svg class="svgIcon"><use xlink:href=\"#icAddComment\"></use></svg>\
+                            <div id = "counter">3</div>\
+                        </div>\
+                    </div >'
+    s += "           <\/div>";
     s += "        <\/div>";
 
     s += ' </div>\n';

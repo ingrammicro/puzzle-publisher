@@ -77,12 +77,12 @@ $.fn.preload = function (callback) {
 function pagerMarkImageAsLoaded() {
     console.log(pagerLoadingTotal);
     if (--pagerLoadingTotal == 0) {
-        $("#loading").addClass("hidden")
+        $("#nav #loading").addClass("hidden")
     }
 }
 
 async function preloadAllPageImages() {
-    $("#loading").removeClass("hidden")
+    $("#nav #loading").removeClass("hidden")
     pagerLoadingTotal = story.totalImages
     var pages = story.pages;
     for (var page of story.pages) {
@@ -171,7 +171,8 @@ function createViewer(story, files) {
             }
             if (story.commentsURL != 'V_V_C' && story.commentsURL != "") {
                 this.commentsViewer = new CommentsViewer()
-                $("#menu_comments_viewer").removeClass("hidden");
+                $("#menu_comments_viewer").removeClass("hidden")
+                $("#nav #pageComments").removeClass("hidden")
             }
 
         },
@@ -220,7 +221,7 @@ function createViewer(story, files) {
             if (this.urlParams.get('e') != null) {
                 this.isEmbed = true
                 // hide image preload indicator
-                $('#loading').hide()
+                $('#nav loading').hide()
                 // hide Navigation                
                 $('.navCenter').hide()
                 $('.navPreviewNext').hide()

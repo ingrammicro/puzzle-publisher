@@ -832,14 +832,9 @@ body {
 }
 
 .navLeft,
-.nav .pageComments {
+.nav #pageComments {
   pointer-events: all;
 }
-
-.navRight {
-  width: 132px;
-}
-
 .navCenter {
   display: flex;
   justify-content: center;
@@ -847,7 +842,7 @@ body {
 
 .nav .btnMenu,
 .nav .navPreviewNext,
-.nav .pageComments,
+.nav #pageComments,
 .nav .pageName {
   display: flex;
   justify-content: center;
@@ -860,13 +855,17 @@ body {
   /* opacity: .9; */
 }
 
+.nav #pageComments #counter{
+    margin-left:5px;
+}
+
 .btnMenu,
 .navPreviewNext {
   margin-right: 12px;
 }
 
 .btnMenu,
-.nav .pageComments,
+.nav #pageComments,
 .btnPreview,
 .btnNext {
   cursor: pointer;
@@ -889,12 +888,12 @@ body {
 .nav .pageName {
   padding: 0 12px;
 }
-.nav .pageComments {
+.nav #pageComments {
     padding: 0 12px;
 }
 
 .btnMenu:hover,
-.nav .pageComments:hover,
+.nav #pageComments:hover,
 .btnPreview:hover,
 .btnNext:hover {
   background: var(--color-hover);
@@ -903,7 +902,7 @@ body {
 }
 
 .btnMenu:active,
-.nav .pageComments:active,
+.nav #pageComments:active,
 .btnPreview:active,
 .btnNext:active {
   background: var(--color-active);
@@ -1061,16 +1060,7 @@ area {
 }
 **/
 /*** LOADING INDICATOR ***/
-#loading {
-  position: fixed;
-  text-align: right;
-  right: 0px;
-  bottom: 20px;
-  width: 80px;
-  height: 10px;
-}
-
-#loading>div {
+#nav #loading div {
   float: left;
   width: 6px;
   height: 6px;
@@ -1081,31 +1071,31 @@ area {
   animation: loading 1s ease-in-out infinite;
 }
 
-#loading .shaft1 {
+#nav #loading .shaft1 {
   -webkit-animation-delay: 0.1s;
 }
 
-#loading .shaft2 {
+#nav #loading .shaft2 {
   -webkit-animation-delay: 0.2s;
 }
 
-#loading .shaft3 {
+#nav #loading .shaft3 {
   -webkit-animation-delay: 0.3s;
 }
 
-#loading .shaft4 {
+#nav #loading .shaft4 {
   -webkit-animation-delay: 0.4s;
 }
 
-#loading .shaft5 {
+#nav #loading .shaft5 {
   -webkit-animation-delay: 0.5s;
 }
 
-#loading .shaft6 {
+#nav #loading .shaft6 {
   -webkit-animation-delay: 0.6s;
 }
 
-#loading .shaft7 {
+#nav #loading .shaft7 {
   -webkit-animation-delay: 0.7s;
 }
 
