@@ -171,7 +171,6 @@ function createViewer(story, files) {
             }
             if (story.commentsURL != 'V_V_C' && story.commentsURL != "") {
                 this.commentsViewer = new CommentsViewer()
-                $("#menu_comments_viewer").removeClass("hidden")
                 $("#nav #pageComments").removeClass("hidden")
             }
 
@@ -455,16 +454,18 @@ function createViewer(story, files) {
             var sidebarWidth = 0
             if (this.sidebarVisible) {
                 var sidebar = $("#sidebar")
-                var defSidebarWidth = this.defSidebarWidth
 
-                sidebarWidth = defSidebarWidth
+                sidebarWidth = this.defSidebarWidth
+
                 /* commented because it works in bad way with small artboards and large screen
                 sidebarWidth = Math.round((fullWidth - page.width) / 2)
                 if (sidebarWidth < defSidebarWidth) {
                     sidebarWidth = defSidebarWidth
                     availableWidth = fullWidth - sidebarWidth
                 }*/
-                availableWidth = fullWidth - sidebarWidth
+                if (((fullWidth - page.width) / 2) < sidebarWidth) {
+                    availableWidth = fullWidth - sidebarWidth
+                }
 
                 sidebar.css("margin-left", (fullWidth - sidebarWidth) + "px")
                 sidebar.css("margin-top", (0) + "px")
