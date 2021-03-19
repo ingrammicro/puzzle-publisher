@@ -335,10 +335,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     s += "            <\/div>";
     s += "            <div class=\"navCenter\"><div class=\"pageName title\">Default button<\/div><\/div>";
     s += '            <div class="navRight">\
-                        <div id="loading" class="">\
+                        <div id="loading" class="hidden">\
                             <div class="lds-ring"><div></div><div></div><div></div><div></div></div>\
                         </div>\
-                        <div id="pageComments" onclick="commentsViewer.toggle(); return false;" class="">\
+                        <div id="pageComments" onclick="commentsViewer.toggle(); return false;" class="hidden">\
                             <svg class="svgIcon"><use xlink:href=\"#icAddComment\"></use></svg>\
                             <div id = "counter">3</div>\
                         </div>\
