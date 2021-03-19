@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 16.1.2 (19 Mar 2021)
+Comments Viewer improvements
+
 ##  Version 16.1.1 (15 Mar 2021)
 Fixed Version Viewer
 
