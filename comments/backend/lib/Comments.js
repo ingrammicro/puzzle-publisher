@@ -665,6 +665,7 @@ class Comments {
     }
     ////////
     reloadComments() {
+        $("#comments_viewer #comments").html("Loading...")
         ///
         var formData = new FormData();
         var handler = function () {
@@ -835,11 +836,17 @@ class Comments {
     }
     //
     showViewer() {
-        this._buildScene()
-        this._buildMarkers()
+        if (this.currentPage.index != viewer.currentPage.index) {
+            this.reloadComments()
+        } else {
+            this._buildScene()
+            this._buildMarkers()
+        }
     }
     hideViewer() {
         if (this.currentForm) this.currentForm.hideViewer()
+        //
         this._dropScene()
+        //        
     }
 }
