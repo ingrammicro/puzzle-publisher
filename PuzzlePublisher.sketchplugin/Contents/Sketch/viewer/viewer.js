@@ -464,6 +464,7 @@ function createViewer(story, files) {
                     sidebarWidth = defSidebarWidth
                     availableWidth = fullWidth - sidebarWidth
                 }*/
+                availableWidth = fullWidth - sidebarWidth
 
                 sidebar.css("margin-left", (fullWidth - sidebarWidth) + "px")
                 sidebar.css("margin-top", (0) + "px")
