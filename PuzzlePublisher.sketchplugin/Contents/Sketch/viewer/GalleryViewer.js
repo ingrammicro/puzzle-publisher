@@ -148,7 +148,7 @@ class GalleryViewer extends AbstractViewer {
     }
 
     mapZoomChanged(zoomValue) {
-        this.mapZoom = zoomValue / 100
+        this.mapZoom = zoomValue / 200
         this.isCustomMapZoom = true
         this.initialize(true, true)
     }
