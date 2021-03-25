@@ -102,6 +102,7 @@ function buildMainHTML(options) {
     }
     s += '<script type="text/javascript" src="viewer/VersionViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
     s += '<script type="text/javascript">\n';
+    //s += 'window.visualViewport.addEventListener("resize", function(e){if(viewer)viewer.handleBrowserZoom(e)}); \n'   
     if (options.jsCode != '') {
         s += 'function runJSCode(){' + options.jsCode + '}\n'
     }

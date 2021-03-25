@@ -147,6 +147,7 @@ function createViewer(story, files) {
         versionViewer: null,
         commentsViewer: null,
 
+        browserZoom: 1,
         defSidebarWidth: 400,
 
         transQueue: [],
@@ -196,7 +197,37 @@ function createViewer(story, files) {
             window.addEventListener('mousemove', function (e) {
                 viewer.onMouseMove(e.pageX, e.pageY)
             });
+            /* doesn't work in Safari
+            window.addEventListener("wheel", function (e) {
+                e.preventDefault();
+                if (e.ctrlKey) {
+                    // Your zoom/scale factor
+                    let scale = 1 - e.deltaY * 0.01
+                    console.log(scale)
+                }
+                render();
+            })*/
+            // https://stackblitz.com/edit/multi-touch-trackpad-gesture?file=index.js
+            window.addEventListener("gesturestart", function (e) {
+                e.preventDefault();
+                viewer.gestureStartScale = viewer.browserZoom
+                console.log("start")
+            });
+
+            window.addEventListener("gesturechange", function (e) {
+                e.preventDefault();
+                scale = viewer.gestureStartScale * e.scale;
+                viewer.browserZoom = scale
+                console.log(scale)
+                viewer.zoomContent()
+            })
+
+            window.addEventListener("gestureend", function (e) {
+                e.preventDefault();
+            });
+
             jQuery(window).resize(function () { viewer.zoomContent() });
+
 
             if (this.urlParams.get('v') != null && this.versionViewer) {
                 this.versionViewer.toggle()
@@ -430,7 +461,14 @@ function createViewer(story, files) {
             window.open(url, "_blank")
         },
 
+        handleBrowserZoom() {
+            this.browserZoom = window.outerWidth / window.innerWidth
+            console.log(Math.round((this.browserZoom) * 100))
+            $("#nav").css("zoom", window.innerWidth / window.outerWidth)
+        },
+
         zoomContent: function () {
+            this.handleBrowserZoom()
             var page = this.lastRegularPage
             if (undefined == page) return
 
@@ -445,7 +483,7 @@ function createViewer(story, files) {
             var contentModal = $('#content-modal')
             var elems = [content, contentModal] //,contentShadow
 
-            var fullWidth = marker.innerWidth()
+            var fullWidth = marker.outerWidth()
             var availableWidth = fullWidth
             var zoom = ""
             var scale = ""
