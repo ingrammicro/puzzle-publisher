@@ -74,6 +74,17 @@ const ERROR_UPDATE_COMMENT_COMMENTID_EMPTY          ="#013.002";
 const ERROR_UPDATE_COMMENT_NOCOMMENT                ="#013.003";
 const ERROR_UPDATE_COMMENT_WRONG_OWNER              ="#013.004";
 const ERROR_UPDATE_COMMENT_MSG_EMPTY                ="#013.005";
+
+// 014. PROJECT SAVE/LOAD
+const ERROR_PROJECT_EMPTY_ID                        = "#014.001";
+const ERROR_CANT_LOAD_PROJECT                       = "#014.003";
+const ERROR_CANT_PARSE_PROJECT                      = "#014.004";
+const ERROR_CANT_ENCODE_PROJECT                     = "#014.005";
+const ERROR_CANT_SAVE_PROJECT                       = "#014.006";
+const ERROR_CANT_CREATE_PROJECT_FOLDER              = "#014.007";
+const ERROR_CANT_LOAD_PROJECT_PAGE                  = "#014.008";
+
+
 ////////////////////////////////////////////////////////////////
 const DEF_USER_INFO = [
     "name"=>"",    
@@ -333,7 +344,7 @@ EOL
          // Check data
          if("" == $this->pubID) return $this->setError(ERROR_PAGE_EMPTY_ID);
         //        
-        $this->intID = $forum->getPageIntIDByPubID($this->pubID);
+        $this->intID = $forum->findPageIntIDByPubID($this->pubID);
         return True;
     }
 
@@ -358,6 +369,17 @@ EOL
      
         // create new page
         $this->intID = Forum::$o->generatePageIntIDForPubID($this->pubID);
+
+        // update parent project
+        $project = Forum::$o->buildProject();
+        if(""!=$project->lastError){
+            return $this->setError($project->lastError);
+        }
+        if(!$project->addPageIDs( $this->pubID,$this->intID )){
+            return $this->setError($project->lastError);
+        }
+
+        // configure itself
         $this->info = DEF_PAGE_INFO;                        
         $this->info['ownerName'] =  http_post_param("pageOwnerName");
         $this->info['ownerEmail'] =  http_post_param("pageOwnerEmail");
@@ -462,11 +484,148 @@ EOL
 }
 
 ////////////////////////////////////////////////////////////////
+const DEF_PROJECT_INFO = [
+    "pages"=>[],
+];
+
+class Project
+{
+    private $info =  [];
+    private $intID = null;
+    public  $lastError = "";
+
+    public static function build($pubID){
+        $obj = new Project();
+        $obj->pubID = $pubID;
+        $obj->init();        
+        return $obj;
+    }
+
+    protected function setError($errorCode){
+        $this->lastError = $errorCode;
+        return False;
+    }
+
+    protected function init(){
+        $forum  = Forum::$o;
+         // Check data
+         if("" == $this->pubID) return $this->setError(ERROR_PROJECT_EMPTY_ID);    
+         //
+        $this->intID = $forum->findProjectIntIDByPubID($this->pubID);
+        return True;
+    }
+
+    protected function load(){
+        $forum  = Forum::$o;
+
+         // Check ID
+        if("" == $this->pubID) return $this->setError(ERROR_PROJECT_EMPTY_ID);
+        
+        // find project data in forum config   
+        if(False===$this->intID){
+            return True;
+        }else{
+            $this->info = $this->loadJSON();
+            if(""!=$this->lastError) return False;
+        }
+        //        
+        return True;
+    }
+
+    protected function create(){     
+        // create new project
+        $this->intID = Forum::$o->generateProjectIntIDForPubID($this->pubID);
+        $this->info = DEF_PROJECT_INFO;                        
+        if(False===$this->saveToJSON())
+            return $this->setError(ERROR_CANT_SAVE_PROJECT);
+        return True;   
+    }
+
+
+    public function getInfo(){
+        // Load self
+        if(!$this->load()) return False;
+        //
+        $info = [];
+        foreach ($this["pages"] as $pagePubID->$pageIntID) {
+            $page = Page::build($pagePubID);
+            if(""!=$page->lastError){
+                $this->setError(ERROR_CANT_LOAD_PROJECT_PAGE);
+                return False;
+            }
+            //
+            if(False==$page->load()){
+                $this->setError(ERROR_CANT_LOAD_PROJECT_PAGE);
+                return False;
+            }
+            //        
+            //
+        }
+        return $info;
+    }
+
+    public function addPageIDs($pagePubID,$pageIntID){                
+        // Load self
+        if(!$this->load()) return False;
+        // Create if required        
+        if(False==$this->intID && !$this->create()) return False;
+
+        // Update page list
+        $this->info['pages'][$pagePubID] = $pageIntID;
+        return $this->save();
+    }
+
+    protected function save(){
+        return $this->saveToJSON();
+    }
+
+    private function getJSONPath(){
+        return  Forum::$o->getBaseProject()."/project-".$this->intID.".json";
+    }
+
+    protected function loadJSON(){        
+        // check if page config exists
+        if(!file_exists($this->getJSONPath())) return DEF_PROJECT_INFO;       
+
+        $content = file_get_contents($this->getJSONPath());
+        if($content===FALSE){
+            $this->setError(ERROR_CANT_LOAD_PROJECT);        
+            return [];
+        }               
+        // decode a text config into a array
+        $json = json_decode( $content, true );
+        if($json==NULL){
+            $this->setError(ERROR_CANT_PARSE_PROJECT);        
+            return [];
+        }    
+
+        return $json;
+    }
+
+    protected function saveToJSON(){
+         // encode an array into a json
+         $text = json_encode($this->info);
+         if($text===False){
+            $this->setError(ERROR_CANT_ENCODE_PROJECT);       
+            return False;
+         }   
+         // save into a file
+         if( False===file_put_contents($this->getJSONPath(),$text)){
+            $this->setError(ERROR_CANT_SAVE_PROJECT);       
+            return False;
+         }
+         return True;
+
+    }
+}
+////////////////////////////////////////////////////////////////
 
 const DEF_FORUM_CONFIG = [
     "name"=> "default",
     "pageCounter"=>1,
     "pages"=>[],    
+    "projectCounter"=>1,
+    "projects"=>[]
 ];
 
 class Forum
@@ -502,12 +661,30 @@ class Forum
 
         return $newIntID;
     }
-    public function getPageIntIDByPubID($pubID){
+
+    public function findPageIntIDByPubID($pubID){
         if(!array_key_exists($pubID,$this->config['pages'])){
             return False;
         }
         return $this->config['pages'][$pubID];
     }    
+
+    public function generateProjectIntIDForPubID($pubID){
+        $newIntID = $this->config['projectCounter']++;
+        $this->config['projects'][  $pubID ] = $newIntID;
+        
+        if(False===$this->saveForumConfig()) return False;
+
+        return $newIntID;
+    }
+
+    public function findProjectIntIDByPubID($pubID){
+        if(!array_key_exists($pubID,$this->config['projects'])){
+            return False;
+        }
+        return $this->config['projects'][$pubID];
+    }        
+    
     
     public function logout(){
         if(""!=$this->sid){
@@ -701,15 +878,43 @@ EOL
         ];        
     
         return Forum::$o->sendEmail($email);
-    }
+    }    
 
-
-    public function buildPage(){
+    private function _getPagePubIDByReferer(){
         $pagePubID = $_SERVER['HTTP_REFERER'];
         $pattern = '/(.+)\/(\d+)\/(.+)/i';
         $pagePubID = preg_replace($pattern, "$1/live/$3",$pagePubID);
         $pagePubID = preg_replace('/(.+)\&(.+)/', "$1",$pagePubID);
+        return $pagePubID;
+    }
+
+    public function buildPage(){        
+        $pagePubID = $this->_getPagePubIDByReferer();
         return Page::build($pagePubID);
+    }
+
+    public function buildProject(){        
+        $pagePubID = $this->_getPagePubIDByReferer();
+        $projectPubID = explode("?",$pagePubID)[0];
+        return Project::build($projectPubID);
+    }
+
+
+    public function getProjectInfo(){
+        //
+        $project = $this->buildProject();
+        if($project->lastError!=''){
+            $this->lastError = $project->lastError;
+            return False;
+        }
+        //      
+        $info = $project->getInfo();
+        if(False===$info){
+            $this->lastError = $project->lastError;
+            return False;
+        }
+        //
+        return $info;
     }
 
     public function sendEmail($email){
@@ -822,6 +1027,7 @@ EOL;
     }
 
     protected function init(){
+        error_log("init 1");
         // Check data
         if("" == $this->forumID){
             $this->setError(ERROR_FORUM_EMPTY_ID);
@@ -864,6 +1070,8 @@ EOL;
         
         // ok
         Forum::$o = $this;
+        error_log("init 2");
+
 
         // Restore user context
         {
@@ -915,6 +1123,9 @@ EOL;
     }
 
     public function getBasePage(){
+        return $this->basePath;
+    }
+    public function getBaseProject(){
         return $this->basePath;
     }
 

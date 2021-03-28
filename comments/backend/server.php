@@ -66,12 +66,17 @@ if('login'==$cmd){
     $res = $forum->auth();
     if(False===$res) exitError($forum->lastError);
     exitSuccess("User authorized and logged",$res);    
-}else if('getInfo'==$cmd){
+}else if('getPageInfo'==$cmd){
     $page = $forum->buildPage();
     if($page->lastError!="") exitError($page->lastError);
     // load data
     $info = $page->getInfo();
     if(False===$info) exitError($page->lastError);
+    // build result
+    exitSuccess("Info loaded",$info);
+}else if('getProjectInfo'==$cmd){    
+    $info = $forum->getProjectInfo();
+    if(False===$info) exitError($forum->lastError);
     // build result
     exitSuccess("Info loaded",$info);
 }else if('buildFullHTML'==$cmd){
