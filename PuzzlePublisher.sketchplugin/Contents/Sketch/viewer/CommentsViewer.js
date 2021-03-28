@@ -80,7 +80,7 @@ class CommentsViewer extends AbstractViewer {
         var formData = new FormData();
 
         var xhr = new XMLHttpRequest();
-        xhr.open("POST", story.commentsURL + "&cmd=getInfo", true);
+        xhr.open("POST", story.commentsURL + "&cmd=getPageInfo", true);
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
         xhr.onload = function () {
             var result = JSON.parse(this.responseText);
