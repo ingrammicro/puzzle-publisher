@@ -542,23 +542,26 @@ class Project
     }
 
 
-    public function getInfo(){
+    public function getProjectInfo(){
         // Load self
         if(!$this->load()) return False;
         //
         $info = [];
-        foreach ($this["pages"] as $pagePubID->$pageIntID) {
+        foreach ($this->info["pages"] as $pagePubID => $pageIntID) {
             $page = Page::build($pagePubID);
             if(""!=$page->lastError){
                 $this->setError(ERROR_CANT_LOAD_PROJECT_PAGE);
                 return False;
             }
             //
-            if(False==$page->load()){
+            $pageInfo = $page->getInfo();
+            if(False==$pageInfo){
                 $this->setError(ERROR_CANT_LOAD_PROJECT_PAGE);
                 return False;
             }
-            //        
+            //
+            $pageName = substr(strrchr($pagePubID, "?"),1);
+            $info[$pageName] = $pageInfo;
             //
         }
         return $info;
@@ -908,7 +911,7 @@ EOL
             return False;
         }
         //      
-        $info = $project->getInfo();
+        $info = $project->getProjectInfo();
         if(False===$info){
             $this->lastError = $project->lastError;
             return False;
@@ -1027,7 +1030,6 @@ EOL;
     }
 
     protected function init(){
-        error_log("init 1");
         // Check data
         if("" == $this->forumID){
             $this->setError(ERROR_FORUM_EMPTY_ID);
@@ -1070,8 +1072,6 @@ EOL;
         
         // ok
         Forum::$o = $this;
-        error_log("init 2");
-
 
         // Restore user context
         {

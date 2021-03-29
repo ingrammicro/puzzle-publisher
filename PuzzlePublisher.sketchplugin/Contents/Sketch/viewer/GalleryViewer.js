@@ -97,6 +97,21 @@ class GalleryViewer extends AbstractViewer {
     initialize(force = false, skipZoomUpdate = false) {
         if (!force && this.inited) return
 
+        // Load page comment counters
+        if (viewer.commentsViewer) {
+            var formData = new FormData();
+            viewer.commentsViewer.askCommentCounters(function () {
+                var result = JSON.parse(this.responseText);
+                //
+                if ("ok" == result.status) {
+                    viewer.galleryViewer._updateCommentCounters(result.data)
+                } else {
+                    console.log(result.message);
+                }
+                return
+            })
+        }
+
         // adjust main container for current mode
         if (this.isMapMode) {
             $("#gallery").removeClass("gallery-grid")
@@ -123,6 +138,24 @@ class GalleryViewer extends AbstractViewer {
         }
 
         this.inited = true
+    }
+
+    _updateCommentCounters(pagesInfo) {
+        //if (this.isMapMode) return this.loadPagesAbs()
+        viewer.userStoryPages.forEach(function (page) {
+            const pageID = page.getHash()
+            const pageInfo = pagesInfo[pageID]
+            if (!pageInfo) {
+                console.log("Can't find page info for " + pageID);
+                return
+            }
+            //
+            let text = ""
+            if (pageInfo['commentsTotal'] != 0) text = pageInfo['commentsTotal']
+            //
+            $("#gallery #grid #" + page.index + " #comm").text(text)
+
+        }, this);
     }
 
     handleKeyDown(jevent) {
@@ -371,8 +404,16 @@ class GalleryViewer extends AbstractViewer {
             alt: page.title,
             text: page.title,
         });
-
         title.appendTo(divTitle);
+
+        if (viewer.commentsViewer) {
+            var comments = $('<span/>', {
+                id: "comm",
+                text: ""
+            });
+            comments.appendTo(divTitle);
+        }
+
         divTitle.appendTo(divMain);
     }
 

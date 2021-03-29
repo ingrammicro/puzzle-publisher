@@ -76,13 +76,14 @@ class CommentsViewer extends AbstractViewer {
     }
     /////////////////////////////////////////////////
 
+    askCommentCounters(handler) {
+        var formData = new FormData();
+        this.sendRequest(formData, "getProjectInfo", handler)
+    }
+
     _showCommentCounter() {
         var formData = new FormData();
-
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", story.commentsURL + "&cmd=getPageInfo", true);
-        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        xhr.onload = function () {
+        this.sendRequest(formData, "getPageInfo", function () {
             var result = JSON.parse(this.responseText);
             //
             if ("ok" == result.status) {
@@ -92,8 +93,32 @@ class CommentsViewer extends AbstractViewer {
             }
             return
 
-        };
-        xhr.send(formData);
+        })
+        /*
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", story.commentsURL + "&cmd=getPageInfo", true);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhr.onload = function () {
+                var result = JSON.parse(this.responseText);
+                //
+                if ("ok" == result.status) {
+                    commentsViewer.updateCommentCounter(result.data.commentsTotal)
+                } else {
+                    console.log(result.message);
+                }
+                return
+    
+            };
+            xhr.send(formData);
+            */
+    }
+
+    sendRequest(formData, cmd, handler) {
+        var xhr = new XMLHttpRequest()
+        xhr.open("POST", story.commentsURL + "&cmd=" + cmd, true)
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest')
+        xhr.onload = handler
+        xhr.send(formData)
     }
 
     updateCommentCounter(total) {
