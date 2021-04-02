@@ -15,6 +15,7 @@ Features:
 - Ability to insert Google counter
 - Ability to hide navigation controls and hotspot highlighting
 - Automatic compression of images
+- Browser favicon customization [Sketch example](https://github.com/ingrammicro/puzzle-publisher/tree/master/examples/Favicon) / [HTML Demo](https://ingrammicro.github.io/puzzle-publisher/Favicon)
 
 Viewer features:
 - Gallery / [Picture](https://github.com/ingrammicro/puzzle-publisher/raw/master/tests/Pictures/Gallery.png)
