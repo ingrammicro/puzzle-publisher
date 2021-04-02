@@ -698,7 +698,7 @@ text-overflow: ellipsis;
     text-align: left;
   }
 
-.grid-cell .div-page-title{
+  #gallery #grid .grid-cell .div-page-title{
   position: absolute;
   bottom: 0;
   left: 0;

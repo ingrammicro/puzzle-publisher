@@ -151,7 +151,7 @@ class GalleryViewer extends AbstractViewer {
             }
             //
             let text = ""
-            if (pageInfo['commentsTotal'] != 0) text = pageInfo['commentsTotal']
+            if (pageInfo['commentsTotal'] != 0) text = " (" + pageInfo['commentsTotal'] + ")"
             //
             $("#gallery #grid #" + page.index + " #comm").text(text)
 
@@ -399,19 +399,23 @@ class GalleryViewer extends AbstractViewer {
             class: "div-page-title"
         });
 
-        var title = $('<span/>', {
+        var spanTitle = $('<span/>', {
             id: "page-title",
             alt: page.title,
-            text: page.title,
         });
-        title.appendTo(divTitle);
+        spanTitle.appendTo(divTitle);
+
+        var title = $('<div/>', {
+            text: page.title
+        });
+        title.appendTo(spanTitle);
 
         if (viewer.commentsViewer) {
-            var comments = $('<span/>', {
+            var comments = $('<div/>', {
                 id: "comm",
                 text: ""
             });
-            comments.appendTo(divTitle);
+            comments.appendTo(spanTitle);
         }
 
         divTitle.appendTo(divMain);
