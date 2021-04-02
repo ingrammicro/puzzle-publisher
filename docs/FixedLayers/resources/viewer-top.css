@@ -1,0 +1,30 @@
+#container{
+	text-align: center;
+    margin: 0 auto;	
+    overflow: auto;
+}
+
+#content,#map{
+	text-align: center;
+    margin: 0 auto;	   
+    /*width:100%;*/
+    /*position:fixed; */
+}
+
+#content-shadow {
+	z-index: 40;
+	position: fixed;
+	overflow: auto;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100vw;
+	height: 100vh;
+	display: grid;
+	margin-left: auto;
+	margin-right: auto; 
+	margin-top: 0 auto; 
+	margin-bottom: auto;
+	align-items: center;	
+}
