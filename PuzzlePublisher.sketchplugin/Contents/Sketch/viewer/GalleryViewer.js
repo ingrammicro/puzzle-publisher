@@ -141,7 +141,6 @@ class GalleryViewer extends AbstractViewer {
     }
 
     _updateCommentCounters(pagesInfo) {
-        //if (this.isMapMode) return this.loadPagesAbs()
         viewer.userStoryPages.forEach(function (page) {
             const pageID = page.getHash()
             const pageInfo = pagesInfo[pageID]
@@ -151,9 +150,13 @@ class GalleryViewer extends AbstractViewer {
             }
             //
             let text = ""
-            if (pageInfo['commentsTotal'] != 0) text = "&nbsp;&nbsp;(" + pageInfo['commentsTotal'] + ")"
+            if (pageInfo['commentsTotal'] != 0) text = "  (" + pageInfo['commentsTotal'] + ")"
             //
-            $("#gallery #grid #" + page.index + " #comm").text(text)
+            if (this.isMapMode) {
+                $("#gallery #grid #t" + page.index + " #comm").text(text)
+            } else {
+                $("#gallery #grid #" + page.index + " #comm").text(text)
+            }
 
         }, this);
     }
@@ -469,14 +472,18 @@ class GalleryViewer extends AbstractViewer {
         /// add title
         {
             let style = this._valueToStyle("left", page.finalLeft, GALLERY_LEFTRIGH_MARGIN) + this._valueToStyle("top", page.finalTop + page.height, GALLERY_TOP_MARGIN)
-                + this._valueToStyle("width", page.width) + this._valueToStyle("height", 20)
+                + this._valueToStyle("width", page.width) //+ this._valueToStyle("height", 20)
             var div = $('<div/>', {
                 id: "t" + page.index,
-                //class: "galleryArtboardAbs",
+                class: "galleryArtboardLabelAbs",
                 style: style,
             });
             div.text(page.title)
             div.appendTo($('#gallery #grid'))
+            var span = $('<span/>', {
+                id: "comm"
+            });
+            span.appendTo(div)
         }
 
     }

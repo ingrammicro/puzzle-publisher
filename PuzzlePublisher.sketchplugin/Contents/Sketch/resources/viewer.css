@@ -589,6 +589,12 @@ text-overflow: ellipsis;
     transition: transform .24s, box-shadow .24s;
 }
 
+.galleryArtboardLabelAbs{
+    position: absolute;
+    color:      var(--color-active);    
+    font-size:          12px;
+}
+
 .galleryArtboardAbs image{
 }
 
