@@ -151,7 +151,7 @@ class GalleryViewer extends AbstractViewer {
             }
             //
             let text = ""
-            if (pageInfo['commentsTotal'] != 0) text = " (" + pageInfo['commentsTotal'] + ")"
+            if (pageInfo['commentsTotal'] != 0) text = "&nbsp;&nbsp;(" + pageInfo['commentsTotal'] + ")"
             //
             $("#gallery #grid #" + page.index + " #comm").text(text)
 
@@ -425,44 +425,60 @@ class GalleryViewer extends AbstractViewer {
         page.finalTop = pageTop + page.y
         page.finalLeft = page.x - pageLeft
 
-        let style = this._valueToStyle("left", page.finalLeft, GALLERY_LEFTRIGH_MARGIN) + this._valueToStyle("top", page.finalTop, GALLERY_TOP_MARGIN)
-            + this._valueToStyle("width", page.width) + this._valueToStyle("height", page.height)
-        if (undefined != story.backColor) {
-            style += "background-color:" + story.backColor + ";"
+        {
+            let style = this._valueToStyle("left", page.finalLeft, GALLERY_LEFTRIGH_MARGIN) + this._valueToStyle("top", page.finalTop, GALLERY_TOP_MARGIN)
+                + this._valueToStyle("width", page.width) + this._valueToStyle("height", page.height)
+            if (undefined != story.backColor) {
+                style += "background-color:" + story.backColor + ";"
+            }
+
+            var div = $('<div/>', {
+                id: page.index,
+                class: "galleryArtboardAbs",
+                style: style,
+            });
+
+            div.click(function (e) {
+                viewer.galleryViewer.selectPage(parseInt(this.id));
+            });
+            div.mouseenter(function () {
+                viewer.galleryViewer.mouseEnterPage(this.id)
+            })
+            div.appendTo($('#gallery #grid'));
+
+            const width = Math.round(this.mapZoom * page.width)
+            // Show large image for large width
+            const previewWidth = 522
+            let src = encodeURIComponent(viewer.files)
+            if (width < previewWidth) {
+                src += '/previews/' + encodeURIComponent(page.image)
+            } else {
+                src += '/' + encodeURIComponent(story.hasRetina ? page['image2x'] : page.image)
+            }
+
+            var img = $('<img/>', {
+                class: "gallery-map-image",
+                alt: page.title,
+                width: width,
+                height: Math.round(this.mapZoom * page.height) + "px",
+                src: src
+            });
+            img.appendTo(div);
         }
 
-        var div = $('<div/>', {
-            id: page.index,
-            class: "galleryArtboardAbs",
-            style: style,
-        });
-
-        div.click(function (e) {
-            viewer.galleryViewer.selectPage(parseInt(this.id));
-        });
-        div.mouseenter(function () {
-            viewer.galleryViewer.mouseEnterPage(this.id)
-        })
-        div.appendTo($('#gallery #grid'));
-
-        const width = Math.round(this.mapZoom * page.width)
-        // Show large image for large width
-        const previewWidth = 522
-        let src = encodeURIComponent(viewer.files)
-        if (width < previewWidth) {
-            src += '/previews/' + encodeURIComponent(page.image)
-        } else {
-            src += '/' + encodeURIComponent(story.hasRetina ? page['image2x'] : page.image)
+        /// add title
+        {
+            let style = this._valueToStyle("left", page.finalLeft, GALLERY_LEFTRIGH_MARGIN) + this._valueToStyle("top", page.finalTop + page.height, GALLERY_TOP_MARGIN)
+                + this._valueToStyle("width", page.width) + this._valueToStyle("height", 20)
+            var div = $('<div/>', {
+                id: "t" + page.index,
+                //class: "galleryArtboardAbs",
+                style: style,
+            });
+            div.text(page.title)
+            div.appendTo($('#gallery #grid'))
         }
 
-        var img = $('<img/>', {
-            class: "gallery-map-image",
-            alt: page.title,
-            width: width,
-            height: Math.round(this.mapZoom * page.height) + "px",
-            src: src
-        });
-        img.appendTo(div);
     }
 
     _valueToStyle(styleName, v, absDelta = 0) {
