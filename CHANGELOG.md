@@ -1,6 +1,10 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 16.2.0 (5 Apr 2021)
+Added comment counters to Gallery
+Added page labels to Gallery Map view
+
 ##  Version 16.1.2 (19 Mar 2021)
 Comments Viewer improvements
 
