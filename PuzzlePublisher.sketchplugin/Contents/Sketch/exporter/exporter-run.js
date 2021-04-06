@@ -93,14 +93,23 @@ function syncExportHTML(context, doc) {
     saveDocumentAs(doc, tempFile)
     // Run other Sketch instance to export
 
-    let cmd = `/Applications/Sketch.app/Contents/Resources/sketchtool/bin/sketchtool --without-activating=YES --new-instance=YES run ~/Library/Application\ Support/com.bohemiancoding.sketch3/Plugins/PuzzlePublisher.sketchplugin "cmdRun"  --context='{"file":"`
-    cmd += tempFile
-    cmd += `","commands":"export"}`
+    let cmd = "/Applications/Sketch.app/Contents/Resources/sketchtool/bin/sketchtool"
+    let cmdContext = {
+        file: tempFile,
+        commands: "export,close"
+    }
+    let args = [
+        "--without-activating=YES", "--new-instance=YES", "run",
+        "~/Library/Application\ Support/com.bohemiancoding.sketch3/Plugins/PuzzlePublisher.sketchplugin",
+        "'cmdRun'",
+        "--context='" + JSON.stringify(cmdContext) + "'"
+    ]
+    log(args)
 
-    const execRes = Utils.runCommand(cmd)
+    const execRes = Utils.runCommand(cmd, args, false)
     if (execRes.result) {
     } else {
-        UI.alert('Can export HTML', execRes.output)
+        UI.alert('Can not export HTML', execRes.output)
     }
 }
 

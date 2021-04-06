@@ -2,7 +2,7 @@
 
 // osascript -e 'quit app "Sketch"'
 const example = `
-/Applications/Sketch.app/Contents/Resources/sketchtool/bin/sketchtool --without-activating=YES --new-instance=No run ~/Library/Application\ Support/com.bohemiancoding.sketch3/Plugins/PuzzlePublisher.sketchplugin "cmdRun"  --context='{"file":"/Users/baza/GitHub/puzzle-publisher/tests/Links2.sketch","commands":"sync,export,publish,save"}'
+/Applications/Sketch.app/Contents/Resources/sketchtool/bin/sketchtool --without-activating=YES --new-instance=No run ~/Library/Application\ Support/com.bohemiancoding.sketch3/Plugins/PuzzlePublisher.sketchplugin "cmdRun"  --context='{"file":"/Users/baza/GitHub/puzzle-publisher/tests/Links2.sketch","commands":"sync,export,publish,save,close"}'
 `
 
 function syncDocumentStyles(styles) {
@@ -73,6 +73,8 @@ function closeDocument(document) {
 
 var cmdRun = function (context) {
     let Document = require('sketch/dom').Document
+
+    log(context)
 
     // Parse command line arguments    
     let path = context.file + ""

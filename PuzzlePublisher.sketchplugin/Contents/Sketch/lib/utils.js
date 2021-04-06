@@ -215,7 +215,7 @@ class Utils {
     }
 
 
-    static runCommand(command, args) {
+    static runCommand(command, args, sync = true) {
         var task = NSTask.alloc().init();
 
         var pipe = NSPipe.alloc().init()
@@ -224,8 +224,8 @@ class Utils {
         task.setLaunchPath(command);
         task.arguments = args;
         task.launch();
-        task.waitUntilExit();
-
+        if (!sync) return { result: true }
+        task.waitUntilExit()
 
         var fileHandle = pipe.fileHandleForReading()
         var data = [fileHandle readDataToEndOfFile];
