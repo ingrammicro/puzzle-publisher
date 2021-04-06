@@ -340,7 +340,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                         </div>\
                         <div id="pageComments" onclick="commentsViewer.toggle(); return false;" class="hidden">\
                             <svg class="svgIcon"><use xlink:href=\"#icAddComment\"></use></svg>\
-                            <div id = "counter">3</div>\
+                            <div id = "counter"></div>\
                         </div>\
                     </div >'
     s += "           <\/div>";
