@@ -79,19 +79,50 @@ function exportHTML(currentPath, nDoc, exportOptions, context) {
 }
 
 
+function saveDocumentAs(document, filePath) {
+    if (DEBUG) log(" SAVING DOCUMENT TO " + filePath)
+
+    var newFileURL = NSURL.fileURLWithPath(filePath)
+    document.sketchObject.writeToURL_ofType_forSaveOperation_originalContentsURL_error_(newFileURL, "com.bohemiancoding.sketch.drawing",
+        NSSaveOperation, nil, nil);
+}
+
+function syncExportHTML(context, doc) {
+    // Clone current doc to temp file
+    const tempFile = Utils.getPathToTempFolder() + "/" + doc.sketchObject.cloudName() + ".sketch"
+    saveDocumentAs(doc, tempFile)
+    // Run other Sketch instance to export
+
+    let cmd = `/Applications/Sketch.app/Contents/Resources/sketchtool/bin/sketchtool --without-activating=YES --new-instance=YES run ~/Library/Application\ Support/com.bohemiancoding.sketch3/Plugins/PuzzlePublisher.sketchplugin "cmdRun"  --context='{"file":"`
+    cmd += tempFile
+    cmd += `","commands":"export"}`
+
+    const execRes = Utils.runCommand(cmd)
+    if (execRes.result) {
+    } else {
+        UI.alert('Can export HTML', execRes.output)
+    }
+}
+
 function runExporter(context, exportOptions = null) {
+
     if (null == exportOptions) {
         exportOptions = {
             cmd: 'exportHTML'
         }
     }
 
-    let fromCmd = ('fromCmd' in exportOptions) && exportOptions.fromCmd
-
     const Dom = require('sketch/dom')
     const nDoc = exportOptions.nDoc ? exportOptions.nDoc : context.document
     const doc = Dom.fromNative(nDoc)
     const Settings = require('sketch/settings')
+
+
+    if ("asyncExportHTML" == exportOptions["cmd"]) {
+        return syncExportHTML(context, doc)
+    }
+
+    let fromCmd = ('fromCmd' in exportOptions) && exportOptions.fromCmd
 
 
     const isCmdExportToHTML = exportOptions['cmd'] == "exportHTML"

@@ -182,6 +182,11 @@ class Utils {
         return str.split('"').join('\\"')
     }
 
+    static getPathToTempFolder() {
+        const fileManager = NSFileManager.defaultManager()
+        return fileManager.temporaryDirectory().path() + ""
+    }
+
     static toFilename(name, dasherize = true) {
         if (dasherize == null) {
             dasherize = true;
