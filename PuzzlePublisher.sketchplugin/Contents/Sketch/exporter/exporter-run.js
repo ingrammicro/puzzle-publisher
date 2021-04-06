@@ -89,28 +89,19 @@ function saveDocumentAs(document, filePath) {
 
 function syncExportHTML(context, doc) {
     // Clone current doc to temp file
-    const tempFile = Utils.getPathToTempFolder() + "/" + doc.sketchObject.cloudName() + ".sketch"
+    const docName = doc.sketchObject.cloudName()
+    const tempFile = Utils.getPathToTempFolder() + "/" + "tmp" + ".sketch"
     saveDocumentAs(doc, tempFile)
+
+
+    const fileManager = NSFileManager.defaultManager()
+    const scriptName = "export.sh"
+
+    const scriptPath = context.plugin.url().URLByAppendingPathComponent("Contents").URLByAppendingPathComponent("Sketch").URLByAppendingPathComponent("scripts").URLByAppendingPathComponent(scriptName)
+    log(scriptPath)
+
     // Run other Sketch instance to export
-
-    let cmd = "/Applications/Sketch.app/Contents/Resources/sketchtool/bin/sketchtool"
-    let cmdContext = {
-        file: tempFile,
-        commands: "export,close"
-    }
-    let args = [
-        "--without-activating=YES", "--new-instance=YES", "run",
-        "~/Library/Application\ Support/com.bohemiancoding.sketch3/Plugins/PuzzlePublisher.sketchplugin",
-        "'cmdRun'",
-        "--context='" + JSON.stringify(cmdContext) + "'"
-    ]
-    log(args)
-
-    const execRes = Utils.runCommand(cmd, args, false)
-    if (execRes.result) {
-    } else {
-        UI.alert('Can not export HTML', execRes.output)
-    }
+    Utils.runCommand('/bin/bash', [scriptPath, tempFile, docName], false)
 }
 
 function runExporter(context, exportOptions = null) {
