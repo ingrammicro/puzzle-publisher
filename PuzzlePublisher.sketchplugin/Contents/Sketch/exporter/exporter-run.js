@@ -36,8 +36,10 @@ function exportHTML(currentPath, nDoc, exportOptions, context) {
 
     new Exporter(currentPath, nDoc, nDoc.currentPage(), exportOptions, context);
 
+
+    let exportedOk = false
     if (fromCmd) {
-        exporter.exportArtboards()
+        exportedOk = exporter.exportArtboards()
         track(TRACK_EXPORT_COMPLETED)
     } else {
         let panel = new UIPanel("Exporting to HTML")
@@ -51,16 +53,7 @@ function exportHTML(currentPath, nDoc, exportOptions, context) {
         exportInfo.timeout = coscript.scheduleWithInterval_jsFunction(1, function () {
 
             // Exporting...
-            let exportedOk = exporter.exportArtboards()
-            if (exportedOk) {
-                // open HTML in browser 
-                if (!exportOptions.dontOpenBrowser) {
-                    const openPath = currentPath + "/" + exporter.docName + "/"
-                    const fullPath = "" + openPath + (openPath.endsWith('/') ? '' : '/') + 'index.html'
-                    NSWorkspace.sharedWorkspace().openFile(fullPath);
-                }
-            }
-
+            exportedOk = exporter.exportArtboards()
             // 
             //panelSwitchFinished()
             closePanel()
@@ -76,6 +69,16 @@ function exportHTML(currentPath, nDoc, exportOptions, context) {
             }
         })
     }
+
+    if (exportedOk && (!fromCmd || context['async'])) {
+        // open HTML in browser 
+        if (!exportOptions.dontOpenBrowser) {
+            const openPath = currentPath + "/" + exporter.docName + "/"
+            const fullPath = "" + openPath + (openPath.endsWith('/') ? '' : '/') + 'index.html'
+            NSWorkspace.sharedWorkspace().openFile(fullPath);
+        }
+    }
+
 }
 
 
@@ -87,12 +90,11 @@ function saveDocumentAs(document, filePath) {
         NSSaveOperation, nil, nil);
 }
 
-function syncExportHTML(context, doc) {
+function asyncExportHTML(context, doc) {
     // Clone current doc to temp file
     const docName = doc.sketchObject.cloudName()
     const tempFile = Utils.getPathToTempFolder() + "/" + "tmp" + ".sketch"
     saveDocumentAs(doc, tempFile)
-
 
     const fileManager = NSFileManager.defaultManager()
     const scriptName = "export.sh"
@@ -101,7 +103,7 @@ function syncExportHTML(context, doc) {
     log(scriptPath)
 
     // Run other Sketch instance to export
-    Utils.runCommand('/bin/bash', [scriptPath, tempFile, docName], false)
+    Utils.runCommand('/bin/bash', [scriptPath, tempFile, docName, "&"], false)
 }
 
 function runExporter(context, exportOptions = null) {
@@ -117,13 +119,7 @@ function runExporter(context, exportOptions = null) {
     const doc = Dom.fromNative(nDoc)
     const Settings = require('sketch/settings')
 
-
-    if ("asyncExportHTML" == exportOptions["cmd"]) {
-        return syncExportHTML(context, doc)
-    }
-
     let fromCmd = ('fromCmd' in exportOptions) && exportOptions.fromCmd
-
 
     const isCmdExportToHTML = exportOptions['cmd'] == "exportHTML"
     var dontOpenBrowser = Settings.settingForKey(SettingKeys.PLUGIN_DONT_OPEN_BROWSER) == 1
@@ -203,6 +199,12 @@ function runExporter(context, exportOptions = null) {
         Settings.setSettingForKey(SettingKeys.PLUGIN_EXPORTING_URL, currentPath)
         Settings.setSettingForKey(SettingKeys.PLUGIN_DONT_OPEN_BROWSER, dontOpenBrowser)
         Settings.setSettingForKey(SettingKeys.PLUGIN_COMPRESS, compress)
+
+        // Export in background        
+        var asyncEnabled = Settings.settingForKey(SettingKeys.PLUGIN_ENABLE_ASYNC) == 1
+        if (asyncEnabled) {
+            return asyncExportHTML(context, doc)
+        }
     }
 
 

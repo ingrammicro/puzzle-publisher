@@ -68,7 +68,6 @@ class PZPage {
     //////////////////////// PRIVATE FUNCTIONS //////////////////////////////////////
 
     _scanLayersToSaveInfo(sParent) {
-        if (DEBUG) exporter.logMsg("PZPage._scanLayersToSaveInfo() running name=" + (this.sPage ? this.sPage.name : ''))
         const nParent = sParent.sketchObject
 
         // taken here - https://sketchplugins.com/d/466-get-all-symbol-and-all-image-inside-selected-storyboard

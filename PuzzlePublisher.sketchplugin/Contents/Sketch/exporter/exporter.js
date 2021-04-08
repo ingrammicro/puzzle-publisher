@@ -28,13 +28,17 @@ class Exporter {
         this.errors = []
         this.warnings = []
 
-        // workaround for Sketch 52s
-        this.docName = this._clearCloudName(this.ndoc.cloudName() + "")
-        let posSketch = this.docName.indexOf(".sketch")
-        if (posSketch > 0) {
-            this.docName = this.docName.slice(0, posSketch)
+        if (context['async']) {
+            this.docName = context["name"]
+        } else {
+            // workaround for Sketch 52s
+            this.docName = this._clearCloudName(this.ndoc.cloudName() + "")
+            let posSketch = this.docName.indexOf(".sketch")
+            if (posSketch > 0) {
+                this.docName = this.docName.slice(0, posSketch)
+            }
+            // @workaround for Sketch 52
         }
-        // @workaround for Sketch 52
 
         this.initPaths(selectedPath)
 
@@ -345,8 +349,10 @@ class Exporter {
             this.logError(error)
         }
         finally {
-            if (DEBUG) exporter.logMsg("exportArtboards: undo changes")
-            this.mDoc.undoChanges()
+            if (!exporter.context['async']) {
+                if (DEBUG || true) exporter.logMsg("exportArtboards: undo changes")
+                this.mDoc.undoChanges()
+            }
 
         }
 
