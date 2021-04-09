@@ -46,7 +46,7 @@ function publishDocument(context, document) {
     context.fromCmd = true
     const publisher = new Publisher(context, document.sketchObject);
     publisher.authorName = "[BOT]";
-    publisher.message = "--";
+    publisher.message = "--TELE";
     publisher.publish();
 }
 

@@ -93,7 +93,8 @@ function saveDocumentAs(document, filePath) {
 function asyncExportHTML(context, doc) {
     // Clone current doc to temp file
     const docName = doc.sketchObject.cloudName()
-    const tempFile = Utils.getPathToTempFolder() + "/" + "tmp" + ".sketch"
+    const tempDir = Utils.getPathToTempFolder()
+    const tempFile = tempDir + "/" + "tmp" + ".sketch"
     saveDocumentAs(doc, tempFile)
 
     const fileManager = NSFileManager.defaultManager()
@@ -103,7 +104,7 @@ function asyncExportHTML(context, doc) {
     log(scriptPath)
 
     // Run other Sketch instance to export
-    Utils.runCommand('/bin/bash', [scriptPath, tempFile, docName, "&"], false)
+    Utils.runCommand('/bin/bash', [scriptPath, tempDir, tempFile, docName], false)
 }
 
 function runExporter(context, exportOptions = null) {
