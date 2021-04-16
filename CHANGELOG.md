@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 16.2.2 (16 Apr 2021)
+Improved Element Inspector
+
 ##  Version 16.2.0 (5 Apr 2021)
 Added comment counters to Gallery
 Added page labels to Gallery Map view
