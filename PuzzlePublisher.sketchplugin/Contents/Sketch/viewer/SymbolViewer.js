@@ -67,7 +67,7 @@ class SymbolViewer extends AbstractViewer {
 
     // called by Viewer
     pageChanged() {
-        this._buildSymbolLinks()
+        this._reShowContent()
     }
 
     _selectLib(libName) {
@@ -84,11 +84,14 @@ class SymbolViewer extends AbstractViewer {
             panel.linksDiv.children(".modalSymbolLink,.symbolLink").remove()
         }
 
+        // drop selection
+        this.setSelected()
+
         // redraw inspector
         this._showEmptyContent()
 
         // rebuild links
-        this._buildSymbolLinks()
+        this._buildElementLinks()
     }
 
 
@@ -156,7 +159,7 @@ class SymbolViewer extends AbstractViewer {
         viewer.toogleLayout(false)
         viewer.linksDisabled = true
 
-        this._buildSymbolLinks()
+        this._buildElementLinks()
 
         var isModal = viewer.currentPage && viewer.currentPage.isModal
         const contentDiv = isModal ? $('#content-modal') : $('#content')
@@ -175,15 +178,16 @@ class SymbolViewer extends AbstractViewer {
         $('#symbol_viewer #empty').removeClass("hidden")
     }
 
-    _buildSymbolLinks() {
-        this._showPage(viewer.currentPage)
+
+    _buildElementLinks() {
+        this._buildElementLinksForPage(viewer.currentPage)
         for (let overlay of viewer.currentPage.currentOverlays) {
-            this._showPage(overlay)
+            this._buildElementLinksForPage(overlay)
         }
     }
 
 
-    _showPage(page) {
+    _buildElementLinksForPage(page) {
         var pageIndex = page.index
         this.pageIndex = pageIndex
         this.page = page
@@ -196,47 +200,37 @@ class SymbolViewer extends AbstractViewer {
             this.createdPages[pageIndex] = newPageInfo
 
             this.pageInfo = newPageInfo
-            this._create()
         } else {
             this.pageInfo = this.createdPages[pageIndex]
         }
-    }
-
-
-
-    _create() {
+        //
         const layers = layersData[this.pageIndex].c
-        if (undefined == layers) return
-        if (this.showSymbols)
-            this._processSymbolList(layers)
-        else
-            this._processLayerList(layers)
+        if (undefined != layers) {
+            if (this.showSymbols)
+                this._processSymbolList(layers)
+            else
+                this._processLayerList(layers)
+        }
     }
 
     _processSymbolList(layers, isParentSymbol = false) {
         for (var l of layers.slice().reverse()) {
-            if (this.currentLib != "") {
-                if (this.showSymbols && l.b) {
-                    if (l.b == this.currentLib) {
-                        this._showElement(l)
-                        continue
-                    }
-                }
-                if (!this.showSymbols && undefined != l.l) {
-                    const styleInfo = this._findStyleAndLibByStyleName(l.l)
-                    if (styleInfo && styleInfo.libName == this.currentLib) {
-                        this._showElement(l)
-                        continue
-                    }
-                }
-            } else {
-                if ((this.showSymbols && l.s != undefined) ||
-                    (!this.showSymbols && !isParentSymbol && l.l != undefined)) {
+            // l.b: library name
+            if (
+                l.s &&
+                ("" == this.currentLib || (this.currentLib != "" && l.b && l.b == this.currentLib))
+            ) {
+                this._showElement(l)
+            }/* else
+                // l.s: symbol name
+                // l.l: style name
+                if (l.s != undefined || (!isParentSymbol && l.l != undefined)) {
                     this._showElement(l)
                 }
-            }
+            */
+            // l.c : childs
             if (undefined != l.c)
-                this._processSymbolList(l.c, this.showSymbols && l.s != undefined)
+                this._processSymbolList(l.c, l.s != undefined)
         }
     }
 
@@ -317,13 +311,9 @@ class SymbolViewer extends AbstractViewer {
             }
             const layer = sv.selected.layer // selection can be changed inside setSelected
 
-            var symName = sv.showSymbols ? layer.s : (siLayer ? siLayer.s : null)
+            var symName = layer.s ? layer.s : (siLayer ? siLayer.s : null)
+            //sv.showSymbols && layer.s ? layer.s : (siLayer ? siLayer.s : null)
             var styleName = layer.l
-            var comment = layer.comment
-            var frameX = layer.finalX
-            var frameY = layer.finalY
-            var frameWidth = layer.w
-            var frameHeight = layer.h
 
             const styleInfo = styleName != undefined ? viewer.symbolViewer._findStyleAndLibByStyleName(styleName) : undefined
             const symInfo = symName != undefined ? viewer.symbolViewer._findSymbolAndLibBySymbolName(symName) : undefined
@@ -335,54 +325,12 @@ class SymbolViewer extends AbstractViewer {
             // layer.tp : layer type: SI, Text, ShapePath or Image
             // siLayer : symbol master, owner of the layer            
 
-            if (symName != undefined) {
-                info = "<hr>" +
-                    "<div class='block'>" +
-                    "<div class='label'>" + "Symbol" + "</div>" +
-                    "<div class='value'>" + symName + "</div>"
-                const libName = layer.b != undefined ? (layer.b + " (external)") :
-                    (siLayer && siLayer.b ? siLayer.b + " (external)" : "Document")
-                info += "<div style='font-size:12px; color:var(--color-secondary)'>" + libName + "</div></div>"
+            info += sv._showLayerDimenstions(layer)
+            info += sv._showLayerSymbol(layer, symName, siLayer)
+            info += sv._showLayerComment(layer)
+            info += sv._showLayerStyle(layer, siLayer)
 
-            }
-            if (styleName != undefined) {
-                info = "<hr>" +
-                    "<div class='block'>" +
-                    "<div class='label'>" + "Style" + "</div>" +
-                    "<div class='value'>" + styleName + "</div>"
-                const libName = layer.b != undefined ? (layer.b + " (external)") :
-                    (siLayer ? siLayer.b + " (external)" : "Document")
-                info += "<div style='font-size:12px; color:var(--color-secondary)'>" + libName + "</div></div>"
-            }
-
-
-            if (comment != undefined) info +=
-                "<hr>" +
-                "<div class='block'>" +
-                "<div class='label'>" + "Comment" + "</div>" +
-                "<div style='value'>" + comment + "</div>" + 2
-            "</div>"
-
-            info += "<hr>" +
-                "<div class='block twoColumn'>" +
-                "<div>" +
-                "<span class='label'>" + "X: </span>" + Math.round(frameX) + "px" +
-                "</div>" +
-                "<div>" +
-                "<span class='label'>" + "Y: </span>" + Math.round(frameY) + "px" +
-                "</div>" +
-                "</div>"
-
-            info += "<div class='block twoColumn'>" +
-                "<div>" +
-                "<span class='label'>" + "Width: </span>" + Math.round(frameWidth) + "px" +
-                "</div>" +
-                "<div>" +
-                "<span class='label'>" + "Height: </span>" + Math.round(frameHeight) + "px" +
-                "</div>" +
-                "</div>"
-
-
+            // if layer has CSS classes described
             if (layer.pr != undefined) {
                 let tokens = null
                 if (styleInfo)
@@ -393,41 +341,15 @@ class SymbolViewer extends AbstractViewer {
                 }
                 const decRes = sv._decorateCSS(layer, tokens, layer.b ? layer : siLayer)
                 info += decRes.css
+
                 if ("Text" == layer.tp) {
-                    if (layer.tx != undefined && layer.tx != "") {
-                        info += `
-                            <hr>
-                            <div class='block'>
-                            <div class='label'>Content&nbsp;<button onclick = "copyToBuffer('sv_content')">Copy</button>`
-                        let afterContent = ""
-                        let cssClass = ""
-                        if (decRes.styles["font-family"].startsWith("Font Awesome 5")) {
-                            cssClass += "icon "
-                            if (decRes.styles["font-weight"] != "400") cssClass += "solid "
-                            const codeText = layer.tx.codePointAt(0).toString(16)
-                            afterContent = "Unicode: " + codeText
-                            info += `<button onclick = "showFAIconInfo('` + codeText + `')">Info</button>`
-                        } else {
-                            cssClass += "code value"
-                        }
-                        info += `</div ><div id='sv_content' class="` + cssClass + `">` + layer.tx + "</div>"
-                        if (afterContent != "") {
-                            info += "<div  class='code value'>" + afterContent + "</div>"
-                        }
-                        info += "</div>"
-                    }
+                    info += sv._showLayerTextContent(layer, decRes)
                 }
             }
 
+            // Process image layar
             if ("Image" == layer.tp) {
-                const url = layer.iu
-                info += `
-                        <hr>
-                        <div class='block'>
-                        <div class='label'>Content&nbsp;<a class="svlink" href="`+ url + `">Download</a>`
-                let cssClass = "code value"
-                const width = "100%" //viewer.defSidebarWidth - 40
-                info += `</div ><div id='sv_content' class="` + cssClass + `"><img ` + `width="` + width + `" src="` + url + `"/></div>`
+                info += sv._showLayerImage(layer)
             }
 
             $('#symbol_viewer #empty').addClass("hidden")
@@ -450,6 +372,121 @@ class SymbolViewer extends AbstractViewer {
         })
 
         symbolDiv.appendTo(a)
+    }
+
+    // Show Text layer content with Copy button
+    _showLayerTextContent(layer, decRes) {
+        if (layer.tx == undefined || layer.tx == "") return ""
+        let info = ""
+
+        info += `
+                <hr>
+                <div class='block'>
+                <div class='label'>Text Content&nbsp;<button onclick = "copyToBuffer('sv_content')">Copy</button>`
+        let afterContent = ""
+        let cssClass = ""
+        if (decRes.styles["font-family"].startsWith("Font Awesome 5")) {
+            cssClass += "icon "
+            if (decRes.styles["font-weight"] != "400") cssClass += "solid "
+            const codeText = layer.tx.codePointAt(0).toString(16)
+            afterContent = "Unicode: " + codeText
+            info += `<button onclick = "showFAIconInfo('` + codeText + `')">Info</button>`
+        } else {
+            cssClass += "code value"
+        }
+        info += `</div ><div id='sv_content' class="` + cssClass + `">` + layer.tx + "</div>"
+        if (afterContent != "") {
+            info += "<div  class='code value'>" + afterContent + "</div>"
+        }
+        info += "</div>"
+
+        return info
+    }
+
+    _showLayerSymbol(layer, symName, siLayer) {
+        if (undefined == symName) return ""
+        let info = "<hr>" +
+            "<div class='block'>" +
+            "<div class='label'>" + "Symbol" + "</div>" +
+            "<div class='value'>" + symName + "</div>"
+        const libName = layer.b != undefined ? (layer.b + " (external)") :
+            (siLayer && siLayer.b ? siLayer.b + " (external)" : "Document")
+        info += "<div style='font-size:12px; color:var(--color-secondary)'>" + libName + "</div></div>"
+        return info
+    }
+
+
+    _showLayerComment(layer) {
+        var comment = layer.comment
+        if (undefined == comment) return ""
+
+        return `
+                <hr>
+                <div class="block">
+                    <div class="label">Comment</div>
+                    <div style="value">${comment}</div>
+                </div>`
+    }
+
+    _showLayerImage(layer) {
+        let info = ""
+        const url = layer.iu
+        info += `
+                <hr>
+                <div class='block'>
+                <div class='label'>Image Content&nbsp;<a class="svlink" href="`+ url + `">Download</a>`
+        let cssClass = "code value"
+        const width = "100%" //viewer.defSidebarWidth - 40
+        info += `</div ><div id='sv_content' class="` + cssClass + `"><img ` + `width="` + width + `" src="` + url + `"/></div>`
+        return info
+    }
+
+    // siLayer: parent symbol 
+    _showLayerStyle(layer, siLayer) {
+        if (undefined == layer.l) return ""
+
+        let info = ""
+        let styleName = layer.l
+        const libName = layer.b != undefined ? (layer.b + " (external)") :
+            (siLayer ? siLayer.b + " (external)" : "Document")
+
+        info = `<hr>
+                <div class='block'>
+                    <div class='label'>Layer Style</div>
+                    <div class='value'>${styleName}</div>
+                    <div style='font-size:12px; color:var(--color-secondary)'>${libName}</div>
+                </div>`
+
+        return info
+    }
+
+    _showLayerDimenstions(layer) {
+        let info = ""
+
+        var frameX = layer.finalX
+        var frameY = layer.finalY
+        var frameWidth = layer.w
+        var frameHeight = layer.h
+
+        info += "<hr>" +
+            "<div class='block twoColumn'>" +
+            "<div>" +
+            "<span class='label'>" + "X: </span>" + Math.round(frameX) + "px" +
+            "</div>" +
+            "<div>" +
+            "<span class='label'>" + "Y: </span>" + Math.round(frameY) + "px" +
+            "</div>" +
+            "</div>"
+
+        info += "<div class='block twoColumn'>" +
+            "<div>" +
+            "<span class='label'>" + "Width: </span>" + Math.round(frameWidth) + "px" +
+            "</div>" +
+            "<div>" +
+            "<span class='label'>" + "Height: </span>" + Math.round(frameHeight) + "px" +
+            "</div>" +
+            "</div>"
+        return info
     }
 
     setSelected(event = null, layer = null, a = null, force = false) {
@@ -524,10 +561,11 @@ class SymbolViewer extends AbstractViewer {
 
     findOtherSelection(click, layers, foundLayers) {
         if (null == layers) layers = layersData[this.pageIndex].c
+
         if (undefined == layers) return
         for (var l of layers.slice().reverse()) {
-
-            if (SUPPORT_TYPES.indexOf(l.tp) >= 0 && !l.hd) {
+            if ((!this.showSymbols || l.s != undefined) &&
+                SUPPORT_TYPES.indexOf(l.tp) >= 0 && !l.hd) {
                 if (click.x >= l.finalX && click.x <= (l.finalX + l.w) && click.y >= l.finalY && click.y <= (l.finalY + l.h)) {
                     foundLayers.push(l)
                 }
@@ -723,7 +761,7 @@ class SymbolViewer extends AbstractViewer {
 
         result += "<hr>" +
             "<div class='block'>" +
-            "<div class='label'>Styles" +
+            "<div class='label'>CSS Styles" +
             (1 == story.fontSizeFormat ? " (font size adjusted for Linux)" : "") +
             "</div > " +
             "<div class='value code'>"

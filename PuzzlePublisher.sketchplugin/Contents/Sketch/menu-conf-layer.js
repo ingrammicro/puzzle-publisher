@@ -36,7 +36,7 @@ var onRun = function (context) {
         overlayType = SettingKeys.LAYER_OVERLAY_DEFAULT
 
     // create dialog
-    const dialog = new UIDialog("Layer Settings", NSMakeRect(0, 0, 400, 220), "Save", "Configure selected layer options ")
+    const dialog = new UIDialog("Layer Settings", NSMakeRect(0, 0, 400, 320), "Save", "Configure selected layer options ")
     dialog.removeLeftColumn()
 
     dialog.addSelect("overlayType", "Overlay Mode", overlayType, ["Default (using \"Fix position\" setting)", "Trasparent overlay with fixed position (TOP)", "Trasparent overlay with fixed position (LEFT)", "Standalone DIV inside a page"], 300)
