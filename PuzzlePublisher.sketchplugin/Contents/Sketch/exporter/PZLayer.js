@@ -509,6 +509,7 @@ class PZLayer {
         if (!style || !style.sketchObject.primitiveTextStyle()) return
         // Try to find that color variables was used        
         var attributes = style.sketchObject.primitiveTextStyle().attributes()
+        if (!attributes || !attributes.MSAttributedStringColorAttribute) return undefined
         var swatchID = attributes.MSAttributedStringColorAttribute.swatchID()
         if (!swatchID) return undefined
         //

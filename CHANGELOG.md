@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 16.2.3 (20 Apr 2021)
+Workaround for export crash
+
 ##  Version 16.2.2 (16 Apr 2021)
 Improved Element Inspector
 
