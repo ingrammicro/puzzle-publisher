@@ -144,6 +144,7 @@ class PZLayer {
             this.comment = comment
         }
 
+        /*
         // If the object is mask when we need to setup a parent group as exportable
         if (this.nlayer.hasClippingMask()) {
             if (this.parent && undefined == this.parent.imageIndex) {
@@ -155,7 +156,7 @@ class PZLayer {
             }
             sLayer.hidden = false
             this.hasClippingMask = true
-        } else if ("Image" == sLayer.type && this.nlayer.isMasked()) {
+        } else */if ("Image" == sLayer.type && this.nlayer.isMasked()) {
             // sLayer.hidden = true
             this.isMasked = true
         } else if ("Image" == sLayer.type || (("Group" == sLayer.type || "ShapePath" == sLayer.type) && undefined != sLayer.exportFormats && sLayer.exportFormats.length > 0)) {
