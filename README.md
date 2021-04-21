@@ -41,15 +41,15 @@ Please send your feedback and requests to max@bazarov.ru
 ## Screenshots
 Commands:
 
-<img width="20%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/Examples/Pictures/Menu.png"/><img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/Examples/Pictures/Export-Dialog.png"/><img width="40%" src="https://github.com/ingrammicro/puzzle-publisher/blob/master/Examples/Pictures/Publish-Dialog.png?raw=true"/>
+<img width="20%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/examples/Pictures/Menu.png"/><img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/examples/Pictures/Export-Dialog.png"/><img width="40%" src="https://github.com/ingrammicro/puzzle-publisher/blob/master/examples/Pictures/Publish-Dialog.png?raw=true"/>
 
 Settings: 
 
-<img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/Examples/Pictures/Layer-Dialog.png"/><img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/Examples/Pictures/Artboard-Dialog1.png"/><img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/Examples/Pictures/Artboard-Dialog2.png"/><img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/Examples/Pictures/Document-Dialog.png"/><img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/Examples/Pictures/Plugin-Dialog.png"/>
+<img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/examples/Pictures/Layer-Dialog.png"/><img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/examples/Pictures/Artboard-Dialog1.png"/><img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/examples/Pictures/Artboard-Dialog2.png"/><img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/examples/Pictures/Document-Dialog.png"/><img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/examples/Pictures/Plugin-Dialog.png"/>
 
 Viewer - Show symbols (and design tokens):
 
-<img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/Examples/Show Symbols/screenshot.png"/>
+<img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/examples/Show Symbols/screenshot.png"/>
 
 ## Installation
 
