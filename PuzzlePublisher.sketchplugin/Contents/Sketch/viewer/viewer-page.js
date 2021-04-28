@@ -79,6 +79,8 @@ class ViewerPage {
         this.currentX = undefined
         this.currentY = undefined
 
+        // this.searchLayer  = undefined
+
         this.overlayByEvent = undefined
         this.tmpSrcOverlayByEvent = undefined
 
@@ -192,31 +194,63 @@ class ViewerPage {
     findText(text) {
         text = text.toLowerCase().trim()
         const layers = layersData[this.index].c
-        if (!layers) return
-        this._findTextProcessLayers(layers, text)
+        if (!layers) return false
+        //        
+        if (undefined != this.prevSearchText && this.prevSearchText != text) {
+            this.textElemIndex = undefined
+            this.prevSearchText = undefined
+        }
+        if (undefined == this.textElemIndex) this.textElemIndex = 0
+        //
+        let foundLayers = []
+        this._findTextLayersByText(layers, text, foundLayers)
+        foundLayers.sort(function (a, b) {
+            return a.y < b.y ? -1 : 1
+        })
+        if (foundLayers.length > this.textElemIndex)
+            this._findTextShowElement(foundLayers[this.textElemIndex])
+        //
+        this.prevSearchText = text
+        if ((foundLayers.length + 1) > this.textElemIndex) this.textElemIndex++
+        //
+        return foundLayers.length > 0
     }
 
-    _findTextProcessLayers(layers, text) {
+    _findTextLayersByText(layers, text, foundLayers) {
         for (var l of layers.slice().reverse()) {
-            if ("Text" == l.tp && text == l.tx.toLowerCase()) {
-                this._findTextShowElement(l)
+            if ("Text" == l.tp && l.tx.toLowerCase().includes(text)) {
+                foundLayers.push(l)
             }
             if (undefined != l.c)
-                this._findTextProcessLayers(l.c, text)
+                this._findTextLayersByText(l.c, text, foundLayers)
         }
     }
     _findTextShowElement(l) {
-        let x = l.finalX
-        let y = l.finalY
+        // hide previous search result
+        this.hideFoundTextResult()
+
+        let x = l.x
+        let y = l.y
+        // scroll window to show a layer
         window.scrollTo(x, y);
-        //
-        var style = "left: " + l.finalX + "px; top:" + l.finalY + "px; "
+
+        // show layer border
+        var style = "left: " + x + "px; top:" + y + "px; "
         style += "width: " + l.w + "px; height:" + l.h + "px; "
         var elemDiv = $("<div>", {
-            class: "symbolDiv",
+            class: "searchDiv",
         }).attr('style', style)
 
         elemDiv.appendTo(this.linksDiv)
+
+        this.foundDiv = elemDiv
+    }
+
+    hideFoundTextResult() {
+        if (!this.foundDiv) return
+
+        this.foundDiv.remove()
+        this.foundDiv = undefined
     }
 
     updatePosition() {

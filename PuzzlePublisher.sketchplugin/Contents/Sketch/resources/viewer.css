@@ -76,7 +76,13 @@
   opacity: 0.4;
   transition: opacity 0.5s;
 }
-
+/* SEARCH */
+.searchDiv {
+    position: absolute;    
+    outline: 1px solid var(--color-accent);
+    outline-offset: -1px;
+  
+  }  
 /************ SYMBOLS ******/
 .symbolLink {}
 
@@ -100,7 +106,6 @@
   opacity: .3;
   display: block;
   cursor: pointer;
-  /*border: 1px dashed red;   */
   outline: 1px solid red;
   outline-offset: -1px;
   transition: all 0.3s;

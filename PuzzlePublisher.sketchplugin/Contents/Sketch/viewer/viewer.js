@@ -290,12 +290,8 @@ function createViewer(story, files) {
                 v.next()
             } else if (allowNavigation && (8 == event.which || 37 == event.which)) { // backspace OR left
                 v.previous()
-            } else if (event.metaKey && (70 == event.which)) { // Cmd+F
-                const search = prompt("Type text to find:", this.searchText)
-                if (null != search) {
-                    this.searchText = search
-                    this.currentPage.findText(this.searchText)
-                }
+            } else if (allowNavigation && event.metaKey && (70 == event.which)) { // Cmd+F
+                this.showTextSearch()
             } else if (allowNavigation && (16 == event.which)) { // shift
                 if (!jevent.metaKey) {  // no cmd to allow user to make a screenshot on macOS
                     v.toggleLinks()
@@ -321,6 +317,15 @@ function createViewer(story, files) {
             }
             jevent.preventDefault()
             return true
+        },
+
+        showTextSearch: function () {
+            const search = prompt("Type text to find:", this.searchText)
+            if (null != search) {
+                this.searchText = search
+                if (this.currentPage.findText(this.searchText)) {
+                }
+            }
         },
 
 
@@ -948,8 +953,13 @@ function createViewer(story, files) {
             this.currentPage.show()
         },
         onKeyEscape: function () {
-            // If the current page has some overlay open then close it
             const page = this.currentPage
+            // If the current page has search visible then hide it            
+            if (page.foundDiv) {
+                page.hideFoundTextResult()
+                return true
+            }
+            // If the current page has some overlay open then close it
             if (page.hideCurrentOverlays()) {
                 return true
             }
