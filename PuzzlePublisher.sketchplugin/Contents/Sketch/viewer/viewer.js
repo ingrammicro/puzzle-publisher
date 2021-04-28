@@ -123,6 +123,8 @@ function createViewer(story, files) {
         showLayout: false,
         isEmbed: false,
 
+        searchText: "",
+
         fullBaseURL: "",
         fullCurrentPageURL: "",
 
@@ -277,18 +279,27 @@ function createViewer(story, files) {
             // allow currently active childs to handle global keys
             if (this.child && this.child.handleKeyDown(jevent)) return true
 
-            //console.log(jevent.metaKey)
-            //console.log(jevent.which)
+            console.log(event.metaKey)
+            console.log(event.which)
+
+            if (allowNavigation && 91 == event.which) { // cmd
+                if (this.highlightLinks) v.toggleLinks(false) // hide hightlights to allow user to make a screenshot on macOS
+            }
+
             if (allowNavigation && (13 == event.which || 39 == event.which)) { // enter OR right
                 v.next()
             } else if (allowNavigation && (8 == event.which || 37 == event.which)) { // backspace OR left
                 v.previous()
+            } else if (event.metaKey && (70 == event.which)) { // Cmd+F
+                const search = prompt("Type text to find:", this.searchText)
+                if (null != search) {
+                    this.searchText = search
+                    this.currentPage.findText(this.searchText)
+                }
             } else if (allowNavigation && (16 == event.which)) { // shift
                 if (!jevent.metaKey) {  // no cmd to allow user to make a screenshot on macOS
                     v.toggleLinks()
                 }
-            } else if (allowNavigation && 91 == event.which) { // cmd
-                if (this.highlightLinks) v.toggleLinks(false) // hide hightlights to allow user to make a screenshot on macOS
             } else if (event.metaKey || event.altKey || event.ctrlKey) { // skip any modificator active to allow a browser to handle its own shortkeys
                 return false
             } else if (allowNavigation && 90 == event.which) { // z
@@ -804,11 +815,11 @@ function createViewer(story, files) {
                 redirectOverlayLinkIndex: undefined,
             }
             var hash = location.hash;
-     
+         
             if (hash == null || hash.length == 0) {
                 hash = '#'
                 result.reset_url = true
-     
+         
             } else if (hash.indexOf('/') > 0) {
                 // read additonal parameters
                 var args = hash.split('/')
@@ -819,7 +830,7 @@ function createViewer(story, files) {
                 hash = hash.substring(0, hash.indexOf('/'))
                 hash = '#' + hash.replace(/^[^#]*#?(.*)$/, '$1');
             }
-     
+         
             result.page_name = hash
             return result
         },*/

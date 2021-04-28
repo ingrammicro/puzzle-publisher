@@ -188,6 +188,29 @@ class ViewerPage {
         this.visible = true
     }
 
+
+    findText(text) {
+        text = text.toLowerCase().trim()
+        const layers = layersData[this.index].c
+        if (!layers) return
+        this._findTextProcessLayers(layers, text)
+    }
+
+    _findTextProcessLayers(layers, text) {
+        for (var l of layers.slice().reverse()) {
+            if ("Text" == l.tp && text == l.tx.toLowerCase()) {
+                this._findTextShowElement(l)
+            }
+            if (undefined != l.c)
+                this._findTextProcessLayers(l.c, text)
+        }
+    }
+    _findTextShowElement(l) {
+        let x = viewer.currentZoom * l.x
+        let y = viewer.currentZoom * l.y
+        window.scrollTo(x, y);
+    }
+
     updatePosition() {
         this.currentLeft = viewer.currentMarginLeft
         this.currentTop = viewer.currentMarginTop
