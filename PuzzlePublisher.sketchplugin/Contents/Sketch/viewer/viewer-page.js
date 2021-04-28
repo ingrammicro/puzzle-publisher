@@ -206,9 +206,17 @@ class ViewerPage {
         }
     }
     _findTextShowElement(l) {
-        let x = viewer.currentZoom * l.x
-        let y = viewer.currentZoom * l.y
+        let x = l.finalX
+        let y = l.finalY
         window.scrollTo(x, y);
+        //
+        var style = "left: " + l.finalX + "px; top:" + l.finalY + "px; "
+        style += "width: " + l.w + "px; height:" + l.h + "px; "
+        var elemDiv = $("<div>", {
+            class: "symbolDiv",
+        }).attr('style', style)
+
+        elemDiv.appendTo(this.linksDiv)
     }
 
     updatePosition() {
