@@ -279,8 +279,8 @@ function createViewer(story, files) {
             // allow currently active childs to handle global keys
             if (this.child && this.child.handleKeyDown(jevent)) return true
 
-            console.log(event.metaKey)
-            console.log(event.which)
+            //console.log(event.metaKey)
+            //console.log(event.which)
 
             if (allowNavigation && 91 == event.which) { // cmd
                 if (this.highlightLinks) v.toggleLinks(false) // hide hightlights to allow user to make a screenshot on macOS
@@ -292,6 +292,8 @@ function createViewer(story, files) {
                 v.previous()
             } else if (allowNavigation && event.metaKey && (70 == event.which)) { // Cmd+F
                 this.showTextSearch()
+            } else if (allowNavigation && event.metaKey && (71 == event.which)) { // Cmd+G -> Next search
+                this.currentPage.findTextNext()
             } else if (allowNavigation && (16 == event.which)) { // shift
                 if (!jevent.metaKey) {  // no cmd to allow user to make a screenshot on macOS
                     v.toggleLinks()

@@ -166,8 +166,8 @@ class GalleryViewer extends AbstractViewer {
 
         if (27 == event.which) { // esc
             this.toggle()
-        } else if (!this.searchInputFocused && 71 == event.which) { // key "g"
-            // Key "G" deactivates Symbol Viewer
+        } else if (!this.searchInputFocused && 71 == event.which && !event.metaKey) { // key "g"
+            // Key "G" activates/deactivates Symbol Viewer
             this.toggle()
         } else if (this.searchInputFocused) {
             return true
@@ -197,7 +197,7 @@ class GalleryViewer extends AbstractViewer {
     handleKeyDownWhileInactive(jevent) {
         const event = jevent.originalEvent
 
-        if (71 == event.which) { // g
+        if (71 == event.which && !event.metaKey) { // g
             // Key "G" activates Symbol Viewer
             this.toggle()
         } else {

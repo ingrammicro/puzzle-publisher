@@ -190,6 +190,12 @@ class ViewerPage {
         this.visible = true
     }
 
+    findTextNext() {
+        if (undefined == this.textElemIndex) return false
+        //
+        //this.textElemIndex++
+        this.findText(this.prevSearchText)
+    }
 
     findText(text) {
         text = text.toLowerCase().trim()
@@ -201,14 +207,23 @@ class ViewerPage {
             this.prevSearchText = undefined
         }
         if (undefined == this.textElemIndex) this.textElemIndex = 0
-        //
+
+        // Search all layers with required text inside
         let foundLayers = []
         this._findTextLayersByText(layers, text, foundLayers)
         foundLayers.sort(function (a, b) {
             return a.y < b.y ? -1 : 1
         })
-        if (foundLayers.length > this.textElemIndex)
-            this._findTextShowElement(foundLayers[this.textElemIndex])
+        //  No results
+        if (0 == foundLayers.length) {
+            return false
+        }
+        if (foundLayers.length <= this.textElemIndex) {
+            // No more results ahead
+            this.textElemIndex = 0
+        }
+        // Higlight search result
+        this._findTextShowElement(foundLayers[this.textElemIndex])
         //
         this.prevSearchText = text
         if ((foundLayers.length + 1) > this.textElemIndex) this.textElemIndex++

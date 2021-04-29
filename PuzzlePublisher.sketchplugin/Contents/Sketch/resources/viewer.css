@@ -81,6 +81,8 @@
     position: absolute;    
     outline: 1px solid var(--color-accent);
     outline-offset: -1px;
+    opacity: 0.2;
+    background-color: var(--color-accent);
   
   }  
 /************ SYMBOLS ******/
