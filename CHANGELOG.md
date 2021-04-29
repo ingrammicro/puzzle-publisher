@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 16.3.0 (29 Apr 2021)
+Added text search (Cmd+F,Cmd+G)
+
 ##  Version 16.2.4 (23 Apr 2021)
 Don't export masked layers without Export Preset configured
 
