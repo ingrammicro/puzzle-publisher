@@ -77,14 +77,19 @@
   transition: opacity 0.5s;
 }
 /* SEARCH */
-.searchDiv {
+.searchFocusedResultDiv {
     position: absolute;    
-    outline: 1px solid var(--color-accent);
-    outline-offset: -1px;
-    opacity: 0.2;
-    background-color: var(--color-accent);
-  
-  }  
+    outline: 2px solid var(--color-primary);
+    opacity: 0.3;
+    background-color: yellow;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+.searchResultDiv {
+    position: absolute;    
+    outline: 2px solid var(--color-accent);  
+    background-color: white;  
+    opacity: 0.3;
+}
 /************ SYMBOLS ******/
 .symbolLink {}
 

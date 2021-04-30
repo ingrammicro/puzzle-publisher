@@ -222,8 +222,11 @@ class ViewerPage {
             // No more results ahead
             this.textElemIndex = 0
         }
-        // Higlight search result
-        this._findTextShowElement(foundLayers[this.textElemIndex])
+        // Highlight results
+        this.hideFoundTextResults()
+        foundLayers.forEach(function (l, index) {
+            this._findTextShowElement(l, index == this.textElemIndex)
+        }, this)
         //
         this.prevSearchText = text
         if ((foundLayers.length + 1) > this.textElemIndex) this.textElemIndex++
@@ -240,32 +243,27 @@ class ViewerPage {
                 this._findTextLayersByText(l.c, text, foundLayers)
         }
     }
-    _findTextShowElement(l) {
-        // hide previous search result
-        this.hideFoundTextResult()
+    _findTextShowElement(l, isFocused = false) {
+        const padding = isFocused ? 5 : 0
+        let x = l.x - padding
+        let y = l.y - padding
 
-        let x = l.x
-        let y = l.y
         // scroll window to show a layer
-        window.scrollTo(x, y);
+        if (isFocused) window.scrollTo(x, y);
 
         // show layer border
         var style = "left: " + x + "px; top:" + y + "px; "
-        style += "width: " + l.w + "px; height:" + l.h + "px; "
+        style += "width: " + (l.w + padding * 2) + "px; height:" + (l.h + padding * 2) + "px; "
         var elemDiv = $("<div>", {
-            class: "searchDiv",
+            class: isFocused ? "searchFocusedResultDiv" : "searchResultDiv",
         }).attr('style', style)
 
         elemDiv.appendTo(this.linksDiv)
-
-        this.foundDiv = elemDiv
     }
 
-    hideFoundTextResult() {
-        if (!this.foundDiv) return
-
-        this.foundDiv.remove()
-        this.foundDiv = undefined
+    hideFoundTextResults() {
+        $(".searchResultDiv").remove()
+        $(".searchFocusedResultDiv").remove()
     }
 
     updatePosition() {
