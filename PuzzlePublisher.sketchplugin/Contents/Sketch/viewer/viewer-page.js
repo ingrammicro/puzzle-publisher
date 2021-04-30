@@ -248,9 +248,6 @@ class ViewerPage {
         let x = l.x - padding
         let y = l.y - padding
 
-        // scroll window to show a layer
-        if (isFocused) window.scrollTo(x, y);
-
         // show layer border
         var style = "left: " + x + "px; top:" + y + "px; "
         style += "width: " + (l.w + padding * 2) + "px; height:" + (l.h + padding * 2) + "px; "
@@ -259,6 +256,21 @@ class ViewerPage {
         }).attr('style', style)
 
         elemDiv.appendTo(this.linksDiv)
+
+        // scroll window to show a layer
+        if (isFocused) {
+            this._scrollTo(l.x, l.y)
+        }
+    }
+
+    _scrollTo(x, y) {
+        for (let p of this.fixedPanels) {
+            if (Math.round(p.y) == 0) {
+                y -= p.height
+                break
+            }
+        }
+        window.scrollTo(x, y - 10);
     }
 
     hideFoundTextResults() {
