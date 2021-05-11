@@ -224,7 +224,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     s += '          <div id="gallery-header">\n';
     s += '            <div id="gallery-header-container">\n';
     s += '              <div id="title"><div>' + options.docName + '</div><div id="screensamount"></div></div>\n';
-    s += '              <div id="search"><input type="text" placeholder="Search screen..." id="searchInput" onkeyup="searchScreen()"></div>\n';
+    s += '              <div id="search"><input type="text" placeholder="Search screen..." id="searchInput" onkeyup="viewer.galleryViewer.onSearchInputChange()"></div>\n';
     s += '              <div id="right">\n';
     s += '                <div class="checkbox-container">\n';
     s += '                  <input type="checkbox" id="galleryShowMap" onclick="viewer.galleryViewer.enableMapMode(this.checked)"/>\n';

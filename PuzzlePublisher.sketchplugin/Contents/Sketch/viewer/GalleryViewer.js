@@ -251,8 +251,11 @@ class GalleryViewer extends AbstractViewer {
         })
         $('#searchInput').focus()
 
+
         super._showSelf()
 
+        // Redraw search results
+        this.onSearchInputChange()
         viewer.refresh_url(viewer.currentPage, "", false)
     }
 
@@ -356,7 +359,7 @@ class GalleryViewer extends AbstractViewer {
 
     selectPage(index) {
         this.hide()
-        viewer.goToPage(index)
+        viewer.goToPage(index, this.actualSearchText)
     }
 
     mouseEnterPage(index) {
@@ -537,31 +540,73 @@ class GalleryViewer extends AbstractViewer {
         $('#gallery #grid').append(svg)
     }
 
-}
+    //Search page in gallery by page name
+    onSearchInputChange() {
+        var keyword = $("#searchInput").val().toLowerCase().trim()
+        if (undefined == this.actualSearchText && "" == keyword) return
 
-//Search page in gallery by page name
-function searchScreen() {
-    var keyword = $("#searchInput").val().toLowerCase();
-    var foundScreenAmount = 0;
+        var foundScreenAmount = 0;
 
-    viewer.userStoryPages.forEach(function (page) {
-        const title = page.title.toLowerCase()
-        const div = $("#gallery #grid #" + page.index)
-        const visible = title.includes(keyword) || page.image.includes(keyword)
-        if (visible) foundScreenAmount++
-        page.visibleInGallery = visible
-        //
-        //if (div.is(':visible') == visible) return
-        //
-        if (visible) {
-            div.show()
-        } else {
-            div.hide()
-        }
-    });
+        viewer.userStoryPages.forEach(function (page) {
+            const title = page.title.toLowerCase().trim()
+            const div = $("#gallery #grid #" + page.index)
+            let visible = keyword == ''
+            let foundTextLayers = []
 
-    viewer.galleryViewer._showHideMapLinks()
+            // Reset prev results
+            div.find(".searchFocusedResultDiv,.searchResultDiv").remove()
 
-    //load amount of pages to gallery title
-    $("#screensamount").html(foundScreenAmount + " screens")
+            // Search in artboard title and image name            
+            if (keyword != '') {
+                visible = title.includes(keyword) || page.image.includes(keyword)
+
+                // Search in text layers                
+                page.findTextLayersByText(keyword, foundTextLayers)
+                if (foundTextLayers.length > 0) {
+                    visible = true
+                }
+                //
+            }
+
+            if (visible) foundScreenAmount++
+            page.visibleInGallery = visible
+            if (visible) {
+                div.show()
+                if (visible) {
+                    foundTextLayers.forEach(function (l) {
+                        viewer.galleryViewer._findTextShowElement(page, l, div)
+                    })
+                }
+            } else {
+                div.hide()
+            }
+        });
+
+        // Final procedures
+        this.actualSearchText = keyword != '' ? keyword : undefined
+        viewer.galleryViewer._showHideMapLinks()
+
+        //load amount of pages to gallery title
+        $("#screensamount").html(foundScreenAmount + " screens")
+    }
+
+    _findTextShowElement(page, l, div) {
+        const isFocused = true
+        const padding = isFocused ? 2 : 0
+        const divWidth = div.innerWidth()
+        const zoom = page.width / divWidth
+
+        let x = l.x / zoom
+        let y = l.y / zoom
+
+        // show layer border
+        var style = "left: " + x + "px; top:" + y + "px; "
+        style += "width: " + (l.w / zoom + padding * 2) + "px; height:" + (l.h / zoom + padding * 2) + "px; "
+        var elemDiv = $("<div>", {
+            class: isFocused ? "searchFocusedResultDiv" : "searchResultDiv",
+        }).attr('style', style)
+
+        elemDiv.appendTo(div)
+    }
+
 }

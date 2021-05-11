@@ -199,8 +199,6 @@ class ViewerPage {
 
     findText(text) {
         text = text.toLowerCase().trim()
-        const layers = layersData[this.index].c
-        if (!layers) return false
         //        
         if (undefined != this.prevSearchText && this.prevSearchText != text) {
             this.textElemIndex = undefined
@@ -210,7 +208,7 @@ class ViewerPage {
 
         // Search all layers with required text inside
         let foundLayers = []
-        this._findTextLayersByText(layers, text, foundLayers)
+        this.findTextLayersByText(text, foundLayers)
         foundLayers.sort(function (a, b) {
             return a.y < b.y ? -1 : 1
         })
@@ -234,13 +232,21 @@ class ViewerPage {
         return foundLayers.length > 0
     }
 
-    _findTextLayersByText(layers, text, foundLayers) {
+    // Arguments:
+    //  foundLayers: ref to list result
+    //  layers: list of layers or null (to get a root layers)
+    findTextLayersByText(text, foundLayers, layers = null) {
+        if (null == layers) {
+            layers = layersData[this.index].c
+            if (!layers) return false
+        }
+
         for (var l of layers.slice().reverse()) {
             if ("Text" == l.tp && l.tx.toLowerCase().includes(text)) {
                 foundLayers.push(l)
             }
             if (undefined != l.c)
-                this._findTextLayersByText(l.c, text, foundLayers)
+                this.findTextLayersByText(text, foundLayers, l.c)
         }
     }
     _findTextShowElement(l, isFocused = false) {

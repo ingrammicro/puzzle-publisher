@@ -583,9 +583,14 @@ function createViewer(story, files) {
                 window.history.back();
             }
         },
-        goToPage: function (page) {
+        goToPage: function (page, searchText) {
             this.clear_context();
             this.goTo(page);
+            //
+            if (undefined != searchText) {
+                this.searchText = searchText
+                this.currentPage.findText(this.searchText)
+            }
         },
         goTo: function (page, refreshURL = true) {
             // We don't need any waiting page transitions anymore
@@ -957,7 +962,7 @@ function createViewer(story, files) {
         onKeyEscape: function () {
             const page = this.currentPage
             // If the current page has search visible then hide it            
-            if (undefined != page.prevSearchText) {
+            if (undefined != page.actualSearchText) {
                 page.stopTextSearch()
                 return true
             }
