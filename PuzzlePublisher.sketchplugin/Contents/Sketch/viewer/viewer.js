@@ -957,8 +957,8 @@ function createViewer(story, files) {
         onKeyEscape: function () {
             const page = this.currentPage
             // If the current page has search visible then hide it            
-            if (page.foundDiv) {
-                page.hideFoundTextResult()
+            if (undefined != page.prevSearchText) {
+                page.stopTextSearch()
                 return true
             }
             // If the current page has some overlay open then close it

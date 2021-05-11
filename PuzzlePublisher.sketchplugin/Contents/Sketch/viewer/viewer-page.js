@@ -278,6 +278,12 @@ class ViewerPage {
         $(".searchFocusedResultDiv").remove()
     }
 
+    stopTextSearch() {
+        this.hideFoundTextResults()
+        this.prevSearchText = undefined
+        this.textElemIndex = undefined
+    }
+
     updatePosition() {
         this.currentLeft = viewer.currentMarginLeft
         this.currentTop = viewer.currentMarginTop
