@@ -1,9 +1,11 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 16.4.0 (12 May 2021)
+Text search inside Gallery now finds text layers also
+
 ##  Version 16.3.1 (30 Apr 2021)
 Improved scrolling in Text Search
-
 
 ##  Version 16.3.0 (29 Apr 2021)
 Added text search (Cmd+F,Cmd+G)
