@@ -194,15 +194,15 @@ class ViewerPage {
         if (undefined == this.textElemIndex) return false
         //
         //this.textElemIndex++
-        this.findText(this.prevSearchText)
+        this.findText(this.actualSearchText)
     }
 
     findText(text) {
         text = text.toLowerCase().trim()
         //        
-        if (undefined != this.prevSearchText && this.prevSearchText != text) {
+        if (undefined != this.actualSearchText && this.actualSearchText != text) {
             this.textElemIndex = undefined
-            this.prevSearchText = undefined
+            this.actualSearchText = undefined
         }
         if (undefined == this.textElemIndex) this.textElemIndex = 0
 
@@ -226,7 +226,7 @@ class ViewerPage {
             this._findTextShowElement(l, index == this.textElemIndex)
         }, this)
         //
-        this.prevSearchText = text
+        this.actualSearchText = text
         if ((foundLayers.length + 1) > this.textElemIndex) this.textElemIndex++
         //
         return foundLayers.length > 0
@@ -286,7 +286,7 @@ class ViewerPage {
 
     stopTextSearch() {
         this.hideFoundTextResults()
-        this.prevSearchText = undefined
+        this.actualSearchText = undefined
         this.textElemIndex = undefined
     }
 
