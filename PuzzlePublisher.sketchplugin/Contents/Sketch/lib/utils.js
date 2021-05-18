@@ -27,6 +27,22 @@ Rectangle.prototype.copyToRect = function () {
 
 class Utils {
 
+
+    static getDocSetting(doc, key, defaultValue = '') {
+        const Settings = require('sketch/settings')
+        let value = Settings.documentSettingForKey(doc, key)
+        if (undefined == value || null == value) value = defaultValue
+        return value
+    }
+
+    static getPluginSetting(key, defaultValue = '') {
+        const Settings = require('sketch/settings')
+        let value = Settings.settingForKey(key)
+        if (undefined == value || null == value) value = defaultValue
+        return value
+    }
+
+
     static upgradeArtboardOverlayPosition(oldValue) {
         const newValues = {
             pinTo: 0,

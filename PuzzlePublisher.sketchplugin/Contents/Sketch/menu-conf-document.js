@@ -11,29 +11,21 @@ var onRun = function (context) {
 
     UIDialog.setUp(context);
 
-    let customHideNavigation = Settings.documentSettingForKey(doc, SettingKeys.DOC_CUSTOM_HIDE_NAV)
-    if (customHideNavigation == undefined) customHideNavigation = 0
-
-    let customSortRule = Settings.documentSettingForKey(doc, SettingKeys.DOC_CUSTOM_SORT_RULE)
-    if (customSortRule == undefined) customSortRule = -1 // use "plugin global" setting
+    let customHideNavigation = Utils.getDocSetting(doc, SettingKeys.DOC_CUSTOM_HIDE_NAV, 0)
+    let customSortRule = Utils.getDocSetting(doc, SettingKeys.DOC_CUSTOM_SORT_RULE, -1) // 0 - use "plugin global" setting
     customSortRule++ // take care about the first "plugin global" option
-
-    let customFontSizeFormat = Settings.documentSettingForKey(doc, SettingKeys.DOC_CUSTOM_FONTSIZE_FORMAT)
-    if (customFontSizeFormat == undefined) customFontSizeFormat = 0 // use "plugin global" setting
-
-    let backColor = Settings.documentSettingForKey(doc, SettingKeys.DOC_BACK_COLOR)
-    if (backColor == undefined) backColor = ''
-
-    let disableFixed = Settings.documentSettingForKey(doc, SettingKeys.DOC_DISABLE_FIXED_LAYERS) == 1
-
-    let skipAutoSync = Settings.documentSettingForKey(doc, SettingKeys.DOC_SKIP_AUTOSYNC) == 1
+    let customFontSizeFormat = Utils.getDocSetting(doc, SettingKeys.DOC_CUSTOM_FONTSIZE_FORMAT, 0)// 0 - use "plugin global" setting
+    let backColor = Utils.getDocSetting(doc, SettingKeys.DOC_BACK_COLOR)
+    let DOC_AUTHOR_NAME = Utils.getDocSetting(doc, SettingKeys.DOC_AUTHOR_NAME)
+    let DOC_AUTHOR_EMAIL = Utils.getDocSetting(doc, SettingKeys.DOC_AUTHOR_EMAIL)
+    let disableFixed = Utils.getDocSetting(doc, SettingKeys.DOC_DISABLE_FIXED_LAYERS, undefined) == 1
+    let skipAutoSync = Utils.getDocSetting(doc, SettingKeys.DOC_SKIP_AUTOSYNC, undefined) == 1
 
     //
-    const dialog = new UIDialog("Document Settings", NSMakeRect(0, 0, 500, 420), "Save", "Configure settings common for all document artboards. ")
+    const dialog = new UIDialog("Document Settings", NSMakeRect(0, 0, 500, 520), "Save", "Configure settings common for all document artboards. ")
 
     dialog.addLeftLabel("", "Export")
-    dialog.addCheckbox("disableFixed", "Disable Fixed Layers", disableFixed)
-    dialog.addHint("", "Fixed layers will be rendered as regular parts of an artboard.", 30)
+    dialog.addCheckbox("disableFixed", "Render fixed layers as regular", disableFixed)
     dialog.addCheckbox("skipAutoSync", "Disable auto sync with library", skipAutoSync)
     dialog.addHint("", "The document will not be synced with library during automation", 30)
 
@@ -54,11 +46,17 @@ var onRun = function (context) {
     dialog.addTextInput("backColor", "Custom Background Color", backColor, 'e.g. #FFFFFF')
     dialog.addHint("", "Default color is " + Constants.DEF_BACK_COLOR, 20)
 
+    dialog.addLeftLabel("", "Publish")
+    dialog.addTextInput("DOC_AUTHOR_NAME", "Author Name", DOC_AUTHOR_NAME, 'John Smith')
+    dialog.addHint("", "Leave empty to use global plugin settings", 20)
+    dialog.addTextInput("DOC_AUTHOR_EMAIL", "Author Email", DOC_AUTHOR_EMAIL, 'john@smith.com')
 
     //
     if (dialog.run()) {
         Settings.setDocumentSettingForKey(doc, SettingKeys.DOC_CUSTOM_HIDE_NAV, dialog.views['customHideNavigation'].indexOfSelectedItem())
         Settings.setDocumentSettingForKey(doc, SettingKeys.DOC_BACK_COLOR, dialog.views['backColor'].stringValue() + "")
+        Settings.setDocumentSettingForKey(doc, SettingKeys.DOC_AUTHOR_NAME, dialog.views['DOC_AUTHOR_NAME'].stringValue() + "")
+        Settings.setDocumentSettingForKey(doc, SettingKeys.DOC_AUTHOR_EMAIL, dialog.views['DOC_AUTHOR_EMAIL'].stringValue() + "")
         Settings.setDocumentSettingForKey(doc, SettingKeys.DOC_DISABLE_FIXED_LAYERS, dialog.views['disableFixed'].state() == 1)
         Settings.setDocumentSettingForKey(doc, SettingKeys.DOC_SKIP_AUTOSYNC, dialog.views['skipAutoSync'].state() == 1)
 

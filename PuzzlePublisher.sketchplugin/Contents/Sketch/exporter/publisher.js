@@ -25,10 +25,12 @@ class Publisher {
         this.ver = ''
         this.remoteFolder = ''
 
-        this.allMockupsdDir = this.Settings.settingForKey(SettingKeys.PLUGIN_EXPORTING_URL)
-        this.serverToolsPath = this.Settings.settingForKey(SettingKeys.PLUGIN_SERVERTOOLS_PATH) + ""
+        this.allMockupsdDir = Utils.getPluginSettings(SettingKeys.PLUGIN_EXPORTING_URL, '1')
+        this.serverToolsPath = Utils.getPluginSettings(SettingKeys.PLUGIN_SERVERTOOLS_PATH, "")
         this.authorName = this.Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_NAME) + ""
         this.authorEmail = this.Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_EMAIL) + ""
+        this.docAuthorName = this.Settings.settingForKey(SettingKeys.DOC_AUTHOR_NAME) + ""
+        this.docAuthorEmail = this.Settings.settingForKey(SettingKeys.DOC_AUTHOR_EMAIL) + ""
         this.commentsURL = this.Settings.settingForKey(SettingKeys.PLUGIN_COMMENTS_URL) + ""
 
         this.docFolder = this.doc.cloudName();

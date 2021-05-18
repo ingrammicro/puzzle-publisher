@@ -187,6 +187,8 @@ const SettingKeys = {
     DOC_CUSTOM_FONTSIZE_FORMAT: "DOC_CUSTOM_FONTSIZE_FORMAT", // How to show font size in Element Inspector
     DOC_BACK_COLOR: "docBackColor",
     DOC_SKIP_AUTOSYNC: "DOC_SKIP_AUTOSYNC",
+    DOC_AUTHOR_NAME: "docAuthorName",
+    DOC_AUTHOR_EMAIL: "docAuthorEmail",
 
     LAYER_ANNOTATIONS: "layerAnnotations",
     LAYER_OVERLAY_TYPE: "layerOverlayType",
