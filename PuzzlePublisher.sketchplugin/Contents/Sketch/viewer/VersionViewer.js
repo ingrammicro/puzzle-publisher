@@ -146,7 +146,7 @@ class VersionViewer extends AbstractViewer {
             info += "<div>";
             info += pageName;
             info += "</div><div>";
-            info += "<img src='" + screen['image_url'] + "' border='0'/>";
+            info += "<img src='" + screen['image_url'] + "' border='0' width='360px'/>";
             info += "</div>";
             info += "</div>";
         }
