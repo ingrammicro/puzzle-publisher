@@ -6,7 +6,7 @@ A Sketch plugin that exports Sketch artboards into clickable HTML file.
 
 Features:
 - Single HTML file with links highlighting
-- Show artboard as an overlay over a previous artboard / [Pict 1](https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/tests/FixedLayers/Overlay1.png), [Pict 2](https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/tests/FixedLayers/Overlay2.png), [Pict 3](https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/tests/FixedLayers/Overlay3.png) / [Example](https://github.com/ingrammicro/puzzle-publisher/tree/master/examples/FixedLayers)
+- Show artboard as an overlay over a previous artboard / [Pict 1](https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/examples/FixedLayers/Overlay1.png), [Pict 2](https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/examples/FixedLayers/Overlay2.png), [Pict 3](https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/examples/FixedLayers/Overlay3.png) / [Example](https://github.com/ingrammicro/puzzle-publisher/tree/master/examples/FixedLayers)
 - Show artboard as a modal over a previous artboard  / [Picture](https://github.com/ingrammicro/puzzle-publisher/raw/master/examples/Pictures/Link-ModalArtboard.png), [Example](https://github.com/ingrammicro/puzzle-publisher/raw/master/examples/Link-ModalArtboard.sketch)
 - Support for layers with fixed position (left,top and float panels) / [Sketch example](https://github.com/ingrammicro/puzzle-publisher/tree/master/examples/FixedLayers) / [HTML Demo](https://ingrammicro.github.io/puzzle-publisher/FixedLayers)
 - Support for Sketch-native links (including Back links, cross-page links, links inside Symbols and overrided hotspot links)
