@@ -66,4 +66,4 @@ By default it will show 2x images for high pixel density screens. To turn this o
 ### Special magic string in layer names
 - @MainBackground@: a shape layer background color will be used as a default color for browser pages
 - @SiteIcon@: an image layer will be rendered as site icon for mockups
-- @Redirect@: a link from a marked hostpot will be used to show a page under an overlay ([example](https://github.com/ingrammicro/puzzle-publisher/tree/master/tests/Releases/12.2.0))
+- @Redirect@: a link from a marked hostpot will be used to show a page under an overlay ([example](https://github.com/ingrammicro/puzzle-publisher/tree/master/tests/12.2.0))
