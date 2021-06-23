@@ -16,8 +16,8 @@ var onRun = function (context) {
     customSortRule++ // take care about the first "plugin global" option
     let customFontSizeFormat = Utils.getDocSetting(doc, SettingKeys.DOC_CUSTOM_FONTSIZE_FORMAT, 0)// 0 - use "plugin global" setting
     let backColor = Utils.getDocSetting(doc, SettingKeys.DOC_BACK_COLOR)
-    let DOC_AUTHOR_NAME = Utils.getDocSetting(doc, SettingKeys.DOC_AUTHOR_NAME)
-    let DOC_AUTHOR_EMAIL = Utils.getDocSetting(doc, SettingKeys.DOC_AUTHOR_EMAIL)
+    let DOC_OWNER_NAME = Utils.getDocSetting(doc, SettingKeys.DOC_OWNER_NAME)
+    let DOC_OWNER_EMAIL = Utils.getDocSetting(doc, SettingKeys.DOC_OWNER_EMAIL)
     let disableFixed = Utils.getDocSetting(doc, SettingKeys.DOC_DISABLE_FIXED_LAYERS, undefined) == 1
     let skipAutoSync = Utils.getDocSetting(doc, SettingKeys.DOC_SKIP_AUTOSYNC, undefined) == 1
 
@@ -46,17 +46,18 @@ var onRun = function (context) {
     dialog.addTextInput("backColor", "Custom Background Color", backColor, 'e.g. #FFFFFF')
     dialog.addHint("", "Default color is " + Constants.DEF_BACK_COLOR, 20)
 
-    dialog.addLeftLabel("", "Publish")
-    dialog.addTextInput("DOC_AUTHOR_NAME", "Author Name", DOC_AUTHOR_NAME, 'John Smith')
+    dialog.addDivider()
+    dialog.addLeftLabel("", "Document Owner")
+    dialog.addTextInput("DOC_OWNER_NAME", "Name", DOC_OWNER_NAME, 'John Smith')
     dialog.addHint("", "Leave empty to use global plugin settings", 20)
-    dialog.addTextInput("DOC_AUTHOR_EMAIL", "Author Email", DOC_AUTHOR_EMAIL, 'john@smith.com')
+    dialog.addTextInput("DOC_OWNER_EMAIL", "Email", DOC_OWNER_EMAIL, 'john@smith.com')
 
     //
     if (dialog.run()) {
         Settings.setDocumentSettingForKey(doc, SettingKeys.DOC_CUSTOM_HIDE_NAV, dialog.views['customHideNavigation'].indexOfSelectedItem())
         Settings.setDocumentSettingForKey(doc, SettingKeys.DOC_BACK_COLOR, dialog.views['backColor'].stringValue() + "")
-        Settings.setDocumentSettingForKey(doc, SettingKeys.DOC_AUTHOR_NAME, dialog.views['DOC_AUTHOR_NAME'].stringValue() + "")
-        Settings.setDocumentSettingForKey(doc, SettingKeys.DOC_AUTHOR_EMAIL, dialog.views['DOC_AUTHOR_EMAIL'].stringValue() + "")
+        Settings.setDocumentSettingForKey(doc, SettingKeys.DOC_OWNER_NAME, dialog.views['DOC_OWNER_NAME'].stringValue() + "")
+        Settings.setDocumentSettingForKey(doc, SettingKeys.DOC_OWNER_EMAIL, dialog.views['DOC_OWNER_EMAIL'].stringValue() + "")
         Settings.setDocumentSettingForKey(doc, SettingKeys.DOC_DISABLE_FIXED_LAYERS, dialog.views['disableFixed'].state() == 1)
         Settings.setDocumentSettingForKey(doc, SettingKeys.DOC_SKIP_AUTOSYNC, dialog.views['skipAutoSync'].state() == 1)
 

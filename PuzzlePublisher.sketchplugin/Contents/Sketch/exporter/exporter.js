@@ -181,6 +181,8 @@ class Exporter {
             docName: Utils.toFilename(this.docName),
             docPath: "P_P_P",
             docVersion: Constants.DOCUMENT_VERSION_PLACEHOLDER,
+            ownerName: Utils.getDocSetting(this.ndoc, SettingKeys.DOC_OWNER_NAME),
+            ownerEmail: Utils.getDocSetting(this.ndoc, SettingKeys.DOC_OWNER_EMAIL),
             authorName: Constants.DOCUMENT_AUTHOR_NAME_PLACEHOLDER,
             authorEmail: Constants.DOCUMENT_AUTHOR_EMAIL_PLACEHOLDER,
             commentsURL: Constants.DOCUMENT_COMMENTS_URL_PLACEHOLDER,

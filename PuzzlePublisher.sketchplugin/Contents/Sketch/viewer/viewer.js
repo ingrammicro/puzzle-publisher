@@ -146,7 +146,7 @@ function createViewer(story, files) {
         child: null, // some instance of Viewer
         allChilds: [], // list of all inited instances of Viewer
         symbolViewer: null,
-        versionViewer: null,
+        infoViewer: null,
         commentsViewer: null,
 
         defSidebarWidth: 400,
@@ -166,11 +166,8 @@ function createViewer(story, files) {
                 this.symbolViewer = new SymbolViewer()
 
             }
-            // Create Version Viewer for published mockups with some version specified
-            if (story.docVersion != 'V_V_V') {
-                this.versionViewer = new VersionViewer()
-                $("#menu_version_viewer").removeClass("hidden");
-            }
+            this.infoViewer = new infoViewer()
+
             if (story.commentsURL != 'V_V_C' && story.commentsURL != "") {
                 this.commentsViewer = new CommentsViewer()
                 $("#nav #pageComments").removeClass("hidden")
@@ -200,8 +197,8 @@ function createViewer(story, files) {
             });
             jQuery(window).resize(function () { viewer.zoomContent() });
 
-            if (this.urlParams.get('v') != null && this.versionViewer) {
-                this.versionViewer.toggle()
+            if (this.urlParams.get('v') != null && this.infoViewer) {
+                this.infoViewer.toggle()
             }
             if (this.urlParams.get('c') != null && this.commentsViewer) {
                 this.commentsViewer.toggle()

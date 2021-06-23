@@ -167,7 +167,7 @@
 
 #comments_viewer,
 #symbol_viewer,
-#version_viewer {
+#info_viewer {
   width: 100%;
   overflow-y: auto;
   padding-bottom: 20px;
@@ -283,7 +283,7 @@ select:focus{
 
 #comments_viewer .title, 
 #symbol_viewer .title, 
-#version_viewer .title {
+#info_viewer .title {
   height: 56px;
   display: flex;
   align-items: center;
@@ -362,7 +362,7 @@ select:focus{
   border-top: solid 1px var(--color-border);
 }
 
-#version_viewer .head {
+#info_viewer .head {
   font-weight: 900;
 } */
 

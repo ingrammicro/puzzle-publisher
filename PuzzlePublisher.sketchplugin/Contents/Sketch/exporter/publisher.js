@@ -25,13 +25,11 @@ class Publisher {
         this.ver = ''
         this.remoteFolder = ''
 
-        this.allMockupsdDir = Utils.getPluginSettings(SettingKeys.PLUGIN_EXPORTING_URL, '1')
-        this.serverToolsPath = Utils.getPluginSettings(SettingKeys.PLUGIN_SERVERTOOLS_PATH, "")
-        this.authorName = this.Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_NAME) + ""
-        this.authorEmail = this.Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_EMAIL) + ""
-        this.docAuthorName = this.Settings.settingForKey(SettingKeys.DOC_AUTHOR_NAME) + ""
-        this.docAuthorEmail = this.Settings.settingForKey(SettingKeys.DOC_AUTHOR_EMAIL) + ""
-        this.commentsURL = this.Settings.settingForKey(SettingKeys.PLUGIN_COMMENTS_URL) + ""
+        this.allMockupsdDir = Utils.getPluginSetting(SettingKeys.PLUGIN_EXPORTING_URL, '1')
+        this.serverToolsPath = Utils.getPluginSetting(SettingKeys.PLUGIN_SERVERTOOLS_PATH)
+        this.authorName = Utils.getPluginSetting(SettingKeys.PLUGIN_AUTHOR_NAME)
+        this.authorEmail = Utils.getPluginSetting(SettingKeys.PLUGIN_AUTHOR_EMAIL)
+        this.commentsURL = Utils.getPluginSetting(SettingKeys.PLUGIN_COMMENTS_URL)
 
         this.docFolder = this.doc.cloudName();
         let posSketch = this.docFolder.indexOf(".sketch")
@@ -151,7 +149,7 @@ class Publisher {
                     url += "&msg=" + encodeURI(this.message).replace(/[#]/g, '')
                     url += "&ver=" + encodeURI(this.ver).replace(/[#]/g, '')
                     url += "&dir=" + encodeURI(announceFolder).replace(/[#]/g, '')
-                    if ('--NOTELE' == this.message) {
+                    if (this.message.includes('--NOTELE')) {
                         url += "&NOTELE=1"
                     }
                     if (DEBUG) {

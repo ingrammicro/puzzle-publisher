@@ -100,7 +100,7 @@ function buildMainHTML(options) {
         s += '<script type="text/javascript" src="viewer/SymbolViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
         s += '<link rel="stylesheet" type="text/css" href="resources/viewer-fonts.css' + verPostfix + '">\n';
     }
-    s += '<script type="text/javascript" src="viewer/VersionViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
+    s += '<script type="text/javascript" src="viewer/InfoViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
     s += '<script type="text/javascript">\n';
     if (options.jsCode != '') {
         s += 'function runJSCode(){' + options.jsCode + '}\n'
@@ -201,20 +201,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 <div id="comments_viewer_content">\
                 </div>\
             </div >\
-            <div id="version_viewer" class="hidden">\
+            <div id="info_viewer" class="hidden">\
                 <div class="title">\
-                  <div style="width:100%;">Version Inspector</div>\
-                  <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.versionViewer.toggle();  return false;">\
+                  <div style="width:100%;">Document Inspector</div>\
+                  <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.infoViewer.toggle();  return false;">\
                     <svg class="svgIcon"><use xlink:href="#icClose"></use></svg>\
                   </div>\
                 </div>\
-    <div style="padding: 72px 20px 0 20px">\
-                   Mode:<br />\
-                  <input type="radio" name="version_viewer_mode" id="version_viewer_mode_diff" value="diff" checked onclick="viewer.versionViewer.pageChanged()" disabled /><label for="version_viewer_mode_diff">Differences</label><br />\
-                  <input type="radio" name="version_viewer_mode" id="version_viewer_mode_prev" value="prev" onclick="viewer.versionViewer.pageChanged()" disabled><label for="version_viewer_mode_prev">Prev version</label><br />\
-                  <input type="radio" name="version_viewer_mode" id="version_viewer_mode_new" value="new" onclick="viewer.versionViewer.pageChanged()" disabled><label for="version_viewer_mode_new">New version</label><br />\
-                </div>\
-                <div id="version_viewer_content" style="padding: 72px 20px 0 20px"></div>\
+                <div id="info_viewer_content" style="padding: 72px 20px 0 20px"></div>\
             </div>\
         </div>\
     <div id="content-shadow" class="hidden" onclick="viewer.onContentClick()"></div>\
@@ -285,7 +279,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         s += "                                <div class=\"tips\">M<\/div>";
         s += "                            <\/div>";
     }
-    s += "                                <div id=\"menu_version_viewer\" class=\"hidden item\" onclick=\"addRemoveClass('class','menu','active'); viewer.versionViewer.toggle();  return false;\">";
+    s += "                                <div id=\"menu_info_viewer\" class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.infoViewer.toggle();  return false;\">";
     s += "                                    <svg class='svgIcon'><use xlink:href=\"#icVersionInspector\"><\/use><\/svg>";
     s += "                                    <span>Version Inspector<\/span>";
     s += "                                    <div class=\"tips\">V<\/div>";
