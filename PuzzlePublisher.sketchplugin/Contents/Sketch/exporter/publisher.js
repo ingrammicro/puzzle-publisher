@@ -145,6 +145,7 @@ class Publisher {
                 try {
                     var url = this.siteRoot + this.serverToolsPath + Constants.SERVER_ANNOUNCE_SCRIPT
                     url += "?author=" + encodeURI(this.authorName).replace(/[#]/g, '')
+                    if ("" != this.authorEmail) url += "&email=" + encodeURI(this.authorEmail).replace(/[#]/g, '')
                     if ("" != this.secret) url += "&sec=" + encodeURI(this.secret).replace(/[#]/g, '')
                     url += "&msg=" + encodeURI(this.message).replace(/[#]/g, '')
                     url += "&ver=" + encodeURI(this.ver).replace(/[#]/g, '')

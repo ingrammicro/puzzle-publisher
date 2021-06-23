@@ -173,6 +173,18 @@
   padding-bottom: 20px;
 }
 
+
+#info_viewer .head{
+    padding-bottom: 20px;
+    width: 100%;
+}
+
+
+#info_viewer .record{
+    padding-bottom: 20px;
+    width: 100%;
+}
+
 select{
   height: 32px;
   width: 100%;

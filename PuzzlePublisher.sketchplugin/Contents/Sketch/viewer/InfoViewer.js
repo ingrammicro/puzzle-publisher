@@ -121,6 +121,18 @@ class infoViewer extends AbstractViewer {
         return true
     }
 
+    showRecDetails(index, forNew) {
+        const rec = this.data['recs'][index]
+        if (!rec) return
+        ///
+        const div = $("#info_viewer .record ." + (forNew ? 'n' : 'u') + "screens#" + index)
+        if (!div) return
+        div.html("")
+        var info = ""
+        ///
+        info += this._showScreens(rec, forNew)
+        div.html(info)
+    }
     /////////////////////////////////////////////////
 
     _restoreNewImages() {
@@ -129,6 +141,7 @@ class infoViewer extends AbstractViewer {
         })
 
     }
+
 
     _showScreens(data, showNew) {
         var info = "";
@@ -191,7 +204,7 @@ class infoViewer extends AbstractViewer {
         var info = ""
 
         if (story.ownerEmail != '') {
-            info += `<div class="tooltip">Owner: ${story.ownerName}<span class="tooltiptext">${story.ownerEmail}</span></div>`
+            info += `<div class="head" style="font-weight:bold;"><div class="tooltip">Owner: ${story.ownerName}<span class="tooltiptext">${story.ownerEmail}</span></div></div>`
         } else {
             info += "Unknown"
         }
@@ -202,16 +215,32 @@ class infoViewer extends AbstractViewer {
 
     _loadData(data) {
         var info = ""
-        this.data = data
 
-        info += `<div id="title" style="font-weight:bold;">Versions</div>`
+        info += `<div id="title" style="font-weight:bold;">Changes</div>`
 
-        data['recs'].forEach(function (rec) {
-            info += `<div>#${rec['ver']} ${rec['time']}</div>
-            <div>${rec['author']}</div>
+        data['recs'].forEach(function (rec, index) {
+            var authorHTML = undefined != rec['email'] ? `<div class="tooltip">Owner: ${rec['author']}<span class="tooltiptext">${rec['email']}</span></div>` : rec['author']
+            info += `
+            <div class="record">
+                <div class="ver">#${rec['ver']} ${new Date(rec['time'] * 1000).toLocaleDateString()} ${authorHTML}</div>
+                <div class="message">${rec['message'].replaceAll('--NOTEL', '')}</div>
+                <div class="info">
             `
+            if (rec['screens_total_new']) {
+                info += `Added: <a href="#" onclick="viewer.infoViewer.showRecDetails(${index},true)">${rec['screens_total_new']} screen(s)</a>`
+                info += `<div class="nscreens" id="${index}"/>`
+            }
+            if (rec['screens_total_changed']) {
+                info += `Updated: <a href="#" onclick="viewer.infoViewer.showRecDetails(${index},false)">${rec['screens_total_changed']} screen(s)</a>`
+                info += `<div class="uscreens" id="${index}"/>`
+            }
+            if (!rec['screens_total_new'] && !rec['screens_total_changed']) {
+                info += "No new or changed screens"
+            }
+            info += `</div></div>`
         }, this)
 
+        this.data = data
         $("#info_viewer_content_dynamic").html(info)
     }
 

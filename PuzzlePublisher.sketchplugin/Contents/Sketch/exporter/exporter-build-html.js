@@ -281,7 +281,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
     s += "                                <div id=\"menu_info_viewer\" class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.infoViewer.toggle();  return false;\">";
     s += "                                    <svg class='svgIcon'><use xlink:href=\"#icVersionInspector\"><\/use><\/svg>";
-    s += "                                    <span>Version Inspector<\/span>";
+    s += "                                    <span>Document Info<\/span>";
     s += "                                    <div class=\"tips\">V<\/div>";
     s += "                                <\/div>";
     s += "                            <\/div>";

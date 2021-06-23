@@ -177,12 +177,17 @@ class Exporter {
     startStoryData() {
         const disableHotspots = this.Settings.settingForKey(SettingKeys.PLUGIN_DISABLE_HOTSPOTS) == 1
 
+        var ownerName = Utils.getDocSetting(this.ndoc, SettingKeys.DOC_OWNER_NAME)
+        if ('' == ownerName) ownerName = Utils.getPluginSetting(SettingKeys.PLUGIN_AUTHOR_NAME)
+        var ownerEmail = Utils.getDocSetting(this.ndoc, SettingKeys.DOC_OWNER_EMAIL)
+        if ('' == ownerEmail) ownerEmail = Utils.getPluginSetting(SettingKeys.PLUGIN_AUTHOR_EMAIL)
+
         this.storyData = {
             docName: Utils.toFilename(this.docName),
             docPath: "P_P_P",
             docVersion: Constants.DOCUMENT_VERSION_PLACEHOLDER,
-            ownerName: Utils.getDocSetting(this.ndoc, SettingKeys.DOC_OWNER_NAME),
-            ownerEmail: Utils.getDocSetting(this.ndoc, SettingKeys.DOC_OWNER_EMAIL),
+            ownerName: ownerName,
+            ownerEmail: ownerEmail,
             authorName: Constants.DOCUMENT_AUTHOR_NAME_PLACEHOLDER,
             authorEmail: Constants.DOCUMENT_AUTHOR_EMAIL_PLACEHOLDER,
             commentsURL: Constants.DOCUMENT_COMMENTS_URL_PLACEHOLDER,
