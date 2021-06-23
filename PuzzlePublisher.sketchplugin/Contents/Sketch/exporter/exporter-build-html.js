@@ -203,7 +203,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             </div >\
             <div id="info_viewer" class="hidden">\
                 <div class="title">\
-                  <div style="width:100%;">Document Inspector</div>\
+                  <div style="width:100%;">Changes Inspector</div>\
                   <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.infoViewer.toggle();  return false;">\
                     <svg class="svgIcon"><use xlink:href="#icClose"></use></svg>\
                   </div>\
@@ -281,7 +281,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
     s += "                                <div id=\"menu_info_viewer\" class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.infoViewer.toggle();  return false;\">";
     s += "                                    <svg class='svgIcon'><use xlink:href=\"#icVersionInspector\"><\/use><\/svg>";
-    s += "                                    <span>Document Info<\/span>";
+    s += "                                    <span>Changes Inspector<\/span>";
     s += "                                    <div class=\"tips\">V<\/div>";
     s += "                                <\/div>";
     s += "                            <\/div>";
