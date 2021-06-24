@@ -219,7 +219,7 @@ class infoViewer extends AbstractViewer {
         info += `<div id="title" style="font-weight:bold;">Changes</div>`
 
         data['recs'].forEach(function (rec, index) {
-            var authorHTML = undefined != rec['email'] ? `<div class="tooltip">Owner: ${rec['author']}<span class="tooltiptext">${rec['email']}</span></div>` : rec['author']
+            var authorHTML = undefined != rec['email'] ? `<div class="tooltip">by ${rec['author']}<span class="tooltiptext">${rec['email']}</span></div>` : rec['author']
             info += `
             <div class="record">
                 <div class="ver">#${rec['ver']} ${new Date(rec['time'] * 1000).toLocaleDateString()} ${authorHTML}</div>

@@ -871,6 +871,7 @@ function createViewer(story, files) {
             var locInfo = this._parseLocationSearch()
             var pageIndex = locInfo.page_name != null ? this.getPageIndex(locInfo.page_name, null) : null
             if (null == pageIndex) {
+                if (locInfo.page_name != "") alert("The requested page is not found. You will be redirected to the default page.")
                 // get the default page
                 pageIndex = story.startPageIndex
                 locInfo.reset_url = true
