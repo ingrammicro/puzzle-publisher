@@ -29,7 +29,7 @@ function track(page, props = undefined) {
             NSUserDefaults.standardUserDefaults().setObject_forKey(uuid, kUUIDKey)
         }
 
-        var variant = MSApplicationMetadata.metadata().variant;
+        var variant = ""//MSApplicationMetadata.metadata().variant;
         var source =
             "Sketch " +
             (variant == "NONAPPSTORE" ? "" : variant + " ") +

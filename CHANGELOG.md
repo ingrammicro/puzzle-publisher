@@ -1,6 +1,11 @@
 # Change Log
 See discussion on https://spectrum.chat/puzzle-publisher site
 
+##  Version 16.4.2 (24 May 2021)
+Viewer alerts about a missed page
+Integration with Miro now requires Miro plugin installed and configured
+Version Viewer replaced by Changes Inspector
+
 ##  Version 16.4.1 (12 May 2021)
 Text search inside Gallery now finds text layers also
 

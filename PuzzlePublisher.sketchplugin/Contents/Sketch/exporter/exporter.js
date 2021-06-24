@@ -83,8 +83,8 @@ class Exporter {
         this.fileType = fileType.toLowerCase()
 
         // To know do we need full-size images or not
-        const miroEmail = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_MIRO_EMAIL)
-        this.exportFullImages = !(miroEmail == undefined || miroEmail == null)
+        const miroEnabled = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_MIRO_ENABLED) == 1
+        this.exportFullImages = miroEnabled
 
         this.ignoreLibArtboards = this.Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_DISABLE_LIB_ARTBOARDS) == 1
     }
