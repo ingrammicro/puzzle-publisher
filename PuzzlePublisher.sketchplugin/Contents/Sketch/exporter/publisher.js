@@ -77,8 +77,6 @@ class Publisher {
             this.miroBoardName = Utils.getDocSetting(this.doc, SettingKeys.DOC_PUBLISH_MIRO_BOARD)
             this.oldMiroBoardName = this.miroBoardName
             this.miroBoardID = Utils.getDocSetting(this.doc, SettingKeys.DOC_PUBLISH_MIRO_BOARDID)
-            log("readOptions() miroBoardID=" + this.miroBoardID)
-            log("readOptions() miroBoardName=" + this.miroBoardName)
             if (("" == this.miroBoardID || "" == this.miroBoardName) && (this.miroBoardID + this.miroBoardName) != '') {
                 this._initMiro()
                 this._validateMiroParams()
@@ -394,7 +392,6 @@ class Publisher {
                     this.miroBoardIndex = this.miroBoards.boards.indexOf(this.miroBoardName)
                     this.miroBoardID = this.miroBoardIndex >= 0 ? this.miroBoards.indexIdsMap[this.miroBoardIndex] : ""
                 }
-                log("askOptions()  this.miroBoardID=" + this.miroBoardID)
                 if ("" != this.miroBoardName && "" == this.miroBoardID) {
                     this.UI.alert("Error", "No such board in Miro")
                     continue
@@ -474,7 +471,6 @@ class Publisher {
                 const currentBoard = input.stringValue() + ""
                 let currentBoardIndex = currentBoard != "" ? publisher.miroBoards.boards.indexOf(currentBoard) : 0
                 if (currentBoardIndex < 0) currentBoardIndex = 0
-                log("addMiroBoardSelector() currentBoardIndex=" + currentBoardIndex)
 
                 dialog.addSelect("miroBoard", "", currentBoardIndex, publisher.miroBoards.boards, 350)
 

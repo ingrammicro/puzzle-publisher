@@ -777,14 +777,16 @@ class SymbolViewer extends AbstractViewer {
             //
             styles[styleName] = styleValue
             //
+            let cvTokens = null
             if (layer.cv && "color" == styleName) {
                 // get token for color variable
-                const tokens = this._findSwatchTokens(layer.cv)
-                if (tokens) {
-                    const tokenStr = this._decorateSwatchToken(tokens, styleValue)
+                cvTokens = this._findSwatchTokens(layer.cv)
+                if (cvTokens) {
+                    const tokenStr = this._decorateSwatchToken(cvTokens, styleValue)
                     result += tokenStr != "" ? tokenStr : (styleValue + ";")
                 }
-            } else {
+            }
+            if (null == cvTokens) {
                 const tokenStr = tokens != null ? this._decorateStyleToken(styleName, tokens, siLayer, styleValue) : ""
                 result += tokenStr != "" ? tokenStr : (this._formatStyleValue(styleName, styleValue) + ";")
             }

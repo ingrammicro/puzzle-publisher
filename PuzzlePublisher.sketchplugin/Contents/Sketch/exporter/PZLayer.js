@@ -507,10 +507,11 @@ class PZLayer {
     _getColorVariable() {
 
         const style = this.slayer.style
-        if (!style || !style.sketchObject.primitiveTextStyle()) return
-        // Try to find that color variables was used        
+        if (!style || !style.sketchObject.primitiveTextStyle()) return undefined
+
+        // Try to find that color variables was used                
         var attributes = style.sketchObject.primitiveTextStyle().attributes()
-        if (!attributes || !attributes.MSAttributedStringColorAttribute) return undefined
+        if (!attributes || !attributes.MSAttributedStringColorAttribute || !attributes.MSAttributedStringColorAttribute.swatchID) return undefined
         var swatchID = attributes.MSAttributedStringColorAttribute.swatchID()
         if (!swatchID) return undefined
         //

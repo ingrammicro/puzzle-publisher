@@ -329,8 +329,6 @@ class Utils {
             if (response.error) {
                 var messages = getMessagesByError(response.error);
 
-                log(email + "/" + password + "/")
-
                 if (messages.alert) {
                     UI.alert("Can't connect to Miro", messages.alert)
                 } else if (messages.label) {
