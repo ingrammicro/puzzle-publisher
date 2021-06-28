@@ -20,6 +20,7 @@ class infoViewer extends AbstractViewer {
         this.screenDiffs = []
         this.mode = 'diff'
         this.published = story.docVersion != 'V_V_V'
+        this.currentRec = null
     }
 
     initialize(force = false) {
@@ -36,7 +37,8 @@ class infoViewer extends AbstractViewer {
     }
 
 
-    goTo(pageIndex) {
+    goTo(recIndex, pageIndex) {
+        this.currentRec = this.data[recIndex]
         viewer.goToPage(pageIndex)
     }
 
@@ -130,7 +132,12 @@ class infoViewer extends AbstractViewer {
         div.html("")
         var info = ""
         ///
-        info += this._showScreens(rec, forNew)
+        if (rec.isVisible) {
+            rec.isVisible = false
+        } else {
+            info += this._showScreens(rec, forNew)
+            rec.isVisible = true
+        }
         div.html(info)
     }
     /////////////////////////////////////////////////
@@ -143,9 +150,9 @@ class infoViewer extends AbstractViewer {
     }
 
 
-    _showScreens(data, showNew) {
+    _showScreens(rec, showNew) {
         var info = "";
-        for (const screen of data['screens_changed']) {
+        for (const [recIndex, screen] of rec['screens_changed'].entries()) {
             if (screen['is_new'] != showNew) continue;
             const pageIndex = viewer.getPageIndex(screen['screen_name'], -1)
             const page = pageIndex >= 0 ? story.pages[pageIndex] : undefined
@@ -159,11 +166,12 @@ class infoViewer extends AbstractViewer {
                 this.screenDiffs[screen['screen_name']] = screen
             }
 
-            info += "<div class='version-screen-div' onclick='viewer.infoViewer.goTo(" + pageIndex + ")'>";
+            info += "<div class='version-screen-div' onclick='viewer.infoViewer.goTo(" + recIndex + "," + pageIndex + ")'>";
             info += "<div>";
             info += pageName;
             info += "</div><div>";
-            info += "<img src='" + screen['image_url'] + "' border='0' width='360px'/>";
+            //info += "<img src='" + screen['image_url'] + "' border='0' width='360px'/>";
+            info += "<img src='" + rec['journals_path'] + '/' + rec['dir'] + "/diffs/" + screen['screen_name'] + "." + story.fileType + "' border='0' width='360px'/>";
             info += "</div>";
             info += "</div>";
         }
@@ -172,7 +180,7 @@ class infoViewer extends AbstractViewer {
 
 
     _showCurrentPageDiffs() {
-        const data = this.data
+        const data = this.currentRec
         const page = viewer.currentPage
         if (!page || !data) return false
 

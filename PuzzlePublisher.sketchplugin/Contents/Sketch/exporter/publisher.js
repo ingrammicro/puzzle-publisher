@@ -177,6 +177,7 @@ class Publisher {
                 // open browser                
                 if (this.siteRoot != '') {
                     const openResult = Utils.runCommand('/usr/bin/open', [openURL])
+                    log(" OPENING PUBLISHED PAGE...")
                     if (openResult.result) {
                     } else {
                         this.UI.alert('Can not open HTML in browser', openResult.output)

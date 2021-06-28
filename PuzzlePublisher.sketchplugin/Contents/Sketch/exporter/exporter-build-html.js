@@ -208,6 +208,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <svg class="svgIcon"><use xlink:href="#icClose"></use></svg>\
                   </div>\
                 </div>\
+                <div style="padding: 72px 20px 0 20px" class="hidden">\
+                Mode:<br />\
+                    <input type="radio" name="info_viewer_mode" id="info_viewer_mode_diff" value="diff" checked onclick="viewer.versionViewer.pageChanged()" disabled /><label for="info_viewer_mode_diff">Differences</label><br />\
+                    <input type="radio" name="info_viewer_mode" id="info_viewer_mode_prev" value="prev" onclick="viewer.versionViewer.pageChanged()" disabled><label for="info_viewer_mode_prev">Prev version</label><br />\
+                    <input type="radio" name="info_viewer_mode" id="info_viewer_mode_new" value="new" onclick="viewer.versionViewer.pageChanged()" disabled><label for="info_viewer_mode_new">New version</label><br />\
+                </div>\
                 <div id="info_viewer_content" style="padding: 72px 20px 0 20px"></div>\
             </div>\
         </div>\
@@ -254,7 +260,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     s += "                                <\/div>";
     s += "                                <div id=\"links\" class=\"item\" onclick=\"viewer.toggleLinks(); addRemoveClass('class','menu','active'); return false;\">";
     s += "                                    <svg class='svgIcon'><use xlink:href=\"#icPointer\"><\/use><\/svg>";
-    s += "                                    <span>Hot Spots<\/span>";
+    s += "                                    <span>Toogle Hot Spots<\/span>";
     s += "                                    <div class=\"tips\">⇧<\/div>";
     s += "                                <\/div>";
     s += "                                <div  id=\"zoom\" class=\"item\" onclick=\"viewer.toggleZoom(); addRemoveClass('class','menu','active'); return false;\">";
@@ -272,6 +278,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     s += "                                    <span>Toogle Grid Layout<\/span>";
     s += "                                    <div class=\"tips\">L<\/div>";
     s += "                                <\/div>";
+    s += "                             <\/div>"
+    s += "                            <hr>";
+    s += "                             <div class=\"groupe\">"
     if (options.loadLayers) {
         s += "                            <div  id=\"symbols\"  class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.symbolViewer.toggle();  return false;\">";
         s += "                                <svg class='svgIcon'><use xlink:href=\"#icElementInspector\"><\/use><\/svg>";
@@ -284,18 +293,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     s += "                                    <span>Changes Inspector<\/span>";
     s += "                                    <div class=\"tips\">V<\/div>";
     s += "                                <\/div>";
-    s += "                            <\/div>";
+    s += "                             <\/div>";
     if (options.serverTools != '') {
         s += "                            <hr>";
         s += "                            <div class=\"groupe\">";
         s += "                                <div class=\"item\" onclick=\"viewer.increaseVersion(); addRemoveClass('class','menu','active'); return false;\">";
         s += "                                    <svg class='svgIcon'><use xlink:href=\"#icIncreaseVersion\"><\/use><\/svg>";
-        s += "                                    <span>Version Up<\/span>";
+        s += "                                    <span>Up Version<\/span>";
         s += "                                    <div class=\"tips\">⇧ ↑<\/div>";
         s += "                                <\/div>";
         s += "                                <div class=\"item\" onclick=\"viewer.decreaseVersion(); addRemoveClass('class','menu','active'); return false;\">";
         s += "                                    <svg class='svgIcon'><use xlink:href=\"#icDecreaseVersion\"><\/use><\/svg>";
-        s += "                                    <span>Version Down<\/span>";
+        s += "                                    <span>Down Version<\/span>";
         s += "                                    <div class=\"tips\">⇧ ↓<\/div>";
         s += "                                <\/div>";
         s += "                            <\/div>";
