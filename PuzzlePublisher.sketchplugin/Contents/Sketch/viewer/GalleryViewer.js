@@ -459,7 +459,7 @@ class GalleryViewer extends AbstractViewer {
             if (width < previewWidth) {
                 src += '/previews/' + encodeURIComponent(page.image)
             } else {
-                src += '/' + encodeURIComponent(story.hasRetina ? page['image2x'] : page.image)
+                src += '/full/' + encodeURIComponent(page.image)
             }
 
             var img = $('<img/>', {

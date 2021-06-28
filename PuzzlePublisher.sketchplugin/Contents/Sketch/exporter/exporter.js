@@ -388,8 +388,8 @@ class Exporter {
         function createSubfolder(path) {
             let error = MOPointer.alloc().init();
             const fileManager = NSFileManager.defaultManager();
-            if (!fileManager.createDirectoryAtPath_withIntermediateDirectories_attributes_error(this.path, false, null, error)) {
-                this.logMsg(error.value().localizedDescription());
+            if (!fileManager.createDirectoryAtPath_withIntermediateDirectories_attributes_error(path, false, null, error)) {
+                exporter.logMsg(error.value().localizedDescription());
             }
         }
 
@@ -397,5 +397,4 @@ class Exporter {
         createSubfolder(this.fullImagesPath)
 
     }
-}
 }

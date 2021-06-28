@@ -42,7 +42,7 @@ class Publisher {
 
         this.story = null
         this.mockupsPath = this.allMockupsdDir + "/" + this.docFolder
-        this.fullImagesPath = this.allMockupsdDir + "/" + this.docFolder + Constants.FULLIMAGES_DIRPOSTFIX;
+        this.fullImagesPath = this.mockupsPath + "/" + Constants.IMAGES_DIRECTORY + Constants.FULLIMAGE_DIRECTORY
 
         this.miroExportInfoList = []
         this.miroEnabled = null
