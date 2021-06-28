@@ -84,7 +84,7 @@ class Exporter {
 
         // To know do we need full-size images or not
         const miroEnabled = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_MIRO_ENABLED) == 1
-        this.exportFullImages = miroEnabled
+        this.exportFullImages = miroEnabled || true
 
         this.ignoreLibArtboards = this.Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_DISABLE_LIB_ARTBOARDS) == 1
     }
@@ -377,33 +377,25 @@ class Exporter {
     initPaths(selectedPath) {
         this._outputPath = selectedPath + "/" + this.docName
         this.imagesPath = this._outputPath + "/" + Constants.IMAGES_DIRECTORY;
-        this.fullImagesPath = selectedPath + "/" + this.docName + Constants.FULLIMAGES_DIRPOSTFIX;
+        this.fullImagesPath = this.imagesPath + Constants.FULLIMAGE_DIRECTORY
         this.previewsImagePath = this.imagesPath + Constants.PREVIEWS_DIRECTORY
     }
 
 
     prepareOutputFolder() {
-        let error;
-        const fileManager = NSFileManager.defaultManager();
+        Utils.deleteFile(this._outputPath)
 
-        if (fileManager.fileExistsAtPath(this._outputPath)) {
-            error = MOPointer.alloc().init();
-            if (!fileManager.removeItemAtPath_error(this._outputPath, error)) {
+        function createSubfolder(path) {
+            let error = MOPointer.alloc().init();
+            const fileManager = NSFileManager.defaultManager();
+            if (!fileManager.createDirectoryAtPath_withIntermediateDirectories_attributes_error(this.path, false, null, error)) {
                 this.logMsg(error.value().localizedDescription());
             }
         }
-        error = MOPointer.alloc().init();
-        if (!fileManager.createDirectoryAtPath_withIntermediateDirectories_attributes_error(this._outputPath, false, null, error)) {
-            this.logMsg(error.value().localizedDescription());
-        }
 
-        if (!fileManager.fileExistsAtPath(this.previewsImagePath)) {
-            error = MOPointer.alloc().init();
-            if (!fileManager.createDirectoryAtPath_withIntermediateDirectories_attributes_error(this.previewsImagePath, true, null, error)) {
-                this.logMsg(error.value().localizedDescription());
-            }
-        } else {
-            Utils.removeFilesWithExtension(this.imagesPath, "png", "jpg");
-        }
+        createSubfolder(this.previewsImagePath)
+        createSubfolder(this.fullImagesPath)
+
     }
+}
 }
