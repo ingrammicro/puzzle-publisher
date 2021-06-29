@@ -1,6 +1,11 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.5.0 (29 Jun 2021)
+Use full images in Gallery
+Changes Inspector improved
+Show icon names
+
 ##  Version 16.4.3 (26 Jun 2021)
 Fixed internal error related to color variables detection
 
