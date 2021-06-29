@@ -16,7 +16,7 @@ const ELEMENTINSPECTOR_LINUX_FONT_SIZES = {
     "26px": "20px"
 }
 
-const SUPPORT_TYPES = ["Text", "ShapePath", "Image"]
+const SUPPORT_TYPES = ["Text", "ShapePath", "Image", "Icon"]
 
 class SymbolViewer extends AbstractViewer {
     constructor() {
@@ -326,6 +326,7 @@ class SymbolViewer extends AbstractViewer {
             // siLayer : symbol master, owner of the layer            
 
             info += sv._showLayerDimenstions(layer)
+            info += sv._showLayerIcon(layer)
             info += sv._showLayerSymbol(layer, symName, siLayer)
             info += sv._showLayerComment(layer)
             info += sv._showLayerStyle(layer, siLayer)
@@ -412,6 +413,17 @@ class SymbolViewer extends AbstractViewer {
         const libName = layer.b != undefined ? (layer.b + " (external)") :
             (siLayer && siLayer.b ? siLayer.b + " (external)" : "Document")
         info += "<div style='font-size:12px; color:var(--color-secondary)'>" + libName + "</div></div>"
+        return info
+    }
+
+    _showLayerIcon(layer) {
+        if (undefined == layer.icn) return ""
+        let info = `<hr>
+            <div class='block'>
+                <div class='label'>Icon</div>
+                <div class='value'>${layer.icn}</div>
+            </div>
+            `
         return info
     }
 

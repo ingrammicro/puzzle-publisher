@@ -73,26 +73,31 @@ class PZLayer {
         const targetPos = this.name.indexOf("±±")
         if (targetPos >= 0) {
             // This layer is Symbol instance
-            const data = this.name.substring(targetPos + 2)
-            const symbolIDPos = data.indexOf("±±")
-            const targetID = data.substring(0, symbolIDPos)
-            const symbolID = data.substring(symbolIDPos + 2)
+            const data = this.name.substring(targetPos + 2).split("±±")
+            const targetID = data[0]
+            const symbolID = data[1]
+            const iconName = data[2]
 
-            const sSymbolMaster = pzDoc.getSymbolMasterByID(symbolID)
-            if (!sSymbolMaster) {
-                exporter.logMsg("PZLayer:constructor() can't find symbol master for layer=" + this.name)
+            if ("" != iconName) {
+                this.icn = iconName
+                this.type = "Icon"
             } else {
-                this.isSymbolInstance = true
-                this.targetId = targetID
-
-                // prepare data for Element Inspector
-                const lib = sSymbolMaster.getLibrary()
-                this.smName = sSymbolMaster.name + ""
-                if (lib) {
-                    this.sharedLib = lib.name
-                    pzDoc.usedLibs[lib.name] = true
+                const sSymbolMaster = pzDoc.getSymbolMasterByID(symbolID)
+                if (!sSymbolMaster) {
+                    exporter.logMsg("PZLayer:constructor() can't find symbol master for layer=" + this.name)
                 } else {
+                    this.isSymbolInstance = true
+                    this.targetId = targetID
 
+                    // prepare data for Element Inspector
+                    const lib = sSymbolMaster.getLibrary()
+                    this.smName = sSymbolMaster.name + ""
+                    if (lib) {
+                        this.sharedLib = lib.name
+                        pzDoc.usedLibs[lib.name] = true
+                    } else {
+
+                    }
                 }
             }
         } else {
@@ -431,7 +436,7 @@ class PZLayer {
         this.s = this.smName
         this.l = this.styleName
         this.b = this.sharedLib
-        if (this.childs.length) this.c = this.childs
+        if (this.childs.length && undefined == this.icn) this.c = this.childs
         this.tp = this.isSymbolInstance ? "SI" : this.slayer.type
         if (!this.isSymbolInstance) this.n = this.name
         if (this.slayer.hidden) this.hd = true
@@ -441,6 +446,8 @@ class PZLayer {
         } else if ("ShapePath" == this.slayer.type || "Shape" == this.slayer.type) {
             this.pr = this._buildShapePropsForJSON()
             this.tp = "ShapePath"
+        } else if ("Icon" == this.type) {
+            this.tp = "Icon"
         } else if ("Image" == this.slayer.type) {
             if (this.isMasked) {
                 this.hd = true

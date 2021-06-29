@@ -77,6 +77,7 @@ class PZPage {
 
         symbols.forEach(function (nl) {
             const sl = Sketch.fromNative(nl)
+            let symbolID = sl.symbolId
             if (sl.name.indexOf("±±") >= 0) {
                 //remove old garabage
                 sl.name = sl.name.substring(0, sl.name.indexOf("±±"))
@@ -86,9 +87,17 @@ class PZPage {
                 log("Error: can't find master for" + sl.name)
                 return
             }
+            let iconName = ""
+            if (smaster.name.includes("icon")) {
+                const io = sl.overrides.filter(s => s.symbolOverride == 1 && s.property == 'symbolID')
+                if (io.length) {
+                    const im = pzDoc.getSymbolMasterByID(io[0].value)
+                    if (im) iconName = im.name
+                }
+            }
             // save target artboard ID to restore info about master afte the detach      
             // save symbol ID to restore info about master after the detachs
-            sl.name = sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + sl.symbolId
+            sl.name = sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + symbolID + "±±" + iconName
 
             // go deeply
             this._scanLayersToSaveInfo(smaster)
@@ -107,6 +116,7 @@ class PZPage {
             sl = sl.detach({
                 recursively: true
             })
+            if (DEBUG) exporter.logMsg("PZPage._scanLayersToDetachSymbols() symbol:" + sl.name)
         }, this)
 
         if (DEBUG) exporter.logMsg("PZPage._scanLayersToDetachSymbols() completed")
