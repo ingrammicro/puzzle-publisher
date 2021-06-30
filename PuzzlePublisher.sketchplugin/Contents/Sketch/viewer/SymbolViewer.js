@@ -78,7 +78,7 @@ class SymbolViewer extends AbstractViewer {
     _reShowContent() {
         delete this.createdPages[viewer.currentPage.index]
 
-        // remove existing symbol links
+        // remove existing symbol links        
         this.page.linksDiv.children(".modalSymbolLink,.symbolLink").remove()
         for (const panel of this.page.fixedPanels) {
             panel.linksDiv.children(".modalSymbolLink,.symbolLink").remove()
@@ -87,11 +87,12 @@ class SymbolViewer extends AbstractViewer {
         // drop selection
         this.setSelected()
 
+        // rebuild links
+        this._buildElementLinks()
+
         // redraw inspector
         this._showEmptyContent()
 
-        // rebuild links
-        this._buildElementLinks()
     }
 
 
@@ -265,7 +266,7 @@ class SymbolViewer extends AbstractViewer {
 
 
         // Check if some layer on top of current
-        for (const pl of this.pageInfo.layerArray) {
+        for (const pl of this.pageInfo.layerArray.filter(s => s.tp != "SI")) {
             if (pl.finalX <= l.finalX && pl.finalY <= l.finalY && (pl.finalX + pl.w) >= (l.finalX + l.w) && (pl.finalY + pl.h) >= (l.finalY + l.h)) return
         }
 
@@ -274,7 +275,7 @@ class SymbolViewer extends AbstractViewer {
             if ("" == l.tx.trim()) return
         }
 
-        // also push symbol instance to a list of layers (if was not aded before)
+        // also push symbol instance to a list of layers (if was not aded before)        
         let indexOfSO = -1
         if (siLayer) {
             if (siLayer.s in this.pageInfo.siLayerIndexes) {
