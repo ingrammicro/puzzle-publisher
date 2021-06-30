@@ -28,6 +28,7 @@ const Constants = {
     EXPORT_MODE_SELECTED_ARTBOARDS: 0,
     EXPORT_MODE_CURRENT_PAGE: 1,
     DEF_BACK_COLOR: "#646464",
+    ICON_TAG: " ic-", // Use this string to find icon symbol
     //
     SITE_CHANGELOG_URL: "https://github.com/ingrammicro/puzzle-publisher/blob/master/CHANGELOG.md",
     //

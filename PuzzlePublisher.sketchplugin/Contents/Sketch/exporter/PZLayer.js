@@ -77,11 +77,17 @@ class PZLayer {
             const targetID = data[0]
             const symbolID = data[1]
             const iconName = data[2]
+            const iconPropName = data[3]
+            const iconPropIndex = data[4]
 
             if ("" != iconName) {
                 this.icn = iconName
                 this.type = "Icon"
             } else {
+                if ("" != iconPropName) {
+                    this.icpn = iconPropName
+                    this.icpi = iconPropIndex
+                }
                 const sSymbolMaster = pzDoc.getSymbolMasterByID(symbolID)
                 if (!sSymbolMaster) {
                     exporter.logMsg("PZLayer:constructor() can't find symbol master for layer=" + this.name)
@@ -428,7 +434,13 @@ class PZLayer {
     clearRefsBeforeJSON() {
         // need to cleanup temp object to allow dump it into JSON
         // but keep nlayer because Exporter.exportImage() needs it
-        //        
+        // 
+        if (undefined != this.icpn && "" != this.icpn) {
+            const c = this.childs[this.icpi]
+            c.icn = this.icpn
+            c.type = "Icon"
+        }
+        ///
         this.x = this.frame.x
         this.y = this.frame.y
         this.w = this.frame.width
@@ -492,6 +504,8 @@ class PZLayer {
         this.hotspots = undefined
         this.targetId = undefined
         this.imageIndex = undefined
+        this.icpn = undefined
+        this.icpi = undefined
 
     }
 
