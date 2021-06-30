@@ -1,6 +1,10 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.5.1 (29 Jun 2021)
+Corrected "Show symbols" toggler behaviour
+Show icon names (Part II)
+
 ##  Version 16.5.0 (29 Jun 2021)
 Use full images in Gallery
 Changes Inspector improved
