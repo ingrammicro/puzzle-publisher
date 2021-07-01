@@ -337,9 +337,14 @@ class SymbolViewer extends AbstractViewer {
                 let tokens = null
                 if (styleInfo)
                     tokens = styleInfo.style.tokens
-                else if (symInfo) {
+                if (symInfo) {
                     const foundLayer = symInfo.symbol.layers[layer.n]
-                    if (foundLayer) tokens = foundLayer.tokens
+                    if (foundLayer) {
+                        if (null == tokens)
+                            tokens = foundLayer.tokens
+                        else
+                            tokens = sv._mergeTokens(tokens, foundLayer.tokens)
+                    }
                 }
                 const decRes = sv._decorateCSS(layer, tokens, layer.b ? layer : siLayer)
                 info += decRes.css
@@ -374,6 +379,18 @@ class SymbolViewer extends AbstractViewer {
         })
 
         symbolDiv.appendTo(a)
+    }
+
+    _mergeTokens(list1, list2) {
+        let adding = []
+        list2.forEach(function (t2) {
+            const res1 = list1.filter(t1 => t1[0] == t2[0])
+            if (!res1.length) adding.push(t2)
+        })
+        if (adding.length)
+            return list1.concat(adding)
+        else
+            return list1
     }
 
     // Show Text layer content with Copy button
@@ -779,37 +796,59 @@ class SymbolViewer extends AbstractViewer {
             "</div > " +
             "<div class='value code'>"
 
+        // Decorate styles already described in CSS 
         css.split("\n").forEach(line => {
             if ("" == line) return
             const props = line.split(": ", 2)
             if (!props.length) return
             const styleName = props[0]
             const styleValue = props[1].slice(0, -1)
-            result += "" + styleName + ": "
-            result += "<span class='tokenName'>"
-            //
+
+            result += this._decorateCSSOneStyle(tokens, layer, siLayer, styleName, styleValue)
             styles[styleName] = styleValue
-            //
-            let cvTokens = null
-            if (layer.cv && "color" == styleName) {
-                // get token for color variable
-                cvTokens = this._findSwatchTokens(layer.cv)
-                if (cvTokens) {
-                    const tokenStr = this._decorateSwatchToken(cvTokens, styleValue)
-                    result += tokenStr != "" ? tokenStr : (styleValue + ";")
-                }
-            }
-            if (null == cvTokens) {
-                const tokenStr = tokens != null ? this._decorateStyleToken(styleName, tokens, siLayer, styleValue) : ""
-                result += tokenStr != "" ? tokenStr : (this._formatStyleValue(styleName, styleValue) + ";")
-            }
-            //
-            result += "</span>"
-            result += "<br/>"
+
         }, this);
+        // Decorate non-CSS common styles
+        result += this._decorateCSSOtherTokens(tokens, layer, siLayer)
+
 
         result += "</div></div>"
         return { "css": result, "styles": styles }
+    }
+
+
+    _decorateCSSOneStyle(tokens, layer, siLayer, styleName, styleValue) {
+        let result = ""
+        result += "" + styleName + ": "
+        result += "<span class='tokenName'>"
+        //
+        let cvTokens = null
+        if (layer.cv && "color" == styleName) {
+            // get token for color variable
+            cvTokens = this._findSwatchTokens(layer.cv)
+            if (cvTokens) {
+                const tokenStr = this._decorateSwatchToken(cvTokens, styleValue)
+                result += tokenStr != "" ? tokenStr : (styleValue + ";")
+            }
+        }
+        if (null == cvTokens) {
+            const tokenStr = tokens != null ? this._decorateStyleToken(styleName, tokens, siLayer, styleValue) : ""
+            result += tokenStr != "" ? tokenStr : (this._formatStyleValue(styleName, styleValue) + ";")
+        }
+        //
+        result += "</span>"
+        result += "<br/>"
+        return result
+    }
+
+    _decorateCSSOtherTokens(tokens, layer, siLayer) {
+        if (null == tokens) return ""
+        let result = ""
+        const knownOtherStyles = ["width", "height"]
+        tokens.filter(t => knownOtherStyles.indexOf(t[0]) >= 0 || t[0].startsWith("margin") || t[0].startsWith("padding")).forEach(function (token) {
+            result += this._decorateCSSOneStyle(tokens, layer, siLayer, token[0], token[1])
+        }, this)
+        return result
     }
 
     _decorateSwatchToken(tokens, styleValue) {
