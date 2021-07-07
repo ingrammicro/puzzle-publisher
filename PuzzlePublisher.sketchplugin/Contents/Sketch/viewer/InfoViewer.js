@@ -37,8 +37,8 @@ class infoViewer extends AbstractViewer {
     }
 
 
-    goTo(recIndex, pageIndex) {
-        this.currentRec = this.data[recIndex]
+    goToScreen(recIndex, pageIndex) {
+        this.currentRec = this.data['recs'][recIndex]
         viewer.goToPage(pageIndex)
     }
 
@@ -67,6 +67,7 @@ class infoViewer extends AbstractViewer {
     _hideSelf() {
         this._restoreNewImages()
         $('#info_viewer').addClass("hidden")
+        $('info_viewer_options').addClass("hidden")
         if (document.location.search.includes('v')) {
             document.location.search = "" // remove ?v
         }
@@ -81,6 +82,7 @@ class infoViewer extends AbstractViewer {
         $("#info_viewer_mode_new").prop('disabled', disabled);
         $("#info_viewer_mode_prev").prop('disabled', disabled);
         if (disabled) return
+        $('#info_viewer_options').removeClass("hidden")
 
         this._showCurrentPageDiffs()
     }
@@ -166,7 +168,7 @@ class infoViewer extends AbstractViewer {
                 this.screenDiffs[screen['screen_name']] = screen
             }
 
-            info += "<div class='version-screen-div' onclick='viewer.infoViewer.goTo(" + recIndex + "," + pageIndex + ")'>";
+            info += "<div class='version-screen-div' onclick='viewer.infoViewer.goToScreen(" + recIndex + "," + pageIndex + ")'>";
             info += "<div>";
             info += pageName;
             info += "</div><div>";
@@ -194,7 +196,7 @@ class infoViewer extends AbstractViewer {
         if (!page.srcImageObjSrc) page.srcImageObjSrc = page.imageObj.attr("src")
 
         if ('diff' == this.mode) {
-            newSrc = data['journals_path'] + '/' + data['dir'] + "/diffs/" + screen['screen_name'] + (story.hasRetina && viewer.isHighDensityDisplay() ? "@2x" : "") + "." + story.fileType
+            newSrc = data['journals_path'] + '/' + data['dir'] + "/diffs/" + screen['screen_name'] + "." + story.fileType
         } else if ('new' == this.mode) {
             if (page.imageObj.attr("src") != page.srcImageObjSrc) {
                 newSrc = page.srcImageObjSrc

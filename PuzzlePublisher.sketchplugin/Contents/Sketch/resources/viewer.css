@@ -874,6 +874,7 @@ body {
 .nav .btnMenu,
 .nav .navPreviewNext,
 .nav #pageComments,
+.nav .infoViewerMode,
 .nav .pageName {
   display: flex;
   justify-content: center;
@@ -885,6 +886,11 @@ body {
   align-self: center;
   /* opacity: .9; */
 }
+
+.nav .infoViewerMode{
+    pointer-events: all;
+}
+
 
 .nav #pageComments #counter{
     margin-left:5px;
@@ -916,7 +922,9 @@ body {
   height: 36px;
 }
 
-.nav .pageName {
+.nav .pageName,
+.nav .infoViewerMode
+{
   padding: 0 12px;
 }
 .nav #pageComments {

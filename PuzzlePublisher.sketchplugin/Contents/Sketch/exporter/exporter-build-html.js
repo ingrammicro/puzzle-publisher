@@ -208,12 +208,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <svg class="svgIcon"><use xlink:href="#icClose"></use></svg>\
                   </div>\
                 </div>\
-                <div style="padding: 72px 20px 0 20px" class="hidden">\
-                Mode:<br />\
-                    <input type="radio" name="info_viewer_mode" id="info_viewer_mode_diff" value="diff" checked onclick="viewer.versionViewer.pageChanged()" disabled /><label for="info_viewer_mode_diff">Differences</label><br />\
-                    <input type="radio" name="info_viewer_mode" id="info_viewer_mode_prev" value="prev" onclick="viewer.versionViewer.pageChanged()" disabled><label for="info_viewer_mode_prev">Prev version</label><br />\
-                    <input type="radio" name="info_viewer_mode" id="info_viewer_mode_new" value="new" onclick="viewer.versionViewer.pageChanged()" disabled><label for="info_viewer_mode_new">New version</label><br />\
-                </div>\
                 <div id="info_viewer_content" style="padding: 72px 20px 0 20px"></div>\
             </div>\
         </div>\
@@ -336,8 +330,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     s += "                    <div id=\"nav-left-next\" class=\"btnNext\" onclick=\"viewer.next(); return false;\" title=\"Next screen\"><svg class='svgIcon'><use xlink:href=\"#icArrwRight\"><\/use><\/svg><\/div>";
     s += "                <\/div>";
     s += "            <\/div>";
-    s += "            <div class=\"navCenter\"><div class=\"pageName title\">Default button<\/div><\/div>";
-    s += '            <div class="navRight">\
+    s += '          <div class="navCenter">\
+                        <div class="pageName title">Default button</div>\
+                        <div id="info_viewer_options" class="infoViewerMode hidden">\
+                            <input type="radio" name="info_viewer_mode" id="info_viewer_mode_diff" value="diff" checked onclick="viewer.infoViewer.pageChanged()" disabled /><label for="info_viewer_mode_diff">Differences</label>\
+                            <input type="radio" name="info_viewer_mode" id="info_viewer_mode_prev" value="prev" onclick="viewer.infoViewer.pageChanged()" disabled><label for="info_viewer_mode_prev">Prev version</label>\
+                            <input type="radio" name="info_viewer_mode" id="info_viewer_mode_new" value="new " onclick="viewer.infoViewer.pageChanged()" disabled><label for="info_viewer_mode_new">New version</label>\
+                        </div>\
+                    </div>'
+    s += '          <div class="navRight">\
                         <div id="loading" class="hidden">\
                             <div class="lds-ring"><div></div><div></div><div></div><div></div></div>\
                         </div>\
