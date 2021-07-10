@@ -1,8 +1,11 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.5.3 (10 Jul 2021)
+Improving Changes Inspector
+
 ##  Version 16.5.2 (07 Jul 2021)
-Imrpoving Changes Inspector
+Improving Changes Inspector
 
 ##  Version 16.5.1 (29 Jun 2021)
 Corrected "Show symbols" toggler behaviour

@@ -34,6 +34,13 @@ class infoViewer extends AbstractViewer {
         }
 
         this.inited = true
+
+    }
+
+    goToVersion(recIndex) {
+        const rec = this.data['recs'][recIndex]
+        const newURL = rec['url'] + '?' + encodeURIComponent(viewer.currentPage.getHash())
+        window.open(newURL, "_self");
     }
 
 
@@ -172,8 +179,10 @@ class infoViewer extends AbstractViewer {
             info += "<div>";
             info += pageName;
             info += "</div><div>";
-            //info += "<img src='" + screen['image_url'] + "' border='0' width='360px'/>";
-            info += "<img src='" + rec['journals_path'] + '/' + rec['dir'] + "/diffs/" + screen['screen_name'] + "." + story.fileType + "' border='0' width='360px'/>";
+            if (showNew)
+                info += "<img src='" + screen['image_url'] + "' border='0' width='360px'/>";
+            else
+                info += "<img src='" + rec['journals_path'] + '/' + rec['dir'] + "/diffs/" + screen['screen_name'] + "." + story.fileType + "' border='0' width='360px'/>";
             info += "</div>";
             info += "</div>";
         }
@@ -232,8 +241,8 @@ class infoViewer extends AbstractViewer {
             var authorHTML = undefined != rec['email'] ? `<div class="tooltip">by ${rec['author']}<span class="tooltiptext">${rec['email']}</span></div>` : rec['author']
             info += `
             <div class="record">
-                <div class="ver">#${rec['ver']} ${new Date(rec['time'] * 1000).toLocaleDateString()} ${authorHTML}</div>
-                <div class="message">${rec['message'].replaceAll('--NOTEL', '')}</div>
+                <div class="ver"><a href="#" onclick="viewer.infoViewer.goToVersion(${index})">#${rec['ver']}</a> ${new Date(rec['time'] * 1000).toLocaleDateString()} ${authorHTML}</div>
+                <div class="message">${rec['message'].replaceAll('--NOTELE', '')}</div>
                 <div class="info">
             `
             if (rec['screens_total_new']) {
@@ -245,7 +254,7 @@ class infoViewer extends AbstractViewer {
                 info += `<div class="uscreens" id="${index}"/>`
             }
             if (!rec['screens_total_new'] && !rec['screens_total_changed']) {
-                info += "No new or changed screens"
+                info += "No visual changes"
             }
             info += `</div></div>`
         }, this)
