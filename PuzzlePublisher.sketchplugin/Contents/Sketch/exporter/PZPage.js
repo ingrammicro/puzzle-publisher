@@ -77,7 +77,6 @@ class PZPage {
 
         symbols.forEach(function (nl) {
             const sl = Sketch.fromNative(nl)
-            let symbolID = sl.symbolId
             if (sl.name.indexOf("±±") >= 0) {
                 //remove old garabage
                 sl.name = sl.name.substring(0, sl.name.indexOf("±±"))
@@ -87,30 +86,10 @@ class PZPage {
                 log("Error: can't find master for" + sl.name)
                 return
             }
-            let iconName = "", iconPropName = "", iconPropIndex = ""
-            if (smaster.name.includes("icon")) {
-                const io = sl.overrides.filter(s => s.symbolOverride == 1 && s.property == 'symbolID')
-                if (io.length) {
-                    const im = pzDoc.getSymbolMasterByID(io[0].value)
-                    if (im) iconName = im.name
-                }
-            } else {
-                smaster.layers.forEach(function (ic, index) {
-                    if (!ic.name.startsWith("icon")) return
-                    const io = sl.overrides.filter(s => s.symbolOverride == 1 && s.property == 'symbolID' && s.path == ic.id)
-                    if (io.length) {
-                        const im = pzDoc.getSymbolMasterByID(io[0].value)
-                        if (im && im.name.includes(Constants.ICON_TAG)) {
-                            iconPropName = im.name
-                            iconPropIndex = index
-                        }
-                    }
-                })
-            }
-
             // save target artboard ID to restore info about master afte the detach      
             // save symbol ID to restore info about master after the detachs
-            sl.name = sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + symbolID + "±±" + iconName + "±±" + iconPropName + "±±" + iconPropIndex
+            sl.name = sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + sl.symbolId
+
             // go deeply
             this._scanLayersToSaveInfo(smaster)
         }, this)
@@ -128,7 +107,6 @@ class PZPage {
             sl = sl.detach({
                 recursively: true
             })
-            if (DEBUG) exporter.logMsg("PZPage._scanLayersToDetachSymbols() symbol:" + sl.name)
         }, this)
 
         if (DEBUG) exporter.logMsg("PZPage._scanLayersToDetachSymbols() completed")

@@ -73,37 +73,26 @@ class PZLayer {
         const targetPos = this.name.indexOf("±±")
         if (targetPos >= 0) {
             // This layer is Symbol instance
-            const data = this.name.substring(targetPos + 2).split("±±")
-            const targetID = data[0]
-            const symbolID = data[1]
-            const iconName = data[2]
-            const iconPropName = data[3]
-            const iconPropIndex = data[4]
+            const data = this.name.substring(targetPos + 2)
+            const symbolIDPos = data.indexOf("±±")
+            const targetID = data.substring(0, symbolIDPos)
+            const symbolID = data.substring(symbolIDPos + 2)
 
-            if ("" != iconName) {
-                this.icn = iconName
-                this.type = "Icon"
+            const sSymbolMaster = pzDoc.getSymbolMasterByID(symbolID)
+            if (!sSymbolMaster) {
+                exporter.logMsg("PZLayer:constructor() can't find symbol master for layer=" + this.name)
             } else {
-                if ("" != iconPropName) {
-                    this.icpn = iconPropName
-                    this.icpi = iconPropIndex
-                }
-                const sSymbolMaster = pzDoc.getSymbolMasterByID(symbolID)
-                if (!sSymbolMaster) {
-                    exporter.logMsg("PZLayer:constructor() can't find symbol master for layer=" + this.name)
+                this.isSymbolInstance = true
+                this.targetId = targetID
+
+                // prepare data for Element Inspector
+                const lib = sSymbolMaster.getLibrary()
+                this.smName = sSymbolMaster.name + ""
+                if (lib) {
+                    this.sharedLib = lib.name
+                    pzDoc.usedLibs[lib.name] = true
                 } else {
-                    this.isSymbolInstance = true
-                    this.targetId = targetID
 
-                    // prepare data for Element Inspector
-                    const lib = sSymbolMaster.getLibrary()
-                    this.smName = sSymbolMaster.name + ""
-                    if (lib) {
-                        this.sharedLib = lib.name
-                        pzDoc.usedLibs[lib.name] = true
-                    } else {
-
-                    }
                 }
             }
         } else {
@@ -434,13 +423,7 @@ class PZLayer {
     clearRefsBeforeJSON() {
         // need to cleanup temp object to allow dump it into JSON
         // but keep nlayer because Exporter.exportImage() needs it
-        // 
-        if (undefined != this.icpn && "" != this.icpn) {
-            const c = this.childs[this.icpi]
-            c.icn = this.icpn
-            c.type = "Icon"
-        }
-        ///
+        //        
         this.x = this.frame.x
         this.y = this.frame.y
         this.w = this.frame.width
@@ -448,7 +431,7 @@ class PZLayer {
         this.s = this.smName
         this.l = this.styleName
         this.b = this.sharedLib
-        if (this.childs.length && undefined == this.icn) this.c = this.childs
+        if (this.childs.length) this.c = this.childs
         this.tp = this.isSymbolInstance ? "SI" : this.slayer.type
         if (!this.isSymbolInstance) this.n = this.name
         if (this.slayer.hidden) this.hd = true
@@ -458,8 +441,6 @@ class PZLayer {
         } else if ("ShapePath" == this.slayer.type || "Shape" == this.slayer.type) {
             this.pr = this._buildShapePropsForJSON()
             this.tp = "ShapePath"
-        } else if ("Icon" == this.type) {
-            this.tp = "Icon"
         } else if ("Image" == this.slayer.type) {
             if (this.isMasked) {
                 this.hd = true
@@ -504,8 +485,6 @@ class PZLayer {
         this.hotspots = undefined
         this.targetId = undefined
         this.imageIndex = undefined
-        this.icpn = undefined
-        this.icpi = undefined
 
     }
 
