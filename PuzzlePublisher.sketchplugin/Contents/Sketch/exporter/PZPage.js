@@ -107,6 +107,7 @@ class PZPage {
             sl = sl.detach({
                 recursively: true
             })
+            if (DEBUG) exporter.logMsg("PZPage._scanLayersToDetachSymbols() symbol:" + sl.name)
         }, this)
 
         if (DEBUG) exporter.logMsg("PZPage._scanLayersToDetachSymbols() completed")

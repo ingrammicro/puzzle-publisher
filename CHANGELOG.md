@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.5.5 (14 Jul 2021)
+Hotfix
+
 ##  Version 16.5.4 (14 Jul 2021)
 - Rolled back icon name support to fix other tokens
 

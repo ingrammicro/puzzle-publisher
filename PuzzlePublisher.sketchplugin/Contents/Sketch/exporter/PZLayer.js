@@ -49,7 +49,7 @@ class PZLayer {
 
     // nlayer: ref to native MSLayer Layer
     // myParent: ref to parent MyLayer
-    constructor(sLayer, myParent) {
+     constructor(sLayer, myParent) {
         this.nlayer = sLayer.sketchObject
         this.name = sLayer.name
         this.parent = myParent
@@ -423,7 +423,8 @@ class PZLayer {
     clearRefsBeforeJSON() {
         // need to cleanup temp object to allow dump it into JSON
         // but keep nlayer because Exporter.exportImage() needs it
-        //        
+        // 
+        ///
         this.x = this.frame.x
         this.y = this.frame.y
         this.w = this.frame.width
@@ -440,7 +441,7 @@ class PZLayer {
             this.pr = this._buildTextPropsForJSON()
         } else if ("ShapePath" == this.slayer.type || "Shape" == this.slayer.type) {
             this.pr = this._buildShapePropsForJSON()
-            this.tp = "ShapePath"
+            this.tp = "ShapePath"    
         } else if ("Image" == this.slayer.type) {
             if (this.isMasked) {
                 this.hd = true
@@ -485,6 +486,8 @@ class PZLayer {
         this.hotspots = undefined
         this.targetId = undefined
         this.imageIndex = undefined
+        this.icpn = undefined
+        this.icpi = undefined
 
     }
 
