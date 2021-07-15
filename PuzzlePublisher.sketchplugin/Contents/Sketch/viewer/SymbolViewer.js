@@ -215,7 +215,7 @@ class SymbolViewer extends AbstractViewer {
     }
 
     _processSymbolList(layers, isParentSymbol = false) {
-        for (var l of layers.slice().reverse()) {
+        for (var l of layers.reverse()) {
             // l.b: library name
             if (
                 l.s &&
@@ -236,7 +236,7 @@ class SymbolViewer extends AbstractViewer {
     }
 
     _processLayerList(layers, sSI = null) {
-        for (var l of layers.slice().reverse()) {
+        for (var l of layers.reverse()) {
             if (SUPPORT_TYPES.indexOf(l.tp) >= 0 && !l.hd) {
                 this._showElement(l, sSI)
             }
@@ -593,7 +593,7 @@ class SymbolViewer extends AbstractViewer {
         if (null == layers) layers = layersData[this.pageIndex].c
 
         if (undefined == layers) return
-        for (var l of layers.slice().reverse()) {
+        for (var l of layers.reverse()) {
             if ((!this.showSymbols || l.s != undefined) &&
                 SUPPORT_TYPES.indexOf(l.tp) >= 0 && !l.hd) {
                 if (click.x >= l.finalX && click.x <= (l.finalX + l.w) && click.y >= l.finalY && click.y <= (l.finalY + l.h)) {
