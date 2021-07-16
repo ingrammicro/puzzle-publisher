@@ -92,30 +92,21 @@ class PZPage {
 
             // go deeply
             this._scanLayersToSaveInfo(smaster)
-
-            sl.detach({
-                recursively: false
-            })
-
         }, this)
     }
 
     _scanLayersToDetachSymbols(sParent) {
-        return
         if (DEBUG) exporter.logMsg("PZPage._scanLayersToDetachSymbols() runnning...name=" + (this.sPage ? this.sPage.name : ''))
         const nParent = sParent.sketchObject
 
         const symbolPredicate = NSPredicate.predicateWithFormat("className == %@", 'MSSymbolInstance');
-        log(nParent.children())
         const symbols = nParent.children().filteredArrayUsingPredicate_(symbolPredicate);
-
 
         symbols.forEach(function (nl) {
             var sl = Sketch.fromNative(nl)
             sl = sl.detach({
                 recursively: true
             })
-
             if (DEBUG) exporter.logMsg("PZPage._scanLayersToDetachSymbols() symbol:" + sl.name)
         }, this)
 
