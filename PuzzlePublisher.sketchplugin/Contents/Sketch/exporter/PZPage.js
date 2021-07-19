@@ -73,9 +73,9 @@ class PZPage {
 
         // taken here - https://sketchplugins.com/d/466-get-all-symbol-and-all-image-inside-selected-storyboard
         const symbolPredicate = NSPredicate.predicateWithFormat("className == %@", 'MSSymbolInstance');
-        const symbols = nParent.children().filteredArrayUsingPredicate_(symbolPredicate);
+        const symbolInstances = nParent.children().filteredArrayUsingPredicate_(symbolPredicate);
 
-        symbols.forEach(function (nl) {
+        symbolInstances.forEach(function (nl) {
             const sl = Sketch.fromNative(nl)
             if (sl.name.indexOf("±±") >= 0) {
                 //remove old garabage
@@ -89,6 +89,7 @@ class PZPage {
             // save target artboard ID to restore info about master afte the detach      
             // save symbol ID to restore info about master after the detachs
             sl.name = sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + sl.symbolId
+            log(sl.name)
 
             // go deeply
             this._scanLayersToSaveInfo(smaster)
@@ -100,9 +101,9 @@ class PZPage {
         const nParent = sParent.sketchObject
 
         const symbolPredicate = NSPredicate.predicateWithFormat("className == %@", 'MSSymbolInstance');
-        const symbols = nParent.children().filteredArrayUsingPredicate_(symbolPredicate);
+        const symbolInstances = nParent.children().filteredArrayUsingPredicate_(symbolPredicate);
 
-        symbols.forEach(function (nl) {
+        symbolInstances.forEach(function (nl) {
             var sl = Sketch.fromNative(nl)
             sl = sl.detach({
                 recursively: true
