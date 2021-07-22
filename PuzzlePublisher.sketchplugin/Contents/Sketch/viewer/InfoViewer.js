@@ -44,7 +44,7 @@ class infoViewer extends AbstractViewer {
     }
 
 
-    goToScreen(recIndex, pageIndex) {
+    goToScreen(recIndex, screenIndex, pageIndex) {
         this.currentRec = this.data['recs'][recIndex]
         viewer.goToPage(pageIndex)
     }
@@ -144,7 +144,7 @@ class infoViewer extends AbstractViewer {
         if (rec.isVisible) {
             rec.isVisible = false
         } else {
-            info += this._showScreens(rec, forNew)
+            info += this._showScreens(rec, index, forNew)
             rec.isVisible = true
         }
         div.html(info)
@@ -159,9 +159,9 @@ class infoViewer extends AbstractViewer {
     }
 
 
-    _showScreens(rec, showNew) {
+    _showScreens(rec, recIndex, showNew) {
         var info = "";
-        for (const [recIndex, screen] of rec['screens_changed'].entries()) {
+        for (const [screenIndex, screen] of rec['screens_changed'].entries()) {
             if (screen['is_new'] != showNew) continue;
             const pageIndex = viewer.getPageIndex(screen['screen_name'], -1)
             const page = pageIndex >= 0 ? story.pages[pageIndex] : undefined
@@ -175,7 +175,7 @@ class infoViewer extends AbstractViewer {
                 this.screenDiffs[screen['screen_name']] = screen
             }
 
-            info += "<div class='version-screen-div' onclick='viewer.infoViewer.goToScreen(" + recIndex + "," + pageIndex + ")'>";
+            info += "<div class='version-screen-div' onclick='viewer.infoViewer.goToScreen(" + recIndex + "," + screenIndex + "," + pageIndex + ")'>";
             info += "<div>";
             info += pageName;
             info += "</div><div>";
@@ -262,30 +262,6 @@ class infoViewer extends AbstractViewer {
         this.data = data
         $("#info_viewer_content_dynamic").html(info)
     }
-
-    _loadData2(data) {
-        var info = ""
-        this.data = data
-
-        this.screenDiffs = {}
-        if (data['screens_total_new']) {
-            info += "<p class='head'>Added screens (" + data['screens_total_new'] + "):</p>";
-            info += this._showScreens(data, true);
-        }
-        if (data['screens_total_changed']) {
-            info += "<p class='head'>Changed screens (" + data['screens_total_changed'] + ")</p>";
-            info += this._showScreens(data, false);
-        }
-        if (!data['screens_total_new'] && !data['screens_total_changed']) {
-            info += "No new or changed screens"
-        }
-
-        this.pageChanged()
-
-        $("#info_viewer_content_dynamic").html(info)
-    }
-
-
 
     _askServerTools() {
         var xhr = new XMLHttpRequest();
