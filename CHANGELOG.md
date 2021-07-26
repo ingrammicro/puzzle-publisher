@@ -1,6 +1,8 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.6.0 (26 Jul 2021)
+Fixed Element Inspector behaviour
 
 ##  Version 16.5.6 (15 Jul 2021)
 Fixed Element Inspector
