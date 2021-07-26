@@ -49,7 +49,7 @@ class PZLayer {
 
     // nlayer: ref to native MSLayer Layer
     // myParent: ref to parent MyLayer
-     constructor(sLayer, myParent) {
+    constructor(sLayer, myParent) {
         this.nlayer = sLayer.sketchObject
         this.name = sLayer.name
         this.parent = myParent
@@ -70,17 +70,37 @@ class PZLayer {
 
 
         if ("Group" == sLayer.type || "Artboard" == sLayer.type) this.isGroup = true
-        const targetPos = this.name.indexOf("±±")
-        if (targetPos >= 0) {
+
+        let symbolID = null
+        let targetID = null
+
+        if ("Group" == sLayer.type) {
+            let tag = "±±" + this.name + "±±"
+            function findShadow(group) {
+                return group.layers.filter(l => l.name.startsWith(tag))[0]
+            }
+            let shadow = findShadow(sLayer.parent)
+            if (!shadow && sLayer.parent.parent) shadow = findShadow(sLayer.parent.parent)
+            //
+            if (!shadow && this.name.startsWith("ic-")) {
+                tag = "±±" + "icon" + "±±"
+                shadow = findShadow(sLayer.parent)
+                if (!shadow && sLayer.parent.parent) shadow = findShadow(sLayer.parent.parent)
+                if (!shadow && sLayer.parent.parent.parent) shadow = findShadow(sLayer.parent.parent.parent)
+            }
+            //
+            if (shadow) {
+                const data = shadow.name.split("±±")
+                targetID = data[2]
+                symbolID = data[3]
+            }
+        }
+        if (null != symbolID) {
             // This layer is Symbol instance
-            const data = this.name.substring(targetPos + 2)
-            const symbolIDPos = data.indexOf("±±")
-            const targetID = data.substring(0, symbolIDPos)
-            const symbolID = data.substring(symbolIDPos + 2)
 
             const sSymbolMaster = pzDoc.getSymbolMasterByID(symbolID)
             if (!sSymbolMaster) {
-                exporter.logMsg("PZLayer:constructor() can't find symbol master for layer=" + this.name)
+                log("PZLayer:constructor() can't find symbol master for layer=" + this.name)
             } else {
                 this.isSymbolInstance = true
                 this.targetId = targetID
@@ -441,7 +461,7 @@ class PZLayer {
             this.pr = this._buildTextPropsForJSON()
         } else if ("ShapePath" == this.slayer.type || "Shape" == this.slayer.type) {
             this.pr = this._buildShapePropsForJSON()
-            this.tp = "ShapePath"    
+            this.tp = "ShapePath"
         } else if ("Image" == this.slayer.type) {
             if (this.isMasked) {
                 this.hd = true

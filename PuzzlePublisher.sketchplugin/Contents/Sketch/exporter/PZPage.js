@@ -77,10 +77,6 @@ class PZPage {
 
         symbolInstances.forEach(function (nl) {
             const sl = Sketch.fromNative(nl)
-            if (sl.name.indexOf("±±") >= 0) {
-                //remove old garabage
-                sl.name = sl.name.substring(0, sl.name.indexOf("±±"))
-            }
             const smaster = pzDoc.getSymbolMasterByID(sl.symbolId)
             if (!smaster) {
                 log("Error: can't find master for" + sl.name)
@@ -88,7 +84,26 @@ class PZPage {
             }
             // save target artboard ID to restore info about master afte the detach      
             // save symbol ID to restore info about master after the detachs
-            sl.name = sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + sl.symbolId
+            //sl.name = sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + sl.symbolId
+
+            var text = new Text({
+                text: ""
+            })
+            text.name = "±±" + sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + sl.symbolId
+            text.hidden = true
+            text.frame.x = sl.frame.x
+            text.frame.y = sl.frame.y
+            text.frame.width = 0
+            text.frame.height = 0
+            sl.parent.layers.push(text)
+
+            /*
+            exporter.context.command.setValue_forKey_onLayer_forPluginIdentifier(sl.symbolId, 'symbolID', nl, Constants.PLUGIN_IDENTIFIER)
+            if (sl.flow)
+                exporter.context.command.setValue_forKey_onLayer_forPluginIdentifier(sl.flow.targetId, 'flowTargetId', nl, Constants.PLUGIN_IDENTIFIER)
+            else
+                exporter.context.command.setValue_forKey_onLayer_forPluginIdentifier(null, 'flowTargetId', nl, Constants.PLUGIN_IDENTIFIER)
+            */
 
             // go deeply
             this._scanLayersToSaveInfo(smaster)
