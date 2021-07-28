@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.6.1 (28 Jul 2021)
+Show icon names correctly in Element Inspector
+
 ##  Version 16.6.0 (26 Jul 2021)
 Fixed Element Inspector behaviour
 
