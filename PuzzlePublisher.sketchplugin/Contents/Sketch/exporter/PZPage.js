@@ -18,7 +18,7 @@ class PZPage {
         if (!sArtboards) sArtboards = this.sPage.layers
 
         // prepare layers for collecting
-        if (DEBUG) exporter.logMsg("PZPage.collectData() preparing...")
+        exporter.logMsg("PZPage.collectData() preparing...")
         for (const sa of sArtboards) {
             if ("Artboard" != sa.type) continue
             if (exporter.filterAster && sa.name.indexOf("*") == 0) continue
@@ -34,8 +34,9 @@ class PZPage {
         }
 
         // collect layers
-        if (DEBUG) exporter.logMsg("PZPage.collectData() collecting...")
+        exporter.logMsg("PZPage.collectData() collecting...")
         this._collectArtboards(sArtboards)
+        exporter.logMsg("PZPage.collectData() collected")
 
         // cleanup temporary data
         //this._cleanUp()        
