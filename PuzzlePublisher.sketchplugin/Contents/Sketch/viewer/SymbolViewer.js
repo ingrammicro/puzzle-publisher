@@ -326,9 +326,9 @@ class SymbolViewer extends AbstractViewer {
             // layer.tp : layer type: SI, Text, ShapePath or Image
             // siLayer : symbol master, owner of the layer            
 
-            info += sv._showLayerDimenstions(layer)
+            info += sv._showLayerDimensions(layer)
             info += sv._showLayerIcon(layer)
-            info += sv._showLayerSymbol(layer, symName, siLayer)
+            if ("Icon" != layer.tp) info += sv._showLayerSymbol(layer, symName, siLayer)
             info += sv._showLayerComment(layer)
             info += sv._showLayerStyle(layer, siLayer)
 
@@ -490,7 +490,7 @@ class SymbolViewer extends AbstractViewer {
         return info
     }
 
-    _showLayerDimenstions(layer) {
+    _showLayerDimensions(layer) {
         let info = ""
 
         var frameX = layer.finalX

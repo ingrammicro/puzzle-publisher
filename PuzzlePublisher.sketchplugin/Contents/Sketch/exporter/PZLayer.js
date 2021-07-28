@@ -67,14 +67,14 @@ class PZLayer {
         this.isSymbolInstance = false
         this.customLink = undefined
         this.isLink = false
-
+        this.isIcon = false
 
         if ("Group" == sLayer.type || "Artboard" == sLayer.type) this.isGroup = true
 
         let symbolID = null
         let targetID = null
 
-        if ("Group" == sLayer.type) {
+        if ("Group" == sLayer.type) {  // && "icon" != this.name) {
             let tag = "±±" + this.name + "±±"
             function findShadow(group) {
                 return group.layers.filter(l => l.name.startsWith(tag))[0]
@@ -82,11 +82,12 @@ class PZLayer {
             let shadow = findShadow(sLayer.parent)
             if (!shadow && sLayer.parent.parent) shadow = findShadow(sLayer.parent.parent)
             //
-            if (!shadow && this.name.startsWith("ic-")) {
-                tag = "±±" + "icon" + "±±"
+            if (!shadow && (this.name.startsWith("ic-") || "icon" == this.name)) {
+                tag = "±±" + "icon"
                 shadow = findShadow(sLayer.parent)
                 if (!shadow && sLayer.parent.parent) shadow = findShadow(sLayer.parent.parent)
                 if (!shadow && sLayer.parent.parent.parent) shadow = findShadow(sLayer.parent.parent.parent)
+                this.isIcon = shadow != null
             }
             //
             if (shadow) {
@@ -95,6 +96,7 @@ class PZLayer {
                 symbolID = data[3]
             }
         }
+
         if (null != symbolID) {
             // This layer is Symbol instance
 
@@ -263,10 +265,7 @@ class PZLayer {
         for (const sl of sLayers.filter(l => !l.hidden || l.sketchObject.hasClippingMask())) {
             //            
             const al = new PZLayer(sl, this)
-            /*
-            if (undefined != al.imageIndex) {
-            } else
-                */if (al.isGroup) al.childs = al.collectAChilds(sl.layers, space + " ")
+            if (al.isGroup && !al.isIcon) al.childs = al.collectAChilds(sl.layers, space + " ")
             aLayers.push(al)
         }
         return aLayers
@@ -472,6 +471,10 @@ class PZLayer {
         } else if (undefined != this.imageIndex) {
             this.tp = "Image"
             this.iu = this._buildImageURL()
+        } else if (this.isIcon) {
+            this.isIcon = undefined
+            this.icn = this.smName
+            this.tp = "Icon"
         }
         if (this.hasClippingMask) {
             this.ms = true

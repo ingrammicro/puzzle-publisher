@@ -77,19 +77,24 @@ class PZPage {
 
         symbolInstances.forEach(function (nl) {
             const sl = Sketch.fromNative(nl)
-            const smaster = pzDoc.getSymbolMasterByID(sl.symbolId)
+            let symbolId = sl.symbolId
+
+            const smaster = pzDoc.getSymbolMasterByID(symbolId)
             if (!smaster) {
-                log("Error: can't find master for" + sl.name)
+                log("_scanLayersToSaveInfo() Error: can't find master for" + sl.name)
                 return
             }
+
             // save target artboard ID to restore info about master afte the detach      
             // save symbol ID to restore info about master after the detachs
             //sl.name = sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + sl.symbolId
 
+
+
             var text = new Text({
                 text: ""
             })
-            text.name = "±±" + sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + sl.symbolId
+            text.name = "±±" + sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + symbolId
             text.hidden = true
             text.frame.x = sl.frame.x
             text.frame.y = sl.frame.y
