@@ -991,7 +991,7 @@ function createViewer(story, files) {
         },
         getNextUserPage: function (page) {
             var nextUserIndex = page ? page.userIndex + 1 : 0
-            if (nextUserIndex >= this.userStoryPages.length) return null
+            if (nextUserIndex >= this.userStoryPages.length) nextUserIndex = 0
             return this.userStoryPages[nextUserIndex]
         },
         getPreviousUserPage: function (page) {
