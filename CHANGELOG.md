@@ -1,6 +1,10 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.6.3 (29 Jul 2021)
+Fix auto-transition for the last page
+Support for undocumented font weight = 14
+
 ##  Version 16.6.2 (29 Jul 2021)
 Added "Use slow but stable symbols detection" checkbox to Export dialog. The fast method depends of unstable Sketch behaviour. The slow method works always stable.
 
