@@ -43,6 +43,7 @@ const weights = [
     { label: 'extra-bold', sketch: 10, css: 800, title: "Extra Bold" },
     { label: 'black', sketch: 11, css: 900, title: "Black" },
     { label: 'black', sketch: 12, css: 900, title: "Black" },
+    { label: 'solid', sketch: 14, css: 900, title: "Solid" },
 ]
 
 class PZLayer {
