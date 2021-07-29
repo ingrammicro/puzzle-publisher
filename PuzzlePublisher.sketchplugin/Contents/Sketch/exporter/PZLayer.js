@@ -74,29 +74,46 @@ class PZLayer {
         let symbolID = null
         let targetID = null
 
-        if (exporter.enabledJSON && "Group" == sLayer.type) {  // && "icon" != this.name) {
-            let tag = "±±" + this.name + "±±"
-            function findShadow(group) {
-                return group.layers.filter(l => l.name.startsWith(tag))[0]
-            }
-            let shadow = findShadow(sLayer.parent)
-            if (!shadow && sLayer.parent.parent) shadow = findShadow(sLayer.parent.parent)
-            //
-            if (!shadow && (this.name.startsWith("ic-") || "icon" == this.name)) {
-                tag = "±±" + "icon"
-                shadow = findShadow(sLayer.parent)
-                if (!shadow && sLayer.parent.parent) shadow = findShadow(sLayer.parent.parent)
-                if (!shadow && sLayer.parent.parent.parent) shadow = findShadow(sLayer.parent.parent.parent)
-                this.isIcon = shadow != null
-            }
-            //
-            if (shadow) {
-                const data = shadow.name.split("±±")
-                targetID = data[2]
-                symbolID = data[3]
+
+        // find a symbol and flow information saved before detatch()
+        if (this.isGroup && exporter.enabledJSON) {  // && "icon" != this.name) {
+
+            if (exporter.slowExportSymbols) {
+                // WAY #1— works, but slowly
+                let tag = "±±" + this.name + "±±"
+                function findShadow(group) {)
+                    return group.layers.filter(l => l.name.startsWith(tag))[0]
+                }
+                let shadow = findShadow(sLayer.parent)
+                if (!shadow && sLayer.parent.parent.layers) shadow = findShadow(sLayer.parent.parent)
+                //
+                if (!shadow && (this.name.startsWith("ic-") || "icon" == this.name)) {
+                    tag = "±±" + "icon"
+                    shadow = findShadow(sLayer.parent)
+                    if (!shadow && sLayer.parent.parent) shadow = findShadow(sLayer.parent.parent)
+                    if (!shadow && sLayer.parent.parent.parent) shadow = findShadow(sLayer.parent.parent.parent)
+                    this.isIcon = shadow != null
+                }
+                //
+                if (shadow) {
+                    const data = shadow.name.split("±±")
+                    targetID = data[2]
+                    symbolID = data[3]
+                }
+            } else {
+                /// WAY 2 — works unstable
+                const targetPos = this.name.indexOf("±±")
+                if (targetPos >= 0) {
+                    // This layer is Symbol instance
+                    const data = this.name.substring(targetPos + 2)
+                    const symbolIDPos = data.indexOf("±±")
+                    targetID = data.substring(0, symbolIDPos)
+                    symbolID = data.substring(symbolIDPos + 2)
+                }  // END OF WAY #1
             }
         }
 
+        // save found symbol information
         if (null != symbolID) {
             // This layer is Symbol instance
 

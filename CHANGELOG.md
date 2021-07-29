@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.6.2 (29 Jul 2021)
+Added "Use slow but stable symbols detection" checkbox to Export dialog. The fast method depends of unstable Sketch behaviour. The slow method works always stable.
+
 ##  Version 16.6.1 (28 Jul 2021)
 Show icon names correctly in Element Inspector
 

@@ -58,6 +58,7 @@ class Exporter {
 
         this.retinaImages = this.Settings.settingForKey(SettingKeys.PLUGIN_DONT_RETINA_IMAGES) != 1
         this.enabledJSON = this.Settings.settingForKey(SettingKeys.PLUGIN_DONT_SAVE_ELEMENTS) != 1
+        this.slowExportSymbols = this.Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_SYMBOLS_SLOW) == 1
         this.disableFixedLayers = this.customArtboardFrame || this.Settings.documentSettingForKey(this.doc, SettingKeys.DOC_DISABLE_FIXED_LAYERS) == 1
 
         let pluginSortRule = this.Settings.settingForKey(SettingKeys.PLUGIN_SORT_RULE)

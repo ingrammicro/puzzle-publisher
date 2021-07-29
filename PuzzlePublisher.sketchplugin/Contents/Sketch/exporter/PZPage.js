@@ -88,22 +88,30 @@ class PZPage {
                 return
             }
 
-            /// WAY 1 — works unstable
-            // save target artboard ID to restore info about master afte the detach      
-            // save symbol ID to restore info about master after the detachs
-            //sl.name = sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + sl.symbolId
+            if (exporter.slowExportSymbols) {
+                /// WAY #1— works, but slowly
+                var text = new Text({
+                    text: ""
+                })
+                text.name = "±±" + sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + symbolId
+                text.hidden = true
+                text.frame.x = sl.frame.x
+                text.frame.y = sl.frame.y
+                text.frame.width = 0
+                text.frame.height = 0
+                sl.parent.layers.push(text)
 
-            /// WAY #2 — works, but slowly
-            var text = new Text({
-                text: ""
-            })
-            text.name = "±±" + sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + symbolId
-            text.hidden = true
-            text.frame.x = sl.frame.x
-            text.frame.y = sl.frame.y
-            text.frame.width = 0
-            text.frame.height = 0
-            sl.parent.layers.push(text)
+            } else {
+                /// WAY 2 — works unstable
+                // save target artboard ID to restore info about master afte the detach      
+                // save symbol ID to restore info about master after the detachs
+                if (sl.name.indexOf("±±") >= 0) {
+                    //remove old garabage
+                    sl.name = sl.name.substring(0, sl.name.indexOf("±±"))
+                }
+                sl.name = sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + sl.symbolId
+                /// END OF WAY 2
+            }
 
             /*
             /// WAY #3 — don't work :(
