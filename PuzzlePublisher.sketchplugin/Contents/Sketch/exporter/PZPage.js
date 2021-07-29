@@ -88,10 +88,12 @@ class PZPage {
                 return
             }
 
+            /// WAY 1 — works unstable
             // save target artboard ID to restore info about master afte the detach      
             // save symbol ID to restore info about master after the detachs
             //sl.name = sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + sl.symbolId
 
+            /// WAY #2 — works, but slowly
             var text = new Text({
                 text: ""
             })
@@ -104,6 +106,7 @@ class PZPage {
             sl.parent.layers.push(text)
 
             /*
+            /// WAY #3 — don't work :(
             exporter.context.command.setValue_forKey_onLayer_forPluginIdentifier(sl.symbolId, 'symbolID', nl, Constants.PLUGIN_IDENTIFIER)
             if (sl.flow)
                 exporter.context.command.setValue_forKey_onLayer_forPluginIdentifier(sl.flow.targetId, 'flowTargetId', nl, Constants.PLUGIN_IDENTIFIER)
