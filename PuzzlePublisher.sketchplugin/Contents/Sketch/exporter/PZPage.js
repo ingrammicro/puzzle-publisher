@@ -29,7 +29,9 @@ class PZPage {
                 PZPage_touched = true
             }
 
-            this._scanLayersToSaveInfo(sa)
+            if (exporter.enabledJSON) {
+                this._scanLayersToSaveInfo(sa)
+            }
             this._scanLayersToDetachSymbols(sa)
         }
 
@@ -89,8 +91,6 @@ class PZPage {
             // save target artboard ID to restore info about master afte the detach      
             // save symbol ID to restore info about master after the detachs
             //sl.name = sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + sl.symbolId
-
-
 
             var text = new Text({
                 text: ""

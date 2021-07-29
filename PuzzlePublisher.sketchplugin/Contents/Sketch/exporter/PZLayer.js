@@ -74,7 +74,7 @@ class PZLayer {
         let symbolID = null
         let targetID = null
 
-        if ("Group" == sLayer.type) {  // && "icon" != this.name) {
+        if (exporter.enabledJSON && "Group" == sLayer.type) {  // && "icon" != this.name) {
             let tag = "±±" + this.name + "±±"
             function findShadow(group) {
                 return group.layers.filter(l => l.name.startsWith(tag))[0]
