@@ -1,6 +1,10 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.7.0 (12 Aug 2021)
+Replaced "Use slow but..." checkbox
+Moved "Enable Element Inspector" from Configure Export to Export dialog
+
 ##  Version 16.6.3 (29 Jul 2021)
 Fix auto-transition for the last page
 Support for undocumented font weight = 14
