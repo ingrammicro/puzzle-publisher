@@ -79,7 +79,7 @@ class PZLayer {
         // find a symbol and flow information saved before detatch()
         if (this.isGroup && exporter.enabledJSON) {  // && "icon" != this.name) {
 
-            if (exporter.slowExportSymbols) {
+            if (false) {
                 // WAY #1— works, but slowly
                 let tag = "±±" + this.name + "±±"
                 function findShadow(group) {)

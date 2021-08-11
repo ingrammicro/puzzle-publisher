@@ -98,8 +98,7 @@ function runExporter(context, exportOptions = null) {
     var dontOpenBrowser = Settings.settingForKey(SettingKeys.PLUGIN_DONT_OPEN_BROWSER) == 1
     var askSize = Settings.settingForKey(SettingKeys.PLUGIN_ASK_CUSTOM_SIZE) == 1
     var compress = Settings.settingForKey(SettingKeys.PLUGIN_COMPRESS) == 1
-    var enabledJSON = Settings.settingForKey(SettingKeys.PLUGIN_DONT_SAVE_ELEMENTS) != 1
-    var slowExportSymbols = Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_SYMBOLS_SLOW) == 1
+    var enabledJSON = Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_ELEMENTS) == 1
 
 
     // ask for output path
@@ -136,9 +135,8 @@ function runExporter(context, exportOptions = null) {
             dialog.addTextInput("customWidth", "Artboard custom width (px)", customWidth + "", 'e.g. 1920')
             dialog.addTextInput("customHeight", "Artboard custom height (px)", customHeight + "", 'e.g. 1080')
         }
-        if (enabledJSON) {
-            dialog.addCheckbox("slowExportSymbols", "Use slow but stable symbols detection ", slowExportSymbols)
-        }
+        dialog.addCheckbox("enabledJSON", "Enable Element Inspector (slows down exporting)", enabledJSON)
+        //dialog.addHint("enabledJSONHint", "Slows exporting down")
 
         track(TRACK_EXPORT_DIALOG_SHOWN)
         while (true) {
@@ -165,8 +163,7 @@ function runExporter(context, exportOptions = null) {
             currentPath = dialog.views['path'].stringValue() + ""
             if (currentPath == "") continue
 
-            if (enabledJSON)
-                slowExportSymbols = dialog.views['slowExportSymbols'].state() == 1
+            enabledJSON = dialog.views['enabledJSON'].state() == 1
 
             dontOpenBrowser = dialog.views['open'].state() != 1
             compress = false //dialog.views['compress'].state() == 1
@@ -180,10 +177,7 @@ function runExporter(context, exportOptions = null) {
         Settings.setSettingForKey(SettingKeys.PLUGIN_EXPORTING_URL, currentPath)
         Settings.setSettingForKey(SettingKeys.PLUGIN_DONT_OPEN_BROWSER, dontOpenBrowser)
         Settings.setSettingForKey(SettingKeys.PLUGIN_COMPRESS, compress)
-        if (enabledJSON) {
-            Settings.setSettingForKey(SettingKeys.PLUGIN_EXPORT_SYMBOLS_SLOW, slowExportSymbols)
-            log("PLUGIN_EXPORT_SYMBOLS_SLOW" + slowExportSymbols)
-        }
+        Settings.setSettingForKey(SettingKeys.PLUGIN_EXPORT_ELEMENTS, enabledJSON)
     }
 
 

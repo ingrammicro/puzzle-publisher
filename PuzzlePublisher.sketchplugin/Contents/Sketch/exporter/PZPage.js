@@ -88,7 +88,7 @@ class PZPage {
                 return
             }
 
-            if (exporter.slowExportSymbols) {
+            if (false) {
                 /// WAY #1— works, but slowly
                 var text = new Text({
                     text: ""
