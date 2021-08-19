@@ -304,7 +304,7 @@ function createViewer(story, files) {
             } else if (allowNavigation && 76 == event.which) { // l
                 v.toogleLayout();
             } else if (enableTopNavigation && 83 == event.which) { // s
-                var first = v.getFirstUserPage()
+                var first = null != story.startPageIndex ? story.pages[story.startPageIndex] : v.getFirstUserPage()
                 if (first && (first.index != v.currentPage.index || this.child)) {
                     this.hideChild()
                     v.goToPage(first.index)
