@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.7.4 (19 Aug 2021)
+'S' button should return to a page marked as "Start Page"
+
 ##  Version 16.7.0 (12 Aug 2021)
 Replaced "Use slow but..." checkbox
 Moved "Enable Element Inspector" from Configure Export to Export dialog
