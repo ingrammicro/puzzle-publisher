@@ -29,9 +29,9 @@ class PZPage {
                 PZPage_touched = true
             }
 
-            if (exporter.enabledJSON) {
-                this._scanLayersToSaveInfo(sa)
-            }
+            // We don't need save info by ourself because Sketch does it. Check userInfo() function
+            // if (exporter.enabledJSON) this._scanLayersToSaveInfo(sa)
+
             this._scanLayersToDetachSymbols(sa)
         }
 
@@ -40,8 +40,6 @@ class PZPage {
         this._collectArtboards(sArtboards)
         exporter.logMsg("PZPage.collectData() collected")
 
-        // cleanup temporary data
-        //this._cleanUp()        
     }
 
 
@@ -84,11 +82,14 @@ class PZPage {
 
             const smaster = pzDoc.getSymbolMasterByID(symbolId)
             if (!smaster) {
-                log("_scanLayersToSaveInfo() Error: can't find master for" + sl.name)
+                if (DEBUG) exporter.logMsg("_scanLayersToSaveInfo() Error: can't find master for " + sl.name)
                 return
             }
 
-            if (false) {
+            if (true) {
+                /// WAY #3
+            }
+            else if (false) {
                 /// WAY #1— works, but slowly
                 var text = new Text({
                     text: ""
@@ -112,15 +113,6 @@ class PZPage {
                 sl.name = sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + sl.symbolId
                 /// END OF WAY 2
             }
-
-            /*
-            /// WAY #3 — don't work :(
-            exporter.context.command.setValue_forKey_onLayer_forPluginIdentifier(sl.symbolId, 'symbolID', nl, Constants.PLUGIN_IDENTIFIER)
-            if (sl.flow)
-                exporter.context.command.setValue_forKey_onLayer_forPluginIdentifier(sl.flow.targetId, 'flowTargetId', nl, Constants.PLUGIN_IDENTIFIER)
-            else
-                exporter.context.command.setValue_forKey_onLayer_forPluginIdentifier(null, 'flowTargetId', nl, Constants.PLUGIN_IDENTIFIER)
-            */
 
             // go deeply
             this._scanLayersToSaveInfo(smaster)

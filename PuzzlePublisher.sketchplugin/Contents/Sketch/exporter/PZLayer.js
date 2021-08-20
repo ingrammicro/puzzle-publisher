@@ -79,7 +79,21 @@ class PZLayer {
         // find a symbol and flow information saved before detatch()
         if (this.isGroup && exporter.enabledJSON) {  // && "icon" != this.name) {
 
-            if (false) {
+            if (true) {
+                // WAY #3 - experimental
+                const info = this.nlayer.userInfo()
+                if (null != info) {
+                    const detach = info['com.sketch.detach']
+                    if (detach) {
+                        if (detach['symbolMaster'])
+                            symbolID = detach['symbolMaster']['symbolID']
+                        else {
+                            //log("!!!!!!!!!!!!!!!!!!!!!! no symbolMaster for " + this.name)
+                            //log(detach)
+                        }
+                    }
+                }
+            } else if (false) {
                 // WAY #1— works, but slowly
                 let tag = "±±" + this.name + "±±"
                 function findShadow(group) {)
@@ -153,9 +167,9 @@ class PZLayer {
                 this.text = this.slayer.text + ""
             }
             this.cv = this._getColorVariable()
-
-            this.targetId = this.slayer.flow ? this.slayer.flow.targetId : null
         }
+        this.targetId = this.slayer.flow ? this.slayer.flow.targetId : null
+
         if ("Artboard" == sLayer.type) this.isArtboard = true
 
         if (!this.isArtboard) {
