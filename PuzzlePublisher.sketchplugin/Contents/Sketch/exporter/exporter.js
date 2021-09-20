@@ -199,7 +199,7 @@ class Exporter {
             zoomEnabled: this.Settings.settingForKey(SettingKeys.PLUGIN_DISABLE_ZOOM) != 1,
             title: this.docName,
             layersExist: this.enabledJSON,
-            centerContent: this.Settings.settingForKey(SettingKeys.PLUGIN_POSITION) === Constants.POSITION_CENTER),
+            centerContent: false, // because too many issues
             highlightLinks: false,
             pages: [],
             groups: []
@@ -207,17 +207,17 @@ class Exporter {
         //
     }
 
+
     createMainHTML() {
         const buildOptions = {
             docName: this.docName,
             serverTools: this.serverTools,
             backColor: this.backColor,
-            centerContent: this.Settings.settingForKey(SettingKeys.PLUGIN_POSITION) === Constants.POSITION_CENTER,
+            centerContent: false, // because too many issues
             loadLayers: this.enabledJSON,
             cssFileNames: this.enabledJSON ? this.mDoc.getCSSIncludes() : undefined,
             enableAnimations: this.enableTransitionAnimation,
         }
-
 
         const docHideNav = this.Settings.documentSettingForKey(this.doc, SettingKeys.DOC_CUSTOM_HIDE_NAV)
         buildOptions.hideNav = docHideNav == undefined || docHideNav == 0 ? this.Settings.settingForKey(SettingKeys.PLUGIN_HIDE_NAV) == 1 : docHideNav == 2

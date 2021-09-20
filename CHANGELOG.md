@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.8.1 (20 Sep 2021)
+Fixed layout issues in Chrome and FF 
+
 ##  Version 16.8.0 (21 Aug 2021)
 Exporting with Element Inspector enabled is fast again! So, "Enable Element Inspector" checkbox moved back to Configure Export dialo
 
