@@ -2,12 +2,12 @@
     "name": "Puzzle Publisher",
     "description": "Generates and publishes a HTML clickable prototype",
     "author": "Maxim Bazarov and Alexey Kalenyuk",
-    "authorEmail": "max@bazarov.ru",
+    "authorEmail": "mbazarov@gmail.com",
     "homepage": "https://github.com/ingrammicro/puzzle-publisher",
     "identifier": "com.cloudblue.sketch.exporter",
     "appcast": "https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/appcast.xml",
     "compatibleVersion": "52",
-    "version": "16.8.1",
+    "version": "16.9.0",
     "icon": "icon.png",
     "commands": [
         {

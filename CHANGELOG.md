@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.9.0 (21 Sep 2021)
+Show links to external documentation (for usage with Puzzle Tokens)
+
 ##  Version 16.8.1 (20 Sep 2021)
 Fixed layout issues in Chrome and FF 
 
