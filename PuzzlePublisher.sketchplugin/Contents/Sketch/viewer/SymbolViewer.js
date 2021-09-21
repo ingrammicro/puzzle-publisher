@@ -435,12 +435,13 @@ class SymbolViewer extends AbstractViewer {
     }
 
     _showExtDocRef(layer, symName, siLayer) {
-        if (undefined == layer.b) return ""
+        if (undefined == layer.b && (undefined == siLayer || undefined == siLayer.b)) return ""
         //
         let href = undefined
         let name = ""
         let parts = symName.split("/")
-        const attrs = SYMBOLS_DICT[layer.b].attrs
+        const libName = layer.b ? layer.b : siLayer.b
+        const attrs = SYMBOLS_DICT[libName].attrs
         while (parts.length) {
             name = parts.join("/")
             if (name in attrs) {
