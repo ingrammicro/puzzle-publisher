@@ -426,12 +426,39 @@ class SymbolViewer extends AbstractViewer {
         if (undefined == symName) return ""
         let info = "<hr>" +
             "<div class='block'>" +
-            "<div class='label'>" + "Symbol" + "</div>" +
+            "<div class='label'>" + "Sketch Symbol" + "</div>" +
             "<div class='value'>" + symName + "</div>"
         const libName = layer.b != undefined ? (layer.b + " (external)") :
             (siLayer && siLayer.b ? siLayer.b + " (external)" : "Document")
         info += "<div style='font-size:12px; color:var(--color-secondary)'>" + libName + "</div></div>"
-        return info
+        return this._showExtDocRef(layer, symName, siLayer) + info
+    }
+
+    _showExtDocRef(layer, symName, siLayer) {
+        if (undefined == layer.b) return ""
+        //
+        let href = undefined
+        let name = ""
+        let parts = symName.split("/")
+        const attrs = SYMBOLS_DICT[layer.b].attrs
+        while (parts.length) {
+            name = parts.join("/")
+            if (name in attrs) {
+                href = attrs[name]["ext-doc-href"]
+                if (undefined != href) {
+                    break
+                }
+            }
+            parts.pop()
+        }
+        if (!href) return ""
+        //        
+        return `
+                <hr>
+                <div class="block">
+                    <div class="label">Documentation</div>
+                    <div style="value"><a href="${href}" target="_blank">${name}</a></div>
+                </div>`
     }
 
     _showLayerIcon(layer) {
@@ -482,7 +509,7 @@ class SymbolViewer extends AbstractViewer {
 
         info = `<hr>
                 <div class='block'>
-                    <div class='label'>Layer Style</div>
+                    <div class='label'>Sketch Style</div>
                     <div class='value'>${styleName}</div>
                     <div style='font-size:12px; color:var(--color-secondary)'>${libName}</div>
                 </div>`
