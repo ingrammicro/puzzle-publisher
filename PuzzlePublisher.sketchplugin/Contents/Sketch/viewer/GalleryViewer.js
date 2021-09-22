@@ -571,14 +571,14 @@ class GalleryViewer extends AbstractViewer {
             if (visible) foundScreenAmount++
             page.visibleInGallery = visible
             if (visible) {
-                div.show()
+                div.removeClass("galleryArtboardAbsHidden")
                 if (visible) {
                     foundTextLayers.forEach(function (l) {
                         viewer.galleryViewer._findTextShowElement(page, l, div)
                     })
                 }
             } else {
-                div.hide()
+                div.addClass("galleryArtboardAbsHidden")
             }
         });
 

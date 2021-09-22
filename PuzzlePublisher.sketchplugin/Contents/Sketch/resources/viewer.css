@@ -614,6 +614,10 @@ text-overflow: ellipsis;
     transition: transform .24s, box-shadow .24s;
 }
 
+.galleryArtboardAbsHidden{
+    opacity: 0.2;
+}
+
 .galleryArtboardLabelAbs{
     position: absolute;
     color:      var(--color-active);    
