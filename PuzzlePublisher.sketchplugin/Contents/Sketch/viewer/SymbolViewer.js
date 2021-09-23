@@ -435,13 +435,21 @@ class SymbolViewer extends AbstractViewer {
     }
 
     _showExtDocRef(layer, symName, siLayer) {
-        if (undefined == layer.b && (undefined == siLayer || undefined == siLayer.b)) return ""
+        const emptyRes = ""
+        if (undefined == layer.b && (undefined == siLayer || undefined == siLayer.b)) return emptyRes
         //
         let href = undefined
         let name = ""
         let parts = symName.split("/")
+
         const libName = layer.b ? layer.b : siLayer.b
+        //  check if library has a dictionary file
+        if (!(libName in SYMBOLS_DICT)) return emptyRes
+
         const attrs = SYMBOLS_DICT[libName].attrs
+        // check if dictionary file has attrs defined
+        if (undefined == attrs) return emptyRes
+
         while (parts.length) {
             name = parts.join("/")
             if (name in attrs) {
@@ -452,7 +460,7 @@ class SymbolViewer extends AbstractViewer {
             }
             parts.pop()
         }
-        if (!href) return ""
+        if (!href) return emptyRes
         //        
         return `
                 <hr>
