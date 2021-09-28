@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.9.2 (26 Sep 2021)
+Elemnent Inspector now shows valid value for style defined as "@token1 + @token2"
+
 ##  Version 16.9.0 (21 Sep 2021)
 Show links to external documentation (for usage with Puzzle Tokens)
 
