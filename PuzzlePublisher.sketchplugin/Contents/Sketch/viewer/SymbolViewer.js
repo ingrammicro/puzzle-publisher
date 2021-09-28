@@ -904,6 +904,8 @@ class SymbolViewer extends AbstractViewer {
         //
         if (finalTokenInfo)
             return finalTokenInfo[0] + ";</span><span class='tokenValue'>//" + this._formatStyleValue(style, finalTokenInfo[1])
+        else if (tokenName != "" && styleValue != "")
+            return tokenName + ";</span><span class='tokenValue'>//" + styleValue
         else
             return ""
     }
