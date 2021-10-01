@@ -68,7 +68,6 @@ class PZLayer {
         this.isSymbolInstance = false
         this.customLink = undefined
         this.isLink = false
-        this.isIcon = false
 
         if ("Group" == sLayer.type || "Artboard" == sLayer.type) this.isGroup = true
 
@@ -273,6 +272,12 @@ class PZLayer {
             this.overlayRedirect = true
         }
 
+
+        // checl if the layer is an image symbol name and we don't want to show the child parts
+        if (this.isSymbolInstance && this.smName.startsWith("images/")) {
+            this.isImageSymbol = true
+        }
+
     }
 
     _calculateConstrains() {
@@ -297,7 +302,7 @@ class PZLayer {
         for (const sl of sLayers.filter(l => !l.hidden || l.sketchObject.hasClippingMask())) {
             //            
             const al = new PZLayer(sl, this)
-            if (al.isGroup && !al.isIcon) al.childs = al.collectAChilds(sl.layers, space + " ")
+            if (al.isGroup && !this.isImageSymbol) al.childs = al.collectAChilds(sl.layers, space + " ")
             aLayers.push(al)
         }
         return aLayers
@@ -493,6 +498,9 @@ class PZLayer {
         } else if ("ShapePath" == this.slayer.type || "Shape" == this.slayer.type) {
             this.pr = this._buildShapePropsForJSON()
             this.tp = "ShapePath"
+        } else if (this.isImageSymbol) {
+            this.tp = "ImageSymbol"
+            this.isImageSymbol = undefined
         } else if ("Image" == this.slayer.type) {
             if (this.isMasked) {
                 this.hd = true
@@ -503,10 +511,6 @@ class PZLayer {
         } else if (undefined != this.imageIndex) {
             this.tp = "Image"
             this.iu = this._buildImageURL()
-        } else if (this.isIcon) {
-            this.isIcon = undefined
-            this.icn = this.smName
-            this.tp = "Icon"
         }
         if (this.hasClippingMask) {
             this.ms = true
