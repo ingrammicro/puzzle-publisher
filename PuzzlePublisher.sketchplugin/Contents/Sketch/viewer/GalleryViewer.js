@@ -13,6 +13,7 @@ class GalleryViewerMapLink {
         if (undefined == dpage.dlinks) dpage.dlinks = []
         spage.slinks.push(this)
         dpage.dlinks.push(this)
+        //
     }
 
     buildCode(zoom, visible) {
@@ -90,8 +91,16 @@ class GalleryViewer extends AbstractViewer {
         this.mapZoom = 0.2
         this.isCustomMapZoom = false
         this.currentFullWidth = null
-
         this.searchInputFocused = false
+        //
+        this._initPages()
+    }
+
+    _initPages() {
+        if (this.isMapMode)
+            this.pages = story.pages.filter(p => "external" != p.type)
+        else
+            this.pages = viewer.userStoryPages
     }
 
     initialize(force = false, skipZoomUpdate = false) {
@@ -123,7 +132,7 @@ class GalleryViewer extends AbstractViewer {
         this.loadPages();
 
         //load amount of pages to gallery title
-        document.getElementById("screensamount").innerHTML = viewer.userStoryPages.length + " screens";
+        document.getElementById("screensamount").innerHTML = this.pages.length + " screens";
 
         // Adjust map zoom
         const zoomContainter = $("#map-controls")
@@ -141,7 +150,7 @@ class GalleryViewer extends AbstractViewer {
     }
 
     _updateCommentCounters(pagesInfo) {
-        viewer.userStoryPages.forEach(function (page) {
+        this.pages.forEach(function (page) {
             const pageID = page.getHash()
             const pageInfo = pagesInfo[pageID]
             if (!pageInfo) {
@@ -221,6 +230,7 @@ class GalleryViewer extends AbstractViewer {
     enableMapMode(enabled) {
         window.localStorage.setItem("galleryIsModeAbs", enabled)
         this.isMapMode = enabled
+        this._initPages()
         this.initialize(true)
         viewer.refresh_url(viewer.currentPage, "", false)
     }
@@ -269,7 +279,7 @@ class GalleryViewer extends AbstractViewer {
 
     loadPages() {
         if (this.isMapMode) return this.loadPagesAbs()
-        viewer.userStoryPages.forEach(function (page) {
+        this.pages.forEach(function (page) {
             this.loadOnePage(page);
         }, this);
     }
@@ -282,7 +292,7 @@ class GalleryViewer extends AbstractViewer {
 
         story.groups.forEach(function (group) {
             // find group pages
-            const pages = viewer.userStoryPages.filter(s => s.groupID == group.id)
+            const pages = this.pages.filter(s => s.groupID == group.id)
             group.pages = pages // save for below
             if (pages.length == 0) return
             ///
@@ -496,7 +506,7 @@ class GalleryViewer extends AbstractViewer {
     }
 
     _showHideMapLinks(show) {
-        viewer.userStoryPages.forEach(function (page) {
+        this.pages.forEach(function (page) {
             page.showHideGalleryLinks(show)
         });
     }
@@ -522,13 +532,13 @@ class GalleryViewer extends AbstractViewer {
         let indexCounter = 0
         this.mapLinks = []
         //
-        viewer.userStoryPages.forEach(function (page) {
+        this.pages.forEach(function (page) {
             /// Show links to other pages
             page.links.forEach(function (l) {
                 // valide destination page
                 if (l.page == page.index) return
                 const dpage = story.pages[l.page]
-                if (!dpage || "external" == dpage.type || "overlay" == dpage.type) return
+                if (!dpage || "external" == dpage.type) return
                 // build SVG coode for the link
                 const link = new GalleryViewerMapLink(indexCounter++, l, page, dpage)
                 svg += link.buildCode(this.mapZoom, this.isMapLinksVisible)
@@ -547,7 +557,7 @@ class GalleryViewer extends AbstractViewer {
 
         var foundScreenAmount = 0;
 
-        viewer.userStoryPages.forEach(function (page) {
+        this.pages.forEach(function (page) {
             const title = page.title.toLowerCase().trim()
             const div = $("#gallery #grid #" + page.index)
             let visible = keyword == ''

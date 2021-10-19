@@ -57,10 +57,7 @@ function handleAnimationEndOnShow(el) {
     t.in_classes.forEach(function (className) {
         el.target.classList.remove(className)
     })
-
 }
-
-
 
 class ViewerPage {
 
@@ -147,7 +144,7 @@ class ViewerPage {
     }
 
     hideCurrentOverlays() {
-        const overlays = this.currentOverlays.slice()
+        const overlays = this.currentOverlays.filter(p => p.overlayOutsideClickIgnore != true).slice()
         for (let overlay of overlays) {
             overlay.hide()
         }
@@ -188,6 +185,33 @@ class ViewerPage {
         }
         this.imageDiv.removeClass("hidden")
         this.visible = true
+    }
+
+    // result:{
+    //    foundPage: {}
+    //    foundlink: {}
+    //}
+    showOverlayOverParent() {
+        var foundPage = null
+        var foundLink = null
+        // scan all regular pages
+        story.pages.filter(page => "regular" == page.type).some(function (page) {
+            const foundLinks = page.links.filter(link => link.page != null && link.page == this.index)
+            if (foundLinks.length != 0) {
+                // return the page index which has link to modal                    
+                foundPage = page
+                foundLink = foundLinks[0]
+                return true
+            }
+            return false
+        }, this)
+        if (!foundPage) return false
+
+        // ok, we found some regular page which has a link to specified overlay        
+        viewer.goTo(foundPage.index, true);
+        foundPage.showOverlayByLinkIndex(foundLink.index)
+
+        return true
     }
 
     findTextNext() {
@@ -236,6 +260,7 @@ class ViewerPage {
     //  foundLayers: ref to list result
     //  layers: list of layers or null (to get a root layers)
     findTextLayersByText(text, foundLayers, layers = null) {
+        if (!story.layersExist) return false
         if (null == layers) {
             layers = layersData[this.index].c
             if (!layers) return false
@@ -811,7 +836,7 @@ function handleLinkEvent(event) {
         if (('overlay' == destPage.type || 'modal' == destPage.type) && destPage.overlayRedirectTargetPage != undefined) {
 
             // Change base page
-            viewer.goTo(destPage.overlayRedirectTargetPage, false)
+            viewer.goTo(destPage.overlayRedirectTargetPage, false, link)
             currentPage = viewer.currentPage
             orgPage = viewer.currentPage
         }
@@ -947,7 +972,7 @@ function handleLinkEvent(event) {
             // check if we need to close current overlay
             currentPage.hideCurrentOverlays()
 
-            viewer.goTo(parseInt(destPageIndex))
+            viewer.goTo(parseInt(destPageIndex), true, link)
             return false
         }
     } else if (link.action != null && link.action == 'back') {

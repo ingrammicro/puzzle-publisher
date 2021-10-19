@@ -1,3 +1,10 @@
+const ExporterConstants = {
+    DOCUMENT_VERSION: "docVersion",
+    DOCUMENT_VERSION_PLACEHOLDER: "V_V_V",
+    DOCUMENT_AUTHOR_NAME_PLACEHOLDER: "V_V_N",
+    DOCUMENT_AUTHOR_EMAIL_PLACEHOLDER: "V_V_E",
+    DOCUMENT_COMMENTS_URL_PLACEHOLDER: "V_V_C"
+}
 
 function buildMainHTML_NavigationIcons(options) {
     return '<div class="containerSVG"> <svg class="svgIcon"> \
@@ -60,48 +67,54 @@ function buildMainHTML_NavigationIcons(options) {
     </symbol >\
     </svg ></div >\n';
 }
-
+// options{
+//     generatorText: ""
+// }  
 function buildMainHTML(options) {
 
-    const verPostfix = "?" + Constants.DOCUMENT_VERSION_PLACEHOLDER
-    const manifest = exporter.getManifest()
+    const verPostfix = "?" + ExporterConstants.DOCUMENT_VERSION_PLACEHOLDER
+    const srcPath = "srcPath" in options ? options.srcPath : ""
 
     let s = "";
-    s += '<!DOCTYPE html>\n<html>\n<head>\n<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">\n';
-    s += '<meta name="generator" content="Generated using Puzzle Publisher ' + manifest.version + ' plugin for Sketch.app - https://github.com/ingrammicro/puzzle-publisher">\n';
-    s += '<title>' + options.docName + '</title>\n';
-    s += '<link rel="shortcut icon"  type="image/png?" href="resources/icon.png' + verPostfix + '">\n';
-    s += '<link rel="stylesheet" type="text/css" href="resources/viewer.css' + verPostfix + '">\n';
+    s += `
+        <!DOCTYPE html>\n<html>\n<head>\n<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">\n
+        <meta name="generator" content="${options.generatorText}">\n
+        <title>${options.docName}</title>\n
+        <link rel="shortcut icon"  type="image/png?" href="${srcPath}resources/icon.png${verPostfix}">\n
+        <link rel="stylesheet" type="text/css" href="${srcPath}resources/viewer.css${verPostfix}">\n
+    `
     if (options.enableAnimations) {
-        s += '<link rel="stylesheet" type="text/css" href="resources/animations.css' + verPostfix + '">\n';
-    }
-    if (options.centerContent) {
-        s += '<link rel="stylesheet" type="text/css" href="resources/viewer-center.css' + verPostfix + '">\n';
-    } else {
-        s += '<link rel="stylesheet" type="text/css" href="resources/viewer-top.css' + verPostfix + '">\n';
+        s += `<link rel="stylesheet" type="text/css" href="${srcPath}resources/animations.css${verPostfix}">\n`
     }
     if (undefined != options.cssFileNames) {
         options.cssFileNames.forEach(function (cssFile) {
-            s += '<link rel="stylesheet" type="text/css" href="resources/' + cssFile + verPostfix + '">\n';
+            s += `<link rel="stylesheet" type="text/css" href="${srcPath}resources/${cssFile}${verPostfix}">\n`
         })
     }
-    s += '<script type="text/javascript" src="resources/jquery-3.3.1.min.js" charset="UTF-8"></script>\n';
-    //  s += '<script type="text/javascript" src="resources/jquery-migrate-1.4.1.min.js" charset="UTF-8"></script>\n';
-    s += '<script type="text/javascript" src="resources/jquery.hotkeys.js" charset="UTF-8"></script>\n';
-    s += '<script type="text/javascript" src="resources/jquery.ba-hashchange.min.js" charset="UTF-8"></script>\n';
-    s += '<script type="text/javascript" src="viewer/viewer-page.js' + verPostfix + '" charset="UTF-8"></script>\n';
-    s += '<script type="text/javascript" src="viewer/story.js' + verPostfix + '" charset="UTF-8"></script>\n';
-    s += '<script type="text/javascript" src="viewer/viewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
-    s += '<script type="text/javascript" src="viewer/AbstractViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
-    s += '<script type="text/javascript" src="viewer/CommentsViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
-    s += '<script type="text/javascript" src="viewer/GalleryViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
+    s += `
+    <link rel="stylesheet" type="text/css" href="${srcPath}resources/viewer-top.css${verPostfix}">
+	<script type="text/javascript" src="${srcPath}resources/jquery-3.3.1.min.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="${srcPath}resources/jquery.hotkeys.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="${srcPath}resources/jquery.ba-hashchange.min.js" charset="UTF-8"></script>
+    <script type="text/javascript" src="${srcPath}viewer/viewer-page.js${verPostfix}" charset="UTF-8"></script>
+    <script type="text/javascript" src="viewer/story.js${verPostfix}" charset="UTF-8"></script>
+    <script type="text/javascript" src="${srcPath}viewer/viewer.js${verPostfix}" charset="UTF-8"></script>
+    <script type="text/javascript" src="${srcPath}viewer/AbstractViewer.js${verPostfix}" charset="UTF-8"></script>
+    <script type="text/javascript" src="${srcPath}viewer/CommentsViewer.js${verPostfix}" charset="UTF-8"></script>
+    <script type="text/javascript" src="${srcPath}viewer/GalleryViewer.js${verPostfix}" charset="UTF-8"></script>
+	`
     if (options.loadLayers) {
-        s += '<script type="text/javascript" src="viewer/LayersData.js' + verPostfix + '" charset="UTF-8"></script>\n';
-        s += '<script type="text/javascript" src="viewer/SymbolViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
-        s += '<link rel="stylesheet" type="text/css" href="resources/viewer-fonts.css' + verPostfix + '">\n';
+        s += `
+			<script type="text/javascript" src="viewer/LayersData.js${verPostfix}" charset="UTF-8"></script>\n
+        		<script type="text/javascript" src="${srcPath}viewer/SymbolViewer.js${verPostfix}" charset="UTF-8"></script>\n
+        		<link rel="stylesheet" type="text/css" href="${srcPath}resources/viewer-fonts.css${verPostfix}">\n
+		`
     }
-    s += '<script type="text/javascript" src="viewer/InfoViewer.js' + verPostfix + '" charset="UTF-8"></script>\n';
-    s += '<script type="text/javascript">\n';
+    s += `
+        <script type="text/javascript" src="${srcPath}viewer/InfoViewer.js${verPostfix}" charset="UTF-8"></script>\n
+        <script type="text/javascript">\n
+    `
+
     if (options.jsCode != '') {
         s += 'function runJSCode(){' + options.jsCode + '}\n'
     }
@@ -274,36 +287,40 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     s += "                                <\/div>";
     s += "                             <\/div>"
     s += "                            <hr>";
-    s += "                             <div class=\"groupe\">"
-    if (options.loadLayers) {
-        s += "                            <div  id=\"symbols\"  class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.symbolViewer.toggle();  return false;\">";
-        s += "                                <svg class='svgIcon'><use xlink:href=\"#icElementInspector\"><\/use><\/svg>";
-        s += "                                <span>Elements Inspector<\/span>";
-        s += "                                <div class=\"tips\">M<\/div>";
-        s += "                            <\/div>";
-    }
-    s += "                                <div id=\"menu_info_viewer\" class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.infoViewer.toggle();  return false;\">";
-    s += "                                    <svg class='svgIcon'><use xlink:href=\"#icVersionInspector\"><\/use><\/svg>";
-    s += "                                    <span>Changes Inspector<\/span>";
-    s += "                                    <div class=\"tips\">V<\/div>";
-    s += "                                <\/div>";
-    s += "                             <\/div>";
-    if (options.serverTools != '') {
+    if (options.loadLayers || (options.serverTools != null && options.serverTools != "")) {
+        s += "                             <div class=\"groupe\">"
+        if (options.loadLayers) {
+            s += "                            <div  id=\"symbols\"  class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.symbolViewer.toggle();  return false;\">";
+            s += "                                <svg class='svgIcon'><use xlink:href=\"#icElementInspector\"><\/use><\/svg>";
+            s += "                                <span>Elements Inspector<\/span>";
+            s += "                                <div class=\"tips\">M<\/div>";
+            s += "                            <\/div>";
+        }
+        if (options.serverTools != null && options.serverTools != "") {
+            s += "                                <div id=\"menu_info_viewer\" class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.infoViewer.toggle();  return false;\">";
+            s += "                                    <svg class='svgIcon'><use xlink:href=\"#icVersionInspector\"><\/use><\/svg>";
+            s += "                                    <span>Changes Inspector<\/span>";
+            s += "                                    <div class=\"tips\">V<\/div>";
+            s += "                                <\/div>";
+        }
+        s += "                             <\/div>";
+        if (options.serverTools != null && options.serverTools != "") {
+            s += "                            <hr>";
+            s += "                            <div class=\"groupe\">";
+            s += "                                <div class=\"item\" onclick=\"viewer.increaseVersion(); addRemoveClass('class','menu','active'); return false;\">";
+            s += "                                    <svg class='svgIcon'><use xlink:href=\"#icIncreaseVersion\"><\/use><\/svg>";
+            s += "                                    <span>Up Version<\/span>";
+            s += "                                    <div class=\"tips\">⇧ ↑<\/div>";
+            s += "                                <\/div>";
+            s += "                                <div class=\"item\" onclick=\"viewer.decreaseVersion(); addRemoveClass('class','menu','active'); return false;\">";
+            s += "                                    <svg class='svgIcon'><use xlink:href=\"#icDecreaseVersion\"><\/use><\/svg>";
+            s += "                                    <span>Down Version<\/span>";
+            s += "                                    <div class=\"tips\">⇧ ↓<\/div>";
+            s += "                                <\/div>";
+            s += "                            <\/div>";
+        }
         s += "                            <hr>";
-        s += "                            <div class=\"groupe\">";
-        s += "                                <div class=\"item\" onclick=\"viewer.increaseVersion(); addRemoveClass('class','menu','active'); return false;\">";
-        s += "                                    <svg class='svgIcon'><use xlink:href=\"#icIncreaseVersion\"><\/use><\/svg>";
-        s += "                                    <span>Up Version<\/span>";
-        s += "                                    <div class=\"tips\">⇧ ↑<\/div>";
-        s += "                                <\/div>";
-        s += "                                <div class=\"item\" onclick=\"viewer.decreaseVersion(); addRemoveClass('class','menu','active'); return false;\">";
-        s += "                                    <svg class='svgIcon'><use xlink:href=\"#icDecreaseVersion\"><\/use><\/svg>";
-        s += "                                    <span>Down Version<\/span>";
-        s += "                                    <div class=\"tips\">⇧ ↓<\/div>";
-        s += "                                <\/div>";
-        s += "                            <\/div>";
     }
-    s += "                            <hr>";
     s += "                            <div  id=\"viewall\" class=\"groupe\">";
     s += "                                <div class=\"item\" onclick=\"viewer.galleryViewer.show(); addRemoveClass('class','menu','active'); return false;\">";
     s += "                                    <svg class='svgIcon'><use xlink:href=\"#icGrid\"><\/use><\/svg>";

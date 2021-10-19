@@ -589,13 +589,20 @@ function createViewer(story, files) {
                 this.currentPage.findText(this.searchText)
             }
         },
-        goTo: function (page, refreshURL = true) {
+        goTo: function (page, refreshURL = true, link = undefined) {
+
+            var index = this.getPageIndex(page);
+            var newPage = story.pages[index];
+
+            // Need to build a context for overlay
+            if (newPage.type === "overlay") {
+                if (newPage.showOverlayOverParent()) return
+            }
+
             // We don't need any waiting page transitions anymore
             this._resetTransQueue()
 
             //if(this.symbolViewer) this.symbolViewer.hide()
-
-            var index = this.getPageIndex(page);
             var currentPage = this.currentPage
 
             if (currentPage && !currentPage.isModal) {
@@ -607,7 +614,6 @@ function createViewer(story, files) {
             if (index < 0 || (currentPage && index == currentPage.index) || index >= story.pages.length) return;
 
 
-            var newPage = story.pages[index];
             if (newPage.type === "modal") {
                 // hide parent page links hightlighting
                 this._updateLinksState(false, $('#content'))
@@ -660,7 +666,7 @@ function createViewer(story, files) {
                 this._setupTransNext(newPage.transNextMsecs)
             }
 
-            if (!newPage.disableAutoScroll) {
+            if (!newPage.disableAutoScroll && (!link || !link.disableAutoScroll)) {
                 window.scrollTo(0, 0)
             }
 
@@ -1087,48 +1093,11 @@ function addRemoveClass(mode, el, cls) {
     }
 }
 
-// Redirect from legacy format URL
-//    https://site.com/dd/index.html#home/o/10?shared  
-// to the new
-//    https://site.com/dd/index.html?home&o=10&shared=true
-
-function redirectFromHashToSearch() {
-    const loc = document.location
-    if (loc.hash == null || loc.hash.length == "") return false
-
-    let url = loc.protocol + "//" + loc.host + loc.pathname
-
-    if (loc.hash.indexOf('/') > 0) {
-        let hash = loc.hash
-        // read additonal parameters
-        var args = hash.split('/')
-        // check for link to click
-        let search = hash.substring(0, hash.indexOf('/'))
-        search = '?' + search.replace(/^[^#]*#?(.*)$/, '$1');
-        if (args[1] == 'o') {
-            search += "&o=" + args[2]
-        }
-        url += search
-    } else {
-        url += "?" + loc.hash.substring(1)
-    }
-    if (null != loc.search && "" != loc.search) {
-        let search = loc.search.substring(1)
-        if ("embed" == search) {
-            url += "&e=1"
-        }
-    }
-    //
-    document.location = url
-    return true
-}
 function handleStateChanges(e) {
     viewer.handleStateChanges(e)
 }
 
 $(document).ready(function () {
-    if (redirectFromHashToSearch()) return
-
     viewer.initialize();
     if (!!('ontouchstart' in window) || !!('onmsgesturechange' in window)) {
         $('body').removeClass('screen');

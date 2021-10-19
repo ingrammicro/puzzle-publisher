@@ -351,6 +351,10 @@ class SymbolViewer extends AbstractViewer {
                 if ("Text" == layer.tp) {
                     info += sv._showLayerTextContent(layer, decRes)
                 }
+            } else {
+                if ("Text" == layer.tp) {
+                    info += sv._showLayerTextContent(layer, null)
+                }
             }
 
             // Process image layar
@@ -403,7 +407,7 @@ class SymbolViewer extends AbstractViewer {
                 <div class='label'>Text Content&nbsp;<button onclick = "copyToBuffer('sv_content')">Copy</button>`
         let afterContent = ""
         let cssClass = ""
-        if (decRes.styles["font-family"].startsWith("Font Awesome 5")) {
+        if (decRes && decRes.styles["font-family"].startsWith("Font Awesome 5")) {
             cssClass += "icon "
             if (decRes.styles["font-weight"] != "400") cssClass += "solid "
             const codeText = layer.tx.codePointAt(0).toString(16)
