@@ -121,6 +121,7 @@ function createViewer(story, files) {
     return {
         highlightLinks: story.highlightLinks,
         showLayout: false,
+        showUI: true,
         isEmbed: false,
 
         searchText: "",
@@ -303,6 +304,8 @@ function createViewer(story, files) {
                 v.share()
             } else if (allowNavigation && 76 == event.which) { // l
                 v.toogleLayout();
+            } else if (allowNavigation && 78 == event.which) { // n
+                v.toogleUI();
             } else if (enableTopNavigation && 83 == event.which) { // s
                 var first = null != story.startPageIndex ? story.pages[story.startPageIndex] : v.getFirstUserPage()
                 if (first && (first.index != v.currentPage.index || this.child)) {
@@ -404,7 +407,7 @@ function createViewer(story, files) {
             if (this.child.isSidebarChild) {
                 this._hideSidebar()
             }
-            this.child._hideSelf();
+            this.child._hideSelf()
             this.child = null;
 
         },
@@ -436,6 +439,7 @@ function createViewer(story, files) {
 
         toggleZoom: function () {
             this.zoomEnabled = !this.zoomEnabled
+            document.querySelector("#nav #zoom span").innerHTML = this.zoomEnabled ? "Disable Autoscale" : "Enable Autoscale"
             this.zoomContent()
         },
 
@@ -1013,7 +1017,9 @@ function createViewer(story, files) {
 
         toogleLayout: function (newState = undefined) {
             this.showLayout = newState != undefined ? newState : !this.showLayout
-            div = $('#content')
+            document.querySelector("#nav #grid span").innerHTML = this.showLayout ? "Hide Grid Layout" : "Show Grid Layout"
+
+            const div = $('#content')
 
             if (this.showLayout) {
                 this.currentPage.showLayout()
@@ -1021,9 +1027,10 @@ function createViewer(story, files) {
             } else
                 div.removeClass("contentLayoutVisible")
         },
-
-
-
+        toogleUI: function (newState = undefined) {
+            this.showUI = newState != undefined ? newState : !this.showUI
+            $('#nav').slideToggle('fast')
+        },
         _updateLinksState: function (showLinks = undefined, div = undefined) {
             if (undefined == div) {
                 if (this.currentPage.isModal) {
@@ -1044,17 +1051,6 @@ function createViewer(story, files) {
             if (text == undefined) return;
             alert(text);
         },
-        hideNavbar: function () {
-            $('#nav').slideToggle('fast', function () {
-                $('#nav-hide').slideToggle('fast').removeClass('hidden');
-            });
-        },
-        showNavbar: function () {
-            $('#nav-hide').slideToggle('fast', function () {
-                $('#nav').slideToggle('fast');
-            }).addClass('hidden');
-        },
-
 
         handleStateChanges: function (e) {
             viewer.urlLocked = true
