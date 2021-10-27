@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.11.1 (27 Oct 2021)
+Minor improvements in Element Inspector
+
 ##  Version 16.11.0 (24 Oct 2021)
 Use 'n' key to hide/show navigation tools
 
