@@ -15,7 +15,8 @@ const ELEMENTINSPECTOR_LINUX_FONT_SIZES = {
     "25px": "19px",
     "26px": "20px"
 }
-
+const ICON_TAG = " / ic-" // Use this string to find icon symbol
+const ICON_TAG2 = "ic-" // Use this string to find icon symbol
 const SUPPORT_TYPES = ["Text", "ShapePath", "Image", "ImageSymbol"]
 
 class SymbolViewer extends AbstractViewer {
@@ -427,9 +428,17 @@ class SymbolViewer extends AbstractViewer {
 
     _showLayerSymbol(layer, symName, siLayer) {
         if (undefined == symName) return ""
+        let categoryName = "Sketch Symbol"
+        // Drop path to icon, leave only name
+        const iconTagPos = symName.indexOf(ICON_TAG)
+        if (iconTagPos >= 0) {
+            symName = symName.substring(iconTagPos).replace(ICON_TAG, ICON_TAG2)
+            categoryName = "Icon"
+        }
+        //
         let info = "<hr>" +
             "<div class='block'>" +
-            "<div class='label'>" + "Sketch Symbol" + "</div>" +
+            "<div class='label'>" + categoryName + "</div>" +
             "<div class='value'>" + symName + "</div>"
         const libName = layer.b != undefined ? (layer.b + " (external)") :
             (siLayer && siLayer.b ? siLayer.b + " (external)" : "Document")
