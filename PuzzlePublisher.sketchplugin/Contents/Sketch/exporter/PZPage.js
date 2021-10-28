@@ -155,12 +155,12 @@ class PZPage {
         if (Constants.SORT_RULE_X == exporter.sortRule) {
             sArtboards.sort((
                 function (a, b) {
-                    return a.frame.x - b.frame.x
+                    return a.frame.x != b.frame.x ? (a.frame.x - b.frame.x) : (a.frame.y - b.frame.y)
                 }))
         } else if (Constants.SORT_RULE_Y == exporter.sortRule) {
             sArtboards.sort((
                 function (a, b) {
-                    return a.frame.y - b.frame.y
+                    return a.frame.y != b.frame.y ? (a.frame.y - b.frame.y) : (a.frame.x - b.frame.x)
                 }))
         } else if (Constants.SORT_RULE_REVERSIVE_SKETCH == exporter.sortRule) {
             sArtboards = sArtboards.reverse()
