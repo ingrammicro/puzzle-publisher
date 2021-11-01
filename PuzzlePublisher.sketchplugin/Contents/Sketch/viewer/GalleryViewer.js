@@ -78,7 +78,7 @@ class GalleryViewer extends AbstractViewer {
         this.enableTopNavigation = true
         this.mapLinks = null
         this.mapFocusedPage = null
-        this.isMapMode = false
+        this.isMapMode = viewer.figma === true // Show map by default for Figma users
         //
         const restoredMode = window.localStorage.getItem("galleryIsModeAbs") == "true"
         if (null != restoredMode) this.isMapMode = restoredMode

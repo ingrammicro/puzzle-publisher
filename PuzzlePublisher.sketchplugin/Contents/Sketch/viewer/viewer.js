@@ -123,6 +123,7 @@ function createViewer(story, files) {
         showLayout: false,
         showUI: true,
         isEmbed: false,
+        figma: false,
 
         searchText: "",
 
