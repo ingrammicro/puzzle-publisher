@@ -845,7 +845,7 @@ class SymbolViewer extends AbstractViewer {
 
         }, this);
         // Decorate non-CSS common styles
-        result += this._decorateCSSOtherTokens(tokens, layer, siLayer)
+        result += this._decorateCSSOtherTokens(tokens, layer, siLayer, styles)
 
 
         result += "</div></div>"
@@ -877,11 +877,15 @@ class SymbolViewer extends AbstractViewer {
         return result
     }
 
-    _decorateCSSOtherTokens(tokens, layer, siLayer) {
+    _decorateCSSOtherTokens(tokens, layer, siLayer, styles) {
         if (null == tokens) return ""
         let result = ""
         const knownOtherStyles = ["width", "height"]
-        tokens.filter(t => knownOtherStyles.indexOf(t[0]) >= 0 || t[0].startsWith("margin") || t[0].startsWith("padding")).forEach(function (token) {
+        tokens.filter(t => knownOtherStyles.indexOf(t[0]) >= 0
+            || t[0].startsWith("margin")
+            || t[0].startsWith("padding")
+            || !(t[0] in styles)
+        ).forEach(function (token) {
             result += this._decorateCSSOneStyle(tokens, layer, siLayer, token[0], token[1])
         }, this)
         return result
