@@ -929,7 +929,7 @@ class SymbolViewer extends AbstractViewer {
 
     // result: undefined or [tokenName,tokenValue]
     _findTokenValueByName(tokenName, libName, styleValue = null) {
-        const lib = TOKENS_DICT[libName]
+        const lib = TOKENS_DICT[libName.toLowerCase()]
         if (undefined == lib) return undefined
         let value = lib[tokenName]
         if (value != undefined || null == styleValue) return [tokenName, lib[tokenName]]
@@ -954,7 +954,7 @@ class SymbolViewer extends AbstractViewer {
 
     _findSymbolAndLibBySymbolName(symName) {
         for (const libName of Object.keys(SYMBOLS_DICT)) {
-            const lib = SYMBOLS_DICT[libName]
+            const lib = SYMBOLS_DICT[libName.toLowerCase()]
             if (!(symName in lib)) continue
             return {
                 lib: lib,
@@ -967,7 +967,7 @@ class SymbolViewer extends AbstractViewer {
 
     _findStyleAndLibByStyleName(styleName) {
         for (const libName of Object.keys(SYMBOLS_DICT)) {
-            const lib = SYMBOLS_DICT[libName]
+            const lib = SYMBOLS_DICT[libName.toLowerCase()]
             if (!("styles" in lib) || !(styleName in lib.styles)) continue
             return {
                 lib: lib,
