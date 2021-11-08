@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.11.3 (08 Nov 2021)
+Several Element Inspector improvements and fixes
+
 ##  Version 16.11.2 (27 Oct 2021)
 Fixed Artboards Sort Order
 
