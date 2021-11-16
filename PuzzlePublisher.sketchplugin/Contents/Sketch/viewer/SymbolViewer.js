@@ -428,7 +428,7 @@ class SymbolViewer extends AbstractViewer {
 
     _showLayerSymbol(layer, symName, siLayer) {
         if (undefined == symName) return ""
-        let categoryName = "Sketch Symbol"
+        let categoryName = viewer.figma ? "Figma component" : "Sketch Symbol"
         // Drop path to icon, leave only name
         const iconTagPos = symName.indexOf(ICON_TAG)
         if (iconTagPos >= 0) {
@@ -518,7 +518,7 @@ class SymbolViewer extends AbstractViewer {
 
         info = `<hr>
                 <div class='block'>
-                    <div class='label'>Sketch Style</div>
+                    <div class='label'>${viewer.figma ? "Figma Style" : "Sketch Style"}</div>
                     <div class='value'>${styleName}</div>
                     <div style='font-size:12px; color:var(--color-secondary)'>${libName}</div>
                 </div>`
@@ -845,7 +845,7 @@ class SymbolViewer extends AbstractViewer {
 
         }, this);
         // Decorate non-CSS common styles
-        result += this._decorateCSSOtherTokens(tokens, layer, siLayer, styles)
+        result += this._decorateCSSOtherTokens(tokens, layer, siLayer)
 
 
         result += "</div></div>"
@@ -877,15 +877,11 @@ class SymbolViewer extends AbstractViewer {
         return result
     }
 
-    _decorateCSSOtherTokens(tokens, layer, siLayer, styles) {
+    _decorateCSSOtherTokens(tokens, layer, siLayer) {
         if (null == tokens) return ""
         let result = ""
         const knownOtherStyles = ["width", "height"]
-        tokens.filter(t => knownOtherStyles.indexOf(t[0]) >= 0
-            || t[0].startsWith("margin")
-            || t[0].startsWith("padding")
-            || !(t[0] in styles)
-        ).forEach(function (token) {
+        tokens.filter(t => knownOtherStyles.indexOf(t[0]) >= 0 || t[0].startsWith("margin") || t[0].startsWith("padding")).forEach(function (token) {
             result += this._decorateCSSOneStyle(tokens, layer, siLayer, token[0], token[1])
         }, this)
         return result
@@ -933,7 +929,7 @@ class SymbolViewer extends AbstractViewer {
 
     // result: undefined or [tokenName,tokenValue]
     _findTokenValueByName(tokenName, libName, styleValue = null) {
-        const lib = TOKENS_DICT[libName.toLowerCase()]
+        const lib = TOKENS_DICT[libName]
         if (undefined == lib) return undefined
         let value = lib[tokenName]
         if (value != undefined || null == styleValue) return [tokenName, lib[tokenName]]
@@ -958,7 +954,7 @@ class SymbolViewer extends AbstractViewer {
 
     _findSymbolAndLibBySymbolName(symName) {
         for (const libName of Object.keys(SYMBOLS_DICT)) {
-            const lib = SYMBOLS_DICT[libName.toLowerCase()]
+            const lib = SYMBOLS_DICT[libName]
             if (!(symName in lib)) continue
             return {
                 lib: lib,
@@ -971,7 +967,7 @@ class SymbolViewer extends AbstractViewer {
 
     _findStyleAndLibByStyleName(styleName) {
         for (const libName of Object.keys(SYMBOLS_DICT)) {
-            const lib = SYMBOLS_DICT[libName.toLowerCase()]
+            const lib = SYMBOLS_DICT[libName]
             if (!("styles" in lib) || !(styleName in lib.styles)) continue
             return {
                 lib: lib,
