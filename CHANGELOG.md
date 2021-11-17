@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.11.4 (17 Nov 2021)
+Fixed wrong commit
+
 ##  Version 16.11.3 (08 Nov 2021)
 Several Element Inspector improvements and fixes
 
