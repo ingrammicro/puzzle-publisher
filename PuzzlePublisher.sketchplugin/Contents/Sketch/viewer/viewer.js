@@ -142,6 +142,7 @@ function createViewer(story, files) {
         urlLocked: false,
         files: files,
         userStoryPages: [],
+        visStoryPages: [],
         zoomEnabled: story.zoomEnabled,
 
         sidebarVisible: false,
@@ -251,12 +252,20 @@ function createViewer(story, files) {
             story.pages = opages
             //
             this.userStoryPages = []
+            this.visStoryPages = []
             for (var page of story.pages) {
                 if ('regular' == page.type || 'modal' == page.type) {
                     page.userIndex = this.userStoryPages.length
                     this.userStoryPages.push(page)
                 } else {
                     page.userIndex = -1
+                }
+                //
+                if ('regular' == page.type || 'modal' == page.type || 'overlay' == page.type) {
+                    page.visIndex = this.visStoryPages.length
+                    this.visStoryPages.push(page)
+                } else {
+                    page.visIndex = -1
                 }
             }
         },
@@ -289,9 +298,9 @@ function createViewer(story, files) {
                 v.next()
             } else if (allowNavigation && (8 == event.which || 37 == event.which)) { // backspace OR left
                 v.previous()
-            } else if (allowNavigation && event.metaKey && (70 == event.which)) { // Cmd+F
+            } else if (allowNavigation && story.layersExist && event.metaKey && (70 == event.which)) { // Cmd+F
                 this.showTextSearch()
-            } else if (allowNavigation && event.metaKey && (71 == event.which)) { // Cmd+G -> Next search
+            } else if (allowNavigation && story.layersExist && event.metaKey && (71 == event.which)) { // Cmd+G -> Next search
                 this.currentPage.findTextNext()
             } else if (allowNavigation && (16 == event.which)) { // shift
                 if (!jevent.metaKey) {  // no cmd to allow user to make a screenshot on macOS
@@ -786,7 +795,6 @@ function createViewer(story, files) {
             contentModal.removeClass('hidden');
         },
 
-
         _getSearchPath(page = null, extURL = null) {
             if (!page) page = this.currentPage
             let search = '?' + encodeURIComponent(page.getHash())
@@ -1004,6 +1012,12 @@ function createViewer(story, files) {
             var nextUserIndex = page ? page.userIndex + 1 : 0
             if (nextUserIndex >= this.userStoryPages.length) nextUserIndex = 0
             return this.userStoryPages[nextUserIndex]
+        },
+        getNextVisPage: function (page, loopSearch = true) {
+            let nexVisIndex = page ? page.visIndex + 1 : 0
+            if (nexVisIndex >= this.visStoryPages.length)
+                if (loopSearch) nexVisIndex = 0; else return null
+            return this.visStoryPages[nexVisIndex]
         },
         getPreviousUserPage: function (page) {
             var prevUserIndex = page ? page.userIndex - 1 : -1

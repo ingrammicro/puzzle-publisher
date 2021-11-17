@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.12.0 (18 Nov 2021)
+Search continues to next pages
+
 ##  Version 16.11.4 (17 Nov 2021)
 Fixed wrong commit
 

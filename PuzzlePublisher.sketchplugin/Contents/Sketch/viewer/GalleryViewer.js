@@ -97,10 +97,7 @@ class GalleryViewer extends AbstractViewer {
     }
 
     _initPages() {
-        if (this.isMapMode)
-            this.pages = story.pages.filter(p => "external" != p.type)
-        else
-            this.pages = viewer.userStoryPages
+        this.pages = this.isMapMode ? viewer.visStoryPages : viewer.userStoryPages
     }
 
     initialize(force = false, skipZoomUpdate = false) {

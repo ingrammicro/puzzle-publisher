@@ -221,7 +221,7 @@ class ViewerPage {
         this.findText(this.actualSearchText)
     }
 
-    findText(text) {
+    findText(text, interactive = true) {
         text = text.toLowerCase().trim()
         //        
         if (undefined != this.actualSearchText && this.actualSearchText != text) {
@@ -238,10 +238,30 @@ class ViewerPage {
         })
         //  No results
         if (0 == foundLayers.length) {
-            return false
+            if (!interactive) return false
+            const nextPage = this.findNextPageWithText(text)
+            if (!nextPage) {
+                window.alert("The text was not found")
+                return false
+            }
+            if (!window.confirm("Not found on the current page. Do you want to check other pages?")) {
+                return false
+            }
+            viewer.goTo(nextPage.index)
+            return true
         }
         if (foundLayers.length <= this.textElemIndex) {
             // No more results ahead
+            if (interactive) {
+                const nextPage = this.findNextPageWithText(text)
+                if (nextPage) {
+                    if (window.confirm("The last result found on the current page. Do you want to check other pages?")) {
+                        //this.stopTextSearch()
+                        viewer.goTo(nextPage.index)
+                        return true
+                    }
+                }
+            }
             this.textElemIndex = 0
         }
         // Highlight results
@@ -254,6 +274,25 @@ class ViewerPage {
         if ((foundLayers.length + 1) > this.textElemIndex) this.textElemIndex++
         //
         return foundLayers.length > 0
+    }
+
+    findNextPageWithText(text) {
+        let foundPage = null
+        let page = this
+        while (true) {
+            // if we have some next pages?
+            const nextPage = viewer.getNextVisPage(page)
+            if (!nextPage) break
+            // we don't want to run infinity loop
+            if (nextPage.index == this.index) break
+            // if a next page has this text
+            if (nextPage.findText(text, false)) {
+                foundPage = nextPage
+                break
+            }
+            page = nextPage
+        }
+        return foundPage
     }
 
     // Arguments:
