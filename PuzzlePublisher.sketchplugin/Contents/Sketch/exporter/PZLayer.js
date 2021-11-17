@@ -299,6 +299,7 @@ class PZLayer {
         if (undefined == sLayers) {
             exporter.logMsg("PZLayer:collectAChilds() empty sLayers. this.name=" + this.name)
         }
+        for (const sl of sLayers.filter(l =>
             (!l.hidden || l.sketchObject.hasClippingMask()) && (!l.style || l.style.opacity != 0)
         )) {
             const al = new PZLayer(sl, this)
