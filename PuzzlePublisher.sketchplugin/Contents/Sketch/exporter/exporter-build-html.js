@@ -68,7 +68,8 @@ function buildMainHTML_NavigationIcons(options) {
     </svg ></div >\n';
 }
 // options{
-//     generatorText: ""
+//      generatorText: ""
+//      figma: true|undefined - Enable customization for Figma users
 // }  
 function buildMainHTML(options) {
 
@@ -114,10 +115,13 @@ function buildMainHTML(options) {
         <script type="text/javascript">\n
     `
 
-    if (options.jsCode != '') {
+    if (options.jsCode !== '') {
         s += 'function runJSCode(){' + options.jsCode + '}\n'
     }
-    s += '  var viewer = createViewer(story, "images");\n';
+    s += '  var viewer = createViewer(story, "images");\n'
+    if (options.figma) {
+        s += `viewer.figma = true\n`
+    }
     s += '</script>\n';
 
     if (options.googleCode != '') {
