@@ -299,9 +299,8 @@ class PZLayer {
         if (undefined == sLayers) {
             exporter.logMsg("PZLayer:collectAChilds() empty sLayers. this.name=" + this.name)
         }
-        for (const sl of sLayers.filter(l =>
-            (!l.hidden || l.sketchObject.hasClippingMask()) && (!l.style || l.style.opacity != 0)
-        )) {
+        for (const sl of sLayers.filter(l => !l.hidden || l.sketchObject.hasClippingMask())) {
+            //            
             const al = new PZLayer(sl, this)
             if (al.isGroup && !this.isImageSymbol) al.childs = al.collectAChilds(sl.layers, space + " ")
             aLayers.push(al)
