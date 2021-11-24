@@ -523,7 +523,7 @@ class SymbolViewer extends AbstractViewer {
                     <div style='font-size:12px; color:var(--color-secondary)'>${libName}</div>
                 </div>`
 
-        return info
+        return this._showExtDocRef(layer, styleName, siLayer) + info
     }
 
     _showLayerDimensions(layer) {
