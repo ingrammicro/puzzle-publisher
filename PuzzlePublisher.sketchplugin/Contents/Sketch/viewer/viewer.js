@@ -223,7 +223,7 @@ function createViewer(story, files) {
                 this.isEmbed = true
                 // hide image preload indicator
                 $('#nav loading').hide()
-                // hide Navigation                
+                // hide Navigation
                 $('.navCenter').hide()
                 $('.navPreviewNext').hide()
                 $('#btnMenu').hide()
@@ -244,7 +244,7 @@ function createViewer(story, files) {
             return (this.hdMediaQuery && this.hdMediaQuery.matches || (window.devicePixelRatio && window.devicePixelRatio > 1));
         },
         buildUserStory: function () {
-            // 
+            //
             let opages = []
             story.pages.forEach(function (page) {
                 opages.push($.extend(new ViewerPage(), page))
@@ -322,7 +322,7 @@ function createViewer(story, files) {
                     this.hideChild()
                     v.goToPage(first.index)
                 }
-            } else if (allowNavigation && 27 == event.which) { // esc	
+            } else if (allowNavigation && 27 == event.which) { // esc
                 v.onKeyEscape()
             } else {
                 return false
@@ -449,7 +449,7 @@ function createViewer(story, files) {
 
         toggleZoom: function () {
             this.zoomEnabled = !this.zoomEnabled
-            document.querySelector("#nav #zoom span").innerHTML = this.zoomEnabled ? "Disable Autoscale" : "Enable Autoscale"
+            document.querySelector("#nav #zoom span").innerHTML = this.zoomEnabled ? "Disable autoscale" : "Enable autoscale"
             this.zoomContent()
         },
 
@@ -534,7 +534,7 @@ function createViewer(story, files) {
             content.css("margin-top", this.currentMarginTop + "px")
             this.currentPage.updatePosition()
 
-            // 
+            //
             if (this.child) {
                 this.child.viewerResized()
             }
@@ -556,11 +556,11 @@ function createViewer(story, files) {
             story.pages.filter(page => "regular" == page.type).some(function (page) {
                 const foundLinks = page.links.filter(link => link.page != null && link.page == modalIndex)
                 if (foundLinks.length != 0) {
-                    // return the page index which has link to modal                    
+                    // return the page index which has link to modal
                     foundPageIndex = page.index
                     return true
                 }
-                // save a first regular page as a "found" for case if we will not 
+                // save a first regular page as a "found" for case if we will not
                 // find any page with a link to a specified modal
                 if (null == foundPageIndex) foundPageIndex = page.index
                 return false
@@ -752,7 +752,7 @@ function createViewer(story, files) {
                 }
             }
 
-            // hide last modal 
+            // hide last modal
             var prevPageWasModal = this.prevPage != null && this.prevPage.type === "modal"
             if (prevPageWasModal) {
                 var prevImg = $('#img_' + this.prevPage.index);
@@ -843,11 +843,11 @@ function createViewer(story, files) {
                 redirectOverlayLinkIndex: undefined,
             }
             var hash = location.hash;
-         
+
             if (hash == null || hash.length == 0) {
                 hash = '#'
                 result.reset_url = true
-         
+
             } else if (hash.indexOf('/') > 0) {
                 // read additonal parameters
                 var args = hash.split('/')
@@ -858,7 +858,7 @@ function createViewer(story, files) {
                 hash = hash.substring(0, hash.indexOf('/'))
                 hash = '#' + hash.replace(/^[^#]*#?(.*)$/, '$1');
             }
-         
+
             result.page_name = hash
             return result
         },*/
@@ -952,7 +952,7 @@ function createViewer(story, files) {
                 }
             }
 
-            // hide current modal 
+            // hide current modal
             if (isModal) {
                 var modalImg = $('#img_' + this.currentPage.index);
                 if (modalImg.length) {
@@ -978,7 +978,7 @@ function createViewer(story, files) {
         },
         onKeyEscape: function () {
             const page = this.currentPage
-            // If the current page has search visible then hide it            
+            // If the current page has search visible then hide it
             if (undefined != page.actualSearchText) {
                 page.stopTextSearch()
                 return true
@@ -1032,7 +1032,7 @@ function createViewer(story, files) {
 
         toogleLayout: function (newState = undefined) {
             this.showLayout = newState != undefined ? newState : !this.showLayout
-            document.querySelector("#nav #grid span").innerHTML = this.showLayout ? "Hide Grid Layout" : "Show Grid Layout"
+            document.querySelector("#nav #grid span").innerHTML = this.showLayout ? "Hide grid layout" : "Show grid layout"
 
             const div = $('#content')
 

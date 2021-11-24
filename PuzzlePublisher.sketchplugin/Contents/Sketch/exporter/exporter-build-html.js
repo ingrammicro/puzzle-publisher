@@ -65,12 +65,18 @@ function buildMainHTML_NavigationIcons(options) {
     <symbol ID="icComments" viewBox="0 0 24 24">\
     <path d="M19,3 C20.6568542,3 22,4.34314575 22,6 L22,6 L22,19.9193752 C22,21.0239447 21.1045695,21.9193752 20,21.9193752 C19.545857,21.9193752 19.105236,21.7648136 18.7506099,21.4811128 L18.7506099,21.4811128 L15.65,19 L5,19 C3.40231912,19 2.09633912,17.75108 2.00509269,16.1762728 L2.00509269,16.1762728 L2,16 L2,6 C2,4.34314575 3.34314575,3 5,3 L5,3 Z M19,5 L5,5 C4.44771525,5 4,5.44771525 4,6 L4,6 L4,16 C4,16.5522847 4.44771525,17 5,17 L5,17 L16.3507811,17 L20,19.9193752 L20,6 C20,5.44771525 19.5522847,5 19,5 L19,5 Z M12,12 C12.5522847,12 13,12.4477153 13,13 C13,13.5522847 12.5522847,14 12,14 L8,14 C7.44771525,14 7,13.5522847 7,13 C7,12.4477153 7.44771525,12 8,12 L12,12 Z M16,8 C16.5522847,8 17,8.44771525 17,9 C17,9.55228475 16.5522847,10 16,10 L8,10 C7.44771525,10 7,9.55228475 7,9 C7,8.44771525 7.44771525,8 8,8 L16,8 Z"/>\
     </symbol >\
+    <symbol ID="icHide" viewBox="0 0 24 24">\
+    <path d="M5.38615132,2.21064778 C5.82209852,1.87157774 6.45037412,1.95011219 6.78944416,2.38605939 L6.78944416,2.38605939 L20.7894442,20.3860594 L20.8603054,20.4898575 C21.1143171,20.9169531 21.0164453,21.4763645 20.6140326,21.7893522 C20.1780854,22.1284223 19.5498098,22.0498878 19.2107397,21.6139406 L19.2107397,21.6139406 L16.8780344,18.6156594 C15.5498874,19.5708529 14.041875,20 12,20 C8.6859351,20 6.77821955,18.8695019 4.76330809,16.1942038 L4.76330809,16.1942038 L4.61751058,15.9953594 L2.63509259,13.1986701 L2.28770167,12.7182294 L1.75,12 L2.2,11.4 L2.49341785,10.9985181 L4.31543313,8.42073233 L4.75555556,7.80740741 C5.42384589,6.91635363 6.0806072,6.19680427 6.78216144,5.63325828 L5.21073972,3.61394061 L5.13987849,3.51014248 C4.88586677,3.08304691 4.98373853,2.52363551 5.38615132,2.21064778 Z M8.00925198,7.2123467 C7.45172452,7.66214724 6.92187523,8.25231451 6.35555556,9.00740741 L6.35555556,9.00740741 L6.30731957,9.07271659 L4.236,11.999 L6.30450475,14.9148846 L6.53802015,15.2223052 C8.12271813,17.2561888 9.46831678,18 12,18 C13.5528699,18 14.6595013,17.7201572 15.6487821,17.0344116 L14.2866626,15.2823731 C13.6385783,15.7347043 12.8502707,16 12,16 C9.790861,16 8,14.209139 8,12 C8,10.7921161 8.535385,9.70927802 9.38179517,8.97584565 Z M12,4 C15.3306702,4 17.2354638,5.12876655 19.2444444,7.80740741 L19.2444444,7.80740741 L19.3777773,7.98990371 L21.2554675,10.6474617 L21.7154062,11.2859885 L22.25,12 L21.7122983,12.7182294 L21.3649074,13.1986701 L19.7160653,15.5283237 L19.623,15.657954 L18.34,14.007954 L19.763,11.999 L17.9370251,9.41365436 L17.6444444,9.00740741 C15.9867584,6.79715938 14.641552,6 12,6 L12.112,6.00095403 L10.6134966,4.07512187 C10.9529438,4.03563361 11.3083548,4.01198764 11.6820769,4.00353786 Z M10,12 C10,13.1045695 10.8954305,14 12,14 C12.3873079,14 12.7489023,13.8899073 13.0551963,13.6993088 L10.6131393,10.5589495 C10.23517,10.9227924 10,11.4339327 10,12 Z"/>\
+    </symbol >\
+    <symbol ID="icList" viewBox="0 0 24 24">\
+    <path d="M5,16 C5.55228475,16 6,16.4477153 6,17 C6,17.5522847 5.55228475,18 5,18 L4,18 C3.44771525,18 3,17.5522847 3,17 C3,16.4477153 3.44771525,16 4,16 L5,16 Z M20,16 C20.5522847,16 21,16.4477153 21,17 C21,17.5522847 20.5522847,18 20,18 L10,18 C9.44771525,18 9,17.5522847 9,17 C9,16.4477153 9.44771525,16 10,16 L20,16 Z M5,11 C5.55228475,11 6,11.4477153 6,12 C6,12.5522847 5.55228475,13 5,13 L4,13 C3.44771525,13 3,12.5522847 3,12 C3,11.4477153 3.44771525,11 4,11 L5,11 Z M20,11 C20.5522847,11 21,11.4477153 21,12 C21,12.5522847 20.5522847,13 20,13 L10,13 C9.44771525,13 9,12.5522847 9,12 C9,11.4477153 9.44771525,11 10,11 L20,11 Z M5,6 C5.55228475,6 6,6.44771525 6,7 C6,7.55228475 5.55228475,8 5,8 L4,8 C3.44771525,8 3,7.55228475 3,7 C3,6.44771525 3.44771525,6 4,6 L5,6 Z M20,6 C20.5522847,6 21,6.44771525 21,7 C21,7.55228475 20.5522847,8 20,8 L10,8 C9.44771525,8 9,7.55228475 9,7 C9,6.44771525 9.44771525,6 10,6 L20,6 Z"/>\
+    </symbol >\
     </svg ></div >\n';
 }
 // options{
 //      generatorText: ""
 //      figma: true|undefined - Enable customization for Figma users
-// }  
+// }
 function buildMainHTML(options) {
 
     const verPostfix = "?" + ExporterConstants.DOCUMENT_VERSION_PLACEHOLDER
@@ -270,27 +276,27 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             </div>
                             <div ID="links" class="item" onclick="viewer.toggleLinks(); addRemoveClass('class','menu','active'); return false;">
                                 <svg class='svgIcon'><use xlink:href="#icPointer"></use></svg>
-                                <span>Toogle Hot Spots</span>
+                                <span>Toogle hot spots</span>
                                 <div class="tips">Shift</div>
                             </div>
                             <div ID="zoom" class="item" onclick="viewer.toggleZoom(); addRemoveClass('class','menu','active'); return false;">
                                 <svg class='svgIcon'><use xlink:href="#icResize"></use></svg>
-                                <span>Disable Auto-Scale</span>
+                                <span>Disable autoscale</span>
                                 <div class="tips">Z</div>
                             </div>
                             <div ID="embed" class="item" onclick="addRemoveClass('class','menu','active'); viewer.share();  return false;">
                                 <svg class='svgIcon'><use xlink:href="#icEmbed"></use></svg>
-                                <span>Show Embed Code</span>
+                                <span>Show embed code</span>
                                 <div class="tips">E</div>
                             </div>
                             <div ID="grid" class="item" onclick="addRemoveClass('class','menu','active'); viewer.toogleLayout();  return false;">
                                 <svg class='svgIcon'><use xlink:href="#icGridLayout"></use></svg>
-                                <span>Show Grid Layout</span>
+                                <span>Show grid layout</span>
                                 <div class="tips">L</div>
                             </div>
                             <div ID="ui" class="item" onclick="addRemoveClass('class','menu','active'); viewer.toogleUI();  return false;">
-                                <svg class='svgIcon'><use xlink:href="#icGridLayout"></use></svg>
-                                <span>Hide navigation tools</span>
+                                <svg class='svgIcon'><use xlink:href="#icHide"></use></svg>
+                                <span>Hide navigation</span>
                                 <div class="tips">N</div>
                             </div>
                         </div>
@@ -300,14 +306,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         if (options.loadLayers) {
             s += "                            <div  ID=\"symbols\"  class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.symbolViewer.toggle();  return false;\">";
             s += "                                <svg class='svgIcon'><use xlink:href=\"#icElementInspector\"><\/use><\/svg>";
-            s += "                                <span>Elements Inspector<\/span>";
+            s += "                                <span>Handoff<\/span>";
             s += "                                <div class=\"tips\">M<\/div>";
             s += "                            <\/div>";
         }
         if (options.serverTools != null && options.serverTools != "") {
             s += "                                <div ID=\"menu_info_viewer\" class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.infoViewer.toggle();  return false;\">";
-            s += "                                    <svg class='svgIcon'><use xlink:href=\"#icVersionInspector\"><\/use><\/svg>";
-            s += "                                    <span>Changes Inspector<\/span>";
+            s += "                                    <svg class='svgIcon'><use xlink:href=\"#icList\"><\/use><\/svg>";
+            s += "                                    <span>Changes history<\/span>";
             s += "                                    <div class=\"tips\">V<\/div>";
             s += "                                <\/div>";
         }
@@ -317,12 +323,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             s += "                            <div class=\"groupe\">";
             s += "                                <div class=\"item\" onclick=\"viewer.increaseVersion(); addRemoveClass('class','menu','active'); return false;\">";
             s += "                                    <svg class='svgIcon'><use xlink:href=\"#icIncreaseVersion\"><\/use><\/svg>";
-            s += "                                    <span>Up Version<\/span>";
+            s += "                                    <span>Up version<\/span>";
             s += "                                    <div class=\"tips\">⇧ ↑<\/div>";
             s += "                                <\/div>";
             s += "                                <div class=\"item\" onclick=\"viewer.decreaseVersion(); addRemoveClass('class','menu','active'); return false;\">";
             s += "                                    <svg class='svgIcon'><use xlink:href=\"#icDecreaseVersion\"><\/use><\/svg>";
-            s += "                                    <span>Down Version<\/span>";
+            s += "                                    <span>Down version<\/span>";
             s += "                                    <div class=\"tips\">⇧ ↓<\/div>";
             s += "                                <\/div>";
             s += "                            <\/div>";
@@ -332,12 +338,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     s += "                            <div  ID=\"viewall\" class=\"groupe\">";
     s += "                                <div class=\"item\" onclick=\"viewer.galleryViewer.show(); addRemoveClass('class','menu','active'); return false;\">";
     s += "                                    <svg class='svgIcon'><use xlink:href=\"#icGrid\"><\/use><\/svg>";
-    s += "                                    <span>View All Screens<\/span>";
+    s += "                                    <span>View all screens<\/span>";
     s += "                                    <div class=\"tips\">G<\/div>";
     s += "                                <\/div>";
     s += "                                <div  ID=\"start\"  class=\"item\" onclick=\"viewer.goToPage(0); addRemoveClass('class','menu','active'); return false;\">";
     s += "                                    <svg class='svgIcon'><use xlink:href=\"#icBack\"><\/use><\/svg>";
-    s += "                                    <span>Go To Start<\/span>";
+    s += "                                    <span>Go to start<\/span>";
     s += "                                    <div class=\"tips\">S<\/div>";
     s += "                                <\/div>";
     s += "                            <\/div>";
