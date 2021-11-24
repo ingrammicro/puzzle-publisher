@@ -276,27 +276,27 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             </div>
                             <div ID="links" class="item" onclick="viewer.toggleLinks(); addRemoveClass('class','menu','active'); return false;">
                                 <svg class='svgIcon'><use xlink:href="#icPointer"></use></svg>
-                                <span>Toogle Hot Spots</span>
+                                <span>Toogle hot spots</span>
                                 <div class="tips">Shift</div>
                             </div>
                             <div ID="zoom" class="item" onclick="viewer.toggleZoom(); addRemoveClass('class','menu','active'); return false;">
                                 <svg class='svgIcon'><use xlink:href="#icResize"></use></svg>
-                                <span>Disable Auto-Scale</span>
+                                <span>Disable autoscale</span>
                                 <div class="tips">Z</div>
                             </div>
                             <div ID="embed" class="item" onclick="addRemoveClass('class','menu','active'); viewer.share();  return false;">
                                 <svg class='svgIcon'><use xlink:href="#icEmbed"></use></svg>
-                                <span>Show Embed Code</span>
+                                <span>Show embed code</span>
                                 <div class="tips">E</div>
                             </div>
                             <div ID="grid" class="item" onclick="addRemoveClass('class','menu','active'); viewer.toogleLayout();  return false;">
                                 <svg class='svgIcon'><use xlink:href="#icGridLayout"></use></svg>
-                                <span>Show Grid Layout</span>
+                                <span>Show grid layout</span>
                                 <div class="tips">L</div>
                             </div>
                             <div ID="ui" class="item" onclick="addRemoveClass('class','menu','active'); viewer.toogleUI();  return false;">
                                 <svg class='svgIcon'><use xlink:href="#icHide"></use></svg>
-                                <span>Hide navigation tools</span>
+                                <span>Hide navigation</span>
                                 <div class="tips">N</div>
                             </div>
                         </div>
@@ -306,14 +306,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         if (options.loadLayers) {
             s += "                            <div  ID=\"symbols\"  class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.symbolViewer.toggle();  return false;\">";
             s += "                                <svg class='svgIcon'><use xlink:href=\"#icElementInspector\"><\/use><\/svg>";
-            s += "                                <span>Elements Inspector<\/span>";
+            s += "                                <span>Handoff<\/span>";
             s += "                                <div class=\"tips\">M<\/div>";
             s += "                            <\/div>";
         }
         if (options.serverTools != null && options.serverTools != "") {
             s += "                                <div ID=\"menu_info_viewer\" class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.infoViewer.toggle();  return false;\">";
             s += "                                    <svg class='svgIcon'><use xlink:href=\"#icList\"><\/use><\/svg>";
-            s += "                                    <span>Changes Inspector<\/span>";
+            s += "                                    <span>Changes history<\/span>";
             s += "                                    <div class=\"tips\">V<\/div>";
             s += "                                <\/div>";
         }
@@ -323,12 +323,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             s += "                            <div class=\"groupe\">";
             s += "                                <div class=\"item\" onclick=\"viewer.increaseVersion(); addRemoveClass('class','menu','active'); return false;\">";
             s += "                                    <svg class='svgIcon'><use xlink:href=\"#icIncreaseVersion\"><\/use><\/svg>";
-            s += "                                    <span>Up Version<\/span>";
+            s += "                                    <span>Up version<\/span>";
             s += "                                    <div class=\"tips\">⇧ ↑<\/div>";
             s += "                                <\/div>";
             s += "                                <div class=\"item\" onclick=\"viewer.decreaseVersion(); addRemoveClass('class','menu','active'); return false;\">";
             s += "                                    <svg class='svgIcon'><use xlink:href=\"#icDecreaseVersion\"><\/use><\/svg>";
-            s += "                                    <span>Down Version<\/span>";
+            s += "                                    <span>Down version<\/span>";
             s += "                                    <div class=\"tips\">⇧ ↓<\/div>";
             s += "                                <\/div>";
             s += "                            <\/div>";
@@ -338,12 +338,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     s += "                            <div  ID=\"viewall\" class=\"groupe\">";
     s += "                                <div class=\"item\" onclick=\"viewer.galleryViewer.show(); addRemoveClass('class','menu','active'); return false;\">";
     s += "                                    <svg class='svgIcon'><use xlink:href=\"#icGrid\"><\/use><\/svg>";
-    s += "                                    <span>View All Screens<\/span>";
+    s += "                                    <span>View all screens<\/span>";
     s += "                                    <div class=\"tips\">G<\/div>";
     s += "                                <\/div>";
     s += "                                <div  ID=\"start\"  class=\"item\" onclick=\"viewer.goToPage(0); addRemoveClass('class','menu','active'); return false;\">";
     s += "                                    <svg class='svgIcon'><use xlink:href=\"#icBack\"><\/use><\/svg>";
-    s += "                                    <span>Go To Start<\/span>";
+    s += "                                    <span>Go to start<\/span>";
     s += "                                    <div class=\"tips\">S<\/div>";
     s += "                                <\/div>";
     s += "                            <\/div>";
