@@ -16,7 +16,7 @@
   text-align: center;
   padding: 10px 10px;
   border-radius: 4px;
- 
+
   /* Position the tooltip text - see examples below! */
   position: absolute;
   z-index: 1;
@@ -78,16 +78,16 @@
 }
 /* SEARCH */
 .searchFocusedResultDiv {
-    position: absolute;    
+    position: absolute;
     outline: 2px solid var(--color-primary);
     opacity: 0.3;
     background-color: yellow;
     box-shadow: 0 0 20px rgba(0,0,0,0.5);
 }
 .searchResultDiv {
-    position: absolute;    
-    outline: 2px solid var(--color-accent);  
-    background-color: white;  
+    position: absolute;
+    outline: 2px solid var(--color-accent);
+    background-color: white;
     opacity: 0.3;
 }
 /************ SYMBOLS ******/
@@ -293,8 +293,8 @@ select:focus{
   margin-right: 40px;
 }
 
-#comments_viewer .title, 
-#symbol_viewer .title, 
+#comments_viewer .title,
+#symbol_viewer .title,
 #info_viewer .title {
   height: 56px;
   display: flex;
@@ -620,8 +620,9 @@ text-overflow: ellipsis;
 
 .galleryArtboardLabelAbs{
     position: absolute;
-    color:      var(--color-active);    
-    font-size:          12px;
+    margin-top: 8px;
+    color:      var(--color-secondary);
+    font-size:  12px;
 }
 
 .galleryArtboardAbs image{
@@ -728,7 +729,7 @@ text-overflow: ellipsis;
     position: absolute;
     width: 100%;
     height:30px;
-    color: gray;
+    color: var(--color-secondary);
     font-size: 20px;
     text-align: left;
   }
@@ -1123,7 +1124,7 @@ area {
     border: 2px solid var(--color-secondary) ;
     border-radius: 50%;
     animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-    border-color: var(--color-secondary) transparent transparent transparent;        
+    border-color: var(--color-secondary) transparent transparent transparent;
 }
 .lds-ring div:nth-child(1) {
     animation-delay: -0.45s;
