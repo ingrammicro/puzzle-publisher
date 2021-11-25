@@ -61,17 +61,17 @@ function buildMainHTML_NavigationIcons(options) {
     </symbol>\
     <symbol ID="icAddComment" viewBox="0 0 24 24">\
     <path d="M19,3 L5,3 C3.34314575,3 2,4.34314575 2,6 L2,16 L2.00509269,16.1762728 C2.09633912,17.75108 3.40231912,19 5,19 L15.65,19 L18.7506099,21.4811128 C19.105236,21.7648136 19.545857,21.9193752 20,21.9193752 C21.1045695,21.9193752 22,21.0239447 22,19.9193752 L22,6 C22,4.34314575 20.6568542,3 19,3 Z M5,5 L19,5 C19.5522847,5 20,5.44771525 20,6 L20,19.9193752 L16.3507811,17 L5,17 C4.44771525,17 4,16.5522847 4,16 L4,6 C4,5.44771525 4.44771525,5 5,5 Z M12,7 C12.5522847,7 13,7.44771525 13,8 L13,14 C13,14.5522847 12.5522847,15 12,15 C11.4477153,15 11,14.5522847 11,14 L11,8 C11,7.44771525 11.4477153,7 12,7 Z M9,10 L15,10 C15.5522847,10 16,10.4477153 16,11 C16,11.5522847 15.5522847,12 15,12 L9,12 C8.44771525,12 8,11.5522847 8,11 C8,10.4477153 8.44771525,10 9,10 Z"/>\
-    </symbol >\
+    </symbol>\
     <symbol ID="icComments" viewBox="0 0 24 24">\
     <path d="M19,3 C20.6568542,3 22,4.34314575 22,6 L22,6 L22,19.9193752 C22,21.0239447 21.1045695,21.9193752 20,21.9193752 C19.545857,21.9193752 19.105236,21.7648136 18.7506099,21.4811128 L18.7506099,21.4811128 L15.65,19 L5,19 C3.40231912,19 2.09633912,17.75108 2.00509269,16.1762728 L2.00509269,16.1762728 L2,16 L2,6 C2,4.34314575 3.34314575,3 5,3 L5,3 Z M19,5 L5,5 C4.44771525,5 4,5.44771525 4,6 L4,6 L4,16 C4,16.5522847 4.44771525,17 5,17 L5,17 L16.3507811,17 L20,19.9193752 L20,6 C20,5.44771525 19.5522847,5 19,5 L19,5 Z M12,12 C12.5522847,12 13,12.4477153 13,13 C13,13.5522847 12.5522847,14 12,14 L8,14 C7.44771525,14 7,13.5522847 7,13 C7,12.4477153 7.44771525,12 8,12 L12,12 Z M16,8 C16.5522847,8 17,8.44771525 17,9 C17,9.55228475 16.5522847,10 16,10 L8,10 C7.44771525,10 7,9.55228475 7,9 C7,8.44771525 7.44771525,8 8,8 L16,8 Z"/>\
-    </symbol >\
+    </symbol>\
     <symbol ID="icHide" viewBox="0 0 24 24">\
     <path d="M5.38615132,2.21064778 C5.82209852,1.87157774 6.45037412,1.95011219 6.78944416,2.38605939 L6.78944416,2.38605939 L20.7894442,20.3860594 L20.8603054,20.4898575 C21.1143171,20.9169531 21.0164453,21.4763645 20.6140326,21.7893522 C20.1780854,22.1284223 19.5498098,22.0498878 19.2107397,21.6139406 L19.2107397,21.6139406 L16.8780344,18.6156594 C15.5498874,19.5708529 14.041875,20 12,20 C8.6859351,20 6.77821955,18.8695019 4.76330809,16.1942038 L4.76330809,16.1942038 L4.61751058,15.9953594 L2.63509259,13.1986701 L2.28770167,12.7182294 L1.75,12 L2.2,11.4 L2.49341785,10.9985181 L4.31543313,8.42073233 L4.75555556,7.80740741 C5.42384589,6.91635363 6.0806072,6.19680427 6.78216144,5.63325828 L5.21073972,3.61394061 L5.13987849,3.51014248 C4.88586677,3.08304691 4.98373853,2.52363551 5.38615132,2.21064778 Z M8.00925198,7.2123467 C7.45172452,7.66214724 6.92187523,8.25231451 6.35555556,9.00740741 L6.35555556,9.00740741 L6.30731957,9.07271659 L4.236,11.999 L6.30450475,14.9148846 L6.53802015,15.2223052 C8.12271813,17.2561888 9.46831678,18 12,18 C13.5528699,18 14.6595013,17.7201572 15.6487821,17.0344116 L14.2866626,15.2823731 C13.6385783,15.7347043 12.8502707,16 12,16 C9.790861,16 8,14.209139 8,12 C8,10.7921161 8.535385,9.70927802 9.38179517,8.97584565 Z M12,4 C15.3306702,4 17.2354638,5.12876655 19.2444444,7.80740741 L19.2444444,7.80740741 L19.3777773,7.98990371 L21.2554675,10.6474617 L21.7154062,11.2859885 L22.25,12 L21.7122983,12.7182294 L21.3649074,13.1986701 L19.7160653,15.5283237 L19.623,15.657954 L18.34,14.007954 L19.763,11.999 L17.9370251,9.41365436 L17.6444444,9.00740741 C15.9867584,6.79715938 14.641552,6 12,6 L12.112,6.00095403 L10.6134966,4.07512187 C10.9529438,4.03563361 11.3083548,4.01198764 11.6820769,4.00353786 Z M10,12 C10,13.1045695 10.8954305,14 12,14 C12.3873079,14 12.7489023,13.8899073 13.0551963,13.6993088 L10.6131393,10.5589495 C10.23517,10.9227924 10,11.4339327 10,12 Z"/>\
-    </symbol >\
+    </symbol>\
     <symbol ID="icList" viewBox="0 0 24 24">\
     <path d="M5,16 C5.55228475,16 6,16.4477153 6,17 C6,17.5522847 5.55228475,18 5,18 L4,18 C3.44771525,18 3,17.5522847 3,17 C3,16.4477153 3.44771525,16 4,16 L5,16 Z M20,16 C20.5522847,16 21,16.4477153 21,17 C21,17.5522847 20.5522847,18 20,18 L10,18 C9.44771525,18 9,17.5522847 9,17 C9,16.4477153 9.44771525,16 10,16 L20,16 Z M5,11 C5.55228475,11 6,11.4477153 6,12 C6,12.5522847 5.55228475,13 5,13 L4,13 C3.44771525,13 3,12.5522847 3,12 C3,11.4477153 3.44771525,11 4,11 L5,11 Z M20,11 C20.5522847,11 21,11.4477153 21,12 C21,12.5522847 20.5522847,13 20,13 L10,13 C9.44771525,13 9,12.5522847 9,12 C9,11.4477153 9.44771525,11 10,11 L20,11 Z M5,6 C5.55228475,6 6,6.44771525 6,7 C6,7.55228475 5.55228475,8 5,8 L4,8 C3.44771525,8 3,7.55228475 3,7 C3,6.44771525 3.44771525,6 4,6 L5,6 Z M20,6 C20.5522847,6 21,6.44771525 21,7 C21,7.55228475 20.5522847,8 20,8 L10,8 C9.44771525,8 9,7.55228475 9,7 C9,6.44771525 9.44771525,6 10,6 L20,6 Z"/>\
-    </symbol >\
-    </svg ></div >\n';
+    </symbol>\
+    </svg></div>';
 }
 // options{
 //      generatorText: ""
@@ -84,18 +84,18 @@ function buildMainHTML(options) {
 
     let s = "";
     s += `
-        <!DOCTYPE html>\n<html>\n<head>\n<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">\n
-        <meta name="generator" content="${options.generatorText}">\n
-        <title>${options.docName}</title>\n
-        <link rel="shortcut icon"  type="image/png?" href="${srcPath}resources/icon.png${verPostfix}">\n
-        <link rel="stylesheet" type="text/css" href="${srcPath}resources/viewer.css${verPostfix}">\n
+        <!DOCTYPE html><html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="generator" content="${options.generatorText}">
+        <title>${options.docName}</title>
+        <link rel="shortcut icon"  type="image/png?" href="${srcPath}resources/icon.png${verPostfix}">
+        <link rel="stylesheet" type="text/css" href="${srcPath}resources/viewer.css${verPostfix}">
     `
     if (options.enableAnimations) {
-        s += `<link rel="stylesheet" type="text/css" href="${srcPath}resources/animations.css${verPostfix}">\n`
+        s += `<link rel="stylesheet" type="text/css" href="${srcPath}resources/animations.css${verPostfix}">`
     }
     if (undefined != options.cssFileNames) {
         options.cssFileNames.forEach(function (cssFile) {
-            s += `<link rel="stylesheet" type="text/css" href="${srcPath}resources/${cssFile}${verPostfix}">\n`
+            s += `<link rel="stylesheet" type="text/css" href="${srcPath}resources/${cssFile}${verPostfix}">`
         })
     }
     s += `
@@ -112,23 +112,23 @@ function buildMainHTML(options) {
 	`
     if (options.loadLayers) {
         s += `
-			<script type="text/javascript" src="viewer/LayersData.js${verPostfix}" charset="UTF-8"></script>\n
-        		<script type="text/javascript" src="${srcPath}viewer/SymbolViewer.js${verPostfix}" charset="UTF-8"></script>\n
+			<script type="text/javascript" src="viewer/LayersData.js${verPostfix}" charset="UTF-8"></script>
+        		<script type="text/javascript" src="${srcPath}viewer/SymbolViewer.js${verPostfix}" charset="UTF-8"></script>
 		`
     }
     s += `
-        <script type="text/javascript" src="${srcPath}viewer/InfoViewer.js${verPostfix}" charset="UTF-8"></script>\n
-        <script type="text/javascript">\n
+        <script type="text/javascript" src="${srcPath}viewer/InfoViewer.js${verPostfix}" charset="UTF-8"></script>
+        <script type="text/javascript">
     `
 
     if (options.jsCode !== '') {
-        s += 'function runJSCode(){' + options.jsCode + '}\n'
+        s += 'function runJSCode(){' + options.jsCode + '}'
     }
-    s += '  var viewer = createViewer(story, "images");\n'
+    s += '  var viewer = createViewer(story, "images");'
     if (options.figma) {
-        s += `viewer.figma = true\n`
+        s += `viewer.figma = true`
     }
-    s += '</script>\n';
+    s += '</script>';
 
     if (options.googleCode != '') {
         if (options.googleCode.startsWith("GTM")) {
@@ -142,14 +142,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->`
             s += code.replace("<CODE>", options.googleCode)
         } else {
-            s += "<!-- Global site tag (gtag.js) - Google Analytics -->\n"
-            s += "<script async src='https://www.googletagmanager.com/gtag/js?ID=" + options.googleCode + "'></script>\n"
-            s += "<script>\n"
-            s += " window.dataLayer = window.dataLayer || [];\n"
-            s += " function gtag(){dataLayer.push(arguments);}\n"
-            s += " gtag('js', new Date());\n"
-            s += "gtag('config', '" + options.googleCode + "');\n"
-            s += "</script>\n"
+            s += "<!-- Global site tag (gtag.js) - Google Analytics -->"
+            s += "<script async src='https://www.googletagmanager.com/gtag/js?ID=" + options.googleCode + "'></script>"
+            s += "<script>"
+            s += " window.dataLayer = window.dataLayer || [];"
+            s += " function gtag(){dataLayer.push(arguments);}"
+            s += " gtag('js', new Date());"
+            s += "gtag('config', '" + options.googleCode + "');"
+            s += "</script>"
         }
     }
     s += `
@@ -166,14 +166,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     function showFAIconInfo(code){
         window.open("https://fontawesome.com/icons?d=gallery&q="+code,"_blank")
     }
-</script > `
-    s += '<!--HEAD_INJECT-->\n'
-    s += '</head>\n'
+</script> `
+    s += '<!--HEAD_INJECT-->'
+    s += '</head>'
     s += '<body class="screen" style="background:' + options.backColor + '"';
     if (options.jsCode != '') {
         s += ' onload="runJSCode()" '
     }
-    s += ">\n"
+    s += ">"
 
     if (options.googleCode != '') {
         if (options.googleCode.startsWith("GTM")) {
@@ -187,203 +187,190 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
 
     s += buildMainHTML_NavigationIcons(options)
-    s += '\
-    <div class="shaft1"></div><div class="shaft2"></div><div class="shaft3"></div>\
-    <div class="shaft4"></div><div class="shaft5"></div><div class="shaft6"></div><div class="shaft7"></div>\
-  </div>    \
-  <!--/load indicator-->\
-     <div ID="container">\
-        <div ID="marker"></div>\
-        <div ID="content" onclick="viewer.onContentClick()"></div>\
-        <div ID="sidebar" class="hidden">\
-            <div ID="symbol_viewer" class="hidden">\
-                <div class="title">\
-                  <div style="width:100%;">Element Inspector</div>\
-                  <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.symbolViewer.toggle();  return false;">\
-                    <svg class="svgIcon"><use xlink:href="#icClose"></use></svg>\
-                  </div>\
+    s += `
+        <div class="shaft1"></div><div class="shaft2"></div><div class="shaft3"></div>
+        <div class="shaft4"></div><div class="shaft5"></div><div class="shaft6"></div><div class="shaft7"></div>
+    </div>
+   <!--/load indicator-->
+     <div ID="container">
+        <div ID="marker"></div>
+        <div ID="content" onclick="viewer.onContentClick()"></div>
+        <div ID="sidebar" class="hidden">
+            <div ID="symbol_viewer" class="hidden">
+                <div class="title">
+                  <div style="width:100%;">Element Inspector</div>
+                  <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.symbolViewer.toggle();  return false;">
+                    <svg class="svgIcon"><use xlink:href="#icClose"></use></svg>
+                  </div>
+                </div>
+                <div class="checkbox-container" style="margin-top:62px;">
+                  <input type="checkbox" ID="symbol_viewer_symbols" />
+                  <label for="symbol_viewer_symbols"></label>
+                  <span class="checkbox-label">Show symbols&nbsp;&nbsp;</span>
+                  <select ID="lib_selector" style="width:200px;display:none;"></select>
                 </div>\
-                <div class="checkbox-container" style="margin-top:62px;">\
-                  <input type="checkbox" ID="symbol_viewer_symbols" />\
-                  <label for="symbol_viewer_symbols"></label>\
-                  <span class="checkbox-label">Show symbols&nbsp;&nbsp;</span>\
-                  <select ID="lib_selector" style="width:200px;display:none;"></select>\
-                </div>\
-                <div ID="empty" style="padding: 16px 20px 0 20px;margin-top:20px;">Click any element to inspect</div>\
-                <div ID="symbol_viewer_content" style="margin-top:20px;">\
-                </div>\
-            </div>\
-            <div ID="comments_viewer" class="hidden">\
-                <div class="title">\
-                    <div style="width:100%;">Comments</div>\
-                    <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.commentsViewer.toggle();  return false;">\
-                        <svg class="svgIcon"><use xlink:href="#icClose"></use></svg>\
-                    </div>\
-                </div>\
-                <div ID="comments_viewer_content">\
-                </div>\
-            </div >\
-            <div ID="info_viewer" class="hidden">\
-                <div class="title">\
-                  <div style="width:100%;">Changes Inspector</div>\
-                  <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.infoViewer.toggle();  return false;">\
-                    <svg class="svgIcon"><use xlink:href="#icClose"></use></svg>\
-                  </div>\
-                </div>\
-                <div ID="info_viewer_content" style="padding: 72px 20px 0 20px"></div>\
-            </div>\
-        </div>\
-    <div ID="content-shadow" class="hidden" onclick="viewer.onContentClick()"></div>\
-    <div ID="content-modal" class="contentModal hidden" onclick="viewer.onModalClick()"></div>\
-    ';
-    s += '        <div ID="gallery-modal" class="hidden">\n';
-    s += '          <div ID="gallery-header">\n';
-    s += '            <div ID="gallery-header-container">\n';
-    s += '              <div ID="title"><div>' + options.docName + '</div><div ID="screensamount"></div></div>\n';
-    s += '              <div ID="search"><input type="text" placeholder="Search screen..." ID="searchInput" onkeyup="viewer.galleryViewer.onSearchInputChange()"></div>\n';
-    s += '              <div ID="right">\n';
-    s += '                <div class="checkbox-container">\n';
-    s += '                  <input type="checkbox" ID="galleryShowMap" onclick="viewer.galleryViewer.enableMapMode(this.checked)"/>\n';
-    s += '                  <label for="galleryShowMap"></label>\n';
-    s += '                  <span class="checkbox-label">Show map (M)</span>\n';
-    s += '                </div>\n';
-    s += '                <div ID="closebtn" onclick="viewer.galleryViewer.hide(); return false;"><svg class="svgIcon"><use xlink:href="#icCloseBtn"></use></svg></div>\n';
-    s += '              </div>\n';
-    s += '            </div>\n';
-    s += '          </div>\n';
-    s += '          <div ID="gallery"><div ID="grid"></div></div>\n';
-    s += '          <div ID="map-controls">\n';
-    s += '            <div ID="map-controls-container">\n';
-    s += '              <div class="checkbox-container">\n';
-    s += '                <input type="checkbox" ID="galleryShowMapLinks" onclick="viewer.galleryViewer.showMapLinks(this.checked)"/>\n';
-    s += '                <label for="galleryShowMapLinks"></label>\n';
-    s += '                <span class="checkbox-label">Show all links (L)</span>\n';
-    s += '              </div>\n';
-    s += '              <input type="range" min="0" max="100" value="50" class="mapZoom" onclick="viewer.galleryViewer.mapZoomChanged(this.value)">\n';
-    s += '              <span onclick="viewer.galleryViewer.resetMapZoom();return false;" class="mapResetZoom">Reset zoom</span>\n';
-    s += '            </div>\n';
-    s += '          </div>\n';
-    s += '        </div>\n';
-
-    s += `    <div ID="nav" class="${options.hideNav ? "hidden" : "nav"}">
-                <div class="navLeft">
-                    <div ID="menu" class="menu">
-                        <div class="groupe">
-                            <div ID="menu_comments_viewer" class="hidden item" onclick="viewer.commentsViewer.toggle(); addRemoveClass('class','menu','active'); return false;">
-                                <svg class='svgIcon'><use xlink:href="#icAnnotation"></use></svg>
-                                <span>Comments</span>
-                                <div class="tips">C</div>
+                <div ID="empty" style="padding: 16px 20px 0 20px;margin-top:20px;">Click any element to inspect</div>
+                <div ID="symbol_viewer_content" style="margin-top:20px;">
+                </div>
+            </div>
+            <div ID="comments_viewer" class="hidden">
+                <div class="title">
+                    <div style="width:100%;">Comments</div>
+                    <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.commentsViewer.toggle();  return false;">
+                        <svg class="svgIcon"><use xlink:href="#icClose"></use></svg>
+                    </div>
+                </div>
+                <div ID="comments_viewer_content">
+                </div>
+            </div>
+            <div ID="info_viewer" class="hidden">
+                <div class="title">
+                  <div style="width:100%;">Changes Inspector</div>
+                  <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.infoViewer.toggle();  return false;">
+                    <svg class="svgIcon"><use xlink:href="#icClose"></use></svg>
+                  </div>
+                </div>
+                <div ID="info_viewer_content" style="padding: 72px 20px 0 20px"></div>
+            </div>
+        </div>
+    <div ID="content-shadow" class="hidden" onclick="viewer.onContentClick()"></div>
+    <div ID="content-modal" class="contentModal hidden" onclick="viewer.onModalClick()"></div>
+           <div ID="gallery-modal" class="hidden">
+    <div ID="gallery-header">
+        <div ID="gallery-header-container">
+            <div ID="title"><div>${options.docName}</div><div ID="screensamount"></div></div>
+            <div ID="search"><input type="text" placeholder="Search screen..." ID="searchInput" onkeyup="viewer.galleryViewer.onSearchInputChange()"></div>
+            <div ID="right">
+                <div class="checkbox-container">
+                    <input type="checkbox" ID="galleryShowMap" onclick="viewer.galleryViewer.enableMapMode(this.checked)" />
+                    <label for="galleryShowMap"></label>
+                    <span class="checkbox-label">Show map (M)</span>
+                </div>
+                <div ID="closebtn" onclick="viewer.galleryViewer.hide(); return false;"><svg class="svgIcon"><use xlink:href="#icCloseBtn"></use></svg></div>
+            </div>
+        </div>
+    </div>
+        <div ID = "gallery">
+            <div ID="grid"></div></div>
+                <div ID = "map-controls">
+                    <div ID = "map-controls-container">
+                    <div class="checkbox-container">
+                        <input type = "checkbox" ID = "galleryShowMapLinks" onclick = "viewer.galleryViewer.showMapLinks(this.checked)" />
+                        <label for= "galleryShowMapLinks"></label>
+                        <span class="checkbox-label"> Show all links(L)</span>
+                    </div>
+                    <input type = "range" min = "0" max = "100" value = "50" class="mapZoom" onclick = "viewer.galleryViewer.mapZoomChanged(this.value)">
+                    <span onclick = "viewer.galleryViewer.resetMapZoom();return false;" class="mapResetZoom"> Reset zoom</span>
+               </div>
+             </div>
+           </div>
+        <div ID = "nav" class="${options.hideNav ? "hidden" : "nav"}">
+            <div class="navLeft">
+    `
+    //////////////////////////////////////////// GENERATE MENU //////////////////////////////////////
+    // init menu content
+    const menu = []
+    menu.push(
+        {
+            ID: "", items: [
+                { ID: "menu_comments_viewer", label: "Toogle comments", icon: "icAnnotation", key: "C", onclick: "viewer.commentsViewer.toggle();", hidden: true },
+                { ID: "links", label: "Toogle hot spots", icon: "icPointer", key: "Shift", onclick: "viewer.toggleLinks();" },
+                { ID: "zoom", label: "Disable autoscale", icon: "icResize", key: "Z", onclick: "viewer.toggleZoom();" },
+                { ID: "embed", label: "Show embed code", icon: "icEmbed", key: "E", onclick: "viewer.share();" },
+                { ID: "grid", label: "Show grid layout", icon: "icGridLayout", key: "L", onclick: "viewer.toogleLayout();" },
+                { ID: "ui", label: "Hide navigation", icon: "icHide", key: "N", onclick: "viewer.toogleUI()" },
+            ]
+        },
+        {
+            ID: "", on: options.loadLayers || (options.serverTools != null && options.serverTools != ""),
+            items: [
+                { ID: "symbols", label: "Handoff", icon: "icElementInspector", key: "M", onclick: "viewer.symbolViewer.toggle();", on: options.loadLayers },
+                { ID: "menu_info_viewer", label: "Changes history", icon: "icList", key: "V", onclick: "viewer.infoViewer.toggle();", on: options.serverTools != null && options.serverTools != "" },
+            ]
+        },
+        {
+            ID: "", on: options.serverTools != null && options.serverTools != "",
+            items: [
+                { ID: "", label: "Up version", icon: "icIncreaseVersion", key: "⇧ ↑", onclick: "viewer.increaseVersion();" },
+                { ID: "", label: "Down version", icon: "icDecreaseVersion", key: "⇧ ↓", onclick: "viewer.decreaseVersion();" },
+            ]
+        },
+        {
+            ID: "viewall",
+            items: [
+                { ID: "", label: "View all screens", icon: "icGrid", key: "G", onclick: "viewer.galleryViewer.show()" },
+                { ID: "start", label: "Go to start", icon: "icBack", key: "S", onclick: "viewer.goToPage(0)" },
+            ]
+        }
+    )
+    // render menu
+    s += `
+                <div ID="menu" class="menu">
+    `
+    let index = 0
+    menu.forEach(function (group) {
+        if (group.on != null && !group.on) return
+        if (index++) s += "<hr>\n"
+        s += `              
+            <div class="groupe" ID="${group.ID}">
+        `
+        group.items.forEach(function (item) {
+            if (item.on != null && !item.on) return
+            s += `
+                <div ID="${item.ID}" class="item${item.hidden ? ' hidden' : ''}" onclick="addRemoveClass('class','menu','active'); ${item.onclick}; return false; ">
+                    <svg class ='svgIcon'><use xlink: href="#${item.icon}"></use></svg>
+                    <span>${item.label}</span>
+                    <div class ="tips">${item.key}</div>
+                </div>
+            `
+        })
+        s += `
+            </div>
+        `
+    })
+    s += `
+                </div>
+    `
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    s += `
+                <div ID="btnMenu" class="btnMenu" onclick="addRemoveClass('class', 'menu', 'active')">
+                    <svg class='svgIcon'><use xlink:href="#icMenu"></use></svg>
+                </div>
+                <div ID="btnOpenNew" style='display:none' class="btnMenu" onclick="viewer.openNewWindow();return false;">
+                    <svg class='svgIcon'><use xlink:href="#icResize"></use></svg>
+                </div>
+                <div class="navPreviewNext">
+                    <div ID="nav-left-prev" class="btnPreview" onclick="viewer.previous(); return false;" title="Previous screen">
+                        <svg class='svgIcon'><use xlink:href="#icArrwLeft"></use></svg>
+                    </div>
+                    <div ID="nav-left-next" class="btnNext" onclick="viewer.next(); return false;" title="Next screen"><svg class='svgIcon'><use xlink:href="#icArrwRight"></use></svg></div>
+                </div>
+            </div>
+                <div class="navCenter">\
+    <div class="pageName title">Default button</div>\
+    <div ID="info_viewer_options" class="infoViewerMode hidden">\
+        <input type="radio" name="info_viewer_mode" ID="info_viewer_mode_diff" value="diff" checked onclick="viewer.infoViewer.pageChanged()" disabled /><label for="info_viewer_mode_diff">Differences</label>
+        <input type="radio" name="info_viewer_mode" ID="info_viewer_mode_prev" value="prev" onclick="viewer.infoViewer.pageChanged()" disabled><label for="info_viewer_mode_prev">Prev version</label>
+        <input type ="radio" name="info_viewer_mode" ID="info_viewer_mode_new" value="new " onclick="viewer.infoViewer.pageChanged()" disabled><label for="info_viewer_mode_new">New version</label>
+        </div>
+    </div>
+        <div class="navRight">
+            <div ID = "loading" class="hidden">
+                <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
                             </div>
-                            <div ID="links" class="item" onclick="viewer.toggleLinks(); addRemoveClass('class','menu','active'); return false;">
-                                <svg class='svgIcon'><use xlink:href="#icPointer"></use></svg>
-                                <span>Toogle hot spots</span>
-                                <div class="tips">Shift</div>
-                            </div>
-                            <div ID="zoom" class="item" onclick="viewer.toggleZoom(); addRemoveClass('class','menu','active'); return false;">
-                                <svg class='svgIcon'><use xlink:href="#icResize"></use></svg>
-                                <span>Disable autoscale</span>
-                                <div class="tips">Z</div>
-                            </div>
-                            <div ID="embed" class="item" onclick="addRemoveClass('class','menu','active'); viewer.share();  return false;">
-                                <svg class='svgIcon'><use xlink:href="#icEmbed"></use></svg>
-                                <span>Show embed code</span>
-                                <div class="tips">E</div>
-                            </div>
-                            <div ID="grid" class="item" onclick="addRemoveClass('class','menu','active'); viewer.toogleLayout();  return false;">
-                                <svg class='svgIcon'><use xlink:href="#icGridLayout"></use></svg>
-                                <span>Show grid layout</span>
-                                <div class="tips">L</div>
-                            </div>
-                            <div ID="ui" class="item" onclick="addRemoveClass('class','menu','active'); viewer.toogleUI();  return false;">
-                                <svg class='svgIcon'><use xlink:href="#icHide"></use></svg>
-                                <span>Hide navigation</span>
-                                <div class="tips">N</div>
+        <div ID = "pageComments" onclick = "commentsViewer.toggle(); return false;" class="hidden">
+            <svg class="svgIcon"> <use xlink:href="#icAddComment"></use></svg>
+                <div ID = "counter"></div>
                             </div>
                         </div>
-                    <hr>`
-    if (options.loadLayers || (options.serverTools != null && options.serverTools != "")) {
-        s += "                             <div class=\"groupe\">"
-        if (options.loadLayers) {
-            s += "                            <div  ID=\"symbols\"  class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.symbolViewer.toggle();  return false;\">";
-            s += "                                <svg class='svgIcon'><use xlink:href=\"#icElementInspector\"><\/use><\/svg>";
-            s += "                                <span>Handoff<\/span>";
-            s += "                                <div class=\"tips\">M<\/div>";
-            s += "                            <\/div>";
-        }
-        if (options.serverTools != null && options.serverTools != "") {
-            s += "                                <div ID=\"menu_info_viewer\" class=\"item\" onclick=\"addRemoveClass('class','menu','active'); viewer.infoViewer.toggle();  return false;\">";
-            s += "                                    <svg class='svgIcon'><use xlink:href=\"#icList\"><\/use><\/svg>";
-            s += "                                    <span>Changes history<\/span>";
-            s += "                                    <div class=\"tips\">V<\/div>";
-            s += "                                <\/div>";
-        }
-        s += "                             <\/div>";
-        if (options.serverTools != null && options.serverTools != "") {
-            s += "                            <hr>";
-            s += "                            <div class=\"groupe\">";
-            s += "                                <div class=\"item\" onclick=\"viewer.increaseVersion(); addRemoveClass('class','menu','active'); return false;\">";
-            s += "                                    <svg class='svgIcon'><use xlink:href=\"#icIncreaseVersion\"><\/use><\/svg>";
-            s += "                                    <span>Up version<\/span>";
-            s += "                                    <div class=\"tips\">⇧ ↑<\/div>";
-            s += "                                <\/div>";
-            s += "                                <div class=\"item\" onclick=\"viewer.decreaseVersion(); addRemoveClass('class','menu','active'); return false;\">";
-            s += "                                    <svg class='svgIcon'><use xlink:href=\"#icDecreaseVersion\"><\/use><\/svg>";
-            s += "                                    <span>Down version<\/span>";
-            s += "                                    <div class=\"tips\">⇧ ↓<\/div>";
-            s += "                                <\/div>";
-            s += "                            <\/div>";
-        }
-        s += "                            <hr>";
-    }
-    s += "                            <div  ID=\"viewall\" class=\"groupe\">";
-    s += "                                <div class=\"item\" onclick=\"viewer.galleryViewer.show(); addRemoveClass('class','menu','active'); return false;\">";
-    s += "                                    <svg class='svgIcon'><use xlink:href=\"#icGrid\"><\/use><\/svg>";
-    s += "                                    <span>View all screens<\/span>";
-    s += "                                    <div class=\"tips\">G<\/div>";
-    s += "                                <\/div>";
-    s += "                                <div  ID=\"start\"  class=\"item\" onclick=\"viewer.goToPage(0); addRemoveClass('class','menu','active'); return false;\">";
-    s += "                                    <svg class='svgIcon'><use xlink:href=\"#icBack\"><\/use><\/svg>";
-    s += "                                    <span>Go to start<\/span>";
-    s += "                                    <div class=\"tips\">S<\/div>";
-    s += "                                <\/div>";
-    s += "                            <\/div>";
-    s += "                <\/div>";
-    s += "                <div ID=\"btnMenu\" class=\"btnMenu\" onclick=\"addRemoveClass('class', 'menu', 'active')\">";
-    s += "                    <svg class='svgIcon'><use xlink:href=\"#icMenu\"><\/use><\/svg>";
-    s += "                <\/div>";
-    s += "                <div ID=\"btnOpenNew\" style='display:none' class=\"btnMenu\" onclick=\"viewer.openNewWindow();return false;\">";
-    s += "                    <svg class='svgIcon'><use xlink:href=\"#icResize\"><\/use><\/svg>";
-    s += "                <\/div>";
-    s += "                <div class=\"navPreviewNext\">";
-    s += "                    <div ID=\"nav-left-prev\" class=\"btnPreview\" onclick=\"viewer.previous(); return false;\" title=\"Previous screen\">";
-    s += "                        <svg class='svgIcon'><use xlink:href=\"#icArrwLeft\"><\/use><\/svg>";
-    s += "                    <\/div>";
-    s += "                    <div ID=\"nav-left-next\" class=\"btnNext\" onclick=\"viewer.next(); return false;\" title=\"Next screen\"><svg class='svgIcon'><use xlink:href=\"#icArrwRight\"><\/use><\/svg><\/div>";
-    s += "                <\/div>";
-    s += "            <\/div>";
-    s += '          <div class="navCenter">\
-                        <div class="pageName title">Default button</div>\
-                        <div ID="info_viewer_options" class="infoViewerMode hidden">\
-                            <input type="radio" name="info_viewer_mode" ID="info_viewer_mode_diff" value="diff" checked onclick="viewer.infoViewer.pageChanged()" disabled /><label for="info_viewer_mode_diff">Differences</label>\
-                            <input type="radio" name="info_viewer_mode" ID="info_viewer_mode_prev" value="prev" onclick="viewer.infoViewer.pageChanged()" disabled><label for="info_viewer_mode_prev">Prev version</label>\
-                            <input type="radio" name="info_viewer_mode" ID="info_viewer_mode_new" value="new " onclick="viewer.infoViewer.pageChanged()" disabled><label for="info_viewer_mode_new">New version</label>\
-                        </div>\
-                    </div>'
-    s += '          <div class="navRight">\
-                        <div ID="loading" class="hidden">\
-                            <div class="lds-ring"><div></div><div></div><div></div><div></div></div>\
-                        </div>\
-                        <div ID="pageComments" onclick="commentsViewer.toggle(); return false;" class="hidden">\
-                            <svg class="svgIcon"><use xlink:href=\"#icAddComment\"></use></svg>\
-                            <div id = "counter"></div>\
-                        </div>\
-                    </div >'
-    s += "           <\/div>";
-    s += "        <\/div>";
-
-    s += ' </div>\n';
-    s += '</body>\n';
-    s += '</html>\n';
-
-    return s;
-};
+                </div>
+                </div>
+            </div>
+        `
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    s += `
+        </body>
+    </html>
+        `
+    return s
+}
