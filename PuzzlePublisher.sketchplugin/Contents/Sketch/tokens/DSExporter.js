@@ -630,9 +630,6 @@ class DSExporter {
                     }
                 }
             }
-            log("_getLayerTypeShadowsText")
-            log(shadow.color)
-
             res += " " + this._getColorToken(shadow.color)
         }, this)
 
