@@ -335,9 +335,11 @@ function buildMainHTML(options) {
         <div ID = "btnMenu" class="btnMenu" onclick = "addRemoveClass('class', 'menu', 'active')">
             <svg class='svgIcon'><use xlink:href="#icMenu"></use></svg>
                 </div>
+                <!-- Button to embed mode -->
                 <div ID="btnOpenNew" style='display:none' class="btnMenu" onclick="viewer.openNewWindow();return false;">
                     <svg class='svgIcon'><use xlink:href="#icResize"></use></svg>
                 </div>
+                <!-- Next/Back button -->
                 <div class="navPreviewNext">
                     <div ID="nav-left-prev" class="btnPreview" onclick="viewer.previous(); return false;" title="Previous screen">
                         <svg class='svgIcon'><use xlink:href="#icArrwLeft"></use></svg>
@@ -345,9 +347,9 @@ function buildMainHTML(options) {
                     <div ID="nav-left-next" class="btnNext" onclick="viewer.next(); return false;" title="Next screen"><svg class='svgIcon'><use xlink:href="#icArrwRight"></use></svg></div>
                 </div>
             </div>
-            <div class="navCenter">\
-                <div class="pageName title">Default button</div>\
-                <div ID="info_viewer_options" class="infoViewerMode hidden">\
+            <div class="navCenter">
+                <div class="pageName title">Default button</div>
+                <div ID="info_viewer_options" class="infoViewerMode hidden">
                     <input type="radio" name="info_viewer_mode" ID="info_viewer_mode_diff" value="diff" checked onclick="viewer.infoViewer.pageChanged()" disabled /><label for="info_viewer_mode_diff">Differences</label>
                     <input type="radio" name="info_viewer_mode" ID="info_viewer_mode_prev" value="prev" onclick="viewer.infoViewer.pageChanged()" disabled><label for="info_viewer_mode_prev">Prev version</label>
                     <input type ="radio" name="info_viewer_mode" ID="info_viewer_mode_new" value="new " onclick="viewer.infoViewer.pageChanged()" disabled><label for="info_viewer_mode_new">New version</label>
