@@ -989,6 +989,15 @@ body {
   transition: all .12s;
 }
 
+.menu .item-switcher {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    height: 44px;    
+    background: var(--color-background);
+  }
+
 .item {
   display: flex;
   justify-content: space-between;
@@ -1017,7 +1026,7 @@ body {
   text-align: start;
 }
 
-.item .tips {
+.menu .tips {
   font-size: var(--font-small);
   color: var(--color-secondary);
 }

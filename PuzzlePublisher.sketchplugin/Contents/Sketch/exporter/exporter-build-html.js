@@ -126,7 +126,7 @@ function buildMainHTML(options) {
         <script type="text/javascript">
     `
     s += ` 
-        var viewer = createViewer(story, "images");
+        var viewer = new Viewer(story, "images")
         `
     if (options.figma) {
         s += `viewer.figma = true`
@@ -272,33 +272,31 @@ function buildMainHTML(options) {
     menu.push(
         {
             ID: "", items: [
-                { ID: "menu_comments_viewer", label: "Toogle comments", icon: "icAnnotation", key: "C", onclick: "viewer.commentsViewer.toggle();", hidden: true },
-                { ID: "links", label: "Toogle hot spots", icon: "icPointer", key: "Shift", onclick: "viewer.toggleLinks();" },
-                { ID: "zoom", label: "Disable autoscale", icon: "icResize", key: "Z", onclick: "viewer.toggleZoom();" },
-                { ID: "embed", label: "Show embed code", icon: "icEmbed", key: "E", onclick: "viewer.share();" },
-                { ID: "grid", label: "Show grid layout", icon: "icGridLayout", key: "L", onclick: "viewer.toogleLayout();" },
-                { ID: "ui", label: "Hide navigation", icon: "icHide", key: "N", onclick: "viewer.toogleUI()" },
-            ]
+                { ID: "links", label: "Hot spots", icon: "icPointer", key: "Shift", onclick: "viewer.toggleLinks(undefined,false);" },
+                { ID: "zoom", label: "Autoscale", icon: "icResize", key: "Z", onclick: "viewer.toggleZoom(undefined,false);" },
+                { ID: "grid", label: "Grid layout", icon: "icGridLayout", key: "L", onclick: "viewer.toogleLayout(undefined,false);" },
+            ],
+            switchers: true,
         },
         {
-            ID: "", on: options.loadLayers || (options.serverTools != null && options.serverTools != ""),
-            items: [
+            ID: "", items: [
+                { ID: "menu_comments_viewer", label: "Comments", icon: "icAnnotation", key: "C", onclick: "viewer.commentsViewer.toggle();", hidden: true },
                 { ID: "symbols", label: "Handoff", icon: "icElementInspector", key: "M", onclick: "viewer.symbolViewer.toggle();", on: options.loadLayers },
                 { ID: "menu_info_viewer", label: "Changes history", icon: "icList", key: "V", onclick: "viewer.infoViewer.toggle();", on: options.serverTools != null && options.serverTools != "" },
+                { ID: "embed", label: "Embed code", icon: "icEmbed", key: "E", onclick: "viewer.share();" },
             ]
         },
         {
-            ID: "", on: options.serverTools != null && options.serverTools != "",
-            items: [
-                { ID: "", label: "Up version", icon: "icIncreaseVersion", key: "⇧ ↑", onclick: "viewer.increaseVersion();" },
-                { ID: "", label: "Down version", icon: "icDecreaseVersion", key: "⇧ ↓", onclick: "viewer.decreaseVersion();" },
+            ID: "", items: [
+                { ID: "", label: "Up version", icon: "icIncreaseVersion", key: "⇧ ↑", onclick: "viewer.increaseVersion();", on: options.serverTools !== "" },
+                { ID: "", label: "Down version", icon: "icDecreaseVersion", key: "⇧ ↓", onclick: "viewer.decreaseVersion();", on: options.serverTools !== "" },
             ]
         },
         {
-            ID: "viewall",
-            items: [
+            ID: "", items: [
                 { ID: "", label: "View all screens", icon: "icGrid", key: "G", onclick: "viewer.galleryViewer.show()" },
                 { ID: "start", label: "Go to start", icon: "icBack", key: "S", onclick: "viewer.goToPage(0)" },
+                { ID: "ui", label: "Hide UI", icon: "icHide", key: "N", onclick: "viewer.toogleUI()" },
             ]
         }
     )
@@ -309,19 +307,35 @@ function buildMainHTML(options) {
     let index = 0
     menu.forEach(function (group) {
         if (group.on != null && !group.on) return
+        const liveItems = group.items.filter(i => i.on == null || i.on)
+        if (!liveItems.length) return
+        //
         if (index++) s += "<hr>\n"
         s += `              
             <div class="groupe" ID="${group.ID}">
         `
-        group.items.forEach(function (item) {
+        liveItems.forEach(function (item) {
             if (item.on != null && !item.on) return
-            s += `
-                <div ID="${item.ID}" class ="item${item.hidden ? ' hidden' : ''}" onclick="addRemoveClass('class','menu','active'); ${item.onclick}; return false; ">
-                <svg class ='svgIcon'><use xlink: href="#${item.icon}"></use></svg>
-                <span>${item.label}</span>
-                <div class ="tips">${item.key}</div>
+            if (group.switchers) {
+                s += `
+                <div ID="${item.ID}-div" class ="item-switcher${item.hidden ? ' hidden' : ''}">
+                    <div class="checkbox-container">
+                        <input type="checkbox" ID="${item.ID}" onclick="${item.onclick}; return true;"/>
+                        <label for="${item.ID}"></label>
+                        <span class="checkbox-label">${item.label}</span>
+                    </div>
+                    <div class ="tips">${item.key}</div>
                 </div>
-            `
+                `
+            } else {
+                s += `
+                <div ID="${item.ID}" class ="item${item.hidden ? ' hidden' : ''}" onclick="addRemoveClass('class','menu','active'); ${item.onclick}; return false; ">
+                    <svg class ='svgIcon'><use xlink: href="#${item.icon}"></use></svg>
+                    <span>${item.label}</span>
+                    <div class ="tips">${item.key}</div>
+                </div>
+                `
+            }
         })
         s += `
             </div>
