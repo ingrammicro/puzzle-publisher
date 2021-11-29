@@ -114,6 +114,7 @@ function buildMainHTML(options) {
         <script type="text/javascript" src="${srcPath}viewer/AbstractViewer.js${verPostfix}" charset="UTF-8"></script>
         <script type="text/javascript" src="${srcPath}viewer/CommentsViewer.js${verPostfix}" charset="UTF-8"></script>
         <script type="text/javascript" src="${srcPath}viewer/GalleryViewer.js${verPostfix}" charset="UTF-8"></script>
+        <script type="text/javascript" src="${srcPath}viewer/PresenterViewer.js${verPostfix}" charset="UTF-8"></script>
 	`
     if (options.loadLayers) {
         s += `
@@ -146,7 +147,7 @@ function buildMainHTML(options) {
         } else {
             s += `
         <!--Global site tag(gtag.js) - Google Analytics-->
-            <script async src="https://www.googletagmanager.com/gtag/js?ID=${ptions.googleCode}"></script>
+            <script async src="https://www.googletagmanager.com/gtag/js?ID=${options.googleCode}"></script>
             <script>
             window.dataLayer = window.dataLayer || [];
              function gtag(){dataLayer.push(arguments);}
@@ -173,7 +174,22 @@ function buildMainHTML(options) {
         </script>
         <!--HEAD_INJECT-->
     </head>
-        <body class="screen" style="background:${options.backColor}" onload="${options.jsCode != "" ? "runJSCode()" : ""}">
+    <style>
+        /* Safari syntax */
+        :-webkit-full-screen {
+            background-color: ${options.backColor};
+        }
+        /* IE11 */
+        :-ms-fullscreen {
+            background-color: ${options.backColor};
+        }
+        /* Standard syntax */
+        :fullscreen {
+            background-color: ${options.backColor};
+        }
+
+    </style>
+    <body class="screen" style="background:${options.backColor}" onload="${options.jsCode != "" ? "runJSCode()" : ""}">
             `
     if (options.googleCode != '') {
         if (options.googleCode.startsWith("GTM")) {
@@ -274,7 +290,8 @@ function buildMainHTML(options) {
             ID: "", items: [
                 { ID: "links", label: "Hot spots", icon: "icPointer", key: "Shift", onclick: "viewer.toggleLinks(undefined,false);" },
                 { ID: "zoom", label: "Autoscale", icon: "icResize", key: "Z", onclick: "viewer.toggleZoom(undefined,false);" },
-                { ID: "grid", label: "Grid layout", icon: "icGridLayout", key: "L", onclick: "viewer.toogleLayout(undefined,false);" },
+                { ID: "pagegrid", label: "Grid layout", icon: "icGridLayout", key: "L", onclick: "viewer.toogleLayout(undefined,false);" },
+                { ID: "ui", label: "Viewer controls", icon: "icHide", key: "N", onclick: "viewer.toogleUI()", checked: true },
             ],
             switchers: true,
         },
@@ -296,7 +313,7 @@ function buildMainHTML(options) {
             ID: "", items: [
                 { ID: "", label: "View all screens", icon: "icGrid", key: "G", onclick: "viewer.galleryViewer.show()" },
                 { ID: "start", label: "Go to start", icon: "icBack", key: "S", onclick: "viewer.goToPage(0)" },
-                { ID: "ui", label: "Hide UI", icon: "icHide", key: "N", onclick: "viewer.toogleUI()" },
+                { ID: "play", label: "Play", icon: "icBack", key: "P", onclick: "viewer.presenterViewer.play()" },
             ]
         }
     )
@@ -320,7 +337,7 @@ function buildMainHTML(options) {
                 s += `
                 <div ID="${item.ID}-div" class ="item-switcher${item.hidden ? ' hidden' : ''}">
                     <div class="checkbox-container">
-                        <input type="checkbox" ID="${item.ID}" onclick="${item.onclick}; return true;"/>
+                        <input type="checkbox" ID="${item.ID}" onclick="${item.onclick}; return true;" ${item.checked ? "checked" : ""}/>
                         <label for="${item.ID}"></label>
                         <span class="checkbox-label">${item.label}</span>
                     </div>

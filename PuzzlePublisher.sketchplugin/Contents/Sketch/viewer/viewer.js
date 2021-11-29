@@ -151,6 +151,7 @@ class Viewer {
         this.symbolViewer = null
         this.infoViewer = null
         this.commentsViewer = null
+        this.presenterViewer = null
 
         this.defSidebarWidth = 400
 
@@ -174,6 +175,7 @@ class Viewer {
 
         }
         this.infoViewer = new infoViewer()
+        this.presenterViewer = new PresenterViewer()
 
         if (story.commentsURL != 'V_V_C' && story.commentsURL != "") {
             this.commentsViewer = new CommentsViewer()
@@ -447,6 +449,7 @@ class Viewer {
 
         alert(iframe)
     }
+
 
     toggleZoom(newState = undefined, updateToogler = true) {
         this.zoomEnabled = newState === undefined ? newState : !this.zoomEnabled
@@ -984,8 +987,10 @@ class Viewer {
         var first = this.userStoryPages[0]
         return first ? first : null
     }
-    getNextUserPage(page) {
-        var nextUserIndex = page ? page.userIndex + 1 : 0
+    getNextUserPage(page = null) {
+        let nextUserIndex = 0
+        if (!page) page = this.currentPage
+        if (page) nextUserIndex = page.userIndex + 1
         if (nextUserIndex >= this.userStoryPages.length) nextUserIndex = 0
         return this.userStoryPages[nextUserIndex]
     }
@@ -1007,7 +1012,7 @@ class Viewer {
     }
     toogleLayout(newState = undefined, updateToogler = true) {
         this.showLayout = newState != undefined ? newState : !this.showLayout
-        if (updateToogler) $("#menu #grid").prop('checked', this.showLayout);
+        if (updateToogler) $("#menu #pagegrid").prop('checked', this.showLayout);
         const div = $('#content')
 
         if (this.showLayout) {
@@ -1016,8 +1021,9 @@ class Viewer {
         } else
             div.removeClass("contentLayoutVisible")
     }
-    toogleUI(newState = undefined) {
+    toogleUI(newState = undefined, updateToogler = true) {
         this.showUI = newState != undefined ? newState : !this.showUI
+        if (updateToogler) $("#menu #ui").prop('checked', this.showUI);
         $('#nav').slideToggle('fast')
     }
     _updateLinksState(showLinks = undefined, div = undefined) {
