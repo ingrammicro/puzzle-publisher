@@ -1,5 +1,6 @@
-
 let presenterViewer = null;
+const STORAGE_TRANSPERIOD = "presenterViewer.transPeriod"
+
 function doPresenterViewerNext() {
     const nextPage = viewer.getNextUserPage()
     // check if we need to stop
@@ -23,7 +24,10 @@ class PresenterViewer extends AbstractViewer {
     initialize(force = false) {
         if (!force && this.inited) return
         //
-        this.transPeriod = 3000 // msec                
+        {
+            const savedPeriod = window.localStorage.getItem(STORAGE_TRANSPERIOD)
+            this.transPeriod = savedPeriod != null ? savedPeriod : 3000 // msec                
+        }
         //
         this.inited = true
     }
@@ -72,6 +76,9 @@ class PresenterViewer extends AbstractViewer {
 
         if (27 == event.which || 80 == event.which) { // esc or p
             this.stop()
+        } else if (event.which >= 49 && event.which < 57) { // 1..9
+            this.transPeriod = 1000 * (event.which - 48)
+            window.localStorage.setItem(STORAGE_TRANSPERIOD, this.transPeriod)
         } else {
             //return super.handleKeyDown(jevent)
         }
@@ -80,9 +87,8 @@ class PresenterViewer extends AbstractViewer {
         return true
     }
 
-    ///////////////////////// OWN METHODS
-    play() {
-        // enable full screen
+    _enableFullScreen() {
+        ///
         const elem = document.documentElement
         if (elem.requestFullscreen) {
             elem.requestFullscreen();
@@ -90,8 +96,22 @@ class PresenterViewer extends AbstractViewer {
             elem.webkitRequestFullscreen();
         } else if (elem.msRequestFullscreen) { /* IE11 */
             elem.msRequestFullscreen();
+
         }
         //
+        const changeHandler = function (event) {
+            if (document.webkitIsFullScreen === false || document.mozFullScreen === false || document.msFullscreenElement === false) {
+                presenterViewer.stop(false)
+            }
+        }
+        document.addEventListener("fullscreenchange", changeHandler, false);
+        document.addEventListener("webkitfullscreenchange", changeHandler, false);
+        document.addEventListener("mozfullscreenchange", changeHandler, false);
+    }
+
+    ///////////////////////// OWN METHODS
+    play() {
+        this._enableFullScreen()
         this.show()
     }
 
@@ -104,14 +124,17 @@ class PresenterViewer extends AbstractViewer {
         setTimeout(doPresenterViewerNext, this.transPeriod)
     }
 
-    stop() {
+    stop(exitFullScreen = true) {
+        if (!this.visible) return
         // Disable full screen
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) { /* Safari */
-            document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) { /* IE11 */
-            document.msExitFullscreen();
+        if (exitFullScreen) {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) { /* Safari */
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) { /* IE11 */
+                document.msExitFullscreen();
+            }
         }
         //        
         this.hide()
