@@ -1,4 +1,3 @@
-
 // =============================== PRELOAD IMAGES =========================
 var pagerLoadingTotal = 0
 
@@ -144,6 +143,7 @@ class Viewer {
         this.userStoryPages = []
         this.visStoryPages = []
         this.zoomEnabled = story.zoomEnabled
+        this.menuVisible = false
 
         this.sidebarVisible = false
         this.child = null // some instance of Viewer
@@ -293,9 +293,6 @@ class Viewer {
         // allow currently active childs to handle global keys
         if (this.child && this.child.handleKeyDown(jevent)) return true
 
-        //console.log(event.metaKey)
-        //console.log(event.which)
-
         if (allowNavigation && 91 == event.which) { // cmd
             if (this.highlightLinks) v.toggleLinks(false) // hide hightlights to allow user to make a screenshot on macOS
         }
@@ -318,6 +315,8 @@ class Viewer {
             v.toggleZoom()
         } else if (allowNavigation && 69 == event.which) { // e
             v.share()
+        } else if (73 == event.which) { // i
+            v.openFulImage()
         } else if (allowNavigation && 76 == event.which) { // l
             v.toogleLayout();
         } else if (allowNavigation && 78 == event.which) { // n
@@ -362,6 +361,9 @@ class Viewer {
     }
 
     onContentClick() {
+        // Do we need to close a menu?
+        if (this.menuVisible) this.hideMenu()
+
         // allow currently active child to handle click
         if (this.child && this.child.onContentClick()) return true
 
@@ -371,6 +373,18 @@ class Viewer {
     }
     onModalClick() {
         this.blinkHotspots()
+    }
+
+
+    showMenu() {
+        addRemoveClass('class', 'menu', 'active')
+        this.menuVisible = true
+        return true
+    }
+    hideMenu() {
+        addRemoveClass('class', 'menu', 'active')
+        this.menuVisible = false
+        return true
     }
 
     _setupFolderinfoRequest(func) {
@@ -426,9 +440,8 @@ class Viewer {
     }
 
     share() {
-        var page = undefined == this.lastRegularPage ? this.currentPage : this.lastRegularPage
-
-        let url = this.fullCurrentPageURL
+        var page = this.currentPage
+        let url = this._getPageFullURL()
         url += '&e=1'
 
         var iframe = '<iframe src="' + url + '" style="border: none;" noborder="0"'
@@ -449,6 +462,16 @@ class Viewer {
 
         alert(iframe)
     }
+
+
+    openFulImage() {
+        let page = this.currentPage
+        let url = this._getPageFullURL(page)
+        url = url.substring(0, url.lastIndexOf("/")) + "/images/full/" + page['image']
+
+        window.open(url, "_blank")
+    }
+
 
 
     toggleZoom(newState = undefined, updateToogler = true) {
@@ -807,12 +830,17 @@ class Viewer {
         return search
     }
 
+    _getPageFullURL(page = null, extURL = null) {
+        if (!page) page = this.currentPage
+        return this.fullBaseURL + this._getSearchPath(page, extURL)
+    }
+
     _calcCurrentPageURL(page = null, extURL = null) {
         if (!page) page = this.currentPage
         this.urlLastIndex = page.index
         $(document).attr('title', story.title + ': ' + page.title)
 
-        let newPath = this.fullBaseURL + this._getSearchPath(page, extURL)
+        let newPath = this._getPageFullURL(page, extURL)
         this.fullCurrentPageURL = newPath
     }
 
@@ -954,6 +982,10 @@ class Viewer {
     }
 
     onKeyEscape() {
+        // Close menu
+        if (this.menuVisible) return this.hideMenu()
+
+
         const page = this.currentPage
         // If the current page has search visible then hide it
         if (undefined != page.actualSearchText) {

@@ -303,12 +303,13 @@ function buildMainHTML(options) {
             ID: "", items: [
                 { ID: "menu_comments_viewer", label: "Comments", icon: "icAnnotation", key: "C", onclick: "viewer.commentsViewer.toggle();", hidden: true },
                 { ID: "symbols", label: "Handoff", icon: "icElementInspector", key: "M", onclick: "viewer.symbolViewer.toggle();", on: options.loadLayers },
-                { ID: "menu_info_viewer", label: "Changes history", icon: "icList", key: "V", onclick: "viewer.infoViewer.toggle();", on: options.serverTools != null && options.serverTools != "" },
                 { ID: "embed", label: "Embed code", icon: "icEmbed", key: "E", onclick: "viewer.share();" },
+                { ID: "img", label: "Full page image", icon: "icResize", key: "I", onclick: "viewer.openFulImage();" },
             ]
         },
         {
             ID: "", items: [
+                { ID: "menu_info_viewer", label: "Changes history", icon: "icList", key: "V", onclick: "viewer.infoViewer.toggle();", on: options.serverTools != null && options.serverTools != "" },
                 { ID: "", label: "Up version", icon: "icIncreaseVersion", key: "⇧ ↑", onclick: "viewer.increaseVersion();", on: options.serverTools !== "" },
                 { ID: "", label: "Down version", icon: "icDecreaseVersion", key: "⇧ ↓", onclick: "viewer.decreaseVersion();", on: options.serverTools !== "" },
             ]
@@ -350,7 +351,7 @@ function buildMainHTML(options) {
                 `
             } else {
                 s += `
-                <div ID="${item.ID}" class ="item${item.hidden ? ' hidden' : ''}" onclick="addRemoveClass('class','menu','active'); ${item.onclick}; return false; ">
+                <div ID="${item.ID}" class ="item${item.hidden ? ' hidden' : ''}" onclick="viewer.hideMenu(); ${item.onclick}; return false; ">
                     <svg class ='svgIcon'><use xlink: href="#${item.icon}"></use></svg>
                     <span>${item.label}</span>
                     <div class ="tips">${item.key}</div>
@@ -367,21 +368,21 @@ function buildMainHTML(options) {
     `
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     s += `
-        <div ID = "btnMenu" class="btnMenu" onclick = "addRemoveClass('class', 'menu', 'active')">
+        <div ID = "btnMenu" class="btnMenu" onclick = "viewer.showMenu()">
             <svg class='svgIcon'><use xlink:href="#icMenu"></use></svg>
-                </div>
-                <!-- Button to embed mode -->
-                <div ID="btnOpenNew" style='display:none' class="btnMenu" onclick="viewer.openNewWindow();return false;">
-                    <svg class='svgIcon'><use xlink:href="#icResize"></use></svg>
-                </div>
-                <!-- Next/Back button -->
-                <div class="navPreviewNext">
-                    <div ID="nav-left-prev" class="btnPreview" onclick="viewer.previous(); return false;" title="Previous screen">
-                        <svg class='svgIcon'><use xlink:href="#icArrwLeft"></use></svg>
-                    </div>
-                    <div ID="nav-left-next" class="btnNext" onclick="viewer.next(); return false;" title="Next screen"><svg class='svgIcon'><use xlink:href="#icArrwRight"></use></svg></div>
-                </div>
+        </div>
+        <!-- Button to embed mode -->
+        <div ID="btnOpenNew" style='display:none' class="btnMenu" onclick="viewer.openNewWindow();return false;">
+            <svg class='svgIcon'><use xlink:href="#icResize"></use></svg>
+        </div>
+        <!-- Next/Back button -->
+        <div class="navPreviewNext">
+            <div ID="nav-left-prev" class="btnPreview" onclick="viewer.previous(); return false;" title="Previous screen">
+                <svg class='svgIcon'><use xlink:href="#icArrwLeft"></use></svg>
             </div>
+            <div ID="nav-left-next" class="btnNext" onclick="viewer.next(); return false;" title="Next screen"><svg class='svgIcon'><use xlink:href="#icArrwRight"></use></svg></div>
+        </div>
+        </div>
             <div class="navCenter">
                 <div class="pageName title">Default button</div>
                 <div ID="info_viewer_options" class="infoViewerMode hidden">
