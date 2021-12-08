@@ -87,31 +87,9 @@ class PresenterViewer extends AbstractViewer {
         return true
     }
 
-    _enableFullScreen() {
-        ///
-        const elem = document.documentElement
-        if (elem.requestFullscreen) {
-            elem.requestFullscreen();
-        } else if (elem.webkitRequestFullscreen) { /* Safari */
-            elem.webkitRequestFullscreen();
-        } else if (elem.msRequestFullscreen) { /* IE11 */
-            elem.msRequestFullscreen();
-
-        }
-        //
-        const changeHandler = function (event) {
-            if (document.webkitIsFullScreen === false || document.mozFullScreen === false || document.msFullscreenElement === false) {
-                presenterViewer.stop(false)
-            }
-        }
-        document.addEventListener("fullscreenchange", changeHandler, false);
-        document.addEventListener("webkitfullscreenchange", changeHandler, false);
-        document.addEventListener("mozfullscreenchange", changeHandler, false);
-    }
-
     ///////////////////////// OWN METHODS
     play() {
-        this._enableFullScreen()
+        viewer._enableFullScreen()
         this.show()
     }
 
@@ -128,13 +106,7 @@ class PresenterViewer extends AbstractViewer {
         if (!this.visible) return
         // Disable full screen
         if (exitFullScreen) {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.webkitExitFullscreen) { /* Safari */
-                document.webkitExitFullscreen();
-            } else if (document.msExitFullscreen) { /* IE11 */
-                document.msExitFullscreen();
-            }
+            viewer._disableFullScreen()
         }
         //        
         this.hide()

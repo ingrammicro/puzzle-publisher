@@ -121,6 +121,7 @@ class Viewer {
         this.highlightLinks = story.highlightLinks
         this.showLayout = false
         this.showUI = true
+        this.isFullScreen = false
         this.isEmbed = false
         this.figma = false
 
@@ -321,6 +322,8 @@ class Viewer {
             v.toogleLayout();
         } else if (allowNavigation && 78 == event.which) { // n
             v.toogleUI();
+        } else if (70 == event.which) { // f
+            v.toogleFullScreen()
         } else if (enableTopNavigation && 83 == event.which) { // s
             var first = null != story.startPageIndex ? story.pages[story.startPageIndex] : v.getFirstUserPage()
             if (first && (first.index != v.currentPage.index || this.child)) {
@@ -1053,6 +1056,13 @@ class Viewer {
         } else
             div.removeClass("contentLayoutVisible")
     }
+    toogleFullScreen(newState = undefined, updateToogler = true) {
+        this.isFullScreen = newState != undefined ? newState : !this.isFullScreen
+        if (updateToogler) $("#menu #fullScreen").prop('checked', this.isFullScreen);
+        //
+        return this.isFullScreen ? this._enableFullScreen() : this._disableFullScreen()
+    }
+    //
     toogleUI(newState = undefined, updateToogler = true) {
         this.showUI = newState != undefined ? newState : !this.showUI
         if (updateToogler) $("#menu #ui").prop('checked', this.showUI);
@@ -1087,6 +1097,38 @@ class Viewer {
         viewer.initParseGetParams()
         viewer.handleNewLocation(true)
         viewer.urlLocked = false
+    }
+
+    _enableFullScreen() {
+        ///
+        const elem = document.documentElement
+        if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+        } else if (elem.webkitRequestFullscreen) { /* Safari */
+            elem.webkitRequestFullscreen();
+        } else if (elem.msRequestFullscreen) { /* IE11 */
+            elem.msRequestFullscreen();
+
+        }
+        //
+        const changeHandler = function (event) {
+            if (document.webkitIsFullScreen === false || document.mozFullScreen === false || document.msFullscreenElement === false) {
+                presenterViewer.stop(false)
+            }
+        }
+        document.addEventListener("fullscreenchange", changeHandler, false);
+        document.addEventListener("webkitfullscreenchange", changeHandler, false);
+        document.addEventListener("mozfullscreenchange", changeHandler, false);
+    }
+
+    _disableFullScreen() {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) { /* Safari */
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) { /* IE11 */
+            document.msExitFullscreen();
+        }
     }
 }
 

@@ -296,6 +296,7 @@ function buildMainHTML(options) {
                 { ID: "zoom", label: "Autoscale", icon: "icResize", key: "Z", onclick: "viewer.toggleZoom(undefined,false);" },
                 { ID: "pagegrid", label: "Grid layout", icon: "icGridLayout", key: "L", onclick: "viewer.toogleLayout(undefined,false);" },
                 { ID: "ui", label: "Viewer controls", icon: "icHide", key: "N", onclick: "viewer.toogleUI()", checked: true },
+                { ID: "fullscreen", label: "Full screen", icon: "", key: "F", onclick: "viewer.hideMenu();viewer.toogleFullScreen(undefined,false);" },
             ],
             switchers: true,
         },
