@@ -889,7 +889,7 @@ body {
   border-radius: 36px;
   box-shadow: var(--shadow1);
   align-self: center;
-  /* opacity: .9; */
+  opacity: .8; 
 }
 
 .nav .infoViewerMode{

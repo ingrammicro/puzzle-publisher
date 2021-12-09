@@ -193,7 +193,7 @@ function buildMainHTML(options) {
         }
 
     </style>
-    <body class="screen" style="background:${options.backColor}" onload="${options.jsCode != "" ? "runJSCode()" : ""}">
+    <body class="screen" style="background:${options.backColor}" onload="${options.jsCode !== "" ? "runJSCode()" : ""}">
             `
     if (options.googleCode != '') {
         if (options.googleCode.startsWith("GTM")) {
