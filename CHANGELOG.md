@@ -1,6 +1,10 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.14.0 (16 Dec 2021)
+Added full-screen mode
+Improved links to experimental widgets
+
 ##  Version 16.13.0 (6 Dec 2021)
 Esc closed menu
 New "Full page image" function added to menu
