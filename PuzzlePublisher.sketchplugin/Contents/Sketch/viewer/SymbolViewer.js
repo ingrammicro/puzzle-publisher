@@ -320,6 +320,7 @@ class SymbolViewer extends AbstractViewer {
             const styleInfo = styleName != undefined ? viewer.symbolViewer._findStyleAndLibByStyleName(styleName) : undefined
             const symInfo = symName != undefined ? viewer.symbolViewer._findSymbolAndLibBySymbolName(symName) : undefined
 
+            sv.docLinkAdded = false
             var info = ""
             // layer.b : shared library name, owner of style or symbol
             // layer.s : symbol name
@@ -448,6 +449,7 @@ class SymbolViewer extends AbstractViewer {
 
     _showExtDocRef(layer, symName, siLayer) {
         const emptyRes = ""
+        if (this.docLinkAdded) return emptyRes
         if (undefined == layer.b && (undefined == siLayer || undefined == siLayer.b)) return emptyRes
         //
         let href = undefined
@@ -474,6 +476,8 @@ class SymbolViewer extends AbstractViewer {
         }
         if (!href) return emptyRes
         //        
+        if (href.toLowerCase().includes("experimental") && !name.toLowerCase().includes("experimental")) name += "-EXPERIMENTAL"
+        this.docLinkAdded = true
         return `
                 <hr>
                 <div class="block">
