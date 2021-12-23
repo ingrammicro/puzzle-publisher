@@ -478,7 +478,7 @@ class Viewer {
 
 
     toggleZoom(newState = undefined, updateToogler = true) {
-        this.zoomEnabled = newState === undefined ? newState : !this.zoomEnabled
+        this.zoomEnabled = newState !== undefined ? newState : !this.zoomEnabled
         if (updateToogler) $("#menu #zoom").prop('checked', this.zoomEnabled)
         this.zoomContent()
     }
