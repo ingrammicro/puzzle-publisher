@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.14.2 (28 Dec 2021)
+Improved icon visualization in Handoff
+
 ##  Version 16.14.1 (23 Dec 2021)
 Auto-scale switch fixes
 
