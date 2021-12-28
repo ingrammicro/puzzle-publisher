@@ -238,9 +238,13 @@ class SymbolViewer extends AbstractViewer {
 
     _processLayerList(layers, sSI = null) {
         for (var l of layers.slice().reverse()) {
-            if (SUPPORT_TYPES.indexOf(l.tp) >= 0 && !l.hd) {
+            const isIcon = l.s && l.s.indexOf(ICON_TAG) > 0;
+            if (isIcon || (SUPPORT_TYPES.indexOf(l.tp) >= 0 && !l.hd)) {
                 this._showElement(l, sSI)
             }
+            // don't go deep inside an icon
+            if (isIcon) continue
+            // process childs
             if (undefined != l.c)
                 this._processLayerList(l.c, "SI" == l.tp ? l : sSI)
         }

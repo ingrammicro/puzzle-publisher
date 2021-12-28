@@ -19,6 +19,8 @@ var ResizingConstraint = {
     TOP: 1 << 5
 }
 
+const ICON_TAG = " / ic-" // Use this string to find icon symbol
+
 const alignMap2 = {
     [Text.Alignment.left]: "left",
     [Text.Alignment.center]: "center",
@@ -493,7 +495,9 @@ class PZLayer {
         if (!this.isSymbolInstance) this.n = this.name
         if (this.slayer.hidden) this.hd = true
         //
-        if ("Text" == this.slayer.type) {
+        if (this.isSymbolInstance && this.s && this.s.indexOf(ICON_TAG) > 0) {
+            //this.pr = this.parent._buildShapePropsForJSON()
+        } else if ("Text" == this.slayer.type) {
             this.pr = this._buildTextPropsForJSON()
         } else if ("ShapePath" == this.slayer.type || "Shape" == this.slayer.type) {
             this.pr = this._buildShapePropsForJSON()
