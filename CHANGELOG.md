@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.14.3 (11 Jan 2022)
+Updated menu icons
+
 ##  Version 16.14.2 (28 Dec 2021)
 Improved icon visualization in Handoff
 
