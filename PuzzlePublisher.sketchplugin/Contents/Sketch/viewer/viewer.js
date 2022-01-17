@@ -149,10 +149,12 @@ class Viewer {
         this.sidebarVisible = false
         this.child = null // some instance of Viewer
         this.allChilds = [] // list of all inited instances of Viewer
+
         this.symbolViewer = null
         this.infoViewer = null
         this.commentsViewer = null
         this.presenterViewer = null
+        this.expViewer = null
 
         this.defSidebarWidth = 400
 
@@ -173,7 +175,7 @@ class Viewer {
 
         if (story.layersExist) {
             this.symbolViewer = new SymbolViewer()
-
+            if (story.experimentalExisting) this.expViewer = new ExpViewer()
         }
         this.infoViewer = new infoViewer()
         this.presenterViewer = new PresenterViewer()
@@ -181,6 +183,10 @@ class Viewer {
         if (story.commentsURL != 'V_V_C' && story.commentsURL != "") {
             this.commentsViewer = new CommentsViewer()
             $("#nav #pageComments").removeClass("hidden")
+        }
+
+        if (story.experimentalExisting) {
+            $("#nav #experimental").removeClass("hidden")
         }
 
     }

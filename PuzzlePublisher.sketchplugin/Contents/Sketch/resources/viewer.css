@@ -165,9 +165,8 @@
     color:white;
 }
 
-#comments_viewer,
-#symbol_viewer,
-#info_viewer {
+.viewer
+{
   width: 100%;
   overflow-y: auto;
   padding-bottom: 20px;
@@ -293,9 +292,7 @@ select:focus{
   margin-right: 40px;
 }
 
-#comments_viewer .title,
-#symbol_viewer .title,
-#info_viewer .title {
+.viewer .title{
   height: 56px;
   display: flex;
   align-items: center;
@@ -867,8 +864,10 @@ body {
   display: flex;
 }
 
+
 .navLeft,
-.nav #pageComments {
+.nav #pageComments,
+.nav #experimental {
   pointer-events: all;
 }
 .navCenter {
@@ -879,6 +878,7 @@ body {
 .nav .btnMenu,
 .nav .navPreviewNext,
 .nav #pageComments,
+.nav #experimental,
 .nav .infoViewerMode,
 .nav .pageName {
   display: flex;
@@ -908,6 +908,7 @@ body {
 
 .btnMenu,
 .nav #pageComments,
+.nav #experimental,
 .btnPreview,
 .btnNext {
   cursor: pointer;
@@ -938,6 +939,7 @@ body {
 
 .btnMenu:hover,
 .nav #pageComments:hover,
+.nav #experimental:hover,
 .btnPreview:hover,
 .btnNext:hover {
   background: var(--color-hover);
@@ -947,6 +949,7 @@ body {
 
 .btnMenu:active,
 .nav #pageComments:active,
+.nav #experimental:active, 
 .btnPreview:active,
 .btnNext:active {
   background: var(--color-active);
@@ -1171,6 +1174,7 @@ area {
 
   /* Dark mode styles go here! */
   :root {
+    --color-danger:#E40949;
     --color-primary: #E0E1E1;
     --color-secondary: #989EA5;
     --color-accent: #568AF2;

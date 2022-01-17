@@ -41,7 +41,6 @@ class Exporter {
         this.exportOptions = exportOptions
         this._readSettings()
 
-
         this.filterAster = null == this.exportOptions || !('mode' in this.exportOptions) || Constants.EXPORT_MODE_SELECTED_ARTBOARDS != this.exportOptions.mode
 
         // init global variable
@@ -214,6 +213,7 @@ class Exporter {
             docName: this.docName,
             serverTools: this.serverTools,
             backColor: this.backColor,
+            enableExpViewer: this.storyData.experimentalExisting,
             centerContent: false, // because too many issues
             loadLayers: this.enabledJSON,
             cssFileNames: this.enabledJSON ? this.mDoc.getCSSIncludes() : undefined,
@@ -326,14 +326,18 @@ class Exporter {
             this.mDoc.collectData()
             this.mDoc.buildLinks()
 
+            // Build Story.js with hotspots  
+            this.startStoryData();
+
+            // Export every artboard into image
+            this.mDoc.export()
+
+            // Dump document layers to JSON file
+            this.saveToJSON()
 
             // Build main HTML file
             if (!this.createMainHTML()) return false
 
-            // Build Story.js with hotspots  
-            this.startStoryData();
-            // Export every artboard into image
-            this.mDoc.export()
             if (!this.finishSaveStoryData()) return false
 
             // Compress Images
@@ -347,8 +351,6 @@ class Exporter {
                 this.siteIconLayer.exportSiteIcon()
             }
 
-            // Dump document layers to JSON file
-            this.saveToJSON()
         }
         catch (error) {
             this.logError(error)
@@ -369,6 +371,8 @@ class Exporter {
 
         const symbolData = this.mDoc.getSymbolData()
         const json = this.mDoc.getJSON()
+
+        this.storyData.experimentalExisting = json.includes("EXPERIMENTAL")
 
         const pathJSFile = this.createViewerFile('LayersData.js')
         if (!Utils.writeToFile(symbolData + "var layersData = " + json, pathJSFile)) return false

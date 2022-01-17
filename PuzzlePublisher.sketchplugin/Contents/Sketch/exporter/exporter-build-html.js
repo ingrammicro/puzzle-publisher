@@ -26,6 +26,9 @@ function buildMainHTML_NavigationIcons(options) {
     <symbol ID="icAnnotation" viewBox="0 0 24 24">
         <path d="M5,16 L13,16 C13.5522847,16 14,16.4477153 14,17 C14,17.5522847 13.5522847,18 13,18 L5,18 C4.44771525,18 4,17.5522847 4,17 C4,16.4477153 4.44771525,16 5,16 Z M5,6 L19,6 C19.5522847,6 20,6.44771525 20,7 C20,7.55228475 19.5522847,8 19,8 L5,8 C4.44771525,8 4,7.55228475 4,7 C4,6.44771525 4.44771525,6 5,6 Z M5,11 L19,11 C19.5522847,11 20,11.4477153 20,12 C20,12.5522847 19.5522847,13 19,13 L5,13 C4.44771525,13 4,12.5522847 4,12 C4,11.4477153 4.44771525,11 5,11 Z" />
     </symbol>
+    <symbol ID="icExperimental" viewBox="0 0 24 24">
+    <path fill="red" d="M5,16 L13,16 C13.5522847,16 14,16.4477153 14,17 C14,17.5522847 13.5522847,18 13,18 L5,18 C4.44771525,18 4,17.5522847 4,17 C4,16.4477153 4.44771525,16 5,16 Z M5,6 L19,6 C19.5522847,6 20,6.44771525 20,7 C20,7.55228475 19.5522847,8 19,8 L5,8 C4.44771525,8 4,7.55228475 4,7 C4,6.44771525 4.44771525,6 5,6 Z M5,11 L19,11 C19.5522847,11 20,11.4477153 20,12 C20,12.5522847 19.5522847,13 19,13 L5,13 C4.44771525,13 4,12.5522847 4,12 C4,11.4477153 4.44771525,11 5,11 Z" />
+</symbol>
     <symbol ID="icEmbed" viewBox="0 0 24 24">
         <path d="M6.7080808,14.2938686 C7.09806642,14.6849308 7.09719364,15.3180952 6.70613141,15.7080808 C6.31506919,16.0980664 5.68190481,16.0971936 5.2919192,15.7061314 L2.2919192,12.6978494 C1.90193253,12.3067862 1.90280651,11.6736197 2.29387128,11.2836345 L5.29387128,8.29191651 C5.684935,7.90193238 6.31809937,7.90280757 6.70808349,8.29387128 C7.09806762,8.684935 7.09719243,9.31809937 6.70612872,9.70808349 L4.41421491,11.9936701 L6.7080808,14.2938686 Z M17.2938713,9.70808349 C16.9028076,9.31809937 16.9019324,8.684935 17.2919165,8.29387128 C17.6819006,7.90280757 18.315065,7.90193238 18.7061287,8.29191651 L21.7061287,11.2836345 C22.0971935,11.6736197 22.0980675,12.3067862 21.7080808,12.6978494 L18.7080808,15.7061314 C18.3180952,16.0971936 17.6849308,16.0980664 17.2938686,15.7080808 C16.9028064,15.3180952 16.9019336,14.6849308 17.2919192,14.2938686 L19.5857851,11.9936701 L17.2938713,9.70808349 Z M13.0513167,5.68377223 C13.2259645,5.15982892 13.7922844,4.87666893 14.3162278,5.0513167 C14.8401711,5.22596447 15.1233311,5.79228445 14.9486833,6.31622777 L10.9486833,18.3162278 C10.7740355,18.8401711 10.2077156,19.1233311 9.68377223,18.9486833 C9.15982892,18.7740355 8.87666893,18.2077156 9.0513167,17.6837722 L13.0513167,5.68377223 Z" />
     </symbol>
@@ -127,6 +130,11 @@ function buildMainHTML(options) {
         <script type="text/javascript" src="viewer/LayersData.js${verPostfix}" charset="UTF-8"></script>
         <script type="text/javascript" src="${srcPath}viewer/SymbolViewer.js${verPostfix}" charset="UTF-8"></script>
 		`
+        if (options.enableExpViewer) {
+            s += `
+              <script type="text/javascript" src="${srcPath}viewer/ExpViewer.js${verPostfix}" charset="UTF-8"></script>
+            `
+        }
     }
     s += `
         <script type="text/javascript" src="${srcPath}viewer/InfoViewer.js${verPostfix}" charset="UTF-8"></script>
@@ -217,7 +225,7 @@ function buildMainHTML(options) {
         <div ID="marker"></div>
         <div ID="content" onclick="viewer.onContentClick()"></div>
         <div ID="sidebar" class="hidden">
-            <div ID="symbol_viewer" class="hidden">
+            <div ID="symbol_viewer" class="hidden viewer">
                 <div class="title">
                   <div style="width:100%;">Element Inspector</div>
                   <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.symbolViewer.toggle();  return false;">
@@ -233,8 +241,8 @@ function buildMainHTML(options) {
                 <div ID="empty" style="padding: 16px 20px 0 20px;margin-top:20px;">Click any element to inspect</div>
                 <div ID="symbol_viewer_content" style="margin-top:20px;">
                 </div>
-            </div>
-            <div ID="comments_viewer" class="hidden">
+            </div>           
+            <div ID="comments_viewer" class="hidden viewer">
                 <div class="title">
                     <div style="width:100%;">Comments</div>
                     <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.commentsViewer.toggle();  return false;">
@@ -244,7 +252,7 @@ function buildMainHTML(options) {
                 <div ID="comments_viewer_content">
                 </div>
             </div>
-            <div ID="info_viewer" class="hidden">
+            <div ID="info_viewer" class="hidden viewer">
                 <div class="title">
                   <div style="width:100%;">Changes Inspector</div>
                   <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.infoViewer.toggle();  return false;">
@@ -252,6 +260,15 @@ function buildMainHTML(options) {
                   </div>
                 </div>
                 <div ID="info_viewer_content" style="padding: 72px 20px 0 20px"></div>
+            </div>
+            <div ID="exp_viewer" class="hidden viewer">
+                <div class="title">
+                  <div style="width:100%;">Experimental widgets</div>
+                  <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.expViewer.toggle();  return false;">
+                    <svg class="svgIcon"><use xlink:href="#icClose"></use></svg>
+                  </div>
+                </div>
+                <div ID="exp_viewer_content" style="padding: 72px 20px 0 20px"></div>
             </div>
         </div>
     <div ID="content-shadow" class="hidden" onclick="viewer.onContentClick()"></div>
@@ -401,6 +418,9 @@ function buildMainHTML(options) {
                     <div ID="pageComments" onclick="commentsViewer.toggle(); return false;" class="hidden">
                         <svg class="svgIcon"> <use xlink:href="#icAddComment"></use></svg>
                         <div ID="counter"></div>
+                    </div>
+                    <div ID="experimental" onclick="viewer.expViewer.toggle();return false;" class="hidden">
+                        <svg class="svgIcon"> <use xlink:href="#icExperimental"></use></svg>
                     </div>
                 </div>
             </div>
