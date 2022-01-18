@@ -381,7 +381,7 @@ class SymbolViewer extends AbstractViewer {
         var style = "left: " + l.finalX + "px; top:" + l.finalY + "px; "
         style += "width: " + l.w + "px; height:" + l.h + "px; "
         var symbolDiv = $("<div>", {
-            class: "symbolDiv",
+            class: "symbolDiv" + (siLayer && siLayer.s && siLayer.s.includes("EXPERIMENTAL") ? " exp" : ""),
         }).attr('style', style)
         symbolDiv.mouseenter(function () {
             viewer.symbolViewer.mouseEnterLayerDiv($(this))

@@ -268,7 +268,13 @@ function buildMainHTML(options) {
                     <svg class="svgIcon"><use xlink:href="#icClose"></use></svg>
                   </div>
                 </div>
-                <div ID="exp_viewer_content" style="padding: 72px 20px 0 20px"></div>
+                <div style="padding: 62px 20px 0 20px">
+                    Show for <select ID="scope" style="width:240px">
+                        <option selected value="project">all pages</options>
+                        <option value="page">current page</options>
+                    </select>
+                </div>
+                <div ID="exp_viewer_content" style="padding: 20px 20px 0 20px"></div>
             </div>
         </div>
     <div ID="content-shadow" class="hidden" onclick="viewer.onContentClick()"></div>

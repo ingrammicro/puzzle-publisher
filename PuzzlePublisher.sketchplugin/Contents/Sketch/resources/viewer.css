@@ -118,6 +118,14 @@
   transition: all 0.3s;
 }
 
+.contentSymbolsVisible .symbolDiv.exp:hover {
+    outline: 2px solid orange;
+}
+
+.contentSymbolsVisible .symbolDiv.exp {
+    outline: 2px solid orange;
+}
+
 .svBorderLineDiv {
     position: absolute;
     display: none;
@@ -364,7 +372,26 @@ select:focus{
 #sv_content{
     font-size: 20px;
     line-height: 18px;
-  }
+}
+
+
+#exp_viewer .page{
+    padding-bottom:     10px;
+    color:              var(--color-accent);
+}
+
+#exp_viewer .layer{
+    margin-left:        20px;
+    color:              var(--color-primary);
+    font-size:          12px;
+}
+
+#exp_viewer .layer .counter{
+    color:              var(--color-secondary);
+    font-size:          12px;
+}
+
+
 
 /* #symbol_viewer_content .head {
   color: var(--color-secondary);

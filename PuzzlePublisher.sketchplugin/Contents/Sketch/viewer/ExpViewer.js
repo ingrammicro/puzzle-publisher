@@ -18,26 +18,44 @@ class ExpViewer extends AbstractViewer {
         this._buildContent()
     }
 
+    goPage(index) {
+        this.hide()
+        viewer.goToPage(index)
+        viewer.symbolViewer.show()
+    }
+
     //////////
     _buildContent() {
         let html = `<div id="pages">`
         // scan pages
-        layersData.forEach(page => {
+        layersData.filter(page => "c" in page).forEach(page => {
             // try to find experimenal components
-            let foundExpLayers = []
+            let foundExpLayers = {}
             this._findExpLayers(page.c, foundExpLayers)
-            if (!foundExpLayers.length) return
+            const symbols = Object.keys(foundExpLayers)
+            if (!symbols.length) return
 
             // show page with experimental components
             html += `
                 <div ID="${page.index}" class="page">
-                    ${page.n}
+                    <a href="#" onclick="viewer.expViewer.goPage(${page.index})" class="link">${page.n}</a>
                 `
             //
-            foundExpLayers.forEach(l => {
+            function cleanLabel(label) {
+                return label.replace("-EXPERIMENTAL", "-EXP")
+            }
+            symbols.forEach(symbolName => {
                 html += `
                 <div class="layer">
-                    &nbsp;&nbsp;${l.s}
+                    ${cleanLabel(symbolName)}
+                `
+                const total = foundExpLayers[symbolName]
+                if (total > 1) {
+                    html += `
+                        <span class="counter">(${total})</span>
+                    `
+                }
+                html += `
                 </div>
                 `
             }, this)
@@ -56,7 +74,8 @@ class ExpViewer extends AbstractViewer {
     _findExpLayers(layers, foundExpLayers) {
         layers.forEach(l => {
             if (l.tp === "SI" && l.s && l.s.includes("EXPERIMENTAL")) {
-                foundExpLayers.push(l)
+                if (!(l.s in foundExpLayers)) foundExpLayers[l.s] = 0
+                foundExpLayers[l.s]++
             }
             if (l.c && l.c.length) this._findExpLayers(l.c, foundExpLayers)
         }, this)
