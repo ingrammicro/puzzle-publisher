@@ -140,6 +140,11 @@ function buildMainHTML(options) {
         <script type="text/javascript" src="${srcPath}viewer/InfoViewer.js${verPostfix}" charset="UTF-8"></script>
         <script type="text/javascript">
     `
+    if (options.jsCode && options.jsCode != '') {
+        s += `
+        function runJSCode(){${options.jsCode}}
+        `
+    }
     s += `
         var viewer = new Viewer(story, "images")
         `

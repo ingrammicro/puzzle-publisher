@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.14.4 (18 Jan 2022)
+Fixed support for custom JS code (thanks @cargeo for bug report)
+
 ##  Version 16.14.3 (11 Jan 2022)
 Updated menu icons
 
