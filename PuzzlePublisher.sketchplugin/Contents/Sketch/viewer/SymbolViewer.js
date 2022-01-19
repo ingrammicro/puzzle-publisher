@@ -27,6 +27,7 @@ class SymbolViewer extends AbstractViewer {
         this.currentLib = ""
         this.selected = null
         this.showSymbols = false
+        this.insideExpViewer = false
     }
 
     initialize(force = false) {
@@ -101,7 +102,18 @@ class SymbolViewer extends AbstractViewer {
         return this.visible ? this.hide() : this.show()
     }
 
+    hide() {
+        super.hide()
+        if (this.insideExpViewer) {
+            this.insideExpViewer = false
+            viewer.expViewer.show()
+        }
+    }
 
+    showFromExpViewer() {
+        this.insideExpViewer = true
+        this.show()
+    }
 
     _hideSelf() {
         var isModal = viewer.currentPage && viewer.currentPage.isModal
@@ -177,6 +189,10 @@ class SymbolViewer extends AbstractViewer {
 
     _showEmptyContent() {
         $("#symbol_viewer_content").html("")
+        $('#symbol_viewer #empty').html(story.experimentalExisting ?
+            "Click any element to inspect.<br/>EXPERIMENTAL widgets are in <span style='color:orange'>orange</span>." :
+            "Click any element to inspect"
+        );
         $('#symbol_viewer #empty').removeClass("hidden")
     }
 

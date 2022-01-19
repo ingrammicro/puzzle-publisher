@@ -891,7 +891,6 @@ body {
   display: flex;
 }
 
-
 .navLeft,
 .nav #pageComments,
 .nav #experimental {
@@ -993,6 +992,18 @@ body {
 .nav .disabled {
   opacity: .5;
 }
+
+.nav #experimental {
+    width:36px;
+    margin-left: 12px;  
+    background: #FFB70A;;
+}
+
+
+.nav #experimental:hover { 
+    background: #FED574;;
+}
+  
 
 /*** MENU ***/
 .menu {
@@ -1202,6 +1213,7 @@ area {
   /* Dark mode styles go here! */
   :root {
     --color-danger:#E40949;
+    --color-warning:#FFB70A;
     --color-primary: #E0E1E1;
     --color-secondary: #989EA5;
     --color-accent: #568AF2;
