@@ -20,6 +20,9 @@ const Constants = {
     ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_CENTER: 4,
     ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_RIGHT: 5,
     ARTBOARD_OVERLAY_PIN_PAGE_CENTER: 6,
+
+    TRIGGER_ON_CLICK: 0,
+    TRIGGER_ON_HOVER: 1,
 }
 
 const EVENT_HOVER = 1
@@ -396,9 +399,9 @@ class ViewerPage {
 
         var destPage = story.pages[link.page]
         // for mouseover overlay we need to show it on click, but only one time)
-        if ("overlay" == destPage.type && 1 == destPage.overlayByEvent) {
+        if ("overlay" == destPage.type && Constansts.TRIGGER_ON_HOVER == destPage.overlayByEvent) {
             destPage.tmpSrcOverlayByEvent = destPage.overlayByEvent
-            destPage.overlayByEvent = 0
+            destPage.overlayByEvent = Constansts.TRIGGER_ON_HOVER
             viewer.customEvent = {
                 x: link.rect.x,
                 y: link.rect.y,
@@ -423,12 +426,12 @@ class ViewerPage {
 
     // return true (overlay is hidden) or false (overlay is visible)
     onMouseMoveOverlay(x, y) {
-        if (this.imageDiv.hasClass("hidden") || this.overlayByEvent != 1) return false
+        if (this.imageDiv.hasClass("hidden") || this.overlayByEvent != Constansts.TRIGGER_ON_HOVER) return false
         if (viewer.linksDisabled) return false
 
         // handle mouse hover if this page is overlay
         var _hideSelf = false
-        while (1 == this.overlayByEvent) {
+        while (Constansts.TRIGGER_ON_CLICK == this.overlayByEvent) {
             var localX = Math.round(x / viewer.currentZoom) - this.currentLeft
             var localY = Math.round(y / viewer.currentZoom) - this.currentTop
             //alert(" localX:"+localX+" localY:"+localY+" linkX:"+this.currentLink.x+" linkY:"+this.currentLink.y);
@@ -577,7 +580,7 @@ class ViewerPage {
             }
 
 
-        } else if (1 == this.overlayByEvent && posX == this.currentX && posY == this.currentY) {//handle only mouse hover
+        } else if (Constansts.TRIGGER_ON_CLICK == this.overlayByEvent && posX == this.currentX && posY == this.currentY) {//handle only mouse hover
             // cursor returned back from overlay to hotspot -> nothing to do
         } else {
             this.hide()
@@ -798,16 +801,18 @@ class ViewerPage {
                 lpy: y
             })
 
-            var eventType = 0 // click
+            var eventType = Constants.TRIGGER_ON_CLICK
 
             if ('page' in link) {
                 var destPageIndex = viewer.getPageIndex(parseInt(link.page))
                 var destPage = story.pages[destPageIndex];
-                if ('overlay' == destPage.type) {
+                //
+                if (link.triggerOnHover) {
+                    eventType = Constants.TRIGGER_ON_HOVER
+                } else if ('overlay' == destPage.type) {
                     eventType = destPage.overlayByEvent
                 }
             }
-
 
             if (EVENT_HOVER == eventType) { // for Mouse over event
                 a.mouseenter(handleLinkEvent)
