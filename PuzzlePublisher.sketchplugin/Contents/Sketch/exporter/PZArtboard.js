@@ -71,6 +71,9 @@ class PZArtboard extends PZLayer {
             }
         }
 
+        const disableFixed = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_DISABLE_FIXED)
+        this.disableFixedLayers = (disableFixed != undefined && disableFixed > 0) ? disableFixed == 1 : exporter.disableFixedLayers
+
         this.overlayOverFixed = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_OVERLAY_OVERFIXED) == 1
         {
             var overlayAlsoFixed = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_OVERLAY_ALSOFIXED)

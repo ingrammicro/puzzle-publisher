@@ -231,7 +231,7 @@ class PZLayer {
 
         if (myParent != undefined) this.constrains = this._calculateConstrains()
 
-        if (!this.isArtboard && !exporter.disableFixedLayers && !this.isParentFixed) {
+        if (!this.isArtboard && !this.artboard.disableFixedLayers && !this.isParentFixed) {
             var overlayType = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.LAYER_OVERLAY_TYPE)
             if (undefined == overlayType || '' == overlayType)
                 overlayType = Constants.LAYER_OVERLAY_DEFAULT

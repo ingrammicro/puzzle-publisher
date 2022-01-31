@@ -38,11 +38,12 @@ const Constants = {
     INT_LAYER_NAME_XSPACER: "@XSpacer@",
     INT_LAYER_NAME_YSPACER: "@YSpacer@",
     INT_LAYER_NAME_REDIRECT: "@Redirect@",
+    //
     ARTBOARD_TYPE_REGULAR: 0,
     ARTBOARD_TYPE_MODAL: 1,
     ARTBOARD_TYPE_EXTERNAL_URL: 2,
     ARTBOARD_TYPE_OVERLAY: 3,
-    //
+    //    
     ARTBOARD_TRANS_ANIM_NONE: 0,
     ARTBOARD_TRANS_ANIM_SLIDEIN_UP: 1,
     ARTBOARD_TRANS_ANIM_SLIDEIN_LEFT: 2,
@@ -152,11 +153,11 @@ const SettingKeys = {
     PLUGIN_LOGDEBUG_ENABLED: "pluginLogDebugEnabled",
 
     ARTBOARD_TYPE: "artboardType",
+    ARTBOARD_DISABLE_FIXED: "ARTBOARD_DISABLE_FIXED",
 
     LEGACY_ARTBOARD_MODAL: "artboardOverlay", //legacy, replaced by ARTBOARD_TYPE
     LEGACY_ARTBOARD_MODAL_SHADOW: "artboardOverlayShadow", // replaced by  ARTBOARD_SHADOW, Outdated on 14 Frev 2018
     OLD_ARTBOARD_OVERLAY_ALIGN: "artboardOverlayPosition",
-
 
     ARTBOARD_SHADOW: "artboardShadow",
     ARTBOARD_DISABLE_AUTOSCROLL: "artboardDisableAutoScroll",

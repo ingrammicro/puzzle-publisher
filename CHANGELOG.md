@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.16.0 (31 Jan 2022)
+Added ability to enable "render fixed layers as regular" per artboard
+
 ##  Version 16.15.0 (19 Jan 2022)
 Added ability to highlight EXPERIMENTAL widgets
 
