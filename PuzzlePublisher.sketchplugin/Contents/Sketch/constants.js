@@ -191,6 +191,7 @@ const SettingKeys = {
     LAYER_DIV_ID: 'layerDivID',
     LAYER_EXTERNAL_LINK: "externalLink",
     LAYER_EXTERNAL_LINK_BLANKWIN: "layerNewWindow",
-    LAYER_COMMENT: 'layerComment'
+    LAYER_COMMENT: 'layerComment',
+    LAYER_FIXED_SHADOW_TYPE: "LAYER_FIXED_SHADOW_TYPE"
 };
 

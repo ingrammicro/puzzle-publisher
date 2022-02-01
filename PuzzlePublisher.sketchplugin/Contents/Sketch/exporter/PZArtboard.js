@@ -248,14 +248,15 @@ class PZArtboard extends PZLayer {
     }
 
     _findLayersShadow(layers) {
-        for (var l of layers) {
+        layers.forEach(function (l) {
             let layerWithShadow = this._findLayerShadow(l)
             if (layerWithShadow) return layerWithShadow
-        }
+        }, this)
         return undefined
     }
 
     _findLayerShadow(l) {
+        if (l.keepFixedShadow) return null
         let shadowsStyle = l.getShadowAsStyle()
         if (shadowsStyle !== undefined) return l
 
@@ -422,6 +423,10 @@ class PZArtboard extends PZLayer {
             slice.scale = scale;
             slice.saveForWeb = false;
             slice.format = exporter.fileType;
+
+            const bounds = nlayer.absoluteRect();
+            slice.setRect(bounds.rect());
+
             exporter.ndoc.saveArtboardOrSlice_toFile(slice, imagePath);
         }
     }

@@ -1,6 +1,12 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.17.0 (1 Feb 2022)
+Added fixed layer shadow mode to Configure layer
+
+##  Version 16.16.1 (1 Feb 2022)
+Hotfix
+
 ##  Version 16.16.0 (31 Jan 2022)
 Added ability to enable "render fixed layers as regular" per artboard
 

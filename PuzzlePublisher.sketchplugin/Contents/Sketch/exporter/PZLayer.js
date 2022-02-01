@@ -63,7 +63,6 @@ class PZLayer {
         this.artboard = myParent ? myParent.artboard : this
         this.isParentFixed = undefined != myParent && (myParent.isFixed || myParent.isParentFixed)
 
-
         // define type    
         this.isArtboard = false
         this.isGroup = false
@@ -321,7 +320,10 @@ class PZLayer {
                 return
             }
         }
-
+        {
+            const shadowType = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.LAYER_FIXED_SHADOW_TYPE)
+            this.keepFixedShadow = shadowType != undefined && shadowType == 1
+        }
         this.isFixed = true
         this.overlayType = overlayType
         this.fixedIndex = this.artboard.fixedLayers.length
@@ -490,6 +492,7 @@ class PZLayer {
         this.s = this.smName
         this.l = this.styleName
         this.b = this.sharedLib
+        if (this.keepFixedShadow) this.ks = true
         if (this.childs.length) this.c = this.childs
         this.tp = this.isSymbolInstance ? "SI" : this.slayer.type
         if (!this.isSymbolInstance) this.n = this.name
@@ -531,6 +534,7 @@ class PZLayer {
         this.styleName = undefined
         this.sharedLib = undefined
         this.text = undefined
+        this.keepFixedShadow = undefined
         this.childs = undefined
         //
         this.tempOverrides = undefined

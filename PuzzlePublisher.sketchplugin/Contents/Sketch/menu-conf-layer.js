@@ -35,11 +35,22 @@ var onRun = function (context) {
     if (overlayType == undefined || overlayType == "")
         overlayType = SettingKeys.LAYER_OVERLAY_DEFAULT
 
+
+    const isFixed = layer.sketchObject.isFixedToViewport()
+    let fixedShadowType = undefined
+    if (isFixed) {
+        fixedShadowType = Settings.layerSettingForKey(layer, SettingKeys.LAYER_FIXED_SHADOW_TYPE)
+        if (fixedShadowType == undefined) fixedShadowType = 0
+    }
+
     // create dialog
     const dialog = new UIDialog("Layer Settings", NSMakeRect(0, 0, 400, 320), "Save", "Configure selected layer options ")
     dialog.removeLeftColumn()
 
     dialog.addSelect("overlayType", "Overlay Mode", overlayType, ["Default (using \"Fix position\" setting)", "Trasparent overlay with fixed position (TOP)", "Trasparent overlay with fixed position (LEFT)", "Standalone DIV inside a page"], 300)
+    if (isFixed) {
+        dialog.addSelect("fixedShadowType", "Fixed Layer Shadow Mode", fixedShadowType, ["Viewer shows a CSS-based shadow around the layer", "Sketch renders the layer shadow during export"], 300)
+    }
 
     dialog.addTextInput("layerDivID", "Layer <div> ID", layerDivID, 'MyLayer1')
     dialog.addHint("", "This layer will be presented by standalone <div> with specified ID")
@@ -58,6 +69,8 @@ var onRun = function (context) {
         layerDivID = dialog.views['layerDivID'].stringValue() + ""
         layerComment = dialog.views['layerComment'].stringValue() + ""
         overlayType = dialog.views['overlayType'].indexOfSelectedItem()
+        if (isFixed) fixedShadowType = dialog.views['fixedShadowType'].indexOfSelectedItem()
+
 
         // check data
         if (false) {
@@ -67,6 +80,7 @@ var onRun = function (context) {
         // save data    
         Settings.setLayerSettingForKey(layer, SettingKeys.LAYER_DIV_ID, layerDivID)
         Settings.setLayerSettingForKey(layer, SettingKeys.LAYER_OVERLAY_TYPE, overlayType)
+        if (isFixed) Settings.setLayerSettingForKey(layer, SettingKeys.LAYER_FIXED_SHADOW_TYPE, fixedShadowType)
         Settings.setLayerSettingForKey(layer, SettingKeys.LAYER_COMMENT, layerComment)
 
         break
