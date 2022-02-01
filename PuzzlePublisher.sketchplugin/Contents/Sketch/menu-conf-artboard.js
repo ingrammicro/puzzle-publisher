@@ -279,6 +279,7 @@ var onRun = function (context) {
         // OK clicked
         // read data
         transNextSecs = transNextSecsControl.stringValue() + ""
+        artboardType = typeControl.indexOfSelectedItem()
         artboardDisableFixed = artboardDisableFixedControl.indexOfSelectedItem()
 
         // check data        
