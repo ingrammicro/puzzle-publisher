@@ -353,7 +353,7 @@ class PZLayer {
         this._processHotspots(space)
     }
 
-    getShadowAsStyle() {
+    getShadowInfo() {
         if (this.slayer.style == undefined || this.slayer.style.shadows == undefined || this.slayer.style.length == 0) return undefined
 
         let shadowInfo = undefined
@@ -373,7 +373,8 @@ class PZLayer {
             } else {
                 shadowInfo = {
                     style: shadowsStyle,
-                    x: shadow.x + shadow.blur
+                    x: shadow.x + shadow.blur,
+                    layer: this
                 }
             }
         }
