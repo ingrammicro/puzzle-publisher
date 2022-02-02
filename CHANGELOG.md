@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 16.17.1 (1 Feb 2022)
+Hotfix - return overlay shadows back
+
 ##  Version 16.17.0 (1 Feb 2022)
 Added fixed layer shadow mode to Configure layer
 
