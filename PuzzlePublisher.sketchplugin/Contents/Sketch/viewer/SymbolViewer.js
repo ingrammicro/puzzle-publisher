@@ -15,8 +15,9 @@ const ELEMENTINSPECTOR_LINUX_FONT_SIZES = {
     "25px": "19px",
     "26px": "20px"
 }
-
-const SUPPORT_TYPES = ["Text", "ShapePath", "Image"]
+const ICON_TAG = " / ic-" // Use this string to find icon symbol
+const ICON_TAG2 = "ic-" // Use this string to find icon symbol
+const SUPPORT_TYPES = ["Text", "ShapePath", "Image", "ImageSymbol"]
 
 class SymbolViewer extends AbstractViewer {
     constructor() {
@@ -26,6 +27,7 @@ class SymbolViewer extends AbstractViewer {
         this.currentLib = ""
         this.selected = null
         this.showSymbols = false
+        this.insideExpViewer = false
     }
 
     initialize(force = false) {
@@ -67,7 +69,7 @@ class SymbolViewer extends AbstractViewer {
 
     // called by Viewer
     pageChanged() {
-        this._buildSymbolLinks()
+        this._reShowContent()
     }
 
     _selectLib(libName) {
@@ -78,17 +80,21 @@ class SymbolViewer extends AbstractViewer {
     _reShowContent() {
         delete this.createdPages[viewer.currentPage.index]
 
-        // remove existing symbol links
+        // remove existing symbol links        
         this.page.linksDiv.children(".modalSymbolLink,.symbolLink").remove()
         for (const panel of this.page.fixedPanels) {
             panel.linksDiv.children(".modalSymbolLink,.symbolLink").remove()
         }
 
+        // drop selection
+        this.setSelected()
+
+        // rebuild links
+        this._buildElementLinks()
+
         // redraw inspector
         this._showEmptyContent()
 
-        // rebuild links
-        this._buildSymbolLinks()
     }
 
 
@@ -96,7 +102,18 @@ class SymbolViewer extends AbstractViewer {
         return this.visible ? this.hide() : this.show()
     }
 
+    hide() {
+        super.hide()
+        if (this.insideExpViewer) {
+            this.insideExpViewer = false
+            viewer.expViewer.show()
+        }
+    }
 
+    showFromExpViewer() {
+        this.insideExpViewer = true
+        this.show()
+    }
 
     _hideSelf() {
         var isModal = viewer.currentPage && viewer.currentPage.isModal
@@ -156,7 +173,7 @@ class SymbolViewer extends AbstractViewer {
         viewer.toogleLayout(false)
         viewer.linksDisabled = true
 
-        this._buildSymbolLinks()
+        this._buildElementLinks()
 
         var isModal = viewer.currentPage && viewer.currentPage.isModal
         const contentDiv = isModal ? $('#content-modal') : $('#content')
@@ -172,18 +189,23 @@ class SymbolViewer extends AbstractViewer {
 
     _showEmptyContent() {
         $("#symbol_viewer_content").html("")
+        $('#symbol_viewer #empty').html(story.experimentalExisting ?
+            "Click any element to inspect.<br/>EXPERIMENTAL widgets are in <span style='color:orange'>orange</span>." :
+            "Click any element to inspect"
+        );
         $('#symbol_viewer #empty').removeClass("hidden")
     }
 
-    _buildSymbolLinks() {
-        this._showPage(viewer.currentPage)
+
+    _buildElementLinks() {
+        this._buildElementLinksForPage(viewer.currentPage)
         for (let overlay of viewer.currentPage.currentOverlays) {
-            this._showPage(overlay)
+            this._buildElementLinksForPage(overlay)
         }
     }
 
 
-    _showPage(page) {
+    _buildElementLinksForPage(page) {
         var pageIndex = page.index
         this.pageIndex = pageIndex
         this.page = page
@@ -196,55 +218,49 @@ class SymbolViewer extends AbstractViewer {
             this.createdPages[pageIndex] = newPageInfo
 
             this.pageInfo = newPageInfo
-            this._create()
         } else {
             this.pageInfo = this.createdPages[pageIndex]
         }
-    }
-
-
-
-    _create() {
+        //
         const layers = layersData[this.pageIndex].c
-        if (undefined == layers) return
-        if (this.showSymbols)
-            this._processSymbolList(layers)
-        else
-            this._processLayerList(layers)
+        if (undefined != layers) {
+            if (this.showSymbols)
+                this._processSymbolList(layers)
+            else
+                this._processLayerList(layers)
+        }
     }
 
     _processSymbolList(layers, isParentSymbol = false) {
         for (var l of layers.slice().reverse()) {
-            if (this.currentLib != "") {
-                if (this.showSymbols && l.b) {
-                    if (l.b == this.currentLib) {
-                        this._showElement(l)
-                        continue
-                    }
-                }
-                if (!this.showSymbols && undefined != l.l) {
-                    const styleInfo = this._findStyleAndLibByStyleName(l.l)
-                    if (styleInfo && styleInfo.libName == this.currentLib) {
-                        this._showElement(l)
-                        continue
-                    }
-                }
-            } else {
-                if ((this.showSymbols && l.s != undefined) ||
-                    (!this.showSymbols && !isParentSymbol && l.l != undefined)) {
+            // l.b: library name
+            if (
+                l.s &&
+                ("" == this.currentLib || (this.currentLib != "" && l.b && l.b == this.currentLib))
+            ) {
+                this._showElement(l)
+            }/* else
+                // l.s: symbol name
+                // l.l: style name
+                if (l.s != undefined || (!isParentSymbol && l.l != undefined)) {
                     this._showElement(l)
                 }
-            }
+            */
+            // l.c : childs
             if (undefined != l.c)
-                this._processSymbolList(l.c, this.showSymbols && l.s != undefined)
+                this._processSymbolList(l.c, l.s != undefined)
         }
     }
 
     _processLayerList(layers, sSI = null) {
         for (var l of layers.slice().reverse()) {
-            if (SUPPORT_TYPES.indexOf(l.tp) >= 0 && !l.hd) {
+            const isIcon = l.s && l.s.indexOf(ICON_TAG) > 0;
+            if (isIcon || (SUPPORT_TYPES.indexOf(l.tp) >= 0 && !l.hd)) {
                 this._showElement(l, sSI)
             }
+            // don't go deep inside an icon
+            if (isIcon) continue
+            // process childs
             if (undefined != l.c)
                 this._processLayerList(l.c, "SI" == l.tp ? l : sSI)
         }
@@ -271,7 +287,7 @@ class SymbolViewer extends AbstractViewer {
 
 
         // Check if some layer on top of current
-        for (const pl of this.pageInfo.layerArray) {
+        for (const pl of this.pageInfo.layerArray.filter(s => s.tp != "SI")) {
             if (pl.finalX <= l.finalX && pl.finalY <= l.finalY && (pl.finalX + pl.w) >= (l.finalX + l.w) && (pl.finalY + pl.h) >= (l.finalY + l.h)) return
         }
 
@@ -280,7 +296,7 @@ class SymbolViewer extends AbstractViewer {
             if ("" == l.tx.trim()) return
         }
 
-        // also push symbol instance to a list of layers (if was not aded before)
+        // also push symbol instance to a list of layers (if was not aded before)        
         let indexOfSO = -1
         if (siLayer) {
             if (siLayer.s in this.pageInfo.siLayerIndexes) {
@@ -317,17 +333,14 @@ class SymbolViewer extends AbstractViewer {
             }
             const layer = sv.selected.layer // selection can be changed inside setSelected
 
-            var symName = sv.showSymbols ? layer.s : (siLayer ? siLayer.s : null)
+            var symName = layer.s ? layer.s : (siLayer ? siLayer.s : null)
+            //sv.showSymbols && layer.s ? layer.s : (siLayer ? siLayer.s : null)
             var styleName = layer.l
-            var comment = layer.comment
-            var frameX = layer.finalX
-            var frameY = layer.finalY
-            var frameWidth = layer.w
-            var frameHeight = layer.h
 
             const styleInfo = styleName != undefined ? viewer.symbolViewer._findStyleAndLibByStyleName(styleName) : undefined
             const symInfo = symName != undefined ? viewer.symbolViewer._findSymbolAndLibBySymbolName(symName) : undefined
 
+            sv.docLinkAdded = false
             var info = ""
             // layer.b : shared library name, owner of style or symbol
             // layer.s : symbol name
@@ -335,99 +348,40 @@ class SymbolViewer extends AbstractViewer {
             // layer.tp : layer type: SI, Text, ShapePath or Image
             // siLayer : symbol master, owner of the layer            
 
-            if (symName != undefined) {
-                info = "<hr>" +
-                    "<div class='block'>" +
-                    "<div class='label'>" + "Symbol" + "</div>" +
-                    "<div class='value'>" + symName + "</div>"
-                const libName = layer.b != undefined ? (layer.b + " (external)") :
-                    (siLayer && siLayer.b ? siLayer.b + " (external)" : "Document")
-                info += "<div style='font-size:12px; color:var(--color-secondary)'>" + libName + "</div></div>"
+            info += sv._showLayerDimensions(layer)
+            info += sv._showLayerSymbol(layer, symName, siLayer)
+            info += sv._showLayerComment(layer)
+            info += sv._showLayerStyle(layer, siLayer)
 
-            }
-            if (styleName != undefined) {
-                info = "<hr>" +
-                    "<div class='block'>" +
-                    "<div class='label'>" + "Style" + "</div>" +
-                    "<div class='value'>" + styleName + "</div>"
-                const libName = layer.b != undefined ? (layer.b + " (external)") :
-                    (siLayer ? siLayer.b + " (external)" : "Document")
-                info += "<div style='font-size:12px; color:var(--color-secondary)'>" + libName + "</div></div>"
-            }
-
-
-            if (comment != undefined) info +=
-                "<hr>" +
-                "<div class='block'>" +
-                "<div class='label'>" + "Comment" + "</div>" +
-                "<div style='value'>" + comment + "</div>" + 2
-            "</div>"
-
-            info += "<hr>" +
-                "<div class='block twoColumn'>" +
-                "<div>" +
-                "<span class='label'>" + "X: </span>" + Math.round(frameX) + "px" +
-                "</div>" +
-                "<div>" +
-                "<span class='label'>" + "Y: </span>" + Math.round(frameY) + "px" +
-                "</div>" +
-                "</div>"
-
-            info += "<div class='block twoColumn'>" +
-                "<div>" +
-                "<span class='label'>" + "Width: </span>" + Math.round(frameWidth) + "px" +
-                "</div>" +
-                "<div>" +
-                "<span class='label'>" + "Height: </span>" + Math.round(frameHeight) + "px" +
-                "</div>" +
-                "</div>"
-
-
+            // if layer has CSS classes described
             if (layer.pr != undefined) {
                 let tokens = null
                 if (styleInfo)
                     tokens = styleInfo.style.tokens
-                else if (symInfo) {
+                if (symInfo) {
                     const foundLayer = symInfo.symbol.layers[layer.n]
-                    if (foundLayer) tokens = foundLayer.tokens
+                    if (foundLayer) {
+                        if (null == tokens)
+                            tokens = foundLayer.tokens
+                        else
+                            tokens = sv._mergeTokens(tokens, foundLayer.tokens)
+                    }
                 }
                 const decRes = sv._decorateCSS(layer, tokens, layer.b ? layer : siLayer)
                 info += decRes.css
+
                 if ("Text" == layer.tp) {
-                    if (layer.tx != undefined && layer.tx != "") {
-                        info += `
-                            <hr>
-                            <div class='block'>
-                            <div class='label'>Content&nbsp;<button onclick = "copyToBuffer('sv_content')">Copy</button>`
-                        let afterContent = ""
-                        let cssClass = ""
-                        if (decRes.styles["font-family"].startsWith("Font Awesome 5")) {
-                            cssClass += "icon "
-                            if (decRes.styles["font-weight"] != "400") cssClass += "solid "
-                            const codeText = layer.tx.codePointAt(0).toString(16)
-                            afterContent = "Unicode: " + codeText
-                            info += `<button onclick = "showFAIconInfo('` + codeText + `')">Info</button>`
-                        } else {
-                            cssClass += "code value"
-                        }
-                        info += `</div ><div id='sv_content' class="` + cssClass + `">` + layer.tx + "</div>"
-                        if (afterContent != "") {
-                            info += "<div  class='code value'>" + afterContent + "</div>"
-                        }
-                        info += "</div>"
-                    }
+                    info += sv._showLayerTextContent(layer, decRes)
+                }
+            } else {
+                if ("Text" == layer.tp) {
+                    info += sv._showLayerTextContent(layer, null)
                 }
             }
 
+            // Process image layar
             if ("Image" == layer.tp) {
-                const url = layer.iu
-                info += `
-                        <hr>
-                        <div class='block'>
-                        <div class='label'>Content&nbsp;<a class="svlink" href="`+ url + `">Download</a>`
-                let cssClass = "code value"
-                const width = "100%" //viewer.defSidebarWidth - 40
-                info += `</div ><div id='sv_content' class="` + cssClass + `"><img ` + `width="` + width + `" src="` + url + `"/></div>`
+                info += sv._showLayerImage(layer)
             }
 
             $('#symbol_viewer #empty').addClass("hidden")
@@ -443,13 +397,186 @@ class SymbolViewer extends AbstractViewer {
         var style = "left: " + l.finalX + "px; top:" + l.finalY + "px; "
         style += "width: " + l.w + "px; height:" + l.h + "px; "
         var symbolDiv = $("<div>", {
-            class: "symbolDiv",
+            class: "symbolDiv" + (siLayer && siLayer.s && siLayer.s.includes("EXPERIMENTAL") ? " exp" : ""),
         }).attr('style', style)
         symbolDiv.mouseenter(function () {
             viewer.symbolViewer.mouseEnterLayerDiv($(this))
         })
 
         symbolDiv.appendTo(a)
+    }
+
+    _mergeTokens(list1, list2) {
+        let adding = []
+        list2.forEach(function (t2) {
+            const res1 = list1.filter(t1 => t1[0] == t2[0])
+            if (!res1.length) adding.push(t2)
+        })
+        if (adding.length)
+            return list1.concat(adding)
+        else
+            return list1
+    }
+
+    // Show Text layer content with Copy button
+    _showLayerTextContent(layer, decRes) {
+        if (layer.tx == undefined || layer.tx == "") return ""
+        let info = ""
+
+        info += `
+                <hr>
+                <div class='block'>
+                <div class='label'>Text Content&nbsp;<button onclick = "copyToBuffer('sv_content')">Copy</button>`
+        let afterContent = ""
+        let cssClass = ""
+        if (decRes && decRes.styles["font-family"].startsWith("Font Awesome 5")) {
+            cssClass += "icon "
+            if (decRes.styles["font-weight"] != "400") cssClass += "solid "
+            const codeText = layer.tx.codePointAt(0).toString(16)
+            afterContent = "Unicode: " + codeText
+            info += `<button onclick = "showFAIconInfo('` + codeText + `')">Info</button>`
+        } else {
+            cssClass += "code value"
+        }
+        info += `</div ><div id='sv_content' class="` + cssClass + `">` + layer.tx + "</div>"
+        if (afterContent != "") {
+            info += "<div  class='code value'>" + afterContent + "</div>"
+        }
+        info += "</div>"
+
+        return info
+    }
+
+    _showLayerSymbol(layer, symName, siLayer) {
+        if (undefined == symName) return ""
+        let categoryName = viewer.figma ? "Figma component" : "Sketch Symbol"
+        // Drop path to icon, leave only name
+        const iconTagPos = symName.indexOf(ICON_TAG)
+        if (iconTagPos >= 0) {
+            symName = symName.substring(iconTagPos).replace(ICON_TAG, ICON_TAG2)
+            categoryName = "Icon"
+        }
+        //
+        let info = "<hr>" +
+            "<div class='block'>" +
+            "<div class='label'>" + categoryName + "</div>" +
+            "<div class='value'>" + symName + "</div>"
+        const libName = layer.b != undefined ? (layer.b + " (external)") :
+            (siLayer && siLayer.b ? siLayer.b + " (external)" : "Document")
+        info += "<div style='font-size:12px; color:var(--color-secondary)'>" + libName + "</div></div>"
+        return this._showExtDocRef(layer, symName, siLayer) + info
+    }
+
+    _showExtDocRef(layer, symName, siLayer) {
+        const emptyRes = ""
+        if (this.docLinkAdded) return emptyRes
+        if (undefined == layer.b && (undefined == siLayer || undefined == siLayer.b)) return emptyRes
+        //
+        let href = undefined
+        let name = ""
+        let parts = symName.split("/")
+
+        const libName = layer.b ? layer.b : siLayer.b
+        //  check if library has a dictionary file
+        if (!(libName in SYMBOLS_DICT)) return emptyRes
+
+        const attrs = SYMBOLS_DICT[libName].attrs
+        // check if dictionary file has attrs defined
+        if (undefined == attrs) return emptyRes
+
+        while (parts.length) {
+            name = parts.join("/")
+            if (name in attrs) {
+                href = attrs[name]["ext-doc-href"]
+                if (undefined != href) {
+                    break
+                }
+            }
+            parts.pop()
+        }
+        if (!href) return emptyRes
+        //        
+        if (href.toLowerCase().includes("experimental") && !name.toLowerCase().includes("experimental")) name += "-EXPERIMENTAL"
+        this.docLinkAdded = true
+        return `
+                <hr>
+                <div class="block">
+                    <div class="label">Documentation</div>
+                    <div style="value"><a href="${href}" target="_blank">${name}</a></div>
+                </div>`
+    }
+
+    _showLayerComment(layer) {
+        var comment = layer.comment
+        if (undefined == comment) return ""
+
+        return `
+                <hr>
+                <div class="block">
+                    <div class="label">Comment</div>
+                    <div style="value">${comment}</div>
+                </div>`
+    }
+
+    _showLayerImage(layer) {
+        let info = ""
+        const url = layer.iu
+        info += `
+                <hr>
+                <div class='block'>
+                <div class='label'>Image Content&nbsp;<a class="svlink" href="`+ url + `">Download</a>`
+        let cssClass = "code value"
+        const width = "100%" //viewer.defSidebarWidth - 40
+        info += `</div ><div id='sv_content' class="` + cssClass + `"><img ` + `width="` + width + `" src="` + url + `"/></div>`
+        return info
+    }
+
+    // siLayer: parent symbol 
+    _showLayerStyle(layer, siLayer) {
+        if (undefined == layer.l) return ""
+
+        let info = ""
+        let styleName = layer.l
+        const libName = layer.b != undefined ? (layer.b + " (external)") :
+            (siLayer ? siLayer.b + " (external)" : "Document")
+
+        info = `<hr>
+                <div class='block'>
+                    <div class='label'>${viewer.figma ? "Figma Style" : "Sketch Style"}</div>
+                    <div class='value'>${styleName}</div>
+                    <div style='font-size:12px; color:var(--color-secondary)'>${libName}</div>
+                </div>`
+
+        return this._showExtDocRef(layer, styleName, siLayer) + info
+    }
+
+    _showLayerDimensions(layer) {
+        let info = ""
+
+        var frameX = layer.finalX
+        var frameY = layer.finalY
+        var frameWidth = layer.w
+        var frameHeight = layer.h
+
+        info += "<hr>" +
+            "<div class='block twoColumn'>" +
+            "<div>" +
+            "<span class='label'>" + "X: </span>" + Math.round(frameX) + "px" +
+            "</div>" +
+            "<div>" +
+            "<span class='label'>" + "Y: </span>" + Math.round(frameY) + "px" +
+            "</div>" +
+            "</div>"
+
+        info += "<div class='block twoColumn'>" +
+            "<div>" +
+            "<span class='label'>" + "Width: </span>" + Math.round(frameWidth) + "px" +
+            "</div>" +
+            "<div>" +
+            "<span class='label'>" + "Height: </span>" + Math.round(frameHeight) + "px" +
+            "</div>" +
+            "</div>"
+        return info
     }
 
     setSelected(event = null, layer = null, a = null, force = false) {
@@ -524,10 +651,11 @@ class SymbolViewer extends AbstractViewer {
 
     findOtherSelection(click, layers, foundLayers) {
         if (null == layers) layers = layersData[this.pageIndex].c
+
         if (undefined == layers) return
         for (var l of layers.slice().reverse()) {
-
-            if (SUPPORT_TYPES.indexOf(l.tp) >= 0 && !l.hd) {
+            if ((!this.showSymbols || l.s != undefined) &&
+                SUPPORT_TYPES.indexOf(l.tp) >= 0 && !l.hd) {
                 if (click.x >= l.finalX && click.x <= (l.finalX + l.w) && click.y >= l.finalY && click.y <= (l.finalY + l.h)) {
                     foundLayers.push(l)
                 }
@@ -723,40 +851,64 @@ class SymbolViewer extends AbstractViewer {
 
         result += "<hr>" +
             "<div class='block'>" +
-            "<div class='label'>Styles" +
+            "<div class='label'>CSS Styles" +
             (1 == story.fontSizeFormat ? " (font size adjusted for Linux)" : "") +
             "</div > " +
             "<div class='value code'>"
 
+        // Decorate styles already described in CSS 
         css.split("\n").forEach(line => {
             if ("" == line) return
             const props = line.split(": ", 2)
             if (!props.length) return
             const styleName = props[0]
             const styleValue = props[1].slice(0, -1)
-            result += "" + styleName + ": "
-            result += "<span class='tokenName'>"
-            //
+
+            result += this._decorateCSSOneStyle(tokens, layer, siLayer, styleName, styleValue)
             styles[styleName] = styleValue
-            //
-            if (layer.cv && "color" == styleName) {
-                // get token for color variable
-                const tokens = this._findSwatchTokens(layer.cv)
-                if (tokens) {
-                    const tokenStr = this._decorateSwatchToken(tokens, styleValue)
-                    result += tokenStr != "" ? tokenStr : (styleValue + ";")
-                }
-            } else {
-                const tokenStr = tokens != null ? this._decorateStyleToken(styleName, tokens, siLayer, styleValue) : ""
-                result += tokenStr != "" ? tokenStr : (this._formatStyleValue(styleName, styleValue) + ";")
-            }
-            //
-            result += "</span>"
-            result += "<br/>"
+
         }, this);
+        // Decorate non-CSS common styles
+        result += this._decorateCSSOtherTokens(tokens, layer, siLayer)
+
 
         result += "</div></div>"
         return { "css": result, "styles": styles }
+    }
+
+
+    _decorateCSSOneStyle(tokens, layer, siLayer, styleName, styleValue) {
+        let result = ""
+        result += "" + styleName + ": "
+        result += "<span class='tokenName'>"
+        //
+        let cvTokens = null
+        if (layer.cv && "color" == styleName) {
+            // get token for color variable
+            cvTokens = this._findSwatchTokens(layer.cv)
+            if (cvTokens) {
+                const tokenStr = this._decorateSwatchToken(cvTokens, styleValue)
+                result += tokenStr != "" ? tokenStr : (styleValue + ";")
+            }
+        }
+        if (null == cvTokens) {
+            const tokenStr = tokens != null ? this._decorateStyleToken(styleName, tokens, siLayer, styleValue) : ""
+            result += tokenStr != "" ? tokenStr : (this._formatStyleValue(styleName, styleValue) + ";")
+        }
+        //
+        result += "</span>"
+        result += "<br/>"
+        return result
+    }
+
+    _decorateCSSOtherTokens(tokens, layer, siLayer) {
+        if (null == tokens) return ""
+        let result = ""
+        const knownOtherStyles = ["width", "height"]
+        tokens.filter(t => knownOtherStyles.indexOf(t[0]) >= 0 || t[0].startsWith("margin") || t[0].startsWith("padding")).forEach(function (token) {
+            result += this._decorateCSSOneStyle(tokens, layer, siLayer, token[0], token[1])
+        }, this)
+        return result
     }
 
     _decorateSwatchToken(tokens, styleValue) {
@@ -776,6 +928,8 @@ class SymbolViewer extends AbstractViewer {
         //
         if (finalTokenInfo)
             return finalTokenInfo[0] + ";</span><span class='tokenValue'>//" + this._formatStyleValue(style, finalTokenInfo[1])
+        else if (foundTokens[0].length == 3)
+            return tokenName + ";</span><span class='tokenValue'>//" + foundTokens[0][2]
         else
             return ""
     }

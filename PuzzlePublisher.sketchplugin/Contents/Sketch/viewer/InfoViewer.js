@@ -3,8 +3,8 @@ function getVersionInfoRequest() {
     if (resp.readyState == resp.DONE) {
         if (resp.status == 200 && resp.responseText != null) {
             const data = JSON.parse(resp.responseText)
-            if (undefined != data['time']) {
-                viewer.versionViewer._loadData(data);
+            if (undefined != data['recs']) {
+                viewer.infoViewer._loadData(data);
                 return true
             }
         }
@@ -14,25 +14,38 @@ function getVersionInfoRequest() {
 }
 
 
-class VersionViewer extends AbstractViewer {
+class infoViewer extends AbstractViewer {
     constructor() {
         super()
         this.screenDiffs = []
         this.mode = 'diff'
+        this.published = story.docVersion != 'V_V_V'
+        this.currentRec = null
     }
 
     initialize(force = false) {
         if (!force && this.inited) return
 
-        // init document common data here
-        this._showLoadingMessage()
-        this._askServerTools();
+        // init document common data here        
+        this._showStatic()
+        if (this.published) {
+            this._showLoadingMessage()
+            this._askServerTools();
+        }
 
         this.inited = true
+
+    }
+
+    goToVersion(recIndex) {
+        const rec = this.data['recs'][recIndex]
+        const newURL = rec['url'] + '?' + encodeURIComponent(viewer.currentPage.getHash())
+        window.open(newURL, "_self");
     }
 
 
-    goTo(pageIndex) {
+    goToScreen(recIndex, screenIndex, pageIndex) {
+        this.currentRec = this.data['recs'][recIndex]
         viewer.goToPage(pageIndex)
     }
 
@@ -47,7 +60,7 @@ class VersionViewer extends AbstractViewer {
         if (posMode >= modes.length) posMode = 0
 
         modes.forEach(function (mode, pos) {
-            var radio = $("#version_viewer_mode_" + mode)
+            var radio = $("#info_viewer_mode_" + mode)
             radio.prop('checked', pos == posMode)
         }, this)
 
@@ -60,7 +73,8 @@ class VersionViewer extends AbstractViewer {
 
     _hideSelf() {
         this._restoreNewImages()
-        $('#version_viewer').addClass("hidden")
+        $('#info_viewer').addClass("hidden")
+        $('info_viewer_options').addClass("hidden")
         if (document.location.search.includes('v')) {
             document.location.search = "" // remove ?v
         }
@@ -71,10 +85,11 @@ class VersionViewer extends AbstractViewer {
 
         var disabled = !this.screenDiffs[viewer.currentPage.getHash()]
 
-        $("#version_viewer_mode_diff").prop('disabled', disabled);
-        $("#version_viewer_mode_new").prop('disabled', disabled);
-        $("#version_viewer_mode_prev").prop('disabled', disabled);
+        $("#info_viewer_mode_diff").prop('disabled', disabled);
+        $("#info_viewer_mode_new").prop('disabled', disabled);
+        $("#info_viewer_mode_prev").prop('disabled', disabled);
         if (disabled) return
+        $('#info_viewer_options').removeClass("hidden")
 
         this._showCurrentPageDiffs()
     }
@@ -117,6 +132,23 @@ class VersionViewer extends AbstractViewer {
         return true
     }
 
+    showRecDetails(index, forNew) {
+        const rec = this.data['recs'][index]
+        if (!rec) return
+        ///
+        const div = $("#info_viewer .record ." + (forNew ? 'n' : 'u') + "screens#" + index)
+        if (!div) return
+        div.html("")
+        var info = ""
+        ///
+        if (rec.isVisible) {
+            rec.isVisible = false
+        } else {
+            info += this._showScreens(rec, index, forNew)
+            rec.isVisible = true
+        }
+        div.html(info)
+    }
     /////////////////////////////////////////////////
 
     _restoreNewImages() {
@@ -126,9 +158,10 @@ class VersionViewer extends AbstractViewer {
 
     }
 
-    _showScreens(data, showNew) {
+
+    _showScreens(rec, recIndex, showNew) {
         var info = "";
-        for (const screen of data['screens_changed']) {
+        for (const [screenIndex, screen] of rec['screens_changed'].entries()) {
             if (screen['is_new'] != showNew) continue;
             const pageIndex = viewer.getPageIndex(screen['screen_name'], -1)
             const page = pageIndex >= 0 ? story.pages[pageIndex] : undefined
@@ -142,11 +175,14 @@ class VersionViewer extends AbstractViewer {
                 this.screenDiffs[screen['screen_name']] = screen
             }
 
-            info += "<div class='version-screen-div' onclick='viewer.versionViewer.goTo(" + pageIndex + ")'>";
+            info += "<div class='version-screen-div' onclick='viewer.infoViewer.goToScreen(" + recIndex + "," + screenIndex + "," + pageIndex + ")'>";
             info += "<div>";
             info += pageName;
             info += "</div><div>";
-            info += "<img src='" + screen['image_url'] + "' border='0'/>";
+            if (showNew)
+                info += "<img src='" + screen['image_url'] + "' border='0' width='360px'/>";
+            else
+                info += "<img src='" + rec['journals_path'] + '/' + rec['dir'] + "/diffs/" + screen['screen_name'] + "." + story.fileType + "' border='0' width='360px'/>";
             info += "</div>";
             info += "</div>";
         }
@@ -155,21 +191,21 @@ class VersionViewer extends AbstractViewer {
 
 
     _showCurrentPageDiffs() {
-        const data = this.data
+        const data = this.currentRec
         const page = viewer.currentPage
         if (!page || !data) return false
 
         const screen = this.screenDiffs[page.getHash()]
         if (!screen) return false
 
-        this.mode = $("#version_viewer_mode_diff").prop('checked') ? 'diff' : ($("#version_viewer_mode_prev").prop('checked') ? 'prev' : 'new')
+        this.mode = $("#info_viewer_mode_diff").prop('checked') ? 'diff' : ($("#info_viewer_mode_prev").prop('checked') ? 'prev' : 'new')
         var newSrc = ''
 
         // save original image srcs
         if (!page.srcImageObjSrc) page.srcImageObjSrc = page.imageObj.attr("src")
 
         if ('diff' == this.mode) {
-            newSrc = data['journals_path'] + '/' + data['dir'] + "/diffs/" + screen['screen_name'] + (story.hasRetina && viewer.isHighDensityDisplay() ? "@2x" : "") + "." + story.fileType
+            newSrc = data['journals_path'] + '/' + data['dir'] + "/diffs/" + screen['screen_name'] + "." + story.fileType
         } else if ('new' == this.mode) {
             if (page.imageObj.attr("src") != page.srcImageObjSrc) {
                 newSrc = page.srcImageObjSrc
@@ -183,26 +219,48 @@ class VersionViewer extends AbstractViewer {
         return true
     }
 
+    _showStatic() {
+        var info = ""
+
+        if (story.ownerEmail != '') {
+            info += `<div class="head" style="font-weight:bold;"><div class="tooltip">Owner: ${story.ownerName}<span class="tooltiptext">${story.ownerEmail}</span></div></div>`
+        } else {
+            info += "Unknown"
+        }
+        info += `<div id = "info_viewer_content_dynamic"/>`
+
+        $("#info_viewer_content").html(info)
+    }
+
     _loadData(data) {
         var info = ""
+
+        info += `<div id="title" style="font-weight:bold;">Changes</div>`
+
+        data['recs'].forEach(function (rec, index) {
+            var authorHTML = undefined != rec['email'] ? `<div class="tooltip">by ${rec['author']}<span class="tooltiptext">${rec['email']}</span></div>` : rec['author']
+            info += `
+            <div class="record">
+                <div class="ver"><a href="#" onclick="viewer.infoViewer.goToVersion(${index})">#${rec['ver']}</a> ${new Date(rec['time'] * 1000).toLocaleDateString()} ${authorHTML}</div>
+                <div class="message">${rec['message'].replaceAll('--NOTELE', '')}</div>
+                <div class="info">
+            `
+            if (rec['screens_total_new']) {
+                info += `Added: <a href="#" onclick="viewer.infoViewer.showRecDetails(${index},true)">${rec['screens_total_new']} screen(s)</a>`
+                info += `<div class="nscreens" id="${index}"/>`
+            }
+            if (rec['screens_total_changed']) {
+                info += `Updated: <a href="#" onclick="viewer.infoViewer.showRecDetails(${index},false)">${rec['screens_total_changed']} screen(s)</a>`
+                info += `<div class="uscreens" id="${index}"/>`
+            }
+            if (!rec['screens_total_new'] && !rec['screens_total_changed']) {
+                info += "No visual changes"
+            }
+            info += `</div></div>`
+        }, this)
+
         this.data = data
-        this.screenDiffs = {}
-
-        if (data['screens_total_new']) {
-            info += "<p class='head'>Added screens (" + data['screens_total_new'] + "):</p>";
-            info += this._showScreens(data, true);
-        }
-        if (data['screens_total_changed']) {
-            info += "<p class='head'>Changed screens (" + data['screens_total_changed'] + ")</p>";
-            info += this._showScreens(data, false);
-        }
-        if (!data['screens_total_new'] && !data['screens_total_changed']) {
-            info += "No new or changed screens"
-        }
-
-        this.pageChanged()
-
-        $("#version_viewer_content").html(info)
+        $("#info_viewer_content_dynamic").html(info)
     }
 
     _askServerTools() {
@@ -215,13 +273,12 @@ class VersionViewer extends AbstractViewer {
 
     _showSelf() {
         if (!this.inited) this.initialize()
-        $('#version_viewer').removeClass("hidden")
+        $('#info_viewer').removeClass("hidden")
 
         super._showSelf()
     }
 
     _showLoadingMessage() {
-        $("#version_viewer_content").html("Loading...")
-        $('#version_viewer #empty').removeClass("hidden")
+        $("#info_viewer_content_dynamic").html("Loading...")
     }
 }

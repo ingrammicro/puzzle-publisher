@@ -25,11 +25,11 @@ class Publisher {
         this.ver = ''
         this.remoteFolder = ''
 
-        this.allMockupsdDir = this.Settings.settingForKey(SettingKeys.PLUGIN_EXPORTING_URL)
-        this.serverToolsPath = this.Settings.settingForKey(SettingKeys.PLUGIN_SERVERTOOLS_PATH) + ""
-        this.authorName = this.Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_NAME) + ""
-        this.authorEmail = this.Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_EMAIL) + ""
-        this.commentsURL = this.Settings.settingForKey(SettingKeys.PLUGIN_COMMENTS_URL) + ""
+        this.allMockupsdDir = Utils.getPluginSetting(SettingKeys.PLUGIN_EXPORTING_URL, '1')
+        this.serverToolsPath = Utils.getPluginSetting(SettingKeys.PLUGIN_SERVERTOOLS_PATH)
+        this.authorName = Utils.getPluginSetting(SettingKeys.PLUGIN_AUTHOR_NAME)
+        this.authorEmail = Utils.getPluginSetting(SettingKeys.PLUGIN_AUTHOR_EMAIL)
+        this.commentsURL = Utils.getPluginSetting(SettingKeys.PLUGIN_COMMENTS_URL)
 
         this.docFolder = this.doc.cloudName();
         let posSketch = this.docFolder.indexOf(".sketch")
@@ -42,10 +42,10 @@ class Publisher {
 
         this.story = null
         this.mockupsPath = this.allMockupsdDir + "/" + this.docFolder
-        this.fullImagesPath = this.allMockupsdDir + "/" + this.docFolder + Constants.FULLIMAGES_DIRPOSTFIX;
-        this.miroExportInfoList = []
+        this.fullImagesPath = this.mockupsPath + "/" + Constants.IMAGES_DIRECTORY + Constants.FULLIMAGE_DIRECTORY
 
-        this.readOptions()
+        this.miroExportInfoList = []
+        this.miroEnabled = null
     }
 
 
@@ -71,14 +71,17 @@ class Publisher {
         this.remoteFolder = Settings.documentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_REMOTE_FOLDER)
         if (this.remoteFolder == undefined || this.remoteFolder == null) this.remoteFolder = ''
 
-        this.miroBoard = Settings.documentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_MIRO_BOARD)
-        if (this.miroBoard == undefined || this.miroBoard == null) this.miroBoard = ''
-
-        this.miroEmail = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_MIRO_EMAIL)
-        if (this.miroEmail == undefined || this.miroEmail == null) this.miroEmail = ''
-
-        this.miroPassword = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_MIRO_PASSWORD)
-        if (this.miroPassword == undefined || this.miroPassword == null) this.miroPassword = ''
+        this.miroEnabled = null == this.miroEnabled ? Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_MIRO_ENABLED) == 1 : this.miroEnabled
+        this.miroBoards = null
+        if (this.miroEnabled) {
+            this.miroBoardName = Utils.getDocSetting(this.doc, SettingKeys.DOC_PUBLISH_MIRO_BOARD)
+            this.oldMiroBoardName = this.miroBoardName
+            this.miroBoardID = Utils.getDocSetting(this.doc, SettingKeys.DOC_PUBLISH_MIRO_BOARDID)
+            if (("" == this.miroBoardID || "" == this.miroBoardName) && (this.miroBoardID + this.miroBoardName) != '') {
+                this._initMiro()
+                this._validateMiroParams()
+            }
+        }
 
         this.authorName = Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_NAME)
         if (this.authorName == undefined || this.authorName == '') this.authorName = 'None'
@@ -88,6 +91,9 @@ class Publisher {
         this.commentsURL = Settings.settingForKey(SettingKeys.PLUGIN_COMMENTS_URL)
         if (this.commentsURL == undefined) this.commentsURL = ''
 
+        ///        
+        //
+        return true
     }
 
     log(msg) {
@@ -95,6 +101,7 @@ class Publisher {
     }
 
     publish() {
+        this.readOptions()
 
         // Show this.UI
         if (!this.context.fromCmd) {
@@ -116,7 +123,7 @@ class Publisher {
         }
 
         // 
-        if (this.miroEmail != "" && this.miroBoard != "") {
+        if (this.miroEnabled && this.miroBoardID != "") {
             this.publishToMiro()
         }
 
@@ -145,11 +152,12 @@ class Publisher {
                 try {
                     var url = this.siteRoot + this.serverToolsPath + Constants.SERVER_ANNOUNCE_SCRIPT
                     url += "?author=" + encodeURI(this.authorName).replace(/[#]/g, '')
+                    if ("" != this.authorEmail) url += "&email=" + encodeURI(this.authorEmail).replace(/[#]/g, '')
                     if ("" != this.secret) url += "&sec=" + encodeURI(this.secret).replace(/[#]/g, '')
                     url += "&msg=" + encodeURI(this.message).replace(/[#]/g, '')
                     url += "&ver=" + encodeURI(this.ver).replace(/[#]/g, '')
                     url += "&dir=" + encodeURI(announceFolder).replace(/[#]/g, '')
-                    if ('--NOTELE' == this.message) {
+                    if (this.message.includes('--NOTELE')) {
                         url += "&NOTELE=1"
                     }
                     if (DEBUG) {
@@ -169,6 +177,7 @@ class Publisher {
                 // open browser                
                 if (this.siteRoot != '') {
                     const openResult = Utils.runCommand('/usr/bin/open', [openURL])
+                    log(" OPENING PUBLISHED PAGE...")
                     if (openResult.result) {
                     } else {
                         this.UI.alert('Can not open HTML in browser', openResult.output)
@@ -185,44 +194,15 @@ class Publisher {
     }
 
     publishToMiro(standalone = false) {
-
+        if (standalone) {
+            this.miroEnabled = true
+            this.readOptions()
+        }
         if (standalone && !this.askMiroOptions()) return false
 
+
         try {
-
-            let miroBoard = this.miroBoard
             log("publishToMiro: start")
-
-            //  Get token
-            var token = api.getToken();
-            if (!token) return false
-            log("publishToMiro: got token")
-
-            // Get request
-            var response = api.authCheckRequest(this.context);
-            if (response) {
-                if (response.success == 1) {
-
-                } else if (response.error && response.error.code == 401) {
-                    api.setToken(nil);
-                    log(response.error)
-                    this.UI.alert('Error', "Can not publish to Miro")
-                    return false
-                } else {
-                    dealWithErrors(context, 'Something went wrong.');
-                    return false
-                }
-            }
-            log("publishToMiro: established connect")
-
-            // Get board ID
-            const boards = api.getBoards()
-            const found = boards.find(el => el.title == miroBoard)
-            if (!found) {
-                this.UI.alert('Error', "Can not find '" + miroBoard + "' board in Miro")
-                return false
-            }
-            const boardId = found['boardId']
 
             // Load story.js file and eval it
             const storyPath = this.mockupsPath + "/viewer/story.js"
@@ -242,15 +222,15 @@ class Publisher {
             this.miroExportInfoList = this.getArtboardsListForMiro()
 
             // Publish        
-            log("publishToMiro: strart publishing")
-            const result = api.uploadArtboardsToRTB(this.context, boardId, true)
+            log("publishToMiro: start publishing")
+            const result = api.uploadArtboardsToRTB(this.context, this.miroBoardID, true)
             if (result != api.UploadEnum.SUCCESS) {
                 throw "Failed to publish"
             }
 
             // Show in browser
             if (standalone) {
-                var fullBoardURL = boardURL + boardId;
+                var fullBoardURL = boardURL + this.miroBoardID;
                 const openResult = Utils.runCommand('/usr/bin/open', [fullBoardURL])
                 if (openResult.result) {
                 } else {
@@ -265,7 +245,6 @@ class Publisher {
         finally {
             log("publishToMiro: done")
         }
-
     }
 
 
@@ -312,6 +291,7 @@ class Publisher {
     }
 
     checkOptions() {
+
         if (this.ver == '') {
             this.UI.alert('Error', 'Version should be specified')
             return false
@@ -334,7 +314,7 @@ class Publisher {
         let askLogin = '' == this.login
         let askSiteRoot = '' == this.siteRoot
         let askMessage = '' != this.serverToolsPath
-        let askMiro = '' != this.miroEmail
+        let askMiro = this.miroEnabled
 
         // show dialod        
         const dialog = new UIDialog("Publish HTML", NSMakeRect(0, 0, 400,
@@ -365,7 +345,6 @@ class Publisher {
 
         if (askMiro) {
             this.addMiroBoardSelector(dialog, 350, " (optional)")
-            //dialog.addTextInput("miroBoard", "Miro board", this.miroBoard, 'Board name (optional)', 350)
         }
 
 
@@ -377,6 +356,8 @@ class Publisher {
                 return false
             }
 
+            // Read data
+
             if (askLogin) {
                 this.login = dialog.views['login'].stringValue() + ""
             }
@@ -385,7 +366,7 @@ class Publisher {
                 this.siteRoot = dialog.views['siteRoot'].stringValue() + ""
             }
             if (askMiro) {
-                this.miroBoard = dialog.views['miroBoard'].stringValue() + ""
+                this.miroBoardName = dialog.views['miroBoard'].stringValue() + ""
             }
 
             this.remoteFolder = dialog.views['remoteFolder'].stringValue() + ""
@@ -399,19 +380,28 @@ class Publisher {
             this.ver = ver
 
             // check data
+            if (askMiro) {
+                if ("" == this.miroBoardName) {
+                    // Set empty board
+                    this.miroBoardID = ""
+                    this.miroBoardIndex = -1
+                } else if (this.oldMiroBoardName != this.miroBoardName) {
+                    // Change name
+
+                    // load Miro boards to find the new ID
+                    if (!this._initMiro()) return false
+                    this.miroBoardIndex = this.miroBoards.boards.indexOf(this.miroBoardName)
+                    this.miroBoardID = this.miroBoardIndex >= 0 ? this.miroBoards.indexIdsMap[this.miroBoardIndex] : ""
+                }
+                if ("" != this.miroBoardName && "" == this.miroBoardID) {
+                    this.UI.alert("Error", "No such board in Miro")
+                    continue
+                }
+            }
             if ('' == this.remoteFolder) continue
             if ('' == this.ver) continue
             if (askMessage && '' == this.message) continue
 
-            if (askMiro && this.miroBoard != '') {
-                // Check board
-                const boards = api.getBoards()
-                const found = boards.find(el => el.title == this.miroBoard)
-                if (!found) {
-                    UI.alert("Error", "No such board in Miro")
-                    continue
-                }
-            }
 
             dialog.finish()
             track(TRACK_PUBLISH_DIALOG_CLOSED, { "cmd": "ok" })
@@ -420,7 +410,8 @@ class Publisher {
                 Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_SITEROOT, this.siteRoot)
             }
             if (askMiro) {
-                Settings.setDocumentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_MIRO_BOARD, this.miroBoard)
+                Settings.setDocumentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_MIRO_BOARDID, this.miroBoardID)
+                Settings.setDocumentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_MIRO_BOARD, this.miroBoardName)
             }
 
             Settings.setDocumentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_REMOTE_FOLDER, this.remoteFolder)
@@ -431,71 +422,34 @@ class Publisher {
     }
 
     askMiroOptions() {
-        let Settings = this.Settings
+        if (!this._initMiro() || !this._validateMiroParams()) return false
 
-        let askCreds = '' == this.miroEmail || '' == this.miroPassword
+        const dialog = new UIDialog("Select Miro Board ", NSMakeRect(0, 0, 350, 60), "Select", "Previously exported pages will be uploaded to Miro whiteboard as images")
+        dialog.removeLeftColumn()
+        dialog.addSelect("miroBoard", "", this.miroBoardIndex, this.miroBoards.boards, 350)
 
-        // show dialog        
-        const dialog = new UIDialog("Publish to Miro", NSMakeRect(0, 0, 600,
-            60 + (askCreds ? 120 : 0)),
-            "Publish", "Previously exported pages will be uploaded to Miro whiteboard as images")
-
-        if (askCreds) {
-            dialog.addLeftLabel("", "Miro Credentials", 40)
-            dialog.addTextInput("miroEmail", "Email", this.miroEmail, 'user@gmail.com', 350)
-            dialog.addSecureTextInput("miroPassword", "Password", this.miroPassword, '', 350)
-            dialog.addDivider()
-        } else {
-            dialog.removeLeftColumn()
-        }
-        if (askCreds) {
-            dialog.addLeftLabel("", "Publish to", 40)
-        }
-        this.addMiroBoardSelector(dialog)
-
-        track(TRACK_PUBLISH_MIRO_DIALOG_SHOWN)
         while (true) {
             const result = dialog.run()
             if (!result) {
-                track(TRACK_PUBLISH_MIRO_DIALOG_CLOSED, { "cmd": "cancel" })
                 return false
             }
-            if (askCreds) {
-                this.miroEmail = dialog.views['miroEmail'].stringValue() + ""
-                this.miroPassword = dialog.views['miroPassword'].stringValue() + ""
-                if ('' == this.miroEmail || '' == this.miroPassword) {
-                    this.UI.alert("Error", "Both Miro email and password should be specified")
-                    continue
-                }
-            }
-            this.miroBoard = dialog.views['miroBoard'].stringValue() + ""
-            if ('' == this.miroBoard) {
-                this.UI.alert("Error", "Miro board should be specified")
+            const miroBoardIndex = dialog.views['miroBoard'].indexOfSelectedItem()
+            if (0 > miroBoardIndex) {
+                publisher.UI.alert("Error", "Miro board should be specified")
                 continue
             }
-
-            // Test connection
-            if (!Utils.testMiro(this.context, this.miroEmail, this.miroPassword)) {
+            let miroBoardID = this.miroBoards.indexIdsMap[miroBoardIndex]
+            if ("" == miroBoardID) {
+                publisher.UI.alert("Error", "Miro board should be specified")
                 continue
             }
-
-            // Check board
-            const boards = api.getBoards()
-            const found = boards.find(el => el.title == this.miroBoard)
-            if (!found) {
-                this.UI.alert("Error", "No such board in Miro")
-                continue
-            }
+            this.miroBoardID = miroBoardID
 
             dialog.finish()
-            track(TRACK_PUBLISH_MIRO_DIALOG_CLOSED, { "cmd": "ok" })
-
             // save 
-            if (askCreds) {
-                Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_MIRO_EMAIL, this.miroEmail)
-                Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_MIRO_PASSWORD, this.miroPassword)
-            }
-            Settings.setDocumentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_MIRO_BOARD, this.miroBoard)
+            this.Settings.setDocumentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_MIRO_BOARDID, this.miroBoardID)
+            if (this.oldMiroBoardName != "") this.Settings.setDocumentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_MIRO_BOARD, "")
+
             return true
         }
         return false
@@ -507,23 +461,19 @@ class Publisher {
 
         const input = dialog.addPathInput({
             id: "miroBoard", label: "Miro board", labelSelect: "Select",
-            textValue: this.miroBoard,
+            textValue: this.miroBoardName,
             inlineHint: 'Board name' + inlineHintPostfix, width,
             customHandler: function () {
+                if (!publisher._initMiro()) return false
+
                 const dialog = new UIDialog("Select Miro Board ", NSMakeRect(0, 0, 350, 60), "Select")
                 dialog.removeLeftColumn()
 
-
                 const currentBoard = input.stringValue() + ""
-                const options = Utils.getMiroBoardsGroupedByProject()
-                if (null == options) {
-                    publisher.UI.alert("Error", "Can not get board list from Miro. Please resubmit Miro creds in Condigure Publishing.")
-                    return false
-                }
-                let currentBoardIndex = currentBoard != "" ? options.indexOf(currentBoard) : 0
-                //if (currentBoardIndex < 0) currentBoardIndex = 0
+                let currentBoardIndex = currentBoard != "" ? publisher.miroBoards.boards.indexOf(currentBoard) : 0
+                if (currentBoardIndex < 0) currentBoardIndex = 0
 
-                dialog.addSelect("miroBoard", "", currentBoardIndex, options, 350)
+                dialog.addSelect("miroBoard", "", currentBoardIndex, publisher.miroBoards.boards, 350)
 
                 while (true) {
                     const result = dialog.run()
@@ -535,7 +485,7 @@ class Publisher {
                         publisher.UI.alert("Error", "Miro board should be specified")
                         continue
                     }
-                    input.setStringValue(options[miroBoardIndex])
+                    input.setStringValue(publisher.miroBoards.boards[miroBoardIndex])
 
                     dialog.finish()
                     // save 
@@ -556,7 +506,6 @@ class Publisher {
         //args.push(Constants.MIRROR2)        
         return this.runScriptWithArgs("publish.sh", args)
     }
-
 
     runScriptWithArgs(scriptName, args) {
         const scriptPath = this.allMockupsdDir + "/" + scriptName
@@ -607,6 +556,65 @@ class Publisher {
         return true
     }
 
+    _initMiro() {
+        log("_initMiro")
+        if (null != this.miroBoards) return true
+        // Get request
+        log("_initMiro start")
+        var response = api.authCheckRequest(this.context);
+        if (response) {
+            if (response.success == 1) {
+            } else if (response.error && response.error.code == 401) {
+                api.setToken(nil);
+                log(response.error)
+                response = null
+            } else {
+                response = null
+            }
+        }
+        if (!response) {
+            this.UI.alert("Error", "You need to log into Miro using Miro plugin\n\nhttps://github.com/miroapp/sketch_plugin")
+            return false
+        } else {
+
+            this.miroBoards = Utils.getMiroBoardsGroupedByProject()
+        }
+        return true
+    }
+
+    _validateMiroParams() {
+        if (null == this.miroBoards) return true
+
+        // Find board ID for name
+        if ("" == this.miroBoardID && "" != this.miroBoardName) {
+            let index = this.miroBoards.boards.indexOf(this.miroBoardName)
+            if (index >= 0) {
+                let miroBoardID = this.miroBoards.indexIdsMap[index]
+                if (undefined == miroBoardID) miroBoardID = ""
+                this.miroBoardID = miroBoardID
+            }
+        }
+        // Find board name for ID
+        if ("" != this.miroBoardID && "" == this.miroBoardName) {
+            let index = this.miroBoards.indexIdsMap.indexOf(this.miroBoardID)
+            if (index >= 0) {
+                let miroBoardName = this.miroBoards.boards[index]
+                if (undefined == miroBoardName) miroBoardName = ""
+                this.miroBoardName = miroBoardName
+            }
+        }
+        // Reset if something is wrong
+        if ("" == this.miroBoardID || "" == this.miroBoardName) {
+            this.miroBoardID = ""
+            this.miroBoardName = ""
+        }
+
+        let currentBoardIndex = this.miroBoardID != "" ? this.miroBoards.indexIdsMap.indexOf(this.miroBoardID) : ""
+        if (currentBoardIndex < 0) currentBoardIndex = 0
+        this.miroBoardIndex = currentBoardIndex
+
+        return true
+    }
 
     _getFileURLInResourceFolder(file) {
         return this.context.plugin.url().URLByAppendingPathComponent("Contents").URLByAppendingPathComponent("Sketch").URLByAppendingPathComponent(PublishKeys.RESOURCES_FOLDER).URLByAppendingPathComponent(file)

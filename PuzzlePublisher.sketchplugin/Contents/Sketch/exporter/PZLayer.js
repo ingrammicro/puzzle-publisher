@@ -19,6 +19,8 @@ var ResizingConstraint = {
     TOP: 1 << 5
 }
 
+const ICON_TAG = " / ic-" // Use this string to find icon symbol
+
 const alignMap2 = {
     [Text.Alignment.left]: "left",
     [Text.Alignment.center]: "center",
@@ -43,6 +45,7 @@ const weights = [
     { label: 'extra-bold', sketch: 10, css: 800, title: "Extra Bold" },
     { label: 'black', sketch: 11, css: 900, title: "Black" },
     { label: 'black', sketch: 12, css: 900, title: "Black" },
+    { label: 'solid', sketch: 14, css: 900, title: "Solid" },
 ]
 
 class PZLayer {
@@ -60,7 +63,6 @@ class PZLayer {
         this.artboard = myParent ? myParent.artboard : this
         this.isParentFixed = undefined != myParent && (myParent.isFixed || myParent.isParentFixed)
 
-
         // define type    
         this.isArtboard = false
         this.isGroup = false
@@ -68,19 +70,71 @@ class PZLayer {
         this.customLink = undefined
         this.isLink = false
 
-
         if ("Group" == sLayer.type || "Artboard" == sLayer.type) this.isGroup = true
-        const targetPos = this.name.indexOf("±±")
-        if (targetPos >= 0) {
+
+        let symbolID = null
+        let targetID = null
+
+
+        // find a symbol and flow information saved before detatch()
+        if (this.isGroup && exporter.enabledJSON) {  // && "icon" != this.name) {
+
+            if (true) {
+                // WAY #3 - experimental
+                const info = this.nlayer.userInfo()
+                if (null != info) {
+                    const detach = info['com.sketch.detach']
+                    if (detach) {
+                        if (detach['symbolMaster'])
+                            symbolID = detach['symbolMaster']['symbolID']
+                        else {
+                            //log("!!!!!!!!!!!!!!!!!!!!!! no symbolMaster for " + this.name)
+                            //log(detach)
+                        }
+                    }
+                }
+            } else if (false) {
+                // WAY #1— works, but slowly
+                let tag = "±±" + this.name + "±±"
+                function findShadow(group) {)
+                    return group.layers.filter(l => l.name.startsWith(tag))[0]
+                }
+                let shadow = findShadow(sLayer.parent)
+                if (!shadow && sLayer.parent.parent.layers) shadow = findShadow(sLayer.parent.parent)
+                //
+                if (!shadow && (this.name.startsWith("ic-") || "icon" == this.name)) {
+                    tag = "±±" + "icon"
+                    shadow = findShadow(sLayer.parent)
+                    if (!shadow && sLayer.parent.parent) shadow = findShadow(sLayer.parent.parent)
+                    if (!shadow && sLayer.parent.parent.parent) shadow = findShadow(sLayer.parent.parent.parent)
+                    this.isIcon = shadow != null
+                }
+                //
+                if (shadow) {
+                    const data = shadow.name.split("±±")
+                    targetID = data[2]
+                    symbolID = data[3]
+                }
+            } else {
+                /// WAY 2 — works unstable
+                const targetPos = this.name.indexOf("±±")
+                if (targetPos >= 0) {
+                    // This layer is Symbol instance
+                    const data = this.name.substring(targetPos + 2)
+                    const symbolIDPos = data.indexOf("±±")
+                    targetID = data.substring(0, symbolIDPos)
+                    symbolID = data.substring(symbolIDPos + 2)
+                }  // END OF WAY #1
+            }
+        }
+
+        // save found symbol information
+        if (null != symbolID) {
             // This layer is Symbol instance
-            const data = this.name.substring(targetPos + 2)
-            const symbolIDPos = data.indexOf("±±")
-            const targetID = data.substring(0, symbolIDPos)
-            const symbolID = data.substring(symbolIDPos + 2)
 
             const sSymbolMaster = pzDoc.getSymbolMasterByID(symbolID)
             if (!sSymbolMaster) {
-                exporter.logMsg("PZLayer:constructor() can't find symbol master for layer=" + this.name)
+                log("PZLayer:constructor() can't find symbol master for layer=" + this.name)
             } else {
                 this.isSymbolInstance = true
                 this.targetId = targetID
@@ -113,9 +167,9 @@ class PZLayer {
                 this.text = this.slayer.text + ""
             }
             this.cv = this._getColorVariable()
-
-            this.targetId = this.slayer.flow ? this.slayer.flow.targetId : null
         }
+        this.targetId = this.slayer.flow ? this.slayer.flow.targetId : null
+
         if ("Artboard" == sLayer.type) this.isArtboard = true
 
         if (!this.isArtboard) {
@@ -144,6 +198,7 @@ class PZLayer {
             this.comment = comment
         }
 
+        /*
         // If the object is mask when we need to setup a parent group as exportable
         if (this.nlayer.hasClippingMask()) {
             if (this.parent && undefined == this.parent.imageIndex) {
@@ -155,7 +210,7 @@ class PZLayer {
             }
             sLayer.hidden = false
             this.hasClippingMask = true
-        } else if ("Image" == sLayer.type && this.nlayer.isMasked()) {
+        } else */if ("Image" == sLayer.type && this.nlayer.isMasked()) {
             // sLayer.hidden = true
             this.isMasked = true
         } else if ("Image" == sLayer.type || (("Group" == sLayer.type || "ShapePath" == sLayer.type) && undefined != sLayer.exportFormats && sLayer.exportFormats.length > 0)) {
@@ -175,7 +230,7 @@ class PZLayer {
 
         if (myParent != undefined) this.constrains = this._calculateConstrains()
 
-        if (!this.isArtboard && !exporter.disableFixedLayers && !this.isParentFixed) {
+        if (!this.isArtboard && !this.artboard.disableFixedLayers && !this.isParentFixed) {
             var overlayType = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.LAYER_OVERLAY_TYPE)
             if (undefined == overlayType || '' == overlayType)
                 overlayType = Constants.LAYER_OVERLAY_DEFAULT
@@ -218,6 +273,12 @@ class PZLayer {
             this.overlayRedirect = true
         }
 
+
+        // checl if the layer is an image symbol name and we don't want to show the child parts
+        if (this.isSymbolInstance && this.smName.startsWith("images/")) {
+            this.isImageSymbol = true
+        }
+
     }
 
     _calculateConstrains() {
@@ -242,10 +303,7 @@ class PZLayer {
         for (const sl of sLayers.filter(l => !l.hidden || l.sketchObject.hasClippingMask())) {
             //            
             const al = new PZLayer(sl, this)
-            /*
-            if (undefined != al.imageIndex) {
-            } else
-                */if (al.isGroup) al.childs = al.collectAChilds(sl.layers, space + " ")
+            if (al.isGroup && !this.isImageSymbol) al.childs = al.collectAChilds(sl.layers, space + " ")
             aLayers.push(al)
         }
         return aLayers
@@ -262,7 +320,10 @@ class PZLayer {
                 return
             }
         }
-
+        {
+            const shadowType = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.LAYER_FIXED_SHADOW_TYPE)
+            this.keepFixedShadow = shadowType != undefined && shadowType == 1
+        }
         this.isFixed = true
         this.overlayType = overlayType
         this.fixedIndex = this.artboard.fixedLayers.length
@@ -292,7 +353,7 @@ class PZLayer {
         this._processHotspots(space)
     }
 
-    getShadowAsStyle() {
+    getShadowInfo() {
         if (this.slayer.style == undefined || this.slayer.style.shadows == undefined || this.slayer.style.length == 0) return undefined
 
         let shadowInfo = undefined
@@ -312,7 +373,8 @@ class PZLayer {
             } else {
                 shadowInfo = {
                     style: shadowsStyle,
-                    x: shadow.x + shadow.blur
+                    x: shadow.x + shadow.blur,
+                    layer: this
                 }
             }
         }
@@ -422,7 +484,8 @@ class PZLayer {
     clearRefsBeforeJSON() {
         // need to cleanup temp object to allow dump it into JSON
         // but keep nlayer because Exporter.exportImage() needs it
-        //        
+        // 
+        ///
         this.x = this.frame.x
         this.y = this.frame.y
         this.w = this.frame.width
@@ -430,16 +493,22 @@ class PZLayer {
         this.s = this.smName
         this.l = this.styleName
         this.b = this.sharedLib
+        if (this.keepFixedShadow) this.ks = true
         if (this.childs.length) this.c = this.childs
         this.tp = this.isSymbolInstance ? "SI" : this.slayer.type
         if (!this.isSymbolInstance) this.n = this.name
         if (this.slayer.hidden) this.hd = true
         //
-        if ("Text" == this.slayer.type) {
+        if (this.isSymbolInstance && this.s && this.s.indexOf(ICON_TAG) > 0) {
+            //this.pr = this.parent._buildShapePropsForJSON()
+        } else if ("Text" == this.slayer.type) {
             this.pr = this._buildTextPropsForJSON()
         } else if ("ShapePath" == this.slayer.type || "Shape" == this.slayer.type) {
             this.pr = this._buildShapePropsForJSON()
             this.tp = "ShapePath"
+        } else if (this.isImageSymbol) {
+            this.tp = "ImageSymbol"
+            this.isImageSymbol = undefined
         } else if ("Image" == this.slayer.type) {
             if (this.isMasked) {
                 this.hd = true
@@ -466,6 +535,7 @@ class PZLayer {
         this.styleName = undefined
         this.sharedLib = undefined
         this.text = undefined
+        this.keepFixedShadow = undefined
         this.childs = undefined
         //
         this.tempOverrides = undefined
@@ -484,6 +554,8 @@ class PZLayer {
         this.hotspots = undefined
         this.targetId = undefined
         this.imageIndex = undefined
+        this.icpn = undefined
+        this.icpi = undefined
 
     }
 
@@ -506,9 +578,11 @@ class PZLayer {
     _getColorVariable() {
 
         const style = this.slayer.style
-        if (!style || !style.sketchObject.primitiveTextStyle()) return
-        // Try to find that color variables was used        
+        if (!style || !style.sketchObject.primitiveTextStyle()) return undefined
+
+        // Try to find that color variables was used                
         var attributes = style.sketchObject.primitiveTextStyle().attributes()
+        if (!attributes || !attributes.MSAttributedStringColorAttribute || !attributes.MSAttributedStringColorAttribute.swatchID) return undefined
         var swatchID = attributes.MSAttributedStringColorAttribute.swatchID()
         if (!swatchID) return undefined
         //

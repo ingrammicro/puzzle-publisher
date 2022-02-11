@@ -20,6 +20,9 @@ const Constants = {
     ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_CENTER: 4,
     ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_RIGHT: 5,
     ARTBOARD_OVERLAY_PIN_PAGE_CENTER: 6,
+
+    TRIGGER_ON_CLICK: 0,
+    TRIGGER_ON_HOVER: 1,
 }
 
 const EVENT_HOVER = 1
@@ -57,10 +60,7 @@ function handleAnimationEndOnShow(el) {
     t.in_classes.forEach(function (className) {
         el.target.classList.remove(className)
     })
-
 }
-
-
 
 class ViewerPage {
 
@@ -78,6 +78,8 @@ class ViewerPage {
 
         this.currentX = undefined
         this.currentY = undefined
+
+        // this.searchLayer  = undefined
 
         this.overlayByEvent = undefined
         this.tmpSrcOverlayByEvent = undefined
@@ -145,7 +147,7 @@ class ViewerPage {
     }
 
     hideCurrentOverlays() {
-        const overlays = this.currentOverlays.slice()
+        const overlays = this.currentOverlays.filter(p => p.overlayOutsideClickIgnore != true).slice()
         for (let overlay of overlays) {
             overlay.hide()
         }
@@ -186,6 +188,173 @@ class ViewerPage {
         }
         this.imageDiv.removeClass("hidden")
         this.visible = true
+    }
+
+    // result:{
+    //    foundPage: {}
+    //    foundlink: {}
+    //}
+    showOverlayOverParent() {
+        var foundPage = null
+        var foundLink = null
+        // scan all regular pages
+        story.pages.filter(page => "regular" == page.type).some(function (page) {
+            const foundLinks = page.links.filter(link => link.page != null && link.page == this.index)
+            if (foundLinks.length != 0) {
+                // return the page index which has link to modal                    
+                foundPage = page
+                foundLink = foundLinks[0]
+                return true
+            }
+            return false
+        }, this)
+        if (!foundPage) return false
+
+        // ok, we found some regular page which has a link to specified overlay        
+        viewer.goTo(foundPage.index, true);
+        foundPage.showOverlayByLinkIndex(foundLink.index)
+
+        return true
+    }
+
+    findTextNext() {
+        if (undefined == this.textElemIndex) return false
+        //
+        //this.textElemIndex++
+        this.findText(this.actualSearchText)
+    }
+
+    findText(text, interactive = true) {
+        text = text.toLowerCase().trim()
+        //        
+        if (undefined != this.actualSearchText && this.actualSearchText != text) {
+            this.textElemIndex = undefined
+            this.actualSearchText = undefined
+        }
+        if (undefined == this.textElemIndex) this.textElemIndex = 0
+
+        // Search all layers with required text inside
+        let foundLayers = []
+        this.findTextLayersByText(text, foundLayers)
+        foundLayers.sort(function (a, b) {
+            return a.y < b.y ? -1 : 1
+        })
+        //  No results
+        if (0 == foundLayers.length) {
+            if (!interactive) return false
+            const nextPage = this.findNextPageWithText(text)
+            if (!nextPage) {
+                window.alert("The text was not found")
+                return false
+            }
+            if (!window.confirm("Not found on the current page. Do you want to check other pages?")) {
+                return false
+            }
+            viewer.goTo(nextPage.index)
+            return true
+        }
+        if (foundLayers.length <= this.textElemIndex) {
+            // No more results ahead
+            if (interactive) {
+                const nextPage = this.findNextPageWithText(text)
+                if (nextPage) {
+                    if (window.confirm("The last result found on the current page. Do you want to check other pages?")) {
+                        //this.stopTextSearch()
+                        viewer.goTo(nextPage.index)
+                        return true
+                    }
+                }
+            }
+            this.textElemIndex = 0
+        }
+        // Highlight results
+        this.hideFoundTextResults()
+        foundLayers.forEach(function (l, index) {
+            this._findTextShowElement(l, index == this.textElemIndex)
+        }, this)
+        //
+        this.actualSearchText = text
+        if ((foundLayers.length + 1) > this.textElemIndex) this.textElemIndex++
+        //
+        return foundLayers.length > 0
+    }
+
+    findNextPageWithText(text) {
+        let foundPage = null
+        let page = this
+        while (true) {
+            // if we have some next pages?
+            const nextPage = viewer.getNextVisPage(page)
+            if (!nextPage) break
+            // we don't want to run infinity loop
+            if (nextPage.index == this.index) break
+            // if a next page has this text
+            if (nextPage.findText(text, false)) {
+                foundPage = nextPage
+                break
+            }
+            page = nextPage
+        }
+        return foundPage
+    }
+
+    // Arguments:
+    //  foundLayers: ref to list result
+    //  layers: list of layers or null (to get a root layers)
+    findTextLayersByText(text, foundLayers, layers = null) {
+        if (!story.layersExist) return false
+        if (null == layers) {
+            layers = layersData[this.index].c
+            if (!layers) return false
+        }
+
+        for (var l of layers.slice().reverse()) {
+            if ("Text" == l.tp && l.tx.toLowerCase().includes(text)) {
+                foundLayers.push(l)
+            }
+            if (undefined != l.c)
+                this.findTextLayersByText(text, foundLayers, l.c)
+        }
+    }
+    _findTextShowElement(l, isFocused = false) {
+        const padding = isFocused ? 5 : 0
+        let x = l.x - padding
+        let y = l.y - padding
+
+        // show layer border
+        var style = "left: " + x + "px; top:" + y + "px; "
+        style += "width: " + (l.w + padding * 2) + "px; height:" + (l.h + padding * 2) + "px; "
+        var elemDiv = $("<div>", {
+            class: isFocused ? "searchFocusedResultDiv" : "searchResultDiv",
+        }).attr('style', style)
+
+        elemDiv.appendTo(this.linksDiv)
+
+        // scroll window to show a layer
+        if (isFocused) {
+            this._scrollTo(l.x, l.y)
+        }
+    }
+
+    _scrollTo(x, y) {
+        for (let p of this.fixedPanels) {
+            if (Math.round(p.y) == 0) {
+                y -= p.height
+                break
+            }
+        }
+        window.scrollTo(x, y - 10);
+    }
+
+    hideFoundTextResults() {
+        $(".searchResultDiv").remove()
+        $(".searchFocusedResultDiv").remove()
+    }
+
+    stopTextSearch() {
+        this.hideFoundTextResults()
+        this.actualSearchText = undefined
+        this.textElemIndex = undefined
     }
 
     updatePosition() {
@@ -230,9 +399,9 @@ class ViewerPage {
 
         var destPage = story.pages[link.page]
         // for mouseover overlay we need to show it on click, but only one time)
-        if ("overlay" == destPage.type && 1 == destPage.overlayByEvent) {
+        if ("overlay" == destPage.type && Constansts.TRIGGER_ON_HOVER == destPage.overlayByEvent) {
             destPage.tmpSrcOverlayByEvent = destPage.overlayByEvent
-            destPage.overlayByEvent = 0
+            destPage.overlayByEvent = Constansts.TRIGGER_ON_HOVER
             viewer.customEvent = {
                 x: link.rect.x,
                 y: link.rect.y,
@@ -257,12 +426,12 @@ class ViewerPage {
 
     // return true (overlay is hidden) or false (overlay is visible)
     onMouseMoveOverlay(x, y) {
-        if (this.imageDiv.hasClass("hidden") || this.overlayByEvent != 1) return false
+        if (this.imageDiv.hasClass("hidden") || this.overlayByEvent != Constansts.TRIGGER_ON_HOVER) return false
         if (viewer.linksDisabled) return false
 
         // handle mouse hover if this page is overlay
         var _hideSelf = false
-        while (1 == this.overlayByEvent) {
+        while (Constansts.TRIGGER_ON_CLICK == this.overlayByEvent) {
             var localX = Math.round(x / viewer.currentZoom) - this.currentLeft
             var localY = Math.round(y / viewer.currentZoom) - this.currentTop
             //alert(" localX:"+localX+" localY:"+localY+" linkX:"+this.currentLink.x+" linkY:"+this.currentLink.y);
@@ -411,7 +580,7 @@ class ViewerPage {
             }
 
 
-        } else if (1 == this.overlayByEvent && posX == this.currentX && posY == this.currentY) {//handle only mouse hover
+        } else if (Constansts.TRIGGER_ON_CLICK == this.overlayByEvent && posX == this.currentX && posY == this.currentY) {//handle only mouse hover
             // cursor returned back from overlay to hotspot -> nothing to do
         } else {
             this.hide()
@@ -632,16 +801,18 @@ class ViewerPage {
                 lpy: y
             })
 
-            var eventType = 0 // click
+            var eventType = Constants.TRIGGER_ON_CLICK
 
             if ('page' in link) {
                 var destPageIndex = viewer.getPageIndex(parseInt(link.page))
                 var destPage = story.pages[destPageIndex];
-                if ('overlay' == destPage.type) {
+                //
+                if (link.triggerOnHover) {
+                    eventType = Constants.TRIGGER_ON_HOVER
+                } else if ('overlay' == destPage.type) {
                     eventType = destPage.overlayByEvent
                 }
             }
-
 
             if (EVENT_HOVER == eventType) { // for Mouse over event
                 a.mouseenter(handleLinkEvent)
@@ -709,7 +880,7 @@ function handleLinkEvent(event) {
         if (('overlay' == destPage.type || 'modal' == destPage.type) && destPage.overlayRedirectTargetPage != undefined) {
 
             // Change base page
-            viewer.goTo(destPage.overlayRedirectTargetPage, false)
+            viewer.goTo(destPage.overlayRedirectTargetPage, false, link)
             currentPage = viewer.currentPage
             orgPage = viewer.currentPage
         }
@@ -845,7 +1016,7 @@ function handleLinkEvent(event) {
             // check if we need to close current overlay
             currentPage.hideCurrentOverlays()
 
-            viewer.goTo(parseInt(destPageIndex))
+            viewer.goTo(parseInt(destPageIndex), true, link)
             return false
         }
     } else if (link.action != null && link.action == 'back') {

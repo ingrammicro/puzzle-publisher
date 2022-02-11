@@ -129,20 +129,44 @@ function Api() {
                     for (var j = 0; j < accountBoards.length; j++) {
                         if (accountBoards[j].currentUserPermission.role == "EDITOR"
                             || accountBoards[j].currentUserPermission.role == "OWNER") {
+                            var title = accountBoards[j]["title"]
                             var board = {
                                 boardId: accountBoards[j]["id"],
-                                title: accountBoards[j]["title"],
+                                title: title,
                                 lastOpenedByMeDate: accountBoards[j]["lastOpenedByMeDate"]
                             };
                             if (accountBoards[j]['project'] != null) {
                                 board['project'] = accountBoards[j]['project']["title"]
                             }
+
+                            // fix name duplicates
+                            let dupIndex = 0
+                            while (boards.find(
+                                function (el) {
+                                    return el['title'] == (title + (dupIndex == 0 ? "" : (" " + dupIndex)))
+                                }
+                            )) {
+                                dupIndex++
+                            }
+                            if (dupIndex > 0) {
+                                board["title"] = board["title"] + " " + dupIndex
+                            }
+                            //
+
                             boards.push(board);
                         }
                     }
                 }
             }
 
+            boards.sort(function (a, b) {
+                if (a["title"] > b["title"]) {
+                    return 1;
+                }
+                if (a["title"] < b["title"]) {
+                    return -1;
+                }
+            })
             return boards;
         }
         return false;

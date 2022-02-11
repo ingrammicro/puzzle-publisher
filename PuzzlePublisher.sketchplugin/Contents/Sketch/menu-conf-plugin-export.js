@@ -32,10 +32,10 @@ var onRun = function (context) {
     const disableZoom = Settings.settingForKey(SettingKeys.PLUGIN_DISABLE_ZOOM) == 1
     const hideNav = Settings.settingForKey(SettingKeys.PLUGIN_HIDE_NAV) == 1
     const disableHotspots = Settings.settingForKey(SettingKeys.PLUGIN_DISABLE_HOTSPOTS) == 1
-    const dontSaveElements = Settings.settingForKey(SettingKeys.PLUGIN_DONT_SAVE_ELEMENTS) == 1
     const askCustomSize = Settings.settingForKey(SettingKeys.PLUGIN_ASK_CUSTOM_SIZE) == 1
     const disableLibArtboards = Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_DISABLE_LIB_ARTBOARDS) == 1
 
+    var enabledJSON = Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_DISABLE_INSPECTOR) != 1
 
     let googleCode = Settings.settingForKey(SettingKeys.PLUGIN_GOOGLE_CODE)
     if (googleCode == undefined) googleCode = ''
@@ -80,7 +80,7 @@ var onRun = function (context) {
 
     dialog.addDivider()
     dialog.addLeftLabel("", "Element Inspector")
-    dialog.addCheckbox("dontSaveElements", "Disable Element Inspector", dontSaveElements)
+    dialog.addCheckbox("enabledJSON", "Enable Element Inspector", enabledJSON)
 
     const fontSizeOptions = Constants.FONTSIZE_FORMAT_OPTIONS.slice()
     fontSizeOptions.splice(0, 0, "Default (" + fontSizeOptions[0] + ")")
@@ -98,9 +98,11 @@ var onRun = function (context) {
         Settings.setSettingForKey(SettingKeys.PLUGIN_SHARE_IFRAME_SIZE, dialog.views['shareiFrameSize'].stringValue() + "")
         Settings.setSettingForKey(SettingKeys.PLUGIN_HIDE_NAV, dialog.views['hidenav'].state() != 1)
         Settings.setSettingForKey(SettingKeys.PLUGIN_DISABLE_HOTSPOTS, dialog.views['disableHotspots'].state() != 1)
-        Settings.setSettingForKey(SettingKeys.PLUGIN_DONT_SAVE_ELEMENTS, dialog.views['dontSaveElements'].state() == 1)
         Settings.setSettingForKey(SettingKeys.PLUGIN_ASK_CUSTOM_SIZE, dialog.views['askCustomSize'].state() == 1)
         Settings.setSettingForKey(SettingKeys.PLUGIN_EXPORT_DISABLE_LIB_ARTBOARDS, dialog.views['disableLibArtboards'].state() == 1)
+
+        enabledJSON = dialog.views['enabledJSON'].state() == 1
+        Settings.setSettingForKey(SettingKeys.PLUGIN_EXPORT_DISABLE_INSPECTOR, !enabledJSON)
 
         // convert position in FILE_TYPES to file type string
         fileType = dialog.views['fileType'].indexOfSelectedItem()

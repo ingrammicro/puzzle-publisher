@@ -75,7 +75,7 @@ class DSExporter {
         this.textStyles = {}
         this.runningForTokens = true
 
-        this.docName = this._clearCloudName(this.nDoc.cloudName())
+        this.fileName = "puzzle-tokens" //this._clearCloudName(this.nDoc.cloudName())
         this.pathTo = undefined
         this.format = undefined
         this.confOpts = undefined
@@ -99,8 +99,12 @@ class DSExporter {
     init() {
         this.pathTo = Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_PATH_TO)
         if (undefined == this.pathTo) this.pathTo = ""
+
         this.format = Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_FORMAT)
         if (undefined == this.format) this.format = Constants.EXPORT_FORMAT_LESS
+
+        this.openFinder = Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_OPEN_FINDER)
+        if (null == this.openFinder) this.openFinder = true
 
         this.confExportLibStyles = Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_LIB_STYLES) == 1
 
@@ -110,6 +114,8 @@ class DSExporter {
         if (null == this.confOpts.fontSizeTokens) this.confOpts.fontSizeTokens = true
         if (null == this.confOpts.fontWeightTokens) this.confOpts.fontWeightTokens = true
         if (null == this.confOpts.fontFamilyTokens) this.confOpts.fontFamilyTokens = true
+
+
 
         // init global variable
         app = this
@@ -159,6 +165,7 @@ class DSExporter {
             if (success) {
                 track(TRACK_EXPORT_COMPLETED)
                 this.UI.message("Completed")
+                if (this.openFinder) this._openFinder()
             }
         }
 
@@ -166,6 +173,10 @@ class DSExporter {
     }
 
     // Internal
+
+    _openFinder() {
+        NSWorkspace.sharedWorkspace().openFile(this.pathTo);
+    }
 
     _clearCloudName(cloudName) {
         let name = cloudName
@@ -196,7 +207,7 @@ class DSExporter {
 
     _showDialog() {
         const dialog = new UIDialog("Export Styles", NSMakeRect(0, 0, 800, 300), "Export",
-            "Export all text styles to a text file")
+            "Export all text styles to \"" + this.fileName + "\".[less|scss] file")
         //dialog.removeLeftColumn()
         dialog.leftColWidth = 200
 
@@ -209,6 +220,8 @@ class DSExporter {
 
         dialog.addLeftLabel("", "File Format")
         dialog.addRadioButtons("format", "", this.format, ["LESS", "SCSS"], 250)
+
+        dialog.addCheckbox("openFinder", "Open Finder window on completion", this.openFinder)
 
         dialog.addDivider()
 
@@ -242,6 +255,7 @@ class DSExporter {
             this.confExportLibStyles = dialog.views['exportLibStyles'].state() == 1
             this.less = this.format == Constants.EXPORT_FORMAT_LESS
             this.scss = this.format == Constants.EXPORT_FORMAT_SCSS
+            this.openFinder = dialog.views['openFinder'].state() == 1
             this.confOpts.colorTokens = dialog.views['colorTokens'].state() == 1
             this.confOpts.fontSizeTokens = dialog.views['fontSizeTokens'].state() == 1
             this.confOpts.fontWeightTokens = dialog.views['fontWeightTokens'].state() == 1
@@ -251,6 +265,7 @@ class DSExporter {
 
             Settings.setSettingForKey(SettingKeys.PLUGIN_EXPORT_PATH_TO, this.pathTo)
             Settings.setSettingForKey(SettingKeys.PLUGIN_EXPORT_FORMAT, this.format)
+            Settings.setSettingForKey(SettingKeys.PLUGIN_EXPORT_OPEN_FINDER, this.openFinder)
             Settings.setSettingForKey(SettingKeys.PLUGIN_EXPORT_OPTS, this.confOpts)
             Settings.setSettingForKey(SettingKeys.PLUGIN_EXPORT_LIB_STYLES, this.confExportLibStyles)
             break
@@ -267,7 +282,7 @@ class DSExporter {
 
         let res = tokensText + textStylesText
 
-        const fullPathTo = this.pathTo + "/" + this.docName + this.def.ext
+        const fullPathTo = this.pathTo + "/" + this.fileName + this.def.ext
         Utils.writeToFile(res, fullPathTo);
 
         return true
@@ -401,7 +416,9 @@ class DSExporter {
 
         res += spaces + "font-family" + ": " + this._getFontFamilyToken(sStyle.fontFamily) + eol
         res += spaces + "font-size" + ": " + this._getFontSizeToken(sStyle.fontSize) + eol
-        res += spaces + "text-align" + ": " + alignMap2[sStyle.alignment] + eol
+        res += spaces + "color" + ": " + this._getColorToken(sStyle.textColor) + eol
+        if (sStyle.alignment !== Text.Alignment.left)
+            res += spaces + "text-align" + ": " + alignMap2[sStyle.alignment] + eol
         res += spaces + "vertical-align" + ": " + vertAlignMap2[sStyle.verticalAlignment] + eol
         {
             var cssWeights = weights.filter(w => w.sketch == sStyle.fontWeight)
@@ -415,7 +432,7 @@ class DSExporter {
         }
         if (null != sStyle.lineHeight)
             res += spaces + "line-height" + ": " + sStyle.lineHeight + pxeol
-        if (undefined != sStyle.textTransform) {
+        if (undefined != sStyle.textTransform && sStyle.textTransform != 'none') {
             res += spaces + "text-transform" + ": " + sStyle.textTransform + eol
         }
         if (undefined != sStyle.textUnderline) {
@@ -430,9 +447,6 @@ class DSExporter {
         if (this.runningForTokens) {
             res += spaces + PT_PARAGRAPH_SPACING + ": " + sStyle.paragraphSpacing + eol
         }
-
-        //
-        res += spaces + "color" + ": " + this._getColorToken(sStyle.textColor) + eol
 
         return res
     }
@@ -563,6 +577,7 @@ class DSExporter {
                 }
                 g.stops.forEach(function (s, index) {
                     res += (index > 0 ? " ," : "") + this._getColorToken(s.color)
+                    if (undefined != s.position) res += " " + (s.position * 100) + "%"
                 }, this)
                 res += ")" + eol
             }
@@ -615,7 +630,6 @@ class DSExporter {
                     }
                 }
             }
-
             res += " " + this._getColorToken(shadow.color)
         }, this)
 

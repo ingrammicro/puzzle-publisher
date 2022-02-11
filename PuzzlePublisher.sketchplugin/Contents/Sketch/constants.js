@@ -1,16 +1,11 @@
 const Constants = {
-    DOCUMENT_VERSION: "docVersion",
-    DOCUMENT_VERSION_PLACEHOLDER: "V_V_V",
-    DOCUMENT_AUTHOR_NAME_PLACEHOLDER: "V_V_N",
-    DOCUMENT_AUTHOR_EMAIL_PLACEHOLDER: "V_V_E",
-    DOCUMENT_COMMENTS_URL_PLACEHOLDER: "V_V_C",
     TAB_SIZE: 2,
     HOTSPOT_PADDING: 0,
     LOGGING: false,
     SERVER_ANNOUNCE_SCRIPT: "announce.php",
     IMAGES_DIRECTORY: "images/",
     PREVIEWS_DIRECTORY: "previews/",
-    FULLIMAGES_DIRPOSTFIX: "-FULLIMAGES/",
+    FULLIMAGE_DIRECTORY: "full/",
     VIEWER_DIRECTORY: "viewer/",
     RESOURCES_DIRECTORY: "resources/",
     PLUGIN_IDENTIFIER: "com.cloudblue.sketch.exporter",
@@ -43,11 +38,12 @@ const Constants = {
     INT_LAYER_NAME_XSPACER: "@XSpacer@",
     INT_LAYER_NAME_YSPACER: "@YSpacer@",
     INT_LAYER_NAME_REDIRECT: "@Redirect@",
+    //
     ARTBOARD_TYPE_REGULAR: 0,
     ARTBOARD_TYPE_MODAL: 1,
     ARTBOARD_TYPE_EXTERNAL_URL: 2,
     ARTBOARD_TYPE_OVERLAY: 3,
-    //
+    //    
     ARTBOARD_TRANS_ANIM_NONE: 0,
     ARTBOARD_TRANS_ANIM_SLIDEIN_UP: 1,
     ARTBOARD_TRANS_ANIM_SLIDEIN_LEFT: 2,
@@ -144,26 +140,25 @@ const SettingKeys = {
     PLUGIN_DISABLE_HOTSPOTS: "pluginDisableHotspots",
     PLUGIN_ASK_CUSTOM_SIZE: "pluginAskCustomSize",
     PLUGIN_EXPORT_DISABLE_LIB_ARTBOARDS: "pluginAskCustomSize",
-    PLUGIN_DONT_SAVE_ELEMENTS: "pluginDontSaveElements",
+    PLUGIN_EXPORT_DISABLE_INSPECTOR: "PLUGIN_EXPORT_DISABLE_INSPECTOR",
     PLUGIN_PUBLISH_LOGIN: "publishLogin",
     PLUGIN_PUBLISH_SITEROOT: "publishSiteRoot",
     PLUGIN_PUBLISH_SECRET: "PLUGIN_PUBLISH_SECRET",
     PLUGIN_PUBLISH_SSH_PORT: "publishSSHPort",
     PLUGIN_EXPORTING_URL: "pluginExportingURL",
     PLUGIN_SHARE_IFRAME_SIZE: "pluginShareiFrameSize",
-    PLUGIN_PUBLISH_MIRO_EMAIL: "PLUGIN_PUBLISH_MIRO_EMAIL",
-    PLUGIN_PUBLISH_MIRO_PASSWORD: "PLUGIN_PUBLISH_MIRO_PASSWORD",
+    PLUGIN_PUBLISH_MIRO_ENABLED: "PLUGIN_PUBLISH_MIRO_ENABLED",
     PLUGIN_INSTALLED: "pluginInstalled",
     PLUGIN_GA_DISABLED: "pluginGADisabled",
     PLUGIN_ENABLE_ASYNC: "PLUGIN_ENABLE_ASYNC",
     PLUGIN_LOGDEBUG_ENABLED: "pluginLogDebugEnabled",
 
     ARTBOARD_TYPE: "artboardType",
+    ARTBOARD_DISABLE_FIXED: "ARTBOARD_DISABLE_FIXED",
 
     LEGACY_ARTBOARD_MODAL: "artboardOverlay", //legacy, replaced by ARTBOARD_TYPE
     LEGACY_ARTBOARD_MODAL_SHADOW: "artboardOverlayShadow", // replaced by  ARTBOARD_SHADOW, Outdated on 14 Frev 2018
     OLD_ARTBOARD_OVERLAY_ALIGN: "artboardOverlayPosition",
-
 
     ARTBOARD_SHADOW: "artboardShadow",
     ARTBOARD_DISABLE_AUTOSCROLL: "artboardDisableAutoScroll",
@@ -179,6 +174,7 @@ const SettingKeys = {
 
     DOC_EXPORTING_URL: "docExportingURL", // legacy, replaced by PLUGIN_EXPORTING_URL
     DOC_PUBLISH_MIRO_BOARD: "DOC_PUBLISH_MIRO_BOARD",
+    DOC_PUBLISH_MIRO_BOARDID: "DOC_PUBLISH_MIRO_BOARDID",
     DOC_PUBLISH_COMPRESS: "docPublishCompress",
     DOC_DISABLE_FIXED_LAYERS: "docDisablFixedLayers",
     DOC_PUBLISH_VERSION: "mockupsVersion",
@@ -188,12 +184,15 @@ const SettingKeys = {
     DOC_CUSTOM_FONTSIZE_FORMAT: "DOC_CUSTOM_FONTSIZE_FORMAT", // How to show font size in Element Inspector
     DOC_BACK_COLOR: "docBackColor",
     DOC_SKIP_AUTOSYNC: "DOC_SKIP_AUTOSYNC",
+    DOC_OWNER_NAME: "DOC_OWNER_NAME",
+    DOC_OWNER_EMAIL: "DOC_OWNER_EMAIL",
 
     LAYER_ANNOTATIONS: "layerAnnotations",
     LAYER_OVERLAY_TYPE: "layerOverlayType",
     LAYER_DIV_ID: 'layerDivID',
     LAYER_EXTERNAL_LINK: "externalLink",
     LAYER_EXTERNAL_LINK_BLANKWIN: "layerNewWindow",
-    LAYER_COMMENT: 'layerComment'
+    LAYER_COMMENT: 'layerComment',
+    LAYER_FIXED_SHADOW_TYPE: "LAYER_FIXED_SHADOW_TYPE"
 };
 

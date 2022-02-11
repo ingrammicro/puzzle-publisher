@@ -1,5 +1,138 @@
 # Change Log
-See discussion on https://spectrum.chat/puzzle-publisher site
+See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
+
+##  Version 16.17.1 (1 Feb 2022)
+Hotfix - return overlay shadows back
+
+##  Version 16.17.0 (1 Feb 2022)
+Added fixed layer shadow mode to Configure layer
+
+##  Version 16.16.1 (1 Feb 2022)
+Hotfix
+
+##  Version 16.16.0 (31 Jan 2022)
+Added ability to enable "render fixed layers as regular" per artboard
+
+##  Version 16.15.0 (19 Jan 2022)
+Added ability to highlight EXPERIMENTAL widgets
+
+##  Version 16.14.4 (18 Jan 2022)
+Fixed support for custom JS code (thanks @cargeo for bug report)
+
+##  Version 16.14.3 (11 Jan 2022)
+Updated menu icons
+
+##  Version 16.14.2 (28 Dec 2021)
+Improved icon visualization in Handoff
+
+##  Version 16.14.1 (23 Dec 2021)
+Auto-scale switch fixes
+
+##  Version 16.14.0 (16 Dec 2021)
+Added full-screen mode
+Improved links to experimental widgets
+
+##  Version 16.13.0 (6 Dec 2021)
+Esc closed menu
+New "Full page image" function added to menu
+
+##  Version 16.12.1 (24 Nov 2021)
+Cleaned Viewer UI
+
+##  Version 16.12.0 (18 Nov 2021)
+Search continues to next pages
+
+##  Version 16.11.4 (17 Nov 2021)
+Fixed wrong commit
+
+##  Version 16.11.3 (08 Nov 2021)
+Several Element Inspector improvements and fixes
+
+##  Version 16.11.2 (27 Oct 2021)
+Fixed Artboards Sort Order
+
+##  Version 16.11.1 (27 Oct 2021)
+Minor improvements in Element Inspector
+
+##  Version 16.11.0 (24 Oct 2021)
+Use 'n' key to hide/show navigation tools
+
+##  Version 16.9.2 (26 Sep 2021)
+Element Inspector now shows valid value for style defined as "@token1 + @token2"
+
+##  Version 16.9.0 (21 Sep 2021)
+Show links to external documentation (for usage with Puzzle Tokens)
+
+##  Version 16.8.1 (20 Sep 2021)
+Fixed layout issues in Chrome and FF 
+
+##  Version 16.8.0 (21 Aug 2021)
+Exporting with Element Inspector enabled is fast again! So, "Enable Element Inspector" checkbox moved back to Configure Export dialo
+
+##  Version 16.7.4 (19 Aug 2021)
+'S' button should return to a page marked as "Start Page"
+
+##  Version 16.7.0 (12 Aug 2021)
+Replaced "Use slow but..." checkbox
+Moved "Enable Element Inspector" from Configure Export to Export dialog
+
+##  Version 16.6.3 (29 Jul 2021)
+Fix auto-transition for the last page
+Support for undocumented font weight = 14
+
+##  Version 16.6.2 (29 Jul 2021)
+Added "Use slow but stable symbols detection" checkbox to Export dialog. The fast method depends of unstable Sketch behaviour. The slow method works always stable.
+
+##  Version 16.6.1 (28 Jul 2021)
+Show icon names correctly in Element Inspector
+
+##  Version 16.6.0 (26 Jul 2021)
+Fixed Element Inspector behaviour
+
+##  Version 16.5.6 (15 Jul 2021)
+Fixed Element Inspector
+
+##  Version 16.5.5 (14 Jul 2021)
+Hotfix
+
+##  Version 16.5.4 (14 Jul 2021)
+- Rolled back icon name support to fix other tokens
+
+##  Version 16.5.3 (10 Jul 2021)
+Improving Changes Inspector
+
+##  Version 16.5.2 (07 Jul 2021)
+Improving Changes Inspector
+
+##  Version 16.5.1 (29 Jun 2021)
+Corrected "Show symbols" toggler behaviour
+Show icon names (Part II)
+
+##  Version 16.5.0 (29 Jun 2021)
+Use full images in Gallery
+Changes Inspector improved
+Show icon names
+
+##  Version 16.4.3 (26 Jun 2021)
+Fixed internal error related to color variables detection
+
+##  Version 16.4.1 (12 May 2021)
+Text search inside Gallery now finds text layers also
+
+##  Version 16.3.1 (30 Apr 2021)
+Improved scrolling in Text Search
+
+##  Version 16.3.0 (29 Apr 2021)
+Added text search (Cmd+F,Cmd+G)
+
+##  Version 16.2.4 (23 Apr 2021)
+Don't export masked layers without Export Preset configured
+
+##  Version 16.2.3 (20 Apr 2021)
+Workaround for export crash
+
+##  Version 16.2.2 (16 Apr 2021)
+Improved Element Inspector
 
 ##  Version 16.2.0 (5 Apr 2021)
 Added comment counters to Gallery

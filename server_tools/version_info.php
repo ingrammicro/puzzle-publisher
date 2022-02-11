@@ -21,7 +21,7 @@ class Worker{
     public $local_dir= "";      // project/82
     public $ver = "";           // 82
     public $current_ver = "";   // 82 or live
-    public $ver_info = [];
+    public $result = [];
 
     public $is_live = FALSE;
 
@@ -83,42 +83,43 @@ class Worker{
     }
 
     private function _find_info(){
-        // read chnange journal into normalised $data
+        // read change journal into normalised $data
         $file_data = file_get_contents("journals/".$this->local_dir."/journal.txt");        
         if(FALSE===$file_data) $file_data="";
         $text_data = "[".$file_data."[]]";        
         $data = json_decode($text_data,TRUE);
         
-        // find single record in data
-        $dir = $this->local_dir."/".$this->ver;
+        // resort changes from new to old
+        $data = array_filter($data,function($a){return array_key_exists('ver',$a); });
+        usort($data,function ($a, $b) { return intval($b['ver']) - intval($a['ver']) ;});
 
-        $ver_index = array_search($dir, array_column($data, 'dir'));
-        if(FALSE===$ver_index){
-            print("Error: can't find project '".$this->local_dir."' and version :".$this->ver);
-            return FALSE;
+        // precalculate some data
+        foreach($data as &$rec){
+            $this->_extend_rec_info($rec);
         }
-        $ver_info = $data[$ver_index];
+        
+        $this->result['recs'] = $data;
+        return TRUE;
+    }
 
+    private function _extend_rec_info(& $rec){
+    
         // replace image URL by preview image URL;
         $changed = 0;
         $new = 0;
-        foreach($ver_info['screens_changed'] as $index => $screen){
-            $ver_info['screens_changed'][$index]['image_url'] = $this->_tranformImageURLbyPreview ($screen['image_url']);
-            $screen_url = $ver_info['screens_changed'][$index]['screen_url'];
+        foreach($rec['screens_changed'] as $index => $screen){
+            $rec['screens_changed'][$index]['image_url'] = $this->_tranformImageURLbyPreview ($screen['image_url']);
+            $screen_url = $rec['screens_changed'][$index]['screen_url'];
 
             // exctract page name after #
             $screen_name_pos = strpos($screen_url,'#');
             $screen_name = FALSE===$screen_name_pos?"":substr($screen_url,$screen_name_pos+1);
-            $ver_info['screens_changed'][$index]['screen_name']  =  $screen_name;
+            $rec['screens_changed'][$index]['screen_name']  =  $screen_name;
 
             if($screen['is_new']) $new++; else $changed++;
         }
-        $ver_info['screens_total_new']=$new;
-        $ver_info['screens_total_changed']=$changed;
-
-        
-        $this->ver_info = $ver_info;
-        return TRUE;
+        $rec['screens_total_new']=$new;
+        $rec['screens_total_changed']=$changed;
     }
 
     private function _build_url($version){
@@ -134,7 +135,7 @@ class Worker{
     }
 
     public function dump_json(){
-        print(json_encode($this->ver_info,JSON_UNESCAPED_SLASHES));
+        print(json_encode($this->result,JSON_UNESCAPED_SLASHES));
     }
 
 }

@@ -71,6 +71,9 @@ class PZArtboard extends PZLayer {
             }
         }
 
+        const disableFixed = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_DISABLE_FIXED)
+        this.disableFixedLayers = (disableFixed != undefined && disableFixed > 0) ? disableFixed == 1 : exporter.disableFixedLayers
+
         this.overlayOverFixed = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_OVERLAY_OVERFIXED) == 1
         {
             var overlayAlsoFixed = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_OVERLAY_ALSOFIXED)
@@ -200,16 +203,14 @@ class PZArtboard extends PZLayer {
             data['type'] = 'overlay'
             // try to find a shadow
             if (this.showShadow) {
-                const layerWithShadow = this._getOverlayShadowLayer()
-                if (layerWithShadow) {
-                    const shadowInfo = layerWithShadow.getShadowAsStyle()
+                const shadowInfo = this._findLayersShadowInfo()
+                if (shadowInfo) {
                     data['overlayShadow'] = shadowInfo.style
                     data['overlayShadowX'] = shadowInfo.x
                 }
             } else if ((Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT == this.overlayPin) && (Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_LEFT == this.overlayPinHotspot)) {
-                const layerWithShadow = this._getOverlayShadowLayer()
-                if (layerWithShadow) {
-                    const shadowInfo = layerWithShadow.getShadowAsStyle()
+                const shadowInfo = this._findLayersShadowInfo()
+                if (shadowInfo) {
                     data['overlayShadowX'] = shadowInfo.x
                 }
             }
@@ -239,24 +240,18 @@ class PZArtboard extends PZLayer {
         exporter.storyData.pages.push(data)
     }
 
-
-    _getOverlayShadowLayer() {
-        return this._findLayersShadow(this.childs)
-    }
-
-    _findLayersShadow(layers) {
-        for (var l of layers) {
-            let layerWithShadow = this._findLayerShadow(l)
-            if (layerWithShadow) return layerWithShadow
+    _findLayersShadowInfo(layers = undefined, checkKeepFixedShadow = false) {
+        if (layers === undefined) layers = this.childs
+        //
+        let shadowInfo = undefined
+        for (const l of layers) {
+            if (checkKeepFixedShadow && l.keepFixedShadow) continue
+            shadowInfo = l.getShadowInfo()
+            if (shadowInfo) break
+            shadowInfo = this._findLayersShadowInfo(l.childs, checkKeepFixedShadow)
+            if (shadowInfo) break
         }
-        return undefined
-    }
-
-    _findLayerShadow(l) {
-        let shadowsStyle = l.getShadowAsStyle()
-        if (shadowsStyle !== undefined) return l
-
-        return this._findLayersShadow(l.childs)
+        return shadowInfo
     }
 
     clearRefsBeforeJSON() {
@@ -319,11 +314,10 @@ class PZArtboard extends PZLayer {
                     rec.image2x = Utils.quoteString(Utils.toFilename(mainName, false) + fileNamePostfix + '@2x.' + exporter.fileType, false)
 
                 // setup shadow
-                const layerWithShadow = this._findLayerShadow(l)
-                if (layerWithShadow) {
-                    const shadowsStyle = layerWithShadow.getShadowAsStyle()
-                    rec.shadow = shadowsStyle.style
-                    rec.shadowX = shadowsStyle.x
+                const shadowInfo = this._findLayersShadowInfo([l], true)
+                if (shadowInfo) {
+                    rec.shadow = shadowInfo.style
+                    rec.shadowX = shadowInfo.x
                 }
                 recs.push(rec)
             }
@@ -390,7 +384,7 @@ class PZArtboard extends PZLayer {
     }
 
     // exportType:  full, layer, preview, artboard
-    _exportImage(exportType, nlayer = null, panelPostix = "") {
+    _exportImage(exportType, nlayer = null, panelPostix = "", forFixedLayer = false) {
         nlayer = nlayer || this.nlayer
         if (DEBUG) exporter.logMsg("   exportImage() for " + nlayer.name())
 
@@ -419,6 +413,10 @@ class PZArtboard extends PZLayer {
             slice.scale = scale;
             slice.saveForWeb = false;
             slice.format = exporter.fileType;
+
+            const bounds = nlayer.absoluteRect();
+            if (forFixedLayer) slice.setRect(bounds.rect())
+
             exporter.ndoc.saveArtboardOrSlice_toFile(slice, imagePath);
         }
     }
@@ -527,22 +525,22 @@ class PZArtboard extends PZLayer {
 
             // temporary disable fixed panel shadows
             let orgShadows = undefined
-            let layerWithShadow = this._findLayerShadow(layer)
-            if (layerWithShadow) {
-                orgShadows = layerWithShadow.slayer.style.shadows
-                layerWithShadow.slayer.style.shadows = []
+            let shadowInfo = this._findLayersShadowInfo([layer], true)
+            if (shadowInfo) {
+                orgShadows = shadowInfo.layer.slayer.style.shadows
+                shadowInfo.layer.slayer.style.shadows = []
             }
 
             // for div and  float fixed layer we need to generate its own image files
             if (layer.isFloat || layer.isFixedDiv) {
                 //this._exportImage2('1, 2',layer.parent.slayer)         
                 const l = layer.parent.isSymbolInstance ? layer : layer
-                this._exportImage("layer", l.nlayer, "-" + layer.fixedIndex)
+                this._exportImage("layer", l.nlayer, "-" + layer.fixedIndex, true)
             }
 
             // restore original fixed panel shadows
-            if (layerWithShadow) {
-                layerWithShadow.slayer.style.shadows = orgShadows
+            if (shadowInfo) {
+                shadowInfo.layer.slayer.style.shadows = orgShadows
             }
         }
     }

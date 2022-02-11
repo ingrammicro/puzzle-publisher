@@ -17,7 +17,15 @@
 
 include_once "lib/FolderInfo.php";
 
+function getParam($key){
+    if(!array_key_exists($key,$_GET)) return "";
+    return $_GET[$key];
+}
 
+function printError($error){
+    error_log($error);
+    print($error."<br/>");
+}
 
 class Worker{
     public $ref = "";
@@ -43,7 +51,7 @@ class Worker{
         $config_text = file_get_contents("config.json");
         if(FALSE===$config_text){
             $this->config = [];     
-            print("Error: can not open config.json");                    
+            printError("Error: can not open config.json");                    
         }else{
             $this->config = json_decode($config_text,TRUE);
         }
@@ -51,13 +59,13 @@ class Worker{
 
     private function _readParams(){
         // read params
-        $this->skip_tele = $_GET["NOTELE"]."";
-        $this->skip_save = $_GET["NOSAVE"]."";
+        $this->skip_tele = getParam("NOTELE");
+        $this->skip_save = getParam("NOSAVE");
         
 
         $secret = $_GET["sec"]."";
         if($secret!=$this->config['secret-key']){
-            print("Error: secrets are not the same ");
+            printError("Error: secrets are not the same ");
             return FALSE;
         }
 
@@ -65,6 +73,7 @@ class Worker{
             'time' => time(),
             'dir' => $_GET["dir"]."",       //  myproject/77
             'author' => $_GET["author"]."",
+            'email' => $_GET["email"]."",
             'message' => $_GET["msg"]."",
             'ver' => $_GET["ver"]."",       // 77
             'down_ver' => '',               // will be specified later
@@ -73,15 +82,15 @@ class Worker{
         
         // check params
         if(''==$data['dir']){
-            print("Error: 'dir' is empty ");
+            printError("Error: 'dir' is empty ");
             return FALSE;
         }
         if(''==$data['author']){
-            print("Error: 'author' is empty");
+            printError("Error: 'author' is empty");
             return FALSE;
         }
         if(''==$data['message']){
-            print("Error: 'msg' is empty");
+            printError("Error: 'msg' is empty");
             return FALSE;
         }
 
@@ -96,7 +105,7 @@ class Worker{
 
         $folder_info = new FolderInfo();
         if(!$folder_info->collectInfo($this->data['dir'])){
-            print("Error: can not get version folder information");
+            printError("Error: can not get version folder information");
             return FALSE; 
         }
 
@@ -111,22 +120,19 @@ class Worker{
         $cmd = "diff -rq";
         $cmd = $cmd." ".$this->local_path."/".$this->local_dir."/".$this->data['down_ver'];
         $cmd = $cmd." ".$this->local_path."/".$this->local_dir."/".$this->data['ver'];
-        $cmd = $cmd." | grep /images/ | grep -v /preview";
+        $cmd = $cmd." | grep /images/full";
 
         $res = shell_exec($cmd);
         if(NULL==$res) return TRUE;
 
-		var_dump($cmd);
-		print("<br/>");
-		var_dump($res);
-
         $this->data['screens_changed'] = [];
         $this->data['journals_path'] = str_replace("//","/",$this->local_url)."journals";
-
-        $cmd_diff = "";
+       
         
         $lines = explode("\n",$res);
         foreach($lines as $line){           
+            $cmd_diff = "";
+            //
             $info = $lines = explode(" ",$line);   
             $image_base_url = $this->base_url."/".$this->data['dir']."/images/";
             $screen_base_url = $this->base_url."/".$this->data['dir']."/index.html#";
@@ -139,12 +145,6 @@ class Worker{
                 // Checking this format:             
                 // Files /var/www/html/test/101/support_1@2x.png and /var/www/html/test/102/support_1@2x.png differ
                 $file_info =  pathinfo($info[3]);
-
-print("file_info<br/>");
-var_dump($file_info);
-print("<br/>");
-
-
                 // compare images               
                 {
                     $path_new = $info[3];
@@ -152,7 +152,7 @@ print("<br/>");
                     $dir_diff = 'journals/'.$this->data['dir']."/diffs";                    
 
                     if(!file_exists($dir_diff) && !mkdir($dir_diff,0777,TRUE)){
-                        print("Error: can not create folder ".$dir_diff);
+                        printError("Error: can not create folder ".$dir_diff);
                         return FALSE;
                     }                                    
                     $path_diff = $dir_diff."/".$file_info['basename'];
@@ -165,13 +165,6 @@ print("<br/>");
                 $file_info =  pathinfo($info[3]);
                 $is_new = TRUE;
             }
-
-
-print("cmd_diff<br/>");
-var_dump($cmd_diff);
-print("<br/>");
-
-
 
             if(NULL==$file_info) continue;
 
@@ -187,18 +180,13 @@ print("<br/>");
                 'screen_url' =>  $screen_base_url.$screen_name,
                 'image_url' =>  $image_base_url.$image_name
             ];
+            //
+            if($cmd_diff!=''){
+                shell_exec($cmd_diff);
+            }
         }
 
-        // Generate images with differences
-
-print("FINAL md_diff<br/>");
-var_dump($cmd_diff);
-print("<br/>");
-
-        if($cmd_diff!=''){
-            $cmd_diff .= " &";
-            shell_exec($cmd_diff);
-        }
+ 
     }
 
     private function _saveData(){
@@ -207,7 +195,7 @@ print("<br/>");
         // Save data to project subfolder folder
         $dir_path =  str_replace("../","journals/",$this->local_dir);
         if(!file_exists($dir_path) && !mkdir($dir_path,0777,TRUE)){
-            print("Error: can not create folder ".$dir_path);
+            printError("Error: can not create folder ".$dir_path);
             return FALSE;
         }
 
@@ -215,7 +203,7 @@ print("<br/>");
         $text = json_encode($this->data,JSON_UNESCAPED_SLASHES).",\n";
         
         if(FALSE==file_put_contents($path,$text,FILE_APPEND)){
-            print("Error: can not open file ".$path);
+            printError("Error: can not open file ".$path);
             return FALSE;
         }       
         
@@ -233,7 +221,7 @@ print("<br/>");
         // Save data to project subfolder folder
         $dir_path =  str_replace("../","journals/",$local_dir);
         if(!file_exists($dir_path) && !mkdir($dir_path,0777,TRUE)){
-            print("Error: can not create folder ".$dir_path);
+            printError("Error: can not create folder ".$dir_path);
             return FALSE;
         }
 
@@ -243,7 +231,7 @@ print("<br/>");
         $text = preg_replace("/\]{1}$/",",\n",$text);
         
         if(FALSE==file_put_contents($path,$text,$options)){
-            print("Error: can not open file ".$path);
+            printError("Error: can not open file ".$path);
             return FALSE;
         }       
         

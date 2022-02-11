@@ -18,7 +18,7 @@ class PZPage {
         if (!sArtboards) sArtboards = this.sPage.layers
 
         // prepare layers for collecting
-        if (DEBUG) exporter.logMsg("PZPage.collectData() preparing...")
+        exporter.logMsg("PZPage.collectData() preparing...")
         for (const sa of sArtboards) {
             if ("Artboard" != sa.type) continue
             if (exporter.filterAster && sa.name.indexOf("*") == 0) continue
@@ -29,16 +29,17 @@ class PZPage {
                 PZPage_touched = true
             }
 
-            this._scanLayersToSaveInfo(sa)
+            // We don't need save info by ourself because Sketch does it. Check userInfo() function
+            // if (exporter.enabledJSON) this._scanLayersToSaveInfo(sa)
+
             this._scanLayersToDetachSymbols(sa)
         }
 
         // collect layers
-        if (DEBUG) exporter.logMsg("PZPage.collectData() collecting...")
+        exporter.logMsg("PZPage.collectData() collecting...")
         this._collectArtboards(sArtboards)
+        exporter.logMsg("PZPage.collectData() collected")
 
-        // cleanup temporary data
-        //this._cleanUp()        
     }
 
 
@@ -72,22 +73,45 @@ class PZPage {
 
         // taken here - https://sketchplugins.com/d/466-get-all-symbol-and-all-image-inside-selected-storyboard
         const symbolPredicate = NSPredicate.predicateWithFormat("className == %@", 'MSSymbolInstance');
-        const symbols = nParent.children().filteredArrayUsingPredicate_(symbolPredicate);
+        const symbolInstances = nParent.children().filteredArrayUsingPredicate_(symbolPredicate);
 
-        symbols.forEach(function (nl) {
+        symbolInstances.forEach(function (nl) {
             const sl = Sketch.fromNative(nl)
-            if (sl.name.indexOf("±±") >= 0) {
-                //remove old garabage
-                sl.name = sl.name.substring(0, sl.name.indexOf("±±"))
-            }
-            const smaster = pzDoc.getSymbolMasterByID(sl.symbolId)
+            let symbolId = sl.symbolId
+
+            const smaster = pzDoc.getSymbolMasterByID(symbolId)
             if (!smaster) {
-                log("Error: can't find master for" + sl.name)
+                if (DEBUG) exporter.logMsg("_scanLayersToSaveInfo() Error: can't find master for " + sl.name)
                 return
             }
-            // save target artboard ID to restore info about master afte the detach      
-            // save symbol ID to restore info about master after the detachs
-            sl.name = sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + sl.symbolId
+
+            if (true) {
+                /// WAY #3
+            }
+            else if (false) {
+                /// WAY #1— works, but slowly
+                var text = new Text({
+                    text: ""
+                })
+                text.name = "±±" + sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + symbolId
+                text.hidden = true
+                text.frame.x = sl.frame.x
+                text.frame.y = sl.frame.y
+                text.frame.width = 0
+                text.frame.height = 0
+                sl.parent.layers.push(text)
+
+            } else {
+                /// WAY 2 — works unstable
+                // save target artboard ID to restore info about master afte the detach      
+                // save symbol ID to restore info about master after the detachs
+                if (sl.name.indexOf("±±") >= 0) {
+                    //remove old garabage
+                    sl.name = sl.name.substring(0, sl.name.indexOf("±±"))
+                }
+                sl.name = sl.name + "±±" + (sl.flow ? sl.flow.targetId : "") + "±±" + sl.symbolId
+                /// END OF WAY 2
+            }
 
             // go deeply
             this._scanLayersToSaveInfo(smaster)
@@ -99,13 +123,14 @@ class PZPage {
         const nParent = sParent.sketchObject
 
         const symbolPredicate = NSPredicate.predicateWithFormat("className == %@", 'MSSymbolInstance');
-        const symbols = nParent.children().filteredArrayUsingPredicate_(symbolPredicate);
+        const symbolInstances = nParent.children().filteredArrayUsingPredicate_(symbolPredicate);
 
-        symbols.forEach(function (nl) {
+        symbolInstances.forEach(function (nl) {
             var sl = Sketch.fromNative(nl)
             sl = sl.detach({
                 recursively: true
             })
+            if (DEBUG) exporter.logMsg("PZPage._scanLayersToDetachSymbols() symbol:" + sl.name)
         }, this)
 
         if (DEBUG) exporter.logMsg("PZPage._scanLayersToDetachSymbols() completed")
@@ -129,12 +154,12 @@ class PZPage {
         if (Constants.SORT_RULE_X == exporter.sortRule) {
             sArtboards.sort((
                 function (a, b) {
-                    return a.frame.x - b.frame.x
+                    return a.frame.x != b.frame.x ? (a.frame.x - b.frame.x) : (a.frame.y - b.frame.y)
                 }))
         } else if (Constants.SORT_RULE_Y == exporter.sortRule) {
             sArtboards.sort((
                 function (a, b) {
-                    return a.frame.y - b.frame.y
+                    return a.frame.y != b.frame.y ? (a.frame.y - b.frame.y) : (a.frame.x - b.frame.x)
                 }))
         } else if (Constants.SORT_RULE_REVERSIVE_SKETCH == exporter.sortRule) {
             sArtboards = sArtboards.reverse()

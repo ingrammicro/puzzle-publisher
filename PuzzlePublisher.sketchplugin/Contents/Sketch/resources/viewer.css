@@ -16,7 +16,7 @@
   text-align: center;
   padding: 10px 10px;
   border-radius: 4px;
- 
+
   /* Position the tooltip text - see examples below! */
   position: absolute;
   z-index: 1;
@@ -76,7 +76,20 @@
   opacity: 0.4;
   transition: opacity 0.5s;
 }
-
+/* SEARCH */
+.searchFocusedResultDiv {
+    position: absolute;
+    outline: 2px solid var(--color-primary);
+    opacity: 0.3;
+    background-color: yellow;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+.searchResultDiv {
+    position: absolute;
+    outline: 2px solid var(--color-accent);
+    background-color: white;
+    opacity: 0.3;
+}
 /************ SYMBOLS ******/
 .symbolLink {}
 
@@ -100,10 +113,17 @@
   opacity: .3;
   display: block;
   cursor: pointer;
-  /*border: 1px dashed red;   */
   outline: 1px solid red;
   outline-offset: -1px;
   transition: all 0.3s;
+}
+
+.contentSymbolsVisible .symbolDiv.exp:hover {
+    outline: 2px solid orange;
+}
+
+.contentSymbolsVisible .symbolDiv.exp {
+    outline: 2px solid orange;
 }
 
 .svBorderLineDiv {
@@ -137,6 +157,7 @@
     position: absolute;
     display: none;
     z-index: 32;
+    text-align: center;
 }
 .contentSymbolsVisible .svMarginValueDiv {
     display: block;
@@ -152,12 +173,23 @@
     color:white;
 }
 
-#comments_viewer,
-#symbol_viewer,
-#version_viewer {
+.viewer
+{
   width: 100%;
   overflow-y: auto;
   padding-bottom: 20px;
+}
+
+
+#info_viewer .head{
+    padding-bottom: 20px;
+    width: 100%;
+}
+
+
+#info_viewer .record{
+    padding-bottom: 20px;
+    width: 100%;
 }
 
 select{
@@ -268,9 +300,7 @@ select:focus{
   margin-right: 40px;
 }
 
-#comments_viewer .title, 
-#symbol_viewer .title, 
-#version_viewer .title {
+.viewer .title{
   height: 56px;
   display: flex;
   align-items: center;
@@ -342,14 +372,33 @@ select:focus{
 #sv_content{
     font-size: 20px;
     line-height: 18px;
-  }
+}
+
+
+#exp_viewer .page{
+    padding-bottom:     10px;
+    color:              var(--color-accent);
+}
+
+#exp_viewer .layer{
+    margin-left:        20px;
+    color:              var(--color-primary);
+    font-size:          12px;
+}
+
+#exp_viewer .layer .counter{
+    color:              var(--color-secondary);
+    font-size:          12px;
+}
+
+
 
 /* #symbol_viewer_content .head {
   color: var(--color-secondary);
   border-top: solid 1px var(--color-border);
 }
 
-#version_viewer .head {
+#info_viewer .head {
   font-weight: 900;
 } */
 
@@ -589,10 +638,15 @@ text-overflow: ellipsis;
     transition: transform .24s, box-shadow .24s;
 }
 
+.galleryArtboardAbsHidden{
+    opacity: 0.2;
+}
+
 .galleryArtboardLabelAbs{
     position: absolute;
-    color:      var(--color-active);    
-    font-size:          12px;
+    margin-top: 8px;
+    color:      var(--color-secondary);
+    font-size:  12px;
 }
 
 .galleryArtboardAbs image{
@@ -699,7 +753,7 @@ text-overflow: ellipsis;
     position: absolute;
     width: 100%;
     height:30px;
-    color: gray;
+    color: var(--color-secondary);
     font-size: 20px;
     text-align: left;
   }
@@ -838,7 +892,8 @@ body {
 }
 
 .navLeft,
-.nav #pageComments {
+.nav #pageComments,
+.nav #experimental {
   pointer-events: all;
 }
 .navCenter {
@@ -849,6 +904,8 @@ body {
 .nav .btnMenu,
 .nav .navPreviewNext,
 .nav #pageComments,
+.nav #experimental,
+.nav .infoViewerMode,
 .nav .pageName {
   display: flex;
   justify-content: center;
@@ -858,8 +915,13 @@ body {
   border-radius: 36px;
   box-shadow: var(--shadow1);
   align-self: center;
-  /* opacity: .9; */
+  opacity: .8; 
 }
+
+.nav .infoViewerMode{
+    pointer-events: all;
+}
+
 
 .nav #pageComments #counter{
     margin-left:5px;
@@ -872,6 +934,7 @@ body {
 
 .btnMenu,
 .nav #pageComments,
+.nav #experimental,
 .btnPreview,
 .btnNext {
   cursor: pointer;
@@ -891,7 +954,9 @@ body {
   height: 36px;
 }
 
-.nav .pageName {
+.nav .pageName,
+.nav .infoViewerMode
+{
   padding: 0 12px;
 }
 .nav #pageComments {
@@ -900,6 +965,7 @@ body {
 
 .btnMenu:hover,
 .nav #pageComments:hover,
+.nav #experimental:hover,
 .btnPreview:hover,
 .btnNext:hover {
   background: var(--color-hover);
@@ -909,6 +975,7 @@ body {
 
 .btnMenu:active,
 .nav #pageComments:active,
+.nav #experimental:active, 
 .btnPreview:active,
 .btnNext:active {
   background: var(--color-active);
@@ -925,6 +992,18 @@ body {
 .nav .disabled {
   opacity: .5;
 }
+
+.nav #experimental {
+    width:36px;
+    margin-left: 12px;  
+    background: #FFB70A;;
+}
+
+
+.nav #experimental:hover { 
+    background: #FED574;;
+}
+  
 
 /*** MENU ***/
 .menu {
@@ -950,6 +1029,15 @@ body {
   transform: translateY(0px);
   transition: all .12s;
 }
+
+.menu .item-switcher {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    height: 44px;    
+    background: var(--color-background);
+  }
 
 .item {
   display: flex;
@@ -979,7 +1067,7 @@ body {
   text-align: start;
 }
 
-.item .tips {
+.menu .tips {
   font-size: var(--font-small);
   color: var(--color-secondary);
 }
@@ -1086,7 +1174,7 @@ area {
     border: 2px solid var(--color-secondary) ;
     border-radius: 50%;
     animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-    border-color: var(--color-secondary) transparent transparent transparent;        
+    border-color: var(--color-secondary) transparent transparent transparent;
 }
 .lds-ring div:nth-child(1) {
     animation-delay: -0.45s;
@@ -1124,6 +1212,8 @@ area {
 
   /* Dark mode styles go here! */
   :root {
+    --color-danger:#E40949;
+    --color-warning:#FFB70A;
     --color-primary: #E0E1E1;
     --color-secondary: #989EA5;
     --color-accent: #568AF2;

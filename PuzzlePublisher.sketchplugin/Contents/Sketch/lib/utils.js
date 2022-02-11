@@ -27,6 +27,22 @@ Rectangle.prototype.copyToRect = function () {
 
 class Utils {
 
+
+    static getDocSetting(doc, key, defaultValue = '') {
+        const Settings = require('sketch/settings')
+        let value = Settings.documentSettingForKey(doc, key)
+        if (undefined == value || null == value) value = defaultValue
+        return value
+    }
+
+    static getPluginSetting(key, defaultValue = '') {
+        const Settings = require('sketch/settings')
+        let value = Settings.settingForKey(key)
+        if (undefined == value || null == value) value = defaultValue
+        return value
+    }
+
+
     static upgradeArtboardOverlayPosition(oldValue) {
         const newValues = {
             pinTo: 0,
@@ -250,7 +266,6 @@ class Utils {
     }
 
     static getMiroBoardsGroupedByProject(context) {
-
         //  Get token
         var token = api.getToken();
         if (!token) return null
@@ -268,17 +283,31 @@ class Utils {
         });
         projects.sort()
         let groupedBoards = []
+        let indexIdsMap = []
         projects.forEach(function (project) {
             groupedBoards.push("--- " + project + " ----")
-            boards.filter(el => el["project"] == project).forEach(el => groupedBoards.push(el['title']))
+            indexIdsMap.push("")
+            boards.filter(el => el["project"] == project).forEach(function (el) {
+                groupedBoards.push(el['title'])
+                indexIdsMap.push(el['boardId'])
+            })
         })
         const boardsWithouProject = boards.filter(el => !("project" in el))
         if (boardsWithouProject.length) {
-            if (projects.length) groupedBoards.push("--- " + "Out of projects" + " ----")
-            boardsWithouProject.forEach(el => groupedBoards.push(el['title']))
+            if (projects.length) {
+                groupedBoards.push("--- " + "Out of projects" + " ----")
+                indexIdsMap.push("")
+            }
+            boardsWithouProject.forEach(function (el) {
+                groupedBoards.push(el['title'])
+                indexIdsMap.push(el['boardId'])
+            })
         }
 
-        return groupedBoards
+        return {
+            indexIdsMap: indexIdsMap,
+            boards: groupedBoards
+        }
     }
 
     static testMiro(context, email, password, board) {
@@ -304,8 +333,6 @@ class Utils {
         if (response) {
             if (response.error) {
                 var messages = getMessagesByError(response.error);
-
-                log(email + "/" + password + "/")
 
                 if (messages.alert) {
                     UI.alert("Can't connect to Miro", messages.alert)

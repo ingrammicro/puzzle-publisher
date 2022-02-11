@@ -88,6 +88,12 @@ var onRun = function (context) {
         }
     }
 
+
+    let artboardDisableFixed = Settings.layerSettingForKey(artboard, SettingKeys.ARTBOARD_DISABLE_FIXED)
+    if (artboardDisableFixed == undefined || artboardDisableFixed == "") {
+        artboardDisableFixed = 0
+    }
+
     const overlayOverFixed = Settings.layerSettingForKey(artboard, SettingKeys.ARTBOARD_OVERLAY_OVERFIXED) == 1
     let overlayAlsoFixed = Settings.layerSettingForKey(artboard, SettingKeys.ARTBOARD_OVERLAY_ALSOFIXED)
     overlayAlsoFixed = (overlayAlsoFixed != undefined) ? overlayAlsoFixed == 1 : true
@@ -133,6 +139,10 @@ var onRun = function (context) {
     const enableShadowControl = dialog.addCheckbox("enableShadow", "Show modal dialog or overlay shadow", enableShadow)
     dialog.addHint("enableShadowHint", "Dim a previous artboard to set visual focus on an modal.")
 
+    dialog.addDivider()
+    dialog.addLeftLabel("", "Export")
+    const artboardDisableFixedControl = dialog.addSelect("artboardDisableFixed", "Render fixed layers as regular",
+        artboardDisableFixed, ["(Use document setting)", "Yes", "No"], 250)
     /////////////////////////// PAGE 2
 
     dialog.setTabForViewsCreating(1)
@@ -260,10 +270,7 @@ var onRun = function (context) {
     const enableAutoScrollControl = dialog.addCheckbox("enableAutoScroll", "Scroll browser page to top", enableAutoScroll)
     dialog.addHint("enableAutoScrollHint", "The artboard will be scrolled on top after showing")
 
-
-
     enableTypeRelated()
-
     ///////////////// RUN EVENT LOOP ///////////////////////
     while (true) {
         // Cancel clicked
@@ -273,6 +280,7 @@ var onRun = function (context) {
         // read data
         transNextSecs = transNextSecsControl.stringValue() + ""
         artboardType = typeControl.indexOfSelectedItem()
+        artboardDisableFixed = artboardDisableFixedControl.indexOfSelectedItem()
 
         // check data        
         if (transNextSecs != '' && isNaN(parseFloat(transNextSecs))) {
@@ -282,6 +290,8 @@ var onRun = function (context) {
         // save data
 
         Settings.setLayerSettingForKey(artboard, SettingKeys.ARTBOARD_TYPE, artboardType)
+        Settings.setLayerSettingForKey(artboard, SettingKeys.ARTBOARD_DISABLE_FIXED, artboardDisableFixed)
+
         if (overlayByEventControl.isEnabled)
             Settings.setLayerSettingForKey(artboard, SettingKeys.ARTBOARD_OVERLAY_BY_EVENT, overlayByEventControl.indexOfSelectedItem())
         if (overlayPinControl.isEnabled) {
