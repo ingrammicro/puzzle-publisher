@@ -90,6 +90,8 @@ class Exporter {
         this.exportFullImages = miroEnabled || true
 
         this.ignoreLibArtboards = this.Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_DISABLE_LIB_ARTBOARDS) == 1
+
+        this.async = Settings.settingForKey(SettingKeys.PLUGIN_ENABLE_ASYNC) == 1
     }
 
     getManifest() {

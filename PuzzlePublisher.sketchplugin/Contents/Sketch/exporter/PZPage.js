@@ -30,7 +30,7 @@ class PZPage {
             }
 
             // We don't need save info by ourself because Sketch does it. Check userInfo() function
-            // if (exporter.enabledJSON) this._scanLayersToSaveInfo(sa)
+            if (exporter.enabledJSON) this._scanLayersToSaveInfo(sa)
 
             this._scanLayersToDetachSymbols(sa)
         }
@@ -87,6 +87,7 @@ class PZPage {
 
             if (true) {
                 /// WAY #3
+                Settings.setLayerSettingForKey(sl, 'masterID', symbolId)
             }
             else if (false) {
                 /// WAY #1— works, but slowly

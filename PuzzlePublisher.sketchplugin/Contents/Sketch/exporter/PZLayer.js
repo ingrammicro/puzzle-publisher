@@ -1,3 +1,4 @@
+const { off } = require("process")
 @import("constants.js")
 @import("lib/utils.js")
 @import("exporter/PZDoc.js")
@@ -80,8 +81,14 @@ class PZLayer {
         if (this.isGroup && exporter.enabledJSON) {  // && "icon" != this.name) {
 
             if (true) {
-                // WAY #3 - experimental
+                // WAY #4 - experimental
+                symbolID = Settings.layerSettingForKey(sLayer, 'masterID')
+                console.log("name=" + sLayer.name)
+                console.log(symbolID)
+            } else if (false) {
+                // WAY #3 - experimental (broken)
                 const info = this.nlayer.userInfo()
+                console.log(info)
                 if (null != info) {
                     const detach = info['com.sketch.detach']
                     if (detach) {
