@@ -77,62 +77,11 @@ class PZLayer {
         let targetID = null
 
 
-        // find a symbol and flow information saved before detatch()
+        // find a symbol and flow information saved by sketchtool during --detach (see export.sh)
         if (this.isGroup && exporter.enabledJSON) {  // && "icon" != this.name) {
-
-            if (true) {
-                // WAY #4 - experimental
-                symbolID = Settings.layerSettingForKey(sLayer, 'masterID')
-                console.log("name=" + sLayer.name)
-                console.log(symbolID)
-            } else if (false) {
-                // WAY #3 - experimental (broken)
-                const info = this.nlayer.userInfo()
-                console.log(info)
-                if (null != info) {
-                    const detach = info['com.sketch.detach']
-                    if (detach) {
-                        if (detach['symbolMaster'])
-                            symbolID = detach['symbolMaster']['symbolID']
-                        else {
-                            //log("!!!!!!!!!!!!!!!!!!!!!! no symbolMaster for " + this.name)
-                            //log(detach)
-                        }
-                    }
-                }
-            } else if (false) {
-                // WAY #1— works, but slowly
-                let tag = "±±" + this.name + "±±"
-                function findShadow(group) {)
-                    return group.layers.filter(l => l.name.startsWith(tag))[0]
-                }
-                let shadow = findShadow(sLayer.parent)
-                if (!shadow && sLayer.parent.parent.layers) shadow = findShadow(sLayer.parent.parent)
-                //
-                if (!shadow && (this.name.startsWith("ic-") || "icon" == this.name)) {
-                    tag = "±±" + "icon"
-                    shadow = findShadow(sLayer.parent)
-                    if (!shadow && sLayer.parent.parent) shadow = findShadow(sLayer.parent.parent)
-                    if (!shadow && sLayer.parent.parent.parent) shadow = findShadow(sLayer.parent.parent.parent)
-                    this.isIcon = shadow != null
-                }
-                //
-                if (shadow) {
-                    const data = shadow.name.split("±±")
-                    targetID = data[2]
-                    symbolID = data[3]
-                }
-            } else {
-                /// WAY 2 — works unstable
-                const targetPos = this.name.indexOf("±±")
-                if (targetPos >= 0) {
-                    // This layer is Symbol instance
-                    const data = this.name.substring(targetPos + 2)
-                    const symbolIDPos = data.indexOf("±±")
-                    targetID = data.substring(0, symbolIDPos)
-                    symbolID = data.substring(symbolIDPos + 2)
-                }  // END OF WAY #1
-            }
+            symbolID = Settings.layerSettingForKey(sLayer, 'masterID')
+            console.log("name=" + sLayer.name)
+            console.log(symbolID)
         }
 
         // save found symbol information

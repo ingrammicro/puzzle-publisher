@@ -14,13 +14,11 @@ var onRun = function (context) {
     // Read settings
     let logDebug = Settings.settingForKey(SettingKeys.PLUGIN_LOGDEBUG_ENABLED) == 1
     let gaEnabled = !Settings.settingForKey(SettingKeys.PLUGIN_GA_DISABLED)
-    let asyncEnabled = Settings.settingForKey(SettingKeys.PLUGIN_ENABLE_ASYNC) == 1
 
     // Build dialog
     const dialog = new UIDialog("Configure", NSMakeRect(0, 0, 400, 200), "Save", "Edit Puzzle Publisher common configuration settings.")
 
     dialog.addCheckbox("logDebug", "Enable debug logging", logDebug)
-    dialog.addCheckbox("asyncEnabled", "Background exporting and publishing", asyncEnabled)
 
     dialog.addDivider()
     dialog.addLeftLabel("", "Privacy", 40)
@@ -36,7 +34,6 @@ var onRun = function (context) {
         }
         logDebug = dialog.views['logDebug'].state() == 1
         gaEnabled = dialog.views['gaEnabled'].state() == 1
-        asyncEnabled = dialog.views['asyncEnabled'].state() == 1
 
         break
     }
@@ -45,7 +42,6 @@ var onRun = function (context) {
     // Save updated settings
     Settings.setSettingForKey(SettingKeys.PLUGIN_LOGDEBUG_ENABLED, logDebug)
     Settings.setSettingForKey(SettingKeys.PLUGIN_GA_DISABLED, !gaEnabled)
-    Settings.setSettingForKey(SettingKeys.PLUGIN_ENABLE_ASYNC, asyncEnabled)
 
     return true
 

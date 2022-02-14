@@ -202,10 +202,8 @@ function runExporter(context, exportOptions = null) {
         Settings.setSettingForKey(SettingKeys.PLUGIN_COMPRESS, compress)
 
         // Export in background        
-        var asyncEnabled = Settings.settingForKey(SettingKeys.PLUGIN_ENABLE_ASYNC) == 1
-        if (asyncEnabled) {
-            return asyncExportHTML(context, doc)
-        }
+        var enabledJSON = Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_DISABLE_INSPECTOR) != 1
+        if (enabledJSON) return asyncExportHTML(context, doc)
     }
 
 

@@ -150,7 +150,6 @@ const SettingKeys = {
     PLUGIN_PUBLISH_MIRO_ENABLED: "PLUGIN_PUBLISH_MIRO_ENABLED",
     PLUGIN_INSTALLED: "pluginInstalled",
     PLUGIN_GA_DISABLED: "pluginGADisabled",
-    PLUGIN_ENABLE_ASYNC: "PLUGIN_ENABLE_ASYNC",
     PLUGIN_LOGDEBUG_ENABLED: "pluginLogDebugEnabled",
 
     ARTBOARD_TYPE: "artboardType",
