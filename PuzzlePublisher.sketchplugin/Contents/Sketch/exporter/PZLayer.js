@@ -78,11 +78,14 @@ class PZLayer {
 
 
         // find a symbol and flow information saved by sketchtool during --detach (see export.sh)
-        if (this.isGroup && exporter.enabledJSON) {  // && "icon" != this.name) {
-            symbolID = Settings.layerSettingForKey(sLayer, 'masterID')
-            console.log("name=" + sLayer.name)
-            console.log(symbolID)
+        if (this.isGroup && exporter.enabledJSON) {
+            const info = this.nlayer.userInfo()
+            if (null != info) {
+                const detach = info['com.sketch.detach']
+                if (detach && detach['symbolMaster']) symbolID = detach['symbolMaster']['symbolID']
+            }
         }
+
 
         // save found symbol information
         if (null != symbolID) {
