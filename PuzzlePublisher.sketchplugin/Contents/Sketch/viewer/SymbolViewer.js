@@ -453,7 +453,7 @@ class SymbolViewer extends AbstractViewer {
         // Drop path to icon, leave only name
         const iconTagPos = symName.indexOf(ICON_TAG)
         if (iconTagPos >= 0) {
-            symName = symName.substring(iconTagPos).replace(ICON_TAG, ICON_TAG2)
+            symName = symName.substring(iconTagPos).replace(ICON_TAG, ICON_TAG2) + "-" + symName.substring(0, 2)
             categoryName = "Icon"
         }
         //
