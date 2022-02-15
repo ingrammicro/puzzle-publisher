@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 17.0.1 (15 Feb 2022)
+Fixed browser page title
+
 ##  Version 17.0.0 (14 Feb 2022)
 Changed method of symbol master information processing to make it compatible with the latest Sketch.app
 
