@@ -92,7 +92,7 @@ function saveDocumentAs(document, filePath) {
 
 function asyncExportHTML(context, doc) {
     // Clone current doc to temp file
-    const docName = doc.sketchObject.cloudName()
+    const docName = doc.sketchObject.cloudName() + ""
     const tempDir = Utils.getPathToTempFolder()
     const tempFile = tempDir + "/" + "tmp" + ".sketch"
     saveDocumentAs(doc, tempFile)

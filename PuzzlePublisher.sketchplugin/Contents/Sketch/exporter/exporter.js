@@ -29,7 +29,7 @@ class Exporter {
         this.warnings = []
 
         if (context['async']) {
-            this.docName = context["name"]
+            this.docName = context["name"] + ""
         } else {
             // workaround for Sketch 52s
             this.docName = this._clearCloudName(this.ndoc.cloudName() + "")
