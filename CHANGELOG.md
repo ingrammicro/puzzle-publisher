@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 17.0.2 (22 Feb 2022)
+Support Sketch.app installed into non-Applications folder
+
 ##  Version 17.0.1 (15 Feb 2022)
 Fixed browser page title
 
