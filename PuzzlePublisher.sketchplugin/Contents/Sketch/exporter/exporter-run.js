@@ -7,6 +7,8 @@
 
 const Settings = require('sketch/settings')
 const UI = require('sketch/ui')
+const Dom = require('sketch/dom')
+
 
 let exportInfo = {
     timeout: undefined,
@@ -31,11 +33,17 @@ function panelSwitchFinished() {
     })
 }
 
+function openBrowser(currentPath, doc) {
+    const docName = doc.sketchObject.cloudName() + ""
+    const openPath = currentPath + "/" + docName + "/"
+    const fullPath = "" + openPath + (openPath.endsWith('/') ? '' : '/') + 'index.html'
+    NSWorkspace.sharedWorkspace().openFile(fullPath);
+}
+
 function exportHTML(currentPath, nDoc, exportOptions, context) {
     let fromCmd = ('fromCmd' in exportOptions) && exportOptions.fromCmd
 
     new Exporter(currentPath, nDoc, nDoc.currentPage(), exportOptions, context);
-
 
     let exportedOk = false
     if (fromCmd) {
@@ -66,19 +74,13 @@ function exportHTML(currentPath, nDoc, exportOptions, context) {
                 UI.alert('Export completed with warnings', exporter.warnings.join("\n\n"))
             } else {
                 UI.message('HTML exported.')
+                // open HTML in browser 
+                if (!exportOptions.dontOpenBrowser) {
+                    openBrowser(currentPath, Dom.fromNative(nDoc))
+                }
             }
         })
     }
-
-    if (exportedOk && (!fromCmd || context['async'])) {
-        // open HTML in browser 
-        if (!exportOptions.dontOpenBrowser) {
-            const openPath = currentPath + "/" + exporter.docName + "/"
-            const fullPath = "" + openPath + (openPath.endsWith('/') ? '' : '/') + 'index.html'
-            NSWorkspace.sharedWorkspace().openFile(fullPath);
-        }
-    }
-
 }
 
 
@@ -104,7 +106,9 @@ function asyncExportHTML(context, doc) {
     log(scriptPath)
 
     // Run other Sketch instance to export
-    Utils.runCommand('/bin/bash', [scriptPath, tempDir, tempFile, docName], false)
+    const result = Utils.runCommand('/bin/bash', [scriptPath, tempDir, tempFile, docName], true)
+    log(result)
+    return result
 }
 
 function runExporter(context, exportOptions = null) {
@@ -115,7 +119,6 @@ function runExporter(context, exportOptions = null) {
         }
     }
 
-    const Dom = require('sketch/dom')
     const nDoc = exportOptions.nDoc ? exportOptions.nDoc : context.document
     const doc = Dom.fromNative(nDoc)
     const Settings = require('sketch/settings')
@@ -203,7 +206,15 @@ function runExporter(context, exportOptions = null) {
 
         // Export in background        
         var enabledJSON = Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_DISABLE_INSPECTOR) != 1
-        if (enabledJSON) return asyncExportHTML(context, doc)
+        if (enabledJSON) {
+            const result = asyncExportHTML(context, doc)
+            if (result.result == 1) {
+                if (!dontOpenBrowser) openBrowser(currentPath, doc)
+            } else {
+                UI.alert('Export failed with errors', result.output)
+            }
+            return
+        }
     }
 
 
