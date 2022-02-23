@@ -175,6 +175,8 @@ class PZDoc {
     }
 
     undoChanges() {
+        if (!exporter.enabledJSON) Utils.actionWithType(this.sDoc.sketchObject, "MSUndoAction").doPerformAction(nil);
+
         this.jsLibs = []
 
     }
