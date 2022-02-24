@@ -2,6 +2,8 @@
 @import("lib/utils.js")
 Sketch = require('sketch/dom')
 
+var PZPage_touched = false
+
 class PZPage {
 
     // spage: ref to Sketch Page
@@ -14,6 +16,24 @@ class PZPage {
         if (DEBUG) exporter.logMsg("PZPage.collectData() starting... name=" + (this.sPage ? this.sPage.name : ''))
         // 
         if (!sArtboards) sArtboards = this.sPage.layers
+
+        // Run in sync mode, doesn't need Element Inspector data to be exported
+        if (!exporter.enabledJSON) {
+            // prepare layers for collecting
+            exporter.logMsg("PZPage.collectData() preparing...")
+            for (const sa of sArtboards) {
+                if ("Artboard" != sa.type) continue
+                if (exporter.filterAster && sa.name.indexOf("*") == 0) continue
+
+                // special trick to add some data change event to Sketch as Undo point
+                if (!PZPage_touched) {
+                    sa.frame.y += 10
+                    PZPage_touched = true
+                }
+
+                this._scanLayersToDetachSymbols(sa)
+            }
+        }
 
         // collect layers
         exporter.logMsg("PZPage.collectData() collecting...")
@@ -46,6 +66,24 @@ class PZPage {
 
 
     //////////////////////// PRIVATE FUNCTIONS //////////////////////////////////////
+
+    _scanLayersToDetachSymbols(sParent) {
+        if (DEBUG) exporter.logMsg("PZPage._scanLayersToDetachSymbols() runnning...name=" + (this.sPage ? this.sPage.name : ''))
+        const nParent = sParent.sketchObject
+
+        const symbolPredicate = NSPredicate.predicateWithFormat("className == %@", 'MSSymbolInstance');
+        const symbolInstances = nParent.children().filteredArrayUsingPredicate_(symbolPredicate);
+
+        symbolInstances.forEach(function (nl) {
+            var sl = Sketch.fromNative(nl)
+            sl = sl.detach({
+                recursively: true
+            })
+            if (DEBUG) exporter.logMsg("PZPage._scanLayersToDetachSymbols() symbol:" + sl.name)
+        }, this)
+
+        if (DEBUG) exporter.logMsg("PZPage._scanLayersToDetachSymbols() completed")
+    }
 
     _collectArtboards(sArtboards) {
         for (var sa of this._sortArtboards(sArtboards)) {
