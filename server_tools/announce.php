@@ -135,7 +135,7 @@ class Worker{
             //
             $info = $lines = explode(" ",$line);   
             $image_base_url = $this->base_url."/".$this->data['dir']."/images/";
-            $screen_base_url = $this->base_url."/".$this->data['dir']."/index.html#";
+            $screen_base_url = $this->base_url."/".$this->data['dir']."/?";
             
             $is_new = FALSE;
             $file_info = NULL;
@@ -247,10 +247,16 @@ class Worker{
         $channelID =  $this->config['telegram-channel-id'];
 
         if(''==$apiToken) return TRUE;
-        
+    
+        // Take the fist new/updated page
+        $pageURL = $this->data['url'];
+        if(count($this->data['screens_changed'])){
+            $pageURL = $this->data['screens_changed'][0]['screen_url'];
+        }
+
         $data = [
             'chat_id' =>  $channelID,
-            'text' => $this->data['author'].' published '. $this->data['url']. " \n- ". $this->data['message']
+            'text' => $this->data['author'].' published '. $pageURL. " \n- ". $this->data['message']
         ];
 
         $response = file_get_contents("https://api.telegram.org/bot$apiToken/sendMessage?" . http_build_query($data) );
