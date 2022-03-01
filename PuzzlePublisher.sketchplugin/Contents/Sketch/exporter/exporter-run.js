@@ -92,7 +92,7 @@ function saveDocumentAs(document, filePath) {
         NSSaveOperation, nil, nil);
 }
 
-function asyncExportHTML(context, doc) {
+function asyncExportHTML(context, doc, exportOptions) {
     // Clone current doc to temp file
     const docName = doc.sketchObject.cloudName() + ""
     const tempDir = Utils.getPathToTempFolder()
@@ -102,11 +102,26 @@ function asyncExportHTML(context, doc) {
     const fileManager = NSFileManager.defaultManager()
     const scriptName = "export.sh"
 
-    const scriptPath = context.plugin.url().URLByAppendingPathComponent("Contents").URLByAppendingPathComponent("Sketch").URLByAppendingPathComponent("scripts").URLByAppendingPathComponent(scriptName)
-    log(scriptPath)
+    const scriptPath = context.plugin.url().URLByAppendingPathComponent("Contents")
+        .URLByAppendingPathComponent("Sketch").URLByAppendingPathComponent("scripts")
+        .URLByAppendingPathComponent(scriptName)
 
-    // Run other Sketch instance to export
-    const result = Utils.runCommand('/bin/bash', [scriptPath, tempDir, tempFile, docName], true)
+    // Prepare options to send
+    if (exportOptions.mode === undefined) {
+    } else if (exportOptions.mode === Constants.EXPORT_MODE_SELECTED_ARTBOARDS) {
+        const ids = exportOptions["selectedArtboards"].map(a => a.id + "")
+        exportOptions["selectedArtboardIDS"] = ids
+    } else if (exportOptions.mode === Constants.EXPORT_MODE_CURRENT_PAGE) {
+        exportOptions["currentPageID"] = exportOptions['currentPage'].id + ""
+    }
+    exportOptions["currentPage"] = undefined
+    exportOptions["selectedLayers"] = undefined
+    exportOptions["selectedArtboards"] = undefined
+
+
+    // Run other Sketch instance to export    
+    log(exportOptions)
+    const result = Utils.runCommand('/bin/bash', [scriptPath, tempDir, tempFile, docName, JSON.stringify(exportOptions)], true)
     log(result)
     return result
 }
@@ -147,8 +162,6 @@ function runExporter(context, exportOptions = null) {
 
     if (!fromCmd) {
         UIDialog.setUp(context);
-
-
 
         const dialog = new UIDialog("Export to HTML", NSMakeRect(0, 0, 500, 100 + (askSize ? 100 : 0)), "Export")
         dialog.removeLeftColumn()
@@ -204,10 +217,15 @@ function runExporter(context, exportOptions = null) {
         Settings.setSettingForKey(SettingKeys.PLUGIN_DONT_OPEN_BROWSER, dontOpenBrowser)
         Settings.setSettingForKey(SettingKeys.PLUGIN_COMPRESS, compress)
 
+        exportOptions.dontOpenBrowser = dontOpenBrowser
+        exportOptions.compress = compress
+        exportOptions.customArtboardHeight = customHeight
+        exportOptions.customArtboardWidth = customWidth
+
         // Export in background        
         var enabledJSON = Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_DISABLE_INSPECTOR) != 1
         if (enabledJSON) {
-            const result = asyncExportHTML(context, doc)
+            const result = asyncExportHTML(context, doc, exportOptions)
             if (result.result == 1) {
                 if (!dontOpenBrowser) openBrowser(currentPath, doc)
             } else {
@@ -216,12 +234,6 @@ function runExporter(context, exportOptions = null) {
             return
         }
     }
-
-
-    exportOptions.dontOpenBrowser = dontOpenBrowser
-    exportOptions.compress = compress
-    exportOptions.customArtboardHeight = customHeight
-    exportOptions.customArtboardWidth = customWidth
 
 
     exportHTML(currentPath, nDoc, exportOptions, context)

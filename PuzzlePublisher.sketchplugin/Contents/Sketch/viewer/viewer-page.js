@@ -399,9 +399,9 @@ class ViewerPage {
 
         var destPage = story.pages[link.page]
         // for mouseover overlay we need to show it on click, but only one time)
-        if ("overlay" == destPage.type && Constansts.TRIGGER_ON_HOVER == destPage.overlayByEvent) {
+        if ("overlay" == destPage.type && Constants.TRIGGER_ON_HOVER == destPage.overlayByEvent) {
             destPage.tmpSrcOverlayByEvent = destPage.overlayByEvent
-            destPage.overlayByEvent = Constansts.TRIGGER_ON_HOVER
+            destPage.overlayByEvent = Constants.TRIGGER_ON_HOVER
             viewer.customEvent = {
                 x: link.rect.x,
                 y: link.rect.y,
@@ -426,7 +426,7 @@ class ViewerPage {
 
     // return true (overlay is hidden) or false (overlay is visible)
     onMouseMoveOverlay(x, y) {
-        if (this.imageDiv.hasClass("hidden") || this.overlayByEvent != Constansts.TRIGGER_ON_HOVER) return false
+        if (this.imageDiv.hasClass("hidden") || this.overlayByEvent != Constants.TRIGGER_ON_HOVER) return false
         if (viewer.linksDisabled) return false
 
         // handle mouse hover if this page is overlay

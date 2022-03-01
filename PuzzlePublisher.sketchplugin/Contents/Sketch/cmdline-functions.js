@@ -95,19 +95,28 @@ var cmdRun = function (context) {
     for (var cmd of allCommands) {
         cmds[cmd] = commandsList.includes(cmd)
     }
+
+    const runOptions = JSON.parse(context.exportOptions)
+
     // Open Sketch document 
     Document.open(path, (err, document) => {
         if (err || !document) {
             log("ERROR: Can't open  " + path)
             return
         }
-        const runOptions = {
-            cmd: "exportHTML",
-            fromCmd: true,
-            nDoc: document.sketchObject
-        }
+
         if (cmds.sync) syncDocument(document)
-        if (cmds.export) exportDocument(context, runOptions)
+        if (cmds.export) {
+            runOptions.cmd = "exportHTML"
+            runOptions.fromCmd = true
+            runOptions.nDoc = document.sketchObject
+            //
+            if (Constants.EXPORT_MODE_CURRENT_PAGE == exportOptions.mode) {
+                runOptions.currentPage = document.pages.filter(p => p.id == exportOptions["currentPageID"])[0]
+            }
+            //
+            exportDocument(context, runOptions)
+        }
         if (cmds.save) saveDocument(document)
         if (cmds.publish) publishDocument(context, document)
         if (cmds.save) saveDocument(document)

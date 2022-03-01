@@ -46,6 +46,7 @@ var onRun = function (context) {
     const modeOptions = {
         "mode": mode,
         "selectedLayers": null,
+        "selectedArtboards": null,
         "currentPage": null
     }
 
