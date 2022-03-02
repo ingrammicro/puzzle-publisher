@@ -399,9 +399,9 @@ class ViewerPage {
 
         var destPage = story.pages[link.page]
         // for mouseover overlay we need to show it on click, but only one time)
-        if ("overlay" == destPage.type && Constansts.TRIGGER_ON_HOVER == destPage.overlayByEvent) {
+        if ("overlay" == destPage.type && Constants.TRIGGER_ON_HOVER == destPage.overlayByEvent) {
             destPage.tmpSrcOverlayByEvent = destPage.overlayByEvent
-            destPage.overlayByEvent = Constansts.TRIGGER_ON_HOVER
+            destPage.overlayByEvent = Constants.TRIGGER_ON_HOVER
             viewer.customEvent = {
                 x: link.rect.x,
                 y: link.rect.y,
@@ -426,12 +426,12 @@ class ViewerPage {
 
     // return true (overlay is hidden) or false (overlay is visible)
     onMouseMoveOverlay(x, y) {
-        if (this.imageDiv.hasClass("hidden") || this.overlayByEvent != Constansts.TRIGGER_ON_HOVER) return false
+        if (this.imageDiv.hasClass("hidden") || this.overlayByEvent != Constants.TRIGGER_ON_HOVER) return false
         if (viewer.linksDisabled) return false
 
         // handle mouse hover if this page is overlay
         var _hideSelf = false
-        while (Constansts.TRIGGER_ON_CLICK == this.overlayByEvent) {
+        while (Constants.TRIGGER_ON_CLICK == this.overlayByEvent) {
             var localX = Math.round(x / viewer.currentZoom) - this.currentLeft
             var localY = Math.round(y / viewer.currentZoom) - this.currentTop
             //alert(" localX:"+localX+" localY:"+localY+" linkX:"+this.currentLink.x+" linkY:"+this.currentLink.y);
@@ -580,7 +580,7 @@ class ViewerPage {
             }
 
 
-        } else if (Constansts.TRIGGER_ON_CLICK == this.overlayByEvent && posX == this.currentX && posY == this.currentY) {//handle only mouse hover
+        } else if (Constants.TRIGGER_ON_CLICK == this.overlayByEvent && posX == this.currentX && posY == this.currentY) {//handle only mouse hover
             // cursor returned back from overlay to hotspot -> nothing to do
         } else {
             this.hide()
