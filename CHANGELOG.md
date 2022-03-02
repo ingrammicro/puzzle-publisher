@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 17.0.4 (01 Mar 2022)
+Bugfixes
+
 ##  Version 17.0.3 (22 Feb 2022)
 HOTFIX FOR 17.0.0 - Symbol internal links are broken if Element Inspector is disabled
 
