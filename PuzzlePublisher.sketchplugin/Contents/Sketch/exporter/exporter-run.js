@@ -107,7 +107,6 @@ function asyncExportHTML(context, doc) {
 
     // Run other Sketch instance to export
     const result = Utils.runCommand('/bin/bash', [scriptPath, tempDir, tempFile, docName], true)
-    log(result)
     return result
 }
 
