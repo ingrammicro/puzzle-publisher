@@ -348,11 +348,19 @@ class PZLayer {
 
         let finalHotspot = {
             r: this.frame.copy(),
-            //l: l,
             linkType: 'undefined',
             artboardID: null,
             target: null,
-            overlayRedirect: this.overlayRedirect
+            overlayRedirect: this.overlayRedirect,
+            ancestorFixed: null
+        }
+        let p = this
+        while (!p.isArtboard) {
+            if (p.nlayer.isFixedToViewport()) {
+                finalHotspot.fixedAncestorID = p.objectID
+                break
+            }
+            p = p.parent
         }
 
         while (true) {

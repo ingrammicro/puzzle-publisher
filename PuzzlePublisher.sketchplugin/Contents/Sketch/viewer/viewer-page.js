@@ -431,7 +431,7 @@ class ViewerPage {
 
         // handle mouse hover if this page is overlay
         var _hideSelf = false
-        while (Constansts.TRIGGER_ON_CLICK == this.overlayByEvent) {
+        while (Constants.TRIGGER_ON_CLICK == this.overlayByEvent) {
             var localX = Math.round(x / viewer.currentZoom) - this.currentLeft
             var localY = Math.round(y / viewer.currentZoom) - this.currentTop
             //alert(" localX:"+localX+" localY:"+localY+" linkX:"+this.currentLink.x+" linkY:"+this.currentLink.y);
@@ -580,7 +580,7 @@ class ViewerPage {
             }
 
 
-        } else if (Constansts.TRIGGER_ON_CLICK == this.overlayByEvent && posX == this.currentX && posY == this.currentY) {//handle only mouse hover
+        } else if (Constants.TRIGGER_ON_CLICK == this.overlayByEvent && posX == this.currentX && posY == this.currentY) {//handle only mouse hover
             // cursor returned back from overlay to hotspot -> nothing to do
         } else {
             this.hide()
