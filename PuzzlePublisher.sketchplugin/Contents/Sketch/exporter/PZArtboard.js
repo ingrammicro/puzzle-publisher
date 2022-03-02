@@ -136,10 +136,12 @@ class PZArtboard extends PZLayer {
                 let hotspot = this.hotspots[hIndex]
                 // move hotspot from artboard hotspots to fixed layer hotspots
                 if (hotspot.r.insideRectangle(l.frame)) {
-                    this.hotspots.splice(hIndex--, 1)
-                    hotspot.r.x -= l.frame.x
-                    hotspot.r.y -= l.frame.y
-                    l.hotspots.push(hotspot)
+                    if (!hotspot.fixedAncestorID || hotspot.fixedAncestorID == l.objectID) {
+                        this.hotspots.splice(hIndex--, 1)
+                        hotspot.r.x -= l.frame.x
+                        hotspot.r.y -= l.frame.y
+                        l.hotspots.push(hotspot)
+                    }
                 }
             }
 
