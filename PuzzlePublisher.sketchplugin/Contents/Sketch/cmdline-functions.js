@@ -74,6 +74,7 @@ function closeDocument(document) {
 var cmdRun = function (context) {
     let Document = require('sketch/dom').Document
 
+    log("context")
     log(context)
 
     // Parse command line arguments    
@@ -96,8 +97,6 @@ var cmdRun = function (context) {
         cmds[cmd] = commandsList.includes(cmd)
     }
 
-    const runOptions = JSON.parse(context.exportOptions)
-
     // Open Sketch document 
     Document.open(path, (err, document) => {
         if (err || !document) {
@@ -107,12 +106,19 @@ var cmdRun = function (context) {
 
         if (cmds.sync) syncDocument(document)
         if (cmds.export) {
-            runOptions.cmd = "exportHTML"
-            runOptions.fromCmd = true
-            runOptions.nDoc = document.sketchObject
+            const runOptions = {
+                cmd: "exportHTML",
+                mode: context.mode,
+                fromCmd: true,
+                nDoc: document.sketchObject
+            }
             //
-            if (Constants.EXPORT_MODE_CURRENT_PAGE == exportOptions.mode) {
-                runOptions.currentPage = document.pages.filter(p => p.id == exportOptions["currentPageID"])[0]
+            if (Constants.EXPORT_MODE_CURRENT_PAGE == context.mode) {
+                runOptions.currentPage = document.pages.filter(p => p.id == context["currentPageID"])[0]
+            } else if (Constants.EXPORT_MODE_SELECTED_ARTBOARDS == context.mode) {
+                console.log(context.selectedArtboardIDS)
+                runOptions.selectedArtboards = context.selectedArtboardIDS.split(",").map(id => document.getLayerWithID(id))
+                console.log(runOptions.selectedArtboards)
             }
             //
             exportDocument(context, runOptions)

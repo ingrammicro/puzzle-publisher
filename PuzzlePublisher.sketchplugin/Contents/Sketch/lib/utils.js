@@ -175,6 +175,10 @@ class Utils {
         const regex = / /gi;
         return path.replace(regex, "\\ ")
     }
+    static escapeDoudleQuote(path) {
+        return path.replace(/[\""]/g, '__')
+    }
+
 
     static copyRect(rect) {
         return NSMakeRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height)
@@ -233,6 +237,8 @@ class Utils {
 
     static runCommand(command, args, sync = true) {
         var task = NSTask.alloc().init();
+
+        console.log(args)
 
         var pipe = NSPipe.alloc().init()
         task.setStandardOutput_(pipe);
