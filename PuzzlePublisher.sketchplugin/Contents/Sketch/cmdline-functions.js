@@ -111,8 +111,8 @@ var cmdRun = function (context) {
             runOptions.fromCmd = true
             runOptions.nDoc = document.sketchObject
             //
-            if (Constants.EXPORT_MODE_CURRENT_PAGE == runOptions.mode) {
-                runOptions.currentPage = document.pages.filter(p => p.id == runOptions["currentPageID"])[0]
+            if (Constants.EXPORT_MODE_CURRENT_PAGE == exportOptions.mode) {
+                runOptions.currentPage = document.pages.filter(p => p.id == exportOptions["currentPageID"])[0]
             }
             //
             exportDocument(context, runOptions)

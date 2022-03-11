@@ -217,8 +217,8 @@ function runExporter(context, exportOptions = null) {
 
         exportOptions.dontOpenBrowser = dontOpenBrowser
         exportOptions.compress = compress
-        if (customHeight !== "") exportOptions.customArtboardHeight = customHeight
-        if (customWidth !== "") exportOptions.customArtboardWidth = customWidth
+        exportOptions.customArtboardHeight = customHeight
+        exportOptions.customArtboardWidth = customWidth
 
         // Export in background        
         var enabledJSON = Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_DISABLE_INSPECTOR) != 1
