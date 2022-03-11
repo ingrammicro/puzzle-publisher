@@ -106,21 +106,29 @@ function asyncExportHTML(context, doc, exportOptions) {
         .URLByAppendingPathComponent("Sketch").URLByAppendingPathComponent("scripts")
         .URLByAppendingPathComponent(scriptName)
 
+    const newContext = {
+        file: tempFile,
+        name: docName,
+        commands: "export,close",
+        async: true,
+        mode: exportOptions.mode
+    }
+
     // Prepare options to send
     if (exportOptions.mode === undefined) {
     } else if (exportOptions.mode === Constants.EXPORT_MODE_SELECTED_ARTBOARDS) {
-        const ids = exportOptions["selectedArtboards"].map(a => a.id + "")
-        exportOptions["selectedArtboardIDS"] = ids
-    } else if (exportOptions.mode === Constants.EXPORT_MODE_CURRENT_PAGE) {
-        exportOptions["currentPageID"] = exportOptions['currentPage'].id + ""
+        const ids = exportOptions["selectedArtboards"].map(a => a.id).join(",")
+        newContext.selectedArtboardIDS = ids
     }
-    exportOptions["currentPage"] = undefined
-    exportOptions["selectedLayers"] = undefined
-    exportOptions["selectedArtboards"] = undefined
+    if (exportOptions.mode !== undefined) {
+        newContext.currentPageID = exportOptions['currentPage'].id + ""
+    }
 
+    const newContextStr = JSON.stringify(newContext)
 
     // Run other Sketch instance to export    
-    const result = Utils.runCommand('/bin/bash', [scriptPath, tempDir, tempFile, docName, JSON.stringify(exportOptions)], true)
+    //const result = Utils.runCommand('/bin/bash', [scriptPath, tempDir, tempFile, docName, Utils.escapeDoudleQuote(JSON.stringify(exportOptions))], true)
+    const result = Utils.runCommand('/bin/bash', [scriptPath, tempDir, tempFile, newContextStr], true)
     return result
 }
 
@@ -217,8 +225,8 @@ function runExporter(context, exportOptions = null) {
 
         exportOptions.dontOpenBrowser = dontOpenBrowser
         exportOptions.compress = compress
-        exportOptions.customArtboardHeight = customHeight
-        exportOptions.customArtboardWidth = customWidth
+        if (customHeight !== "") exportOptions.customArtboardHeight = customHeight
+        if (customWidth !== "") exportOptions.customArtboardWidth = customWidth
 
         // Export in background        
         var enabledJSON = Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_DISABLE_INSPECTOR) != 1
