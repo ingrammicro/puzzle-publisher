@@ -43,7 +43,8 @@ function openBrowser(currentPath, doc) {
 function exportHTML(currentPath, nDoc, exportOptions, context) {
     let fromCmd = ('fromCmd' in exportOptions) && exportOptions.fromCmd
 
-    new Exporter(currentPath, nDoc, nDoc.currentPage(), exportOptions, context);
+    const currentPage = exportOptions.currentPage || nDoc.currentPage()
+    new Exporter(currentPath, nDoc, currentPage, exportOptions, context);
 
     let exportedOk = false
     if (fromCmd) {
@@ -111,7 +112,8 @@ function asyncExportHTML(context, doc, exportOptions) {
         name: docName,
         commands: "export,close",
         async: true,
-        mode: exportOptions.mode
+        mode: exportOptions.mode,
+        currentPageID: exportOptions.currentPage != undefined ? (exportOptions.currentPage.id + "") : undefined
     }
 
     // Prepare options to send
@@ -120,10 +122,6 @@ function asyncExportHTML(context, doc, exportOptions) {
         const ids = exportOptions["selectedArtboards"].map(a => a.id).join(",")
         newContext.selectedArtboardIDS = ids
     }
-    if (exportOptions.mode !== undefined) {
-        newContext.currentPageID = exportOptions['currentPage'].id + ""
-    }
-
     const newContextStr = JSON.stringify(newContext)
 
     // Run other Sketch instance to export    
@@ -134,7 +132,7 @@ function asyncExportHTML(context, doc, exportOptions) {
 
 function runExporter(context, exportOptions = null) {
 
-    if (null == exportOptions) {
+    if (exportOptions === null) {
         exportOptions = {
             cmd: 'exportHTML'
         }

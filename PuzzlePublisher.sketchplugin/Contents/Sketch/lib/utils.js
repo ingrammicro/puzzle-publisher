@@ -237,9 +237,6 @@ class Utils {
 
     static runCommand(command, args, sync = true) {
         var task = NSTask.alloc().init();
-
-        console.log(args)
-
         var pipe = NSPipe.alloc().init()
         task.setStandardOutput_(pipe);
         task.setStandardError_(pipe);

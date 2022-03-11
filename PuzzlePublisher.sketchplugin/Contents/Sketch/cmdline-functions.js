@@ -74,9 +74,6 @@ function closeDocument(document) {
 var cmdRun = function (context) {
     let Document = require('sketch/dom').Document
 
-    log("context")
-    log(context)
-
     // Parse command line arguments    
     let path = context.file + ""
     if ('' == path) {
@@ -110,15 +107,13 @@ var cmdRun = function (context) {
                 cmd: "exportHTML",
                 mode: context.mode,
                 fromCmd: true,
-                nDoc: document.sketchObject
+                nDoc: document.sketchObject,
+                currentPage: context.currentPageID ? document.getLayerWithID(context.currentPageID) : undefined,
             }
             //
             if (Constants.EXPORT_MODE_CURRENT_PAGE == context.mode) {
-                runOptions.currentPage = document.pages.filter(p => p.id == context["currentPageID"])[0]
             } else if (Constants.EXPORT_MODE_SELECTED_ARTBOARDS == context.mode) {
-                console.log(context.selectedArtboardIDS)
                 runOptions.selectedArtboards = context.selectedArtboardIDS.split(",").map(id => document.getLayerWithID(id))
-                console.log(runOptions.selectedArtboards)
             }
             //
             exportDocument(context, runOptions)

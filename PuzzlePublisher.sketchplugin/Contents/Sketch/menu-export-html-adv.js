@@ -32,12 +32,11 @@ function askMode(context) {
 }
 
 var onRun = function (context) {
-    const Dom = require('sketch/dom')
-    const doc = context.document
     const sketch = require('sketch')
-    const document = sketch.fromNative(doc)
-    const Doc = Dom.fromNative(doc)
     const Settings = require('sketch/settings')
+
+    const nDoc = require('sketch/dom').Document.getSelectedDocument()
+    const document = sketch.fromNative(nDoc)
     var UI = require('sketch/ui')
 
     const mode = askMode(context)
@@ -47,11 +46,10 @@ var onRun = function (context) {
         "mode": mode,
         "selectedLayers": null,
         "selectedArtboards": null,
-        "currentPage": null
+        "currentPage": document.selectedPage
     }
 
-    // check is something to export
-    modeOptions['currentPage'] = doc.currentPage()
+    // check is something to export    
     if (mode == Constants.EXPORT_MODE_SELECTED_ARTBOARDS) {
         const filteredArtboards = []
         for (var i = 0; i < document.selectedLayers.length; i++) {
