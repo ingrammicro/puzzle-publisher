@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 17.1.0 (14 Mar 2022)
+Improved PP plugin to show icon colors (finally!)
+
 ##  Version 17.0.5 (11 Mar 2022)
 Selective export fixed
 
