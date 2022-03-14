@@ -70,6 +70,7 @@ class PZLayer {
         this.isSymbolInstance = false
         this.customLink = undefined
         this.isLink = false
+        this.tp = undefined
 
         if ("Group" == sLayer.type || "Artboard" == sLayer.type) this.isGroup = true
 
@@ -95,17 +96,34 @@ class PZLayer {
             if (!sSymbolMaster) {
                 log("PZLayer:constructor() can't find symbol master for layer=" + this.name)
             } else {
-                this.isSymbolInstance = true
-                this.targetId = targetID
+                const smName = sSymbolMaster.name + ""
 
-                // prepare data for Element Inspector
-                const lib = sSymbolMaster.getLibrary()
-                this.smName = sSymbolMaster.name + ""
-                if (lib) {
-                    this.sharedLib = lib.name
-                    pzDoc.usedLibs[lib.name] = true
+                if (smName.indexOf(ICON_TAG) > 0) {
+                    // Found Icon symbol instance
+                    this.tp = "Icon"
+                    if (myParent && myParent.isGroup && myParent.styleName !== "") {
+                        this.styleName = myParent.styleName
+                    }
+                    this.smName = smName
+                    this.isGroup = false
+                    //
+                    if (exporter.enabledJSON) {
+                        this.pr = this._buildIconsPropsForJSON()
+                    }
                 } else {
+                    // Regular symbol instance
+                    this.isSymbolInstance = true
+                    this.targetId = targetID
 
+                    // prepare data for Element Inspector
+                    const lib = sSymbolMaster.getLibrary()
+                    this.smName = smName
+                    if (lib) {
+                        this.sharedLib = lib.name
+                        pzDoc.usedLibs[lib.name] = true
+                    } else {
+
+                    }
                 }
             }
         } else {
@@ -462,12 +480,12 @@ class PZLayer {
         this.b = this.sharedLib
         if (this.keepFixedShadow) this.ks = true
         if (this.childs.length) this.c = this.childs
-        this.tp = this.isSymbolInstance ? "SI" : this.slayer.type
+        if (!this.tp) this.tp = this.isSymbolInstance ? "SI" : this.slayer.type
         if (!this.isSymbolInstance) this.n = this.name
         if (this.slayer.hidden) this.hd = true
         //
-        if (this.isSymbolInstance && this.s && this.s.indexOf(ICON_TAG) > 0) {
-            //this.pr = this.parent._buildShapePropsForJSON()
+        if (this.tp == "Icon") {
+            // this.pr is already enabled
         } else if ("Text" == this.slayer.type) {
             this.pr = this._buildTextPropsForJSON()
         } else if ("ShapePath" == this.slayer.type || "Shape" == this.slayer.type) {
@@ -542,6 +560,13 @@ class PZLayer {
         return pte._getLayerStylePropsAsText(null, this.slayer, this.slayer.style)
     }
 
+    _buildIconsPropsForJSON() {
+        const pte = exporter.getTokensExporter()
+        if (this.parent && this.parent.slayer && this.parent.slayer.style)
+            return pte._getLayerStylePropsAsText(null, this.slayer, this.parent.slayer.style)
+        else
+            return undefined
+    }
     _getColorVariable() {
 
         const style = this.slayer.style
