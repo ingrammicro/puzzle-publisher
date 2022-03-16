@@ -168,6 +168,17 @@ class PZLayer {
 
             }
 
+            // Check if this layer shadow will be used as artboard overlay shadow            
+            if (this.slayer && this.slayer.style
+                && (
+                    (this.slayer.style.shadows && this.slayer.style.shadows.length)
+                    ||
+                    (this.slayer.style.innerShadows && this.slayer.style.innerShadows.length)
+                )
+            ) {
+                this.artboard.shadowLayer = this
+            }
+
         }
 
         var comment = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.LAYER_COMMENT)
@@ -331,34 +342,46 @@ class PZLayer {
     }
 
     getShadowInfo() {
-        if (this.slayer.style == undefined || this.slayer.style.shadows == undefined || this.slayer.style.length == 0) return undefined
+        if (this.slayer.style == undefined || (this.slayer.style.shadows == undefined && this.slayer.style.innerShadows == undefined)) return undefined
+
+        let shadowInfo = this.getShadowSetInfo(this.slayer.style.shadows, false) || this.getShadowSetInfo(this.slayer.style.innerShadows, true)
+        return shadowInfo
+    }
+
+
+    getShadowSetInfo(shadows, inset) {
+        if (!shadows) return
 
         let shadowInfo = undefined
-        for (var shadow of this.slayer.style.shadows) {
-            if (!shadow.enabled) continue
-            let shadowsStyle = ""
+        for (var shadow of shadows.filter(s => s.enabled)) {
+            let res = ""
+            //if (res != "") res += ","
+            if (inset) res += "inset "
+            res += shadow.x + "px "
 
-            if (shadowsStyle != "") shadowsStyle += ","
-            shadowsStyle += shadow.x + "px "
-            shadowsStyle += shadow.y + "px "
-            shadowsStyle += shadow.blur + "px "
-            shadowsStyle += shadow.spread + " "
-            shadowsStyle += shadow.color + " "
+            if (null != shadow.y) {
+                res += " " + shadow.y + "px"
+                if (null != shadow.blur) {
+                    res += " " + shadow.blur + "px"
+                    if (null != shadow.spread) {
+                        res += " " + shadow.spread
+                    }
+                }
+            }
+            res += " " + shadow.color
 
             if (shadowInfo) {
-                shadowInfo.style += ", " + shadowsStyle
+                shadowInfo.style += ", " + res
             } else {
                 shadowInfo = {
-                    style: shadowsStyle,
-                    x: shadow.x + shadow.blur,
+                    style: res,
+                    x: shadow.x + shadow.blur ? shadow.blur : 0,
                     layer: this
                 }
             }
         }
-
         return shadowInfo
     }
-
 
     _processHotspots(prefix) {
         const l = this

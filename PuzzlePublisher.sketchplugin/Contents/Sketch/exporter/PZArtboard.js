@@ -59,15 +59,17 @@ class PZArtboard extends PZLayer {
         this.isModal = Constants.ARTBOARD_TYPE_MODAL == this.artboardType
         this.externalArtboardURL = externalArtboardURL
 
-        this.showShadow = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_SHADOW)
-        if (undefined != this.showShadow)
-            this.showShadow = this.showShadow == 1
-        else {
-            const legacyShadow = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.LEGACY_ARTBOARD_MODAL_SHADOW)
-            if (undefined != legacyShadow && Constants.ARTBOARD_TYPE_MODAL == this.artboardType) {
-                this.showShadow = legacyShadow
-            } else {
-                this.showShadow = true
+        if (this.isModal || Constants.ARTBOARD_TYPE_OVERLAY == this.artboardType) {
+            this.showShadow = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.ARTBOARD_SHADOW)
+            if (undefined != this.showShadow)
+                this.showShadow = this.showShadow == 1
+            else {
+                const legacyShadow = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.LEGACY_ARTBOARD_MODAL_SHADOW)
+                if (undefined != legacyShadow && Constants.ARTBOARD_TYPE_MODAL == this.artboardType) {
+                    this.showShadow = legacyShadow
+                } else {
+                    this.showShadow = true
+                }
             }
         }
 
@@ -205,7 +207,7 @@ class PZArtboard extends PZLayer {
             data['type'] = 'overlay'
             // try to find a shadow
             if (this.showShadow) {
-                const shadowInfo = this._findLayersShadowInfo()
+                const shadowInfo = this._getShadowLayerShadowInfo()
                 if (shadowInfo) {
                     data['overlayShadow'] = shadowInfo.style
                     data['overlayShadowX'] = shadowInfo.x
@@ -242,14 +244,23 @@ class PZArtboard extends PZLayer {
         exporter.storyData.pages.push(data)
     }
 
+
+    _getShadowLayerShadowInfo() {
+        if (!this.shadowLayer) return undefined
+        return this.shadowLayer.getShadowInfo()
+    }
+
     _findLayersShadowInfo(layers = undefined, checkKeepFixedShadow = false) {
+
         if (layers === undefined) layers = this.childs
         //
         let shadowInfo = undefined
         for (const l of layers) {
             if (checkKeepFixedShadow && l.keepFixedShadow) continue
             shadowInfo = l.getShadowInfo()
-            if (shadowInfo) break
+            if (shadowInfo) {
+                break
+            }
             shadowInfo = this._findLayersShadowInfo(l.childs, checkKeepFixedShadow)
             if (shadowInfo) break
         }
