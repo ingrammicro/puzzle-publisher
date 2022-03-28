@@ -1,22 +1,19 @@
-const EXP_IMODE_PAGE = "page"
-const EXP_IMODE_PROJECT = "project"
+const EXP_SCOPE_PAGE = "page"
+const EXP_SCOPE_PROJECT = "project"
+
+const EXP_MODE_PAGES = "pages"
+const EXP_MODE_WIDGETS = "widgets"
 
 class ExpViewer extends AbstractViewer {
 
     constructor() {
         super()
-        this.mode = EXP_IMODE_PROJECT
+        this.scope = EXP_SCOPE_PROJECT
+        this.mode = EXP_MODE_WIDGETS
     }
 
     initialize(force = false) {
         if (!force && this.inited) return
-
-        // setup mode switcher
-        const modeSelect = $('#exp_viewer #mode_selector')
-        modeSelect.change(function () {
-            viewer.expViewer.setMode($(this).children("option:selected").val())
-
-        })
 
         // init document common data here        
         this.inited = true
@@ -33,9 +30,17 @@ class ExpViewer extends AbstractViewer {
 
     //////////
     _buildContent() {
-        let html = `<div id="pages">`
+        if (this.mode === EXP_MODE_PAGES)
+            this._buildContentPages()
+        else
+            this._buildContentWidgets()
+    }
 
-        if (this.mode === EXP_IMODE_PAGE) {
+    //////////
+    _buildContentPages() {
+        let html = `<div class="pages">`
+
+        if (this.scope === EXP_SCOPE_PAGE) {
             html += this._getContentForPage(layersData[viewer.currentPage.index])
         } else {
             // scan all pages
@@ -89,17 +94,91 @@ class ExpViewer extends AbstractViewer {
         return html
     }
 
-    _findExpLayers(layers, foundExpLayers) {
+    _findExpLayers(layers, foundExpLayers, layersExt = null, topPage = null) {
         layers.forEach(l => {
+            let page = topPage
+            if (layersExt != null && !topPage) page = l
             if (l.tp === "SI" && l.s && l.s.includes("EXPERIMENTAL")) {
-                if (!(l.s in foundExpLayers)) foundExpLayers[l.s] = 0
-                foundExpLayers[l.s]++
+                const name = l.s.split("-EXPERIMENTAL")[0] + "-EXP"
+                if (!(name in foundExpLayers)) foundExpLayers[name] = 0
+                foundExpLayers[name]++
+                if (layersExt != null) {
+                    if (!(name in layersExt)) layersExt[name] = {
+                        pages: {}
+                    }
+                    layersExt[name].pages[page.index] = page
+                }
             }
-            if (l.c && l.c.length) this._findExpLayers(l.c, foundExpLayers)
+            if (l.c && l.c.length) this._findExpLayers(l.c, foundExpLayers, layersExt, page)
         }, this)
+    }
+    ////////////////////////////////////////////////
+    _buildContentWidgets() {
+        const [widgets, widgetSet, widgetsExt] = this._getWidgetsSorted()
+
+        let html = `<div class="widgets">`
+        // Scan top-level layers(pages) with childs
+        widgets.forEach(widget => {
+            html += this._getContentForWidget(widgetSet, widgetsExt, widget)
+        }, this);
+
+        html += `</div>`
+        //
+        let contentDiv = $("#exp_viewer_content")
+        contentDiv.html(html)
+    }
+
+    _getWidgetsSorted() {
+        const pages = this.scope === EXP_SCOPE_PROJECT ? layersData.filter(page => "c" in page) : [layersData[viewer.currentPage.index]]
+        let widgetSet = {}, widgetsExt = {}
+        this._findExpLayers(pages, widgetSet, widgetsExt)
+        const widgets = Object.keys(widgetSet).sort()
+        return [widgets, widgetSet, widgetsExt]
+    }
+
+    _getContentForWidget(widgetSet, widgetsExt, widgetName) {
+        let html = ""
+        let widgetNameCleaned = widgetName
+        let widgetInfo = widgetsExt[widgetName]
+        let pageCount = Object.keys(widgetInfo.pages).length
+
+        // show page with experimental components
+        html += `
+     <div ID="exp-widget-${widgetName}" class="widget">
+         <a href="#" onclick="viewer.expViewer.goWidget('${widgetName}')" class="link">${widgetNameCleaned}</a> <span class="counter">(${pageCount})</span>
+     `
+        //     
+        Object.keys(widgetInfo.pages).forEach(pageIndex => {
+            const page = layersData[pageIndex]
+            html += `        
+     <div onclick="viewer.expViewer.goPage(${pageIndex})" class="page hidden">
+         ${page.n}
+     </div>
+     `
+        }, this)
+        //
+        html += `
+     </div >
+                `
+        return html
+    }
+
+
+    goWidget(widgetName) {
+        const pagesDiv = $(document.getElementById("exp-widget-" + widgetName))
+        const widgetsDiv = pagesDiv.find(".page")
+        this._toogleClass(widgetsDiv, "hidden")
+    }
+
+    _toogleClass(obj, className) {
+        if (!obj.hasClass(className)) obj.addClass(className); else obj.removeClass(className)
     }
 
     ////////////////////////////
+    setScope(scope) {
+        this.scope = scope
+        this._buildContent()
+    }
     setMode(mode) {
         this.mode = mode
         this._buildContent()
@@ -121,7 +200,7 @@ class ExpViewer extends AbstractViewer {
 
     // called by Viewer
     pageChanged() {
-        if (this.mode === EXP_IMODE_PAGE) {
+        if (this.scope === EXP_SCOPE_PAGE) {
             this._buildContent()
         }
     }
