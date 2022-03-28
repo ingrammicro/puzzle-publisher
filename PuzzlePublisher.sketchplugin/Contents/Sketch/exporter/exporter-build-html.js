@@ -267,17 +267,21 @@ function buildMainHTML(options) {
                 <div ID="info_viewer_content" style="padding: 72px 20px 0 20px"></div>
             </div>
             <div ID="exp_viewer" class="hidden viewer">
-                <div class="title">
+                <div class="title"> 
                   <div style="width:100%;">Experimental widgets</div>
                   <div style="width:24px; height:24px; cursor: pointer;" onclick="viewer.expViewer.toggle();  return false;">
                     <svg class="svgIcon"><use xlink:href="#icClose"></use></svg>
                   </div>
                 </div>
                 <div style="padding: 62px 20px 0 20px">
-                    Show for <select ID="mode_selector" style="width:240px">
-                        <option selected value="project">all pages</options>
-                        <option value="page">current page</options>
-                    </select>
+                    Show
+                    <input type="radio" ID="exp-scope-project" name="exp-scope" checked onclick="viewer.expViewer.setScope('project')"/><label for="exp-scope-project">all pages</label>&nbsp;
+                    <input type="radio" ID="exp-scope-page" name="exp-scope" onclick="viewer.expViewer.setScope('page')"/><label for="exp-scope-page">current page</label>
+                </div>
+                <div ID="" style="padding: 20px 10px 0 20px">
+                    Group by 
+                    <input type="radio" ID="exp-mode-widgets" name="exp-mode" checked onclick="viewer.expViewer.setMode('widgets')"/><label for="exp-mode-widgets">Widgets</label>&nbsp;
+                    <input type="radio" ID="exp-mode-pages" name="exp-mode" onclick="viewer.expViewer.setMode('pages')"/><label for="exp-mode-pages">Pages</label>
                 </div>
                 <div ID="exp_viewer_content" style="padding: 20px 20px 0 20px"></div>
             </div>

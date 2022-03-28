@@ -375,18 +375,35 @@ select:focus{
 }
 
 
-#exp_viewer .page{
+#exp_viewer .pages .page{
     padding-bottom:     10px;
     color:              var(--color-accent);
 }
 
+#exp_viewer .widgets .widget{
+    padding-bottom:     10px;
+}
+
+#exp_viewer .widgets .widget .link{
+    color:              var(--color-accent);
+    font-weight:        normal;
+}
+
+#exp_viewer .widgets .page{
+    margin-left:        20px;
+    color:              var(--color-accent);
+    font-size:          12px;
+    cursor:             pointer;
+}
+
 #exp_viewer .layer{
     margin-left:        20px;
+    padding-bottom:     10px;
     color:              var(--color-primary);
     font-size:          12px;
 }
 
-#exp_viewer .layer .counter{
+#exp_viewer .counter{
     color:              var(--color-secondary);
     font-size:          12px;
 }
