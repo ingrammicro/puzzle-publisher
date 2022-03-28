@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 17.2.0 (28 Mar 2022)
+Experimental Widgets Viewer has new mode - grouping by widgets
+
 ##  Version 17.1.0 (14 Mar 2022)
 Improved PP plugin to show icon colors (finally!)
 
