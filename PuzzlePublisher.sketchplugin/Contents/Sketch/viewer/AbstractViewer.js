@@ -1,22 +1,46 @@
 
 class AbstractViewer {
-    constructor() {
+    constructor(divID) {
+        this.divID = divID
         // common viewer settings, can be changed in child constructors
         this.isSidebarChild = true
         this.blockMainNavigation = false
         this.enableTopNavigation = false
         this.alwaysHandlePageChanged = false
+        this.preventCustomTextSearch = true
 
         // internal viewer props, can be read by child 
         this.inited = false
         this.visible = false
+        this.mouseover = false
 
         //
         viewer.allChilds.push(this)
     }
 
 
+    initialize(force = false) {
+        if (!force && this.inited) return false
+        //
+        if (this.preventCustomTextSearch) {
+            const div = $('#' + this.divID)
+            div.mouseenter(function () {
+                this.mouseover = true
+            })
+            div.mouseleave(function () {
+                this.mouseover = false
+            })
+        }
+        //
+        this.inited = true
+        return true
+    }
+
     // called by Viewer
+    customTextSearchPrevented() {
+        return this.preventCustomTextSearch && this.mouseover
+    }
+
     pageChanged() {
 
     }
@@ -50,7 +74,6 @@ class AbstractViewer {
     }
 
 
-
     isVisible() {
         return this.visible
     }
@@ -65,6 +88,7 @@ class AbstractViewer {
 
     _hideSelf() {
         this.visible = false
+        this.mouseover = false
     }
 
 

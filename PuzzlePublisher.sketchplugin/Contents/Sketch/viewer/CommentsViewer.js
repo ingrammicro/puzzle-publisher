@@ -3,9 +3,10 @@ let commentsViewer = null;
 
 class CommentsViewer extends AbstractViewer {
     constructor() {
-        super()
+        super("comments_viewer")
 
         this.alwaysHandlePageChanged = true
+        this.preventCustomTextSearch = true
 
         this.comments = null
         this.inputFocused = false
@@ -13,12 +14,11 @@ class CommentsViewer extends AbstractViewer {
     }
 
     initialize(force = false) {
-        if (!force && this.inited) return
+        if (!super.initialize(force)) return
 
         this._showLoadingMessage()
         this._showComments();
 
-        this.inited = true
     }
 
     ///////////////////////////////////////////////// called by Viewer

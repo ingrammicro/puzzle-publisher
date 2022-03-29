@@ -16,7 +16,10 @@ function getVersionInfoRequest() {
 
 class infoViewer extends AbstractViewer {
     constructor() {
-        super()
+        super("info_viewer")
+
+        this.preventCustomTextSearch = true
+
         this.screenDiffs = []
         this.mode = 'diff'
         this.published = story.docVersion != 'V_V_V'
@@ -24,7 +27,7 @@ class infoViewer extends AbstractViewer {
     }
 
     initialize(force = false) {
-        if (!force && this.inited) return
+        if (!super.initialize(force)) return
 
         // init document common data here        
         this._showStatic()
@@ -32,9 +35,6 @@ class infoViewer extends AbstractViewer {
             this._showLoadingMessage()
             this._askServerTools();
         }
-
-        this.inited = true
-
     }
 
     goToVersion(recIndex) {
