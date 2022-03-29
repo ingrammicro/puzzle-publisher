@@ -4,20 +4,24 @@ const EXP_SCOPE_PROJECT = "project"
 const EXP_MODE_PAGES = "pages"
 const EXP_MODE_WIDGETS = "widgets"
 
+const EXP_FILTER_EXP = "exp"
+const EXP_FILTER_ALL = "all"
+
 class ExpViewer extends AbstractViewer {
 
     constructor() {
-        super()
+        super("exp_viewer")
+        this.preventCustomTextSearch = true
+        //
         this.scope = EXP_SCOPE_PROJECT
         this.mode = EXP_MODE_WIDGETS
+        this.filter = EXP_FILTER_EXP
+        //
+        this.highlightWidgetName = null
     }
 
     initialize(force = false) {
-        if (!force && this.inited) return
-
-        // init document common data here        
-        this.inited = true
-
+        if (!super.initialize(force)) return
         // load data
         this._buildContent()
     }
@@ -25,7 +29,7 @@ class ExpViewer extends AbstractViewer {
     goPage(index) {
         this.hide()
         viewer.goToPage(index)
-        viewer.symbolViewer.showFromExpViewer()
+        viewer.symbolViewer.showFromExpViewer(this.highlightWidgetName)
     }
 
     //////////
@@ -98,8 +102,8 @@ class ExpViewer extends AbstractViewer {
         layers.forEach(l => {
             let page = topPage
             if (layersExt != null && !topPage) page = l
-            if (l.tp === "SI" && l.s && l.s.includes("EXPERIMENTAL")) {
-                const name = l.s.split("-EXPERIMENTAL")[0] + "-EXP"
+            if (l.tp === "SI" && l.s && (this.filter == EXP_FILTER_ALL || l.s.includes("EXPERIMENTAL"))) {
+                let name = this.filter == EXP_FILTER_ALL ? l.s.replace("-EXPERIMENTAL", "-EXP") : (l.s.split("-EXPERIMENTAL")[0] + "-EXP")
                 if (!(name in foundExpLayers)) foundExpLayers[name] = 0
                 foundExpLayers[name]++
                 if (layersExt != null) {
@@ -141,10 +145,11 @@ class ExpViewer extends AbstractViewer {
         let widgetNameCleaned = widgetName
         let widgetInfo = widgetsExt[widgetName]
         let pageCount = Object.keys(widgetInfo.pages).length
+        const highlightWidgetClass = this.highlightWidgetName && widgetNameCleaned.includes(this.highlightWidgetName) ? "highlight" : ""
 
         // show page with experimental components
         html += `
-     <div ID="exp-widget-${widgetName}" class="widget">
+     <div ID="exp-widget-${widgetName}" class="widget ${highlightWidgetClass}">
          <a href="#" onclick="viewer.expViewer.goWidget('${widgetName}')" class="link">${widgetNameCleaned}</a> <span class="counter">(${pageCount})</span>
      `
         //     
@@ -183,10 +188,16 @@ class ExpViewer extends AbstractViewer {
         this.mode = mode
         this._buildContent()
     }
+    setFilter(filter) {
+        this.filter = filter
+        this._buildContent()
+    }
 
     ///////////////////////////////////////////////// called by Viewer
     _hideSelf() {
         $('#exp_viewer').addClass("hidden")
+        //this.highlightWidgetName = null
+
         super._hideSelf()
     }
 
@@ -202,6 +213,15 @@ class ExpViewer extends AbstractViewer {
     pageChanged() {
         if (this.scope === EXP_SCOPE_PAGE) {
             this._buildContent()
+        }
+    }
+
+    highlightWidget(widgetName) {
+        this.highlightWidgetName = widgetName.replace("-EXPERIMENTAL", "-EXP")
+        if (!this.highlightWidgetName.includes("-EXP")) {
+            $("#exp-filter-exp").prop("checked", false)
+            $("#exp-filter-all").prop("checked", true)
+            this.setFilter(EXP_FILTER_ALL)
         }
     }
 }

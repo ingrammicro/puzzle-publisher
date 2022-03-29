@@ -21,17 +21,21 @@ const SUPPORT_TYPES = ["Text", "ShapePath", "Image", "ImageSymbol"]
 
 class SymbolViewer extends AbstractViewer {
     constructor() {
-        super()
+        super("symbol_viewer")
+        //
+        this.preventCustomTextSearch = true
+        //
         this.createdPages = {}
         //this.symbolIDs = {} // layer indexes ( in pages[].layers ) of symbols
         this.currentLib = ""
         this.selected = null
         this.showSymbols = false
         this.insideExpViewer = false
+        this.highlightWidgetName = null
     }
 
     initialize(force = false) {
-        if (!force && this.inited) return
+        if (!super.initialize(force)) return
 
         // populate library select
         const libSelect = $('#symbol_viewer #lib_selector')
@@ -56,8 +60,6 @@ class SymbolViewer extends AbstractViewer {
             viewer.symbolViewer._setSymCheck($(this).is(':checked'))
 
         })
-
-        this.inited = true
     }
 
     _setSymCheck(showSymbols) {
@@ -108,10 +110,12 @@ class SymbolViewer extends AbstractViewer {
             this.insideExpViewer = false
             viewer.expViewer.show()
         }
+        this.highlightWidgetName = null
     }
 
-    showFromExpViewer() {
+    showFromExpViewer(highlightWidgetName = null) {
         this.insideExpViewer = true
+        this.highlightWidgetName = highlightWidgetName
         this.show()
     }
 
@@ -396,8 +400,12 @@ class SymbolViewer extends AbstractViewer {
 
         var style = "left: " + l.finalX + "px; top:" + l.finalY + "px; "
         style += "width: " + l.w + "px; height:" + l.h + "px; "
+        const highlight = siLayer && siLayer.s && (
+            (this.highlightWidgetName === null && siLayer.s.includes("EXPERIMENTAL")) ||
+            (this.highlightWidgetName !== null && siLayer.s.includes(this.highlightWidgetName))
+        )
         var symbolDiv = $("<div>", {
-            class: "symbolDiv" + (siLayer && siLayer.s && siLayer.s.includes("EXPERIMENTAL") ? " exp" : ""),
+            class: "symbolDiv" + (highlight ? " exp" : ""),
         }).attr('style', style)
         symbolDiv.mouseenter(function () {
             viewer.symbolViewer.mouseEnterLayerDiv($(this))

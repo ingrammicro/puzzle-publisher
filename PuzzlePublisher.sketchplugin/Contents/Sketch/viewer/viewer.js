@@ -213,16 +213,23 @@ class Viewer {
         });
         jQuery(window).resize(function () { viewer.zoomContent() });
 
-        if (this.urlParams.get('v') != null && this.infoViewer) {
-            this.infoViewer.toggle()
-        }
-        if (this.urlParams.get('c') != null && this.commentsViewer) {
-            this.commentsViewer.toggle()
-        }
+        // Activate galleryViewer
         const gParam = this.urlParams.get('g')
+        const av = this.urlParams.get('av')
         if (gParam != null && this.galleryViewer) {
             this.galleryViewer.handleURLParam(gParam)
             this.galleryViewer.show()
+        } else if (this.urlParams.get('v') != null && this.infoViewer) {
+            // Activate Changes Inspector
+            this.infoViewer.toggle()
+        } else if (this.urlParams.get('c') != null && this.commentsViewer) {
+            // Activate Comment Viewer
+            this.commentsViewer.toggle()
+        } else if (av != null && av === "exp" && this.expViewer) {
+            const widgetName = this.urlParams.get('expn')
+            if (widgetName !== null) this.expViewer.highlightWidget(decodeURIComponent(widgetName))
+            // Activate Experimental Viewer widget
+            this.expViewer.toggle()
         }
     }
 
@@ -308,9 +315,9 @@ class Viewer {
             v.next()
         } else if (allowNavigation && (8 == event.which || 37 == event.which)) { // backspace OR left
             v.previous()
-        } else if (allowNavigation && story.layersExist && event.metaKey && (70 == event.which)) { // Cmd+F
+        } else if (allowNavigation && story.layersExist && event.metaKey && (70 == event.which) && (!this.child || !this.child.customTextSearchPrevented())) { // Cmd+F
             this.showTextSearch()
-        } else if (allowNavigation && story.layersExist && event.metaKey && (71 == event.which)) { // Cmd+G -> Next search
+        } else if (allowNavigation && story.layersExist && event.metaKey && (71 == event.which) && (!this.child || !this.child.customTextSearchPrevented())) { // Cmd+G -> Next search
             this.currentPage.findTextNext()
         } else if (allowNavigation && (16 == event.which)) { // shift
             if (!jevent.metaKey) {  // no cmd to allow user to make a screenshot on macOS
