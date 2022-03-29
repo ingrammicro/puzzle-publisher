@@ -384,6 +384,10 @@ select:focus{
     padding-bottom:     10px;
 }
 
+#exp_viewer .widgets .widget.highlight{
+    background-color:   var(--color-active);
+}
+
 #exp_viewer .widgets .widget .link{
     color:              var(--color-accent);
     font-weight:        normal;
@@ -409,6 +413,16 @@ select:focus{
 }
 
 
+#exp_viewer #controls{
+    display: grid; 
+    grid-template-columns: 80px 1fr;
+    grid-row-gap:5px;
+}
+
+
+#exp_viewer #controls .label{
+    width:              100px;
+}
 
 /* #symbol_viewer_content .head {
   color: var(--color-secondary);
