@@ -876,6 +876,8 @@ class SymbolViewer extends AbstractViewer {
             styles[styleName] = styleValue
 
         }, this);
+        // Add missed CSS styles based on tokens
+        result += this._decorateCSSLostTokens(tokens, styles, layer, siLayer)
         // Decorate non-CSS common styles
         result += this._decorateCSSOtherTokens(tokens, layer, siLayer)
 
@@ -906,6 +908,15 @@ class SymbolViewer extends AbstractViewer {
         //
         result += "</span>"
         result += "<br/>"
+        return result
+    }
+
+    _decorateCSSLostTokens(tokens, styles, layer, siLayer) {
+        if (null == tokens) return ""
+        let result = ""
+        tokens.filter(token => !(token[0] in styles)).forEach(token => {
+            result += this._decorateCSSOneStyle(tokens, layer, siLayer, token[0], token[1])
+        }, this)
         return result
     }
 
