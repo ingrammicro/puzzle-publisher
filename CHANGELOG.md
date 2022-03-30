@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 17.2.2 (30 Mar 2022)
+Handoff shows background color token if its value is "none"
+
 ##  Version 17.2.0 (28 Mar 2022)
 Experimental Widgets Viewer has new mode - grouping by widgets
 
