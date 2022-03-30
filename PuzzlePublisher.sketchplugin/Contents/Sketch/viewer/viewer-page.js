@@ -1009,7 +1009,7 @@ function handleLinkEvent(event) {
         } else {
             // close modal if some link inside a modal opens the same modal
             if (destPageIndex == currentPage.index && currentPage.isModal) {
-                viewer.goBack()
+                viewer.closeModal()
                 return false
             }
 

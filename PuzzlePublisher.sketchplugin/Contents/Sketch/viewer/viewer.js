@@ -632,13 +632,16 @@ class Viewer {
 
     goBack() {
         if (this.backStack.length > 0) {
-            this.goTo(this.backStack[this.backStack.length - 1]);
-            this.backStack.shift();
+            this.goTo(this.backStack[this.backStack.length - 1], true, undefined, false);
+            this.backStack.pop();
         } else if (this.currentPage.isModal && this.lastRegularPage) {
-            this.goTo(this.lastRegularPage.index);
+            this.goTo(this.lastRegularPage.index, true, undefined, false);
         } else {
             window.history.back();
         }
+    }
+    closeModal() {
+        return this.goBack()
     }
     goToPage(page, searchText) {
         this.clear_context();
@@ -650,7 +653,7 @@ class Viewer {
         }
     }
 
-    goTo(page, refreshURL = true, link = undefined) {
+    goTo(page, refreshURL = true, link = undefined, incBackStack = true) {
 
         var index = this.getPageIndex(page);
         var newPage = story.pages[index];
@@ -666,7 +669,7 @@ class Viewer {
         //if(this.symbolViewer) this.symbolViewer.hide()
         var currentPage = this.currentPage
 
-        if (currentPage && !currentPage.isModal) {
+        if (incBackStack && currentPage && !currentPage.isModal) {
             this.backStack.push(currentPage.index);
         }
 
@@ -1014,7 +1017,7 @@ class Viewer {
         }
         // If the current page is modal then close it and go to the last non-modal page
         if (this.currentPage.isModal) {
-            viewer.goBack()
+            viewer.closeModal()
             return true
         }
         return false
