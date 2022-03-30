@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 17.2.3 (30 Mar 2022)
+Back links behaviour fixed
+
 ##  Version 17.2.2 (30 Mar 2022)
 Handoff shows background color token if its value is "none"
 
