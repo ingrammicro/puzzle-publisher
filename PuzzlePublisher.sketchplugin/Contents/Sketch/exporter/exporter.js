@@ -1,7 +1,7 @@
 @import("constants.js")
 @import("lib/utils.js")
 @import("lib/ga.js")
-@import("exporter/exporter-build-html.js")
+@import("pp-viewer/exporter/exporter-build-html.js")
 @import("exporter/PZLayer.js")
 @import("exporter/PZArtboard.js")
 @import("exporter/PZPage.js")
@@ -166,7 +166,8 @@ class Exporter {
         const targetPath = this.prepareFilePath(this._outputPath, resFolder);
         if (undefined == targetPath) return false
 
-        const sourcePath = this.context.plugin.url().URLByAppendingPathComponent("Contents").URLByAppendingPathComponent("Sketch").URLByAppendingPathComponent(resFolder)
+        const sourcePath = this.context.plugin.url().URLByAppendingPathComponent("Contents").URLByAppendingPathComponent("Sketch")
+            .URLByAppendingPathComponent("pp-viewer").URLByAppendingPathComponent("viewer").URLByAppendingPathComponent(resFolder)
         //const sourcePath = this.context.plugin.url().URLByAppendingPathComponent("Contents").URLByAppendingPathComponent("Sketch").URLByAppendingPathComponent(resFolder).path();        
 
         let error = MOPointer.alloc().init();
@@ -275,7 +276,7 @@ class Exporter {
         this.logMsg(" buildPreviews: done!!!!!")
     }
 
-    createViewerFile(fileName, folder = Constants.VIEWER_DIRECTORY) {
+    createDestFile(fileName, folder = Constants.DEST_PROTO_DIRECTORY) {
         return this.prepareFilePath(this._outputPath + "/" + folder, fileName);
     }
 
@@ -307,7 +308,7 @@ class Exporter {
         let jsStory = "var story = " + JSON.stringify(this.storyData, null, ' ')
 
         // And save it
-        const pathStoryJS = this.createViewerFile('story.js')
+        const pathStoryJS = this.createDestFile('story.js')
         if (undefined == pathStoryJS) return false
         Utils.writeToFile(jsStory, pathStoryJS)
         return true
@@ -323,7 +324,7 @@ class Exporter {
 
         // Copy static files
         if (!this.copyStatic("resources")) return false
-        if (!this.copyStatic("viewer")) return false
+        if (!this.copyStatic("js")) return false
 
         this.mDoc = new PZDoc()
         try {
@@ -381,7 +382,7 @@ class Exporter {
 
         this.storyData.experimentalExisting = json.includes("EXPERIMENTAL")
 
-        const pathJSFile = this.createViewerFile('LayersData.js')
+        const pathJSFile = this.createDestFile('handoff.js')
         if (!Utils.writeToFile(symbolData + "var layersData = " + json, pathJSFile)) return false
 
     }

@@ -56,7 +56,7 @@ prepareMockups()
 	
     # inject version
     if [ "$ver" != "-1" ]; then
-        sed -i '' "s/${storyVerPlaceholder}/${storyVerPlaceholderCode}(v${ver})'/g" "${tmpFolder}${ver}/viewer/viewer.js"	
+        sed -i '' "s/${storyVerPlaceholder}/${storyVerPlaceholderCode}(v${ver})'/g" "${tmpFolder}${ver}/viewer/Viewer.js"	
         sed -i '' "s/${docPathPlaceholder}/${docPathValue}/g" "${tmpFolder}${ver}/viewer/story.js"
         sed -i '' "s/${docVerPlaceholder}/${ver}/g" "${tmpFolder}${ver}/viewer/story.js"	
         sed -i '' "s/${DOCUMENT_AUTHOR_NAME_PLACEHOLDER}/${authorName}/g" "${tmpFolder}${ver}/viewer/story.js"	
@@ -67,7 +67,7 @@ prepareMockups()
         if [ "$skipLive" == "" ]; then
             # copy version to live
             cp -R "${allMockupsFolder}/${docFolder}/" "${tmpFolder}live"
-            sed -i '' "s/${storyVerPlaceholder}/${storyVerPlaceholderCode}(v${ver})';/g" "${tmpFolder}live/viewer/viewer.js"
+            sed -i '' "s/${storyVerPlaceholder}/${storyVerPlaceholderCode}(v${ver})';/g" "${tmpFolder}live/viewer/Viewer.js"
             sed -i '' "s/${docPathPlaceholder}/${docPathValue}/g" "${tmpFolder}live/viewer/story.js"
             sed -i '' "s/${docVerPlaceholder}/${ver}/g" "${tmpFolder}live/viewer/story.js"
             sed -i '' "s/${DOCUMENT_AUTHOR_NAME_PLACEHOLDER}/${authorName}/g" "${tmpFolder}live/viewer/story.js"

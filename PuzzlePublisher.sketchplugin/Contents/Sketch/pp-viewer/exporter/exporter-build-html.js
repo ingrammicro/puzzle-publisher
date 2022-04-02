@@ -114,30 +114,30 @@ function buildMainHTML(options) {
     }
     s += `
         <link rel="stylesheet" type="text/css" href="${srcPath}resources/viewer-top.css${verPostfix}">
-        <script type="text/javascript" src="${srcPath}resources/jquery-3.3.1.min.js" charset="UTF-8"></script>
-        <script type="text/javascript" src="${srcPath}resources/jquery.hotkeys.js" charset="UTF-8"></script>
-        <script type="text/javascript" src="${srcPath}resources/jquery.ba-hashchange.min.js" charset="UTF-8"></script>
-        <script type="text/javascript" src="${srcPath}viewer/viewer-page.js${verPostfix}" charset="UTF-8"></script>
-        <script type="text/javascript" src="viewer/story.js${verPostfix}" charset="UTF-8"></script>
-        <script type="text/javascript" src="${srcPath}viewer/viewer.js${verPostfix}" charset="UTF-8"></script>
-        <script type="text/javascript" src="${srcPath}viewer/AbstractViewer.js${verPostfix}" charset="UTF-8"></script>
-        <script type="text/javascript" src="${srcPath}viewer/CommentsViewer.js${verPostfix}" charset="UTF-8"></script>
-        <script type="text/javascript" src="${srcPath}viewer/GalleryViewer.js${verPostfix}" charset="UTF-8"></script>
-        <script type="text/javascript" src="${srcPath}viewer/PresenterViewer.js${verPostfix}" charset="UTF-8"></script>
+        <script type="text/javascript" src="${srcPath}js/other/jquery-3.3.1.min.js" charset="UTF-8"></script>
+        <script type="text/javascript" src="${srcPath}js/other/jquery.hotkeys.js" charset="UTF-8"></script>
+        <script type="text/javascript" src="${srcPath}js/other/jquery.ba-hashchange.min.js" charset="UTF-8"></script>
+        <script type="text/javascript" src="${srcPath}js/ViewerPage.js${verPostfix}" charset="UTF-8"></script>
+        <script type="text/javascript" src="data/story.js${verPostfix}" charset="UTF-8"></script>
+        <script type="text/javascript" src="${srcPath}js/Viewer.js${verPostfix}" charset="UTF-8"></script>
+        <script type="text/javascript" src="${srcPath}js/AbstractViewer.js${verPostfix}" charset="UTF-8"></script>
+        <script type="text/javascript" src="${srcPath}js/CommentsViewer.js${verPostfix}" charset="UTF-8"></script>
+        <script type="text/javascript" src="${srcPath}js/GalleryViewer.js${verPostfix}" charset="UTF-8"></script>
+        <script type="text/javascript" src="${srcPath}js/PresenterViewer.js${verPostfix}" charset="UTF-8"></script>
 	`
     if (options.loadLayers) {
         s += `
-        <script type="text/javascript" src="viewer/LayersData.js${verPostfix}" charset="UTF-8"></script>
-        <script type="text/javascript" src="${srcPath}viewer/SymbolViewer.js${verPostfix}" charset="UTF-8"></script>
+        <script type="text/javascript" src="data/handoff.js${verPostfix}" charset="UTF-8"></script>
+        <script type="text/javascript" src="${srcPath}js/SymbolViewer.js${verPostfix}" charset="UTF-8"></script>
 		`
         if (options.enableExpViewer) {
             s += `
-              <script type="text/javascript" src="${srcPath}viewer/ExpViewer.js${verPostfix}" charset="UTF-8"></script>
+              <script type="text/javascript" src="${srcPath}js/ExpViewer.js${verPostfix}" charset="UTF-8"></script>
             `
         }
     }
     s += `
-        <script type="text/javascript" src="${srcPath}viewer/InfoViewer.js${verPostfix}" charset="UTF-8"></script>
+        <script type="text/javascript" src="${srcPath}js/InfoViewer.js${verPostfix}" charset="UTF-8"></script>
         <script type="text/javascript">
     `
     if (options.jsCode && options.jsCode != '') {

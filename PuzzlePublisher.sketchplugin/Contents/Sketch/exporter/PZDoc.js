@@ -143,7 +143,7 @@ class PZDoc {
                 const cssFileName = Utils.toFilename(lib.jsLib.name + ".css")
                 const css = Utils.readFile(pathSrcCSS)
                 if (undefined != css) {
-                    const pathResultCSS = exporter.createViewerFile(cssFileName, Constants.RESOURCES_DIRECTORY)
+                    const pathResultCSS = exporter.createDestFile(cssFileName, Constants.DEST_RESOURCES_DIRECTORY)
                     if (!Utils.writeToFile(css, pathResultCSS)) {
                         exporter.logError("getSymbolData: can't library save CSS to " + pathResultCSS)
                     }
