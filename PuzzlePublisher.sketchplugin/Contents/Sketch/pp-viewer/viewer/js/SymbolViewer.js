@@ -942,15 +942,18 @@ class SymbolViewer extends AbstractViewer {
         if (!foundTokens.length) return ""
         const tokenName = foundTokens[foundTokens.length - 1][1]
         //
-        const libName = undefined != siLayer.b ? siLayer.b : story.docName
+        const libName = siLayer && undefined != siLayer.b ? siLayer.b : story.docName
         const finalTokenInfo = this._findTokenValueByName(tokenName, libName, styleValue)
         //
         if (finalTokenInfo)
             return finalTokenInfo[0] + ";</span><span class='tokenValue'>//" + this._formatStyleValue(style, finalTokenInfo[1])
         else if (foundTokens[0].length == 3)
             return tokenName + ";</span><span class='tokenValue'>//" + foundTokens[0][2]
+        else if (foundTokens[0].length == 2)
+            return tokenName + ";</span><span class='tokenValue'>//" + foundTokens[0][1]
         else
             return ""
+
     }
 
     _formatStyleValue(style = "font-size", styleValue = "13px") {
