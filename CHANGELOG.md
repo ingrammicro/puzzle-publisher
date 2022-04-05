@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 17.3.0 (5 Apr 2022)
+Viewer file structure changed
+
 ##  Version 17.2.3 (30 Mar 2022)
 Back links behaviour fixed
 
