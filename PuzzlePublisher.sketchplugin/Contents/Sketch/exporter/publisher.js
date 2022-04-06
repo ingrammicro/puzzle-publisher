@@ -37,7 +37,7 @@ class Publisher {
             this.docFolder = this.docFolder.slice(0, posSketch)
         }
 
-        this.message = ""
+        this.message = Utils.getPluginSetting(SettingKeys.PLUGIN_PUBLISH_LAST_MSG)
         publisher = this
 
         this.story = null
@@ -127,6 +127,8 @@ class Publisher {
             this.publishToMiro()
         }
 
+        this.Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_LAST_MSG, this.message)
+
         // run publish script
         let commentsID = destFolder
         commentsID = Utils.toFilename(commentsID)
@@ -183,6 +185,7 @@ class Publisher {
                         this.UI.alert('Can not open HTML in browser', openResult.output)
                     }
                 }
+                this.Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_LAST_MSG, "")
                 this.showMessage(runResult)
             }
         } else {
