@@ -1027,7 +1027,7 @@ function handleLinkEvent(event) {
     } else if (link.url != null) {
         //title = link.url;
         viewer.currentPage.hideCurrentOverlays()
-        var target = link.target
+        var target = event.metaKey ? "_blank" : link.target
         window.open(link.url, target != undefined ? target : "_self")
         return false
         //document.location = link_url
