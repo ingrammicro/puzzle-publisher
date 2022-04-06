@@ -89,43 +89,41 @@ class PZLayer {
 
 
         // save found symbol information
-        if (null != symbolID) {
+        const sSymbolMaster = symbolID ? pzDoc.getSymbolMasterByID(symbolID) : undefined
+        if (sSymbolMaster) {
             // This layer is Symbol instance
+            const smName = sSymbolMaster.name + ""
 
-            const sSymbolMaster = pzDoc.getSymbolMasterByID(symbolID)
-            if (!sSymbolMaster) {
-                log("PZLayer:constructor() can't find symbol master for layer=" + this.name)
+            if (smName.indexOf(ICON_TAG) > 0) {
+                // Found Icon symbol instance
+                this.tp = "Icon"
+                function getLayerStyleName(layer) {
+                    return layer && layer.isGroup && layer.styleName !== "" ? layer.styleName : undefined
+                }
+                this.styleName = getLayerStyleName(myParent) || getLayerStyleName(myParent.parent)
+
+                this.smName = smName
+                this.isGroup = false
+                //
+                if (exporter.enabledJSON) {
+                    this.pr = this._buildIconsPropsForJSON()
+                }
             } else {
-                const smName = sSymbolMaster.name + ""
+                // Regular symbol instance
+                this.isSymbolInstance = true
+                this.targetId = targetID
 
-                if (smName.indexOf(ICON_TAG) > 0) {
-                    // Found Icon symbol instance
-                    this.tp = "Icon"
-                    if (myParent && myParent.isGroup && myParent.styleName !== "") {
-                        this.styleName = myParent.styleName
-                    }
-                    this.smName = smName
-                    this.isGroup = false
-                    //
-                    if (exporter.enabledJSON) {
-                        this.pr = this._buildIconsPropsForJSON()
-                    }
+                // prepare data for Element Inspector
+                const lib = sSymbolMaster.getLibrary()
+                this.smName = smName
+                if (lib) {
+                    this.sharedLib = lib.name
+                    pzDoc.usedLibs[lib.name] = true
                 } else {
-                    // Regular symbol instance
-                    this.isSymbolInstance = true
-                    this.targetId = targetID
 
-                    // prepare data for Element Inspector
-                    const lib = sSymbolMaster.getLibrary()
-                    this.smName = smName
-                    if (lib) {
-                        this.sharedLib = lib.name
-                        pzDoc.usedLibs[lib.name] = true
-                    } else {
-
-                    }
                 }
             }
+
         } else {
             // Check layer shared styles
             this.smName = undefined
