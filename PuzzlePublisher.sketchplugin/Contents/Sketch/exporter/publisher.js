@@ -208,7 +208,7 @@ class Publisher {
             log("publishToMiro: start")
 
             // Load story.js file and eval it
-            const storyPath = this.mockupsPath + "/viewer/story.js"
+            const storyPath = this.mockupsPath + "/data/story.js"
             let storyJS = Utils.readFile(storyPath)
             if (undefined == storyJS) {
                 this.UI.alert('Error', "Can't find mockups on path: " + this.mockupsPath)
