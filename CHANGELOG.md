@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 17.3.3 (15 Apr 2022)
+Improved Handoff
+
 ##  Version 17.3.2 (15 Apr 2022)
 Integration with Miro works again
 
