@@ -93,7 +93,7 @@ const Constants = {
     LAYER_OVERLAY_DEFAULT: 0,
     LAYER_OVERLAY_TRANSP_TOP: 1,
     LAYER_OVERLAY_TRANSP_LEFT: 2,
-    LAYER_OVERLAY_DIV: 3,
+    LAYER_OVERLAY_VSCROLL: 3,
     //
     GA_ID: "UA-84277242-5"
 };
@@ -189,7 +189,6 @@ const SettingKeys = {
 
     LAYER_ANNOTATIONS: "layerAnnotations",
     LAYER_OVERLAY_TYPE: "layerOverlayType",
-    LAYER_DIV_ID: 'layerDivID',
     LAYER_EXTERNAL_LINK: "externalLink",
     LAYER_EXTERNAL_LINK_BLANKWIN: "layerNewWindow",
     LAYER_COMMENT: 'layerComment',
