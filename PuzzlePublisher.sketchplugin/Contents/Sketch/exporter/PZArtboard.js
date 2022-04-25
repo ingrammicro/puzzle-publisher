@@ -455,20 +455,10 @@ class PZArtboard extends PZLayer
     }
 
     // exportType:  full, layer, preview, artboard
-    _exportImage(exportType, layer = null, panelPostix = "", forFixedLayer = false)
+    _exportImage(exportType, nlayer = null, panelPostix = "", forFixedLayer = false)
     {
-        layer = layer || this
-        const nlayer = layer.nlayer
+        nlayer = nlayer || this.nlayer
         if (DEBUG) exporter.logMsg("   exportImage() for " + nlayer.name())
-
-        let maskLayer = undefined
-        if (layer.overlayType === Constants.LAYER_OVERLAY_VSCROLL)
-        {
-            const layerIndex = layer.parent.childs.indexOf(layer)
-            maskLayer = layer.parent.childs[layerIndex - 1]
-            maskLayer.nlayer.hasClippingMask = false
-            log("isVertScroll = " + maskLayer.nlayer.hasClippingMask())
-        }
 
         let scales = null
         let imageBasePath = exporter.imagesPath
@@ -505,8 +495,6 @@ class PZArtboard extends PZLayer
 
             exporter.ndoc.saveArtboardOrSlice_toFile(slice, imagePath);
         }
-
-        if (maskLayer) maskLayer.nlayer.hasClippingMask = true
     }
 
     // new experimental code to export images
@@ -632,12 +620,22 @@ class PZArtboard extends PZLayer
                 shadowInfo.layer.slayer.style.shadows = []
             }
 
+            let maskLayer = undefined
+            if (layer.overlayType === Constants.LAYER_OVERLAY_VSCROLL)
+            {
+                const layerIndex = layer.parent.childs.indexOf(layer)
+                maskLayer = layer.parent.childs[layerIndex - 1]
+                maskLayer.nlayer.hasClippingMask = false
+                log("isVertScroll = " + maskLayer.nlayer.hasClippingMask())
+            }
+
+
             // for div and  float fixed layer we need to generate its own image files
             if (layer.isFloat || layer.isFixedDiv || layer.overlayType === Constants.LAYER_OVERLAY_VSCROLL)
             {
                 //this._exportImage2('1, 2',layer.parent.slayer)         
                 const l = layer.parent.isSymbolInstance ? layer : layer
-                this._exportImage("layer", l, "-" + layer.fixedIndex, true)
+                this._exportImage("layer", l.nlayer, "-" + layer.fixedIndex, true)
             }
 
             // restore original fixed panel shadows
@@ -645,6 +643,8 @@ class PZArtboard extends PZLayer
             {
                 shadowInfo.layer.slayer.style.shadows = orgShadows
             }
+
+            if (maskLayer) maskLayer.nlayer.hasClippingMask = true
         }
     }
 

@@ -6,7 +6,8 @@ const FILE_TYPES = ["PNG", "JPG"]
 
 
 
-var onRun = function (context) {
+var onRun = function (context)
+{
     const sketch = require('sketch')
     const Settings = require('sketch/settings')
     const document = sketch.fromNative(context.document)
@@ -87,7 +88,8 @@ var onRun = function (context) {
     dialog.addSelect("fontSizeFormat", "Font Size Format", fontSizeFormat, fontSizeOptions, 250)
     dialog.addHint("", "Specify how font size will diplayed in Element Inspector.")
 
-    if (dialog.run()) {
+    if (dialog.run())
+    {
         //Settings.setSettingForKey(SettingKeys.PLUGIN_POSITION, dialog.views['position'].indexOfSelectedItem())
         Settings.setSettingForKey(SettingKeys.PLUGIN_SORT_RULE, dialog.views['sortRule'].indexOfSelectedItem())
         Settings.setSettingForKey(SettingKeys.PLUGIN_FONTSIZE_FORMAT, dialog.views['fontSizeFormat'].indexOfSelectedItem())

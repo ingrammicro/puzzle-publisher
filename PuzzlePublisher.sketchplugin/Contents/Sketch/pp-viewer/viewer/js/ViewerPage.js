@@ -38,33 +38,40 @@ let TRANS_ANIMATIONS = [
 
 
 
-function inViewport($el) {
+function inViewport($el)
+{
     var elH = $el.outerHeight(),
         H = $(window).height(),
         r = $el[0].getBoundingClientRect(), t = r.top, b = r.bottom;
     return Math.max(0, t > 0 ? Math.min(elH, H - t) : Math.min(b, H));
 }
 
-function handleAnimationEndOnHide(el) {
+function handleAnimationEndOnHide(el)
+{
     el.target.removeEventListener("animationend", handleAnimationEndOnHide)
     const t = TRANS_ANIMATIONS[el.target.getAttribute("_tch")]
-    t.out_classes.forEach(function (className) {
+    t.out_classes.forEach(function (className)
+    {
         el.target.classList.remove(className)
     })
     el.target.classList.add("hidden")
 }
 
-function handleAnimationEndOnShow(el) {
+function handleAnimationEndOnShow(el)
+{
     el.target.removeEventListener("animationend", handleAnimationEndOnShow)
     const t = TRANS_ANIMATIONS[el.target.getAttribute("_tcs")]
-    t.in_classes.forEach(function (className) {
+    t.in_classes.forEach(function (className)
+    {
         el.target.classList.remove(className)
     })
 }
 
-class ViewerPage {
+class ViewerPage
+{
 
-    constructor() {
+    constructor()
+    {
         this.currentOverlays = []
         this.parentPage = undefined
 
@@ -87,14 +94,17 @@ class ViewerPage {
         this.visibleInGallery = true
     }
 
-    showHideGalleryLinks(show = null) {
+    showHideGalleryLinks(show = null)
+    {
 
         if (this.slinks) this._showHideGalleryLinkSet(this.slinks, show)
         if (this.dlinks) this._showHideGalleryLinkSet(this.dlinks, show)
     }
 
-    _showHideGalleryLinkSet(links, forceShow = null) {
-        links.forEach(function (link) {
+    _showHideGalleryLinkSet(links, forceShow = null)
+    {
+        links.forEach(function (link)
+        {
             let show = forceShow != null ? forceShow : this.visibleInGallery && link.dpage.visibleInGallery && link.spage.visibleInGallery
             // hide link
             const o = $("#gallery #grid svg #l" + link.index)
@@ -105,25 +115,31 @@ class ViewerPage {
         }, this)
     }
 
-    getHash() {
+    getHash()
+    {
         var image = this.image;
         return image.substring(0, image.length - 4); // strip .png suffix
     }
 
-    hide(hideChilds = false, disableAnim = false) {
-        if (!disableAnim && TRANS_ANIM_NONE != this.transAnimType && !this.isModal) {
+    hide(hideChilds = false, disableAnim = false)
+    {
+        if (!disableAnim && TRANS_ANIM_NONE != this.transAnimType && !this.isModal)
+        {
             const transInfo = TRANS_ANIMATIONS[this.transAnimType]
             const el = this.imageDiv.get(0)
             el.setAttribute("_tch", this.transAnimType)
-            transInfo.out_classes.forEach(function (className) {
+            transInfo.out_classes.forEach(function (className)
+            {
                 this.imageDiv.addClass(className)
             }, this)
             el.addEventListener("animationend", handleAnimationEndOnHide)
-        } else {
+        } else
+        {
             this.imageDiv.addClass("hidden")
         }
 
-        if (undefined != this.parentPage) { // current page is overlay      
+        if (undefined != this.parentPage)
+        { // current page is overlay      
 
             if (hideChilds) this.hideChildOverlays()
 
@@ -133,11 +149,13 @@ class ViewerPage {
             const index = parent.currentOverlays.indexOf(this)
             parent.currentOverlays.splice(index, 1)
             this.parentPage = undefined
-        } else {
+        } else
+        {
             this.hideCurrentOverlays()
         }
 
-        if (undefined != this.tmpSrcOverlayByEvent) {
+        if (undefined != this.tmpSrcOverlayByEvent)
+        {
             this.overlayByEvent = this.tmpSrcOverlayByEvent
             this.tmpSrcOverlayByEvent = undefined
         }
@@ -146,45 +164,55 @@ class ViewerPage {
         this.currentLink = null
     }
 
-    hideCurrentOverlays() {
+    hideCurrentOverlays()
+    {
         const overlays = this.currentOverlays.filter(p => p.overlayOutsideClickIgnore != true).slice()
-        for (let overlay of overlays) {
+        for (let overlay of overlays)
+        {
             overlay.hide()
         }
         return overlays.length > 0
     }
 
-    hideChildOverlays() {
+    hideChildOverlays()
+    {
         const overlays = this.parentPage.currentOverlays.slice()
-        for (let overlay of overlays) {
+        for (let overlay of overlays)
+        {
             if (overlay.currentLink.orgPage != this) continue
             overlay.hide()
         }
     }
 
-    hideOtherParentOverlays() {
+    hideOtherParentOverlays()
+    {
         const overlays = this.parentPage.currentOverlays.slice()
-        for (let overlay of overlays) {
+        for (let overlay of overlays)
+        {
             if (overlay == this) continue
             overlay.hide()
         }
     }
 
 
-    show(disableAnim = false) {
+    show(disableAnim = false)
+    {
         if (!this.imageObj) this.loadImages(true)
 
         this.updatePosition()
 
-        if (!disableAnim && TRANS_ANIM_NONE != this.transAnimType && !this.isModal) {
+        if (!disableAnim && TRANS_ANIM_NONE != this.transAnimType && !this.isModal)
+        {
             const transInfo = TRANS_ANIMATIONS[this.transAnimType]
             const el = this.imageDiv.get(0)
             el.setAttribute("_tcs", this.transAnimType)
-            transInfo.in_classes.forEach(function (className, index) {
+            transInfo.in_classes.forEach(function (className, index)
+            {
                 this.imageDiv.addClass(className)
             }, this)
             el.addEventListener("animationend", handleAnimationEndOnShow)
-        } else {
+        } else
+        {
         }
         this.imageDiv.removeClass("hidden")
         this.visible = true
@@ -194,13 +222,16 @@ class ViewerPage {
     //    foundPage: {}
     //    foundlink: {}
     //}
-    showOverlayOverParent() {
+    showOverlayOverParent()
+    {
         var foundPage = null
         var foundLink = null
         // scan all regular pages
-        story.pages.filter(page => "regular" == page.type).some(function (page) {
+        story.pages.filter(page => "regular" == page.type).some(function (page)
+        {
             const foundLinks = page.links.filter(link => link.page != null && link.page == this.index)
-            if (foundLinks.length != 0) {
+            if (foundLinks.length != 0)
+            {
                 // return the page index which has link to modal                    
                 foundPage = page
                 foundLink = foundLinks[0]
@@ -217,17 +248,20 @@ class ViewerPage {
         return true
     }
 
-    findTextNext() {
+    findTextNext()
+    {
         if (undefined == this.textElemIndex) return false
         //
         //this.textElemIndex++
         this.findText(this.actualSearchText)
     }
 
-    findText(text, interactive = true) {
+    findText(text, interactive = true)
+    {
         text = text.toLowerCase().trim()
         //        
-        if (undefined != this.actualSearchText && this.actualSearchText != text) {
+        if (undefined != this.actualSearchText && this.actualSearchText != text)
+        {
             this.textElemIndex = undefined
             this.actualSearchText = undefined
         }
@@ -236,29 +270,37 @@ class ViewerPage {
         // Search all layers with required text inside
         let foundLayers = []
         this.findTextLayersByText(text, foundLayers)
-        foundLayers.sort(function (a, b) {
+        foundLayers.sort(function (a, b)
+        {
             return a.y < b.y ? -1 : 1
         })
         //  No results
-        if (0 == foundLayers.length) {
+        if (0 == foundLayers.length)
+        {
             if (!interactive) return false
             const nextPage = this.findNextPageWithText(text)
-            if (!nextPage) {
+            if (!nextPage)
+            {
                 window.alert("The text was not found")
                 return false
             }
-            if (!window.confirm("Not found on the current page. Do you want to check other pages?")) {
+            if (!window.confirm("Not found on the current page. Do you want to check other pages?"))
+            {
                 return false
             }
             viewer.goTo(nextPage.index)
             return true
         }
-        if (foundLayers.length <= this.textElemIndex) {
+        if (foundLayers.length <= this.textElemIndex)
+        {
             // No more results ahead
-            if (interactive) {
+            if (interactive)
+            {
                 const nextPage = this.findNextPageWithText(text)
-                if (nextPage) {
-                    if (window.confirm("The last result found on the current page. Do you want to check other pages?")) {
+                if (nextPage)
+                {
+                    if (window.confirm("The last result found on the current page. Do you want to check other pages?"))
+                    {
                         //this.stopTextSearch()
                         viewer.goTo(nextPage.index)
                         return true
@@ -269,7 +311,8 @@ class ViewerPage {
         }
         // Highlight results
         this.hideFoundTextResults()
-        foundLayers.forEach(function (l, index) {
+        foundLayers.forEach(function (l, index)
+        {
             this._findTextShowElement(l, index == this.textElemIndex)
         }, this)
         //
@@ -279,17 +322,20 @@ class ViewerPage {
         return foundLayers.length > 0
     }
 
-    findNextPageWithText(text) {
+    findNextPageWithText(text)
+    {
         let foundPage = null
         let page = this
-        while (true) {
+        while (true)
+        {
             // if we have some next pages?
             const nextPage = viewer.getNextVisPage(page)
             if (!nextPage) break
             // we don't want to run infinity loop
             if (nextPage.index == this.index) break
             // if a next page has this text
-            if (nextPage.findText(text, false)) {
+            if (nextPage.findText(text, false))
+            {
                 foundPage = nextPage
                 break
             }
@@ -301,22 +347,27 @@ class ViewerPage {
     // Arguments:
     //  foundLayers: ref to list result
     //  layers: list of layers or null (to get a root layers)
-    findTextLayersByText(text, foundLayers, layers = null) {
+    findTextLayersByText(text, foundLayers, layers = null)
+    {
         if (!story.layersExist) return false
-        if (null == layers) {
+        if (null == layers)
+        {
             layers = layersData[this.index].c
             if (!layers) return false
         }
 
-        for (var l of layers.slice().reverse()) {
-            if ("Text" == l.tp && l.tx.toLowerCase().includes(text)) {
+        for (var l of layers.slice().reverse())
+        {
+            if ("Text" == l.tp && l.tx.toLowerCase().includes(text))
+            {
                 foundLayers.push(l)
             }
             if (undefined != l.c)
                 this.findTextLayersByText(text, foundLayers, l.c)
         }
     }
-    _findTextShowElement(l, isFocused = false) {
+    _findTextShowElement(l, isFocused = false)
+    {
         const padding = isFocused ? 5 : 0
         let x = l.x - padding
         let y = l.y - padding
@@ -331,14 +382,18 @@ class ViewerPage {
         elemDiv.appendTo(this.linksDiv)
 
         // scroll window to show a layer
-        if (isFocused) {
+        if (isFocused)
+        {
             this._scrollTo(l.x, l.y)
         }
     }
 
-    _scrollTo(x, y) {
-        for (let p of this.fixedPanels) {
-            if (Math.round(p.y) == 0) {
+    _scrollTo(x, y)
+    {
+        for (let p of this.fixedPanels)
+        {
+            if (Math.round(p.y) == 0)
+            {
                 y -= p.height
                 break
             }
@@ -346,22 +401,26 @@ class ViewerPage {
         window.scrollTo(x, y - 10);
     }
 
-    hideFoundTextResults() {
+    hideFoundTextResults()
+    {
         $(".searchResultDiv").remove()
         $(".searchFocusedResultDiv").remove()
     }
 
-    stopTextSearch() {
+    stopTextSearch()
+    {
         this.hideFoundTextResults()
         this.actualSearchText = undefined
         this.textElemIndex = undefined
     }
 
-    updatePosition() {
+    updatePosition()
+    {
         this.currentLeft = viewer.currentMarginLeft
         this.currentTop = viewer.currentMarginTop
 
-        if (this.isModal) {
+        if (this.isModal)
+        {
             var regPage = viewer.lastRegularPage
 
             this.currentLeft += Math.round(regPage.width / 2) - Math.round(this.width / 2)
@@ -379,17 +438,20 @@ class ViewerPage {
                 contentModal.css("overflow-y", "")
 
 
-        } else if ("overlay" == this.type) {
+        } else if ("overlay" == this.type)
+        {
             this.currentLeft = viewer.currentPage ? viewer.currentPage.currentLeft : 0
             this.currentTop = viewer.currentPage ? viewer.currentPage.currentTop : 0
         }
     }
 
-    showOverlayByLinkIndex(linkIndex) {
+    showOverlayByLinkIndex(linkIndex)
+    {
         linkIndex = parseInt(linkIndex, 10)
 
         var link = this._getLinkByIndex(linkIndex)
-        if (!link) {
+        if (!link)
+        {
             console.log('Error: can not find link to overlay by index="' + linkIndex + '"')
             return false
         }
@@ -399,7 +461,8 @@ class ViewerPage {
 
         var destPage = story.pages[link.page]
         // for mouseover overlay we need to show it on click, but only one time)
-        if ("overlay" == destPage.type && Constants.TRIGGER_ON_HOVER == destPage.overlayByEvent) {
+        if ("overlay" == destPage.type && Constants.TRIGGER_ON_HOVER == destPage.overlayByEvent)
+        {
             destPage.tmpSrcOverlayByEvent = destPage.overlayByEvent
             destPage.overlayByEvent = Constants.TRIGGER_ON_HOVER
             viewer.customEvent = {
@@ -410,14 +473,17 @@ class ViewerPage {
             }
             handleLinkEvent({})
             viewer.customEvent = undefined
-        } else {
+        } else
+        {
             link.a.click()
         }
     }
 
     // return true (overlay is hidden) or false (overlay is visible)
-    onMouseMove(x, y) {
-        for (let overlay of this.currentOverlays) {
+    onMouseMove(x, y)
+    {
+        for (let overlay of this.currentOverlays)
+        {
             // Commented to hide mouseover-overlay inside onclick-overlay  (ver 12.4.3)
             //if (overlay.currentLink.orgPage != this) continue 
             overlay.onMouseMoveOverlay(x, y)
@@ -425,13 +491,15 @@ class ViewerPage {
     }
 
     // return true (overlay is hidden) or false (overlay is visible)
-    onMouseMoveOverlay(x, y) {
+    onMouseMoveOverlay(x, y)
+    {
         if (this.imageDiv.hasClass("hidden") || this.overlayByEvent != Constants.TRIGGER_ON_HOVER) return false
         if (viewer.linksDisabled) return false
 
         // handle mouse hover if this page is overlay
         var _hideSelf = false
-        while (Constants.TRIGGER_ON_CLICK == this.overlayByEvent) {
+        while (Constants.TRIGGER_ON_CLICK == this.overlayByEvent)
+        {
             var localX = Math.round(x / viewer.currentZoom) - this.currentLeft
             var localY = Math.round(y / viewer.currentZoom) - this.currentTop
             //alert(" localX:"+localX+" localY:"+localY+" linkX:"+this.currentLink.x+" linkY:"+this.currentLink.y);
@@ -442,7 +510,8 @@ class ViewerPage {
                 && localY >= this.currentY
                 && localX < (this.currentX + this.width)
                 && localY < (this.currentY + this.height)
-            ) {
+            )
+            {
                 break
             }
 
@@ -451,7 +520,8 @@ class ViewerPage {
                 || localY < this.currentLink.y
                 || localX >= (this.currentLink.x + this.currentLink.width)
                 || localY >= (this.currentLink.y + this.currentLink.height)
-            ) {
+            )
+            {
                 _hideSelf = true
                 break
             }
@@ -462,14 +532,16 @@ class ViewerPage {
         var visibleTotal = 0
         var total = 0
 
-        for (let overlay of this.parentPage.currentOverlays) {
+        for (let overlay of this.parentPage.currentOverlays)
+        {
             if (overlay.currentLink.orgPage != this) continue
             total++
             if (overlay.onMouseMoveOverlay(x, y)) visibleTotal++
         }
 
         if (_hideSelf)
-            if (!total || (total && !visibleTotal)) {
+            if (!total || (total && !visibleTotal))
+            {
                 this.hide(false)
                 return false
             }
@@ -478,10 +550,12 @@ class ViewerPage {
     }
 
 
-    showAsOverlayInCurrentPage(orgPage, link, posX, posY, linkParentFixed, disableAnim) {
+    showAsOverlayInCurrentPage(orgPage, link, posX, posY, linkParentFixed, disableAnim)
+    {
         const newParentPage = viewer.currentPage
 
-        if (!this.imageDiv) {
+        if (!this.imageDiv)
+        {
             this.loadImages(true)
         }
 
@@ -490,13 +564,18 @@ class ViewerPage {
         const currentOverlays = newParentPage.currentOverlays
 
         let overlayIndex = currentOverlays.indexOf(this.index)
-        if (overlayIndex < 0) {
-            if ('overlay' !== link.orgPage.type || this.overlayClosePrevOverlay) {
+        if (overlayIndex < 0)
+        {
+            if ('overlay' !== link.orgPage.type || this.overlayClosePrevOverlay)
+            {
                 // if we show new overlay by clicking inside other overlay then we close the original overlay
-                if ('overlay' == orgPage.type && this.overlayClosePrevOverlay) {
+                if ('overlay' == orgPage.type && this.overlayClosePrevOverlay)
+                {
                     orgPage.hide()
-                } else {
-                    for (let overlay of currentOverlays) {
+                } else
+                {
+                    for (let overlay of currentOverlays)
+                    {
                         if (overlay == this) continue
                         overlay.hide()
                     }
@@ -508,23 +587,29 @@ class ViewerPage {
         const div = this.imageDiv
 
         this.inFixedPanel = linkParentFixed && this.overlayAlsoFixed
-        if (!this.parentPage || this.parentPage.id != newParentPage.id || div.hasClass('hidden')) {
+        if (!this.parentPage || this.parentPage.id != newParentPage.id || div.hasClass('hidden'))
+        {
 
-            if (this.inFixedPanel) {
+            if (this.inFixedPanel)
+            {
                 div.removeClass('divPanel')
                 div.addClass('fixedPanelFloat')
-            } else if (newParentPage.isModal) {
+            } else if (newParentPage.isModal)
+            {
                 //div.removeClass('divPanel')
                 //div.removeClass('fixedPanelFloat')        
-            } else {
+            } else
+            {
                 div.removeClass('fixedPanelFloat') // clear after inFixedPanel
                 div.addClass('divPanel')
             }
 
             // click on overlay outside of any hotspots should not close it
-            div.click(function () {
+            div.click(function ()
+            {
                 const index = parseInt(this.id.substring(this.id.indexOf("_") + 1))
-                if (index >= 0) {
+                if (index >= 0)
+                {
                     const page = story.pages[index]
                     const indexOverlay = page.parentPage.currentOverlays.indexOf(page)
                     if (indexOverlay == 0) page.hideOtherParentOverlays()
@@ -532,7 +617,8 @@ class ViewerPage {
                 return false
             })
 
-            if (link.fixedBottomPanel) {
+            if (link.fixedBottomPanel)
+            {
                 // show new overlay aligned to bottom
                 const panel = link.fixedBottomPanel;
                 const panelLink = panel.links[link.index]
@@ -546,14 +632,16 @@ class ViewerPage {
                 div.css('top', "")
                 div.css('bottom', posY)
                 div.css('margin-left', posX + "px")
-            } else {
+            } else
+            {
                 // 
                 if (!this.overlayClosePrevOverlay && !positionCloned && undefined != this.overlayShadowX &&
                     (
                         (0 == this.overlayPin) // ARTBOARD_OVERLAY_PIN_HOTSPOT
                         && (3 == this.overlayPinHotspot) //ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_LEFT
                     )
-                ) {// OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_LEFT
+                )
+                {// OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_LEFT
                     posX -= this.overlayShadowX
                 }
 
@@ -572,25 +660,31 @@ class ViewerPage {
             this.currentLink = link
 
             // Change URL
-            if (undefined != this.overlayRedirectTargetPage) {
+            if (undefined != this.overlayRedirectTargetPage)
+            {
                 viewer.refresh_url(this)
-            } else {
+            } else
+            {
                 var extURL = 'o=' + link.index
                 viewer.refresh_url(newParentPage, extURL)
             }
 
 
-        } else if (Constants.TRIGGER_ON_CLICK == this.overlayByEvent && posX == this.currentX && posY == this.currentY) {//handle only mouse hover
+        } else if (Constants.TRIGGER_ON_CLICK == this.overlayByEvent && posX == this.currentX && posY == this.currentY)
+        {//handle only mouse hover
             // cursor returned back from overlay to hotspot -> nothing to do
-        } else {
+        } else
+        {
             this.hide()
             viewer.refresh_url(newParentPage)
         }
     }
 
-    loadImages(force = false) {
+    loadImages(force = false)
+    {
         /// check if already loaded images for this page
-        if (!force && this.imageObj != undefined) {
+        if (!force && this.imageObj != undefined)
+        {
             return pagerMarkImageAsLoaded()
         }
 
@@ -612,16 +706,21 @@ class ViewerPage {
 
 
         // create fixed panel images        
-        for (var panel of this.fixedPanels) {
+        for (var panel of this.fixedPanels)
+        {
             let style = "height: " + panel.height + "px; width: " + panel.width + "px; "
-            if (panel.constrains.top || panel.isFixedDiv || (!panel.constrains.top && !panel.constrains.bottom)) {
+            if (panel.constrains.top || panel.isFixedDiv || (!panel.constrains.top && !panel.constrains.bottom))
+            {
                 style += "top:" + panel.y + "px;"
-            } else if (panel.constrains.bottom) {
+            } else if (panel.constrains.bottom)
+            {
                 style += "bottom:" + (this.height - panel.y - panel.height) + "px;"
             }
-            if (panel.constrains.left || panel.isFixedDiv || (!panel.constrains.left && !panel.constrains.right)) {
+            if (panel.constrains.left || panel.isFixedDiv || (!panel.constrains.left && !panel.constrains.right))
+            {
                 style += "margin-left:" + panel.x + "px;"
-            } else if (panel.constrains.right) {
+            } else if (panel.constrains.right)
+            {
                 style += "margin-left:" + panel.x + "px;"
             }
             //
@@ -631,13 +730,17 @@ class ViewerPage {
 
             // create Div for fixed panel
             var cssClass = ""
-            if (panel.isFloat) {
+            if (panel.isFloat)
+            {
                 cssClass = 'fixedPanelFloat'
-            } else if (panel.isFixedDiv) {
+            } else if (panel.isFixedDiv)
+            {
                 cssClass = 'divPanel'
-            } else if ("top" == panel.type) {
+            } else if ("top" == panel.type)
+            {
                 cssClass = 'fixedPanel fixedPanelTop'
-            } else if ("left" == panel.type) {
+            } else if ("left" == panel.type)
+            {
                 cssClass = 'fixedPanel'
             }
 
@@ -673,7 +776,8 @@ class ViewerPage {
             imageDiv.appendTo(isModal ? contentModal : content);
 
             // create link div
-            if (enableLinks) {
+            if (enableLinks)
+            {
                 var linksDiv = $("<div>", {
                     id: "div_links_" + this.index,
                     class: "linksDiv",
@@ -690,21 +794,25 @@ class ViewerPage {
         img.appendTo(imageDiv)
     }
 
-    showLayout() {
-        if (undefined == this.layoutCreated) {
+    showLayout()
+    {
+        if (undefined == this.layoutCreated)
+        {
             this.layoutCreated = true
             this._addLayoutLines(this.imageDiv)
         }
     }
 
-    _addLayoutLines(imageDiv) {
+    _addLayoutLines(imageDiv)
+    {
         if (this.type != "regular" || undefined == this.layout) return
 
         var x = this.layout.offset
         var colWidth = this.layout.columnWidth
         var colWidthInt = Math.round(this.layout.columnWidth)
         var gutterWidth = this.layout.gutterWidth
-        for (var i = 0; i < this.layout.numberOfColumns; i++) {
+        for (var i = 0; i < this.layout.numberOfColumns; i++)
+        {
             var style = "left: " + Math.trunc(x) + "px; top:" + 0 + "px; width: " + colWidthInt + "px; height:" + this.height + "px; "
             var colDiv = $("<div>", {
                 class: "layoutColDiv layouLineDiv",
@@ -713,7 +821,8 @@ class ViewerPage {
             x += colWidth + gutterWidth
         }
 
-        for (var y = 0; y < this.height; y += 5) {
+        for (var y = 0; y < this.height; y += 5)
+        {
             var style = "left: " + 0 + "px; top:" + y + "px; width: " + this.width + "px; height:" + 1 + "px; "
             var colDiv = $("<div>", {
                 class: "layoutRowDiv layouLineDiv",
@@ -726,12 +835,15 @@ class ViewerPage {
     /*------------------------------- INTERNAL METHODS -----------------------------*/
 
     // Try to find a first page and link which has a link to this page
-    _getSrcPageAndLink() {
+    _getSrcPageAndLink()
+    {
         let res = null
-        for (var page of story.pages) {
+        for (var page of story.pages)
+        {
             res = this._getLinkByTargetPage(page, page.links, this.index)
             if (res) return res
-            for (var panel of page.fixedPanels) {
+            for (var panel of page.fixedPanels)
+            {
                 res = this._getLinkByTargetPage(page, panel.links, this.index)
                 if (res) return res
             }
@@ -739,7 +851,8 @@ class ViewerPage {
         return null
     }
 
-    _getLinkByTargetPage(page, links, targetPageIndex) {
+    _getLinkByTargetPage(page, links, targetPageIndex)
+    {
         const link = links.find(link => link.page == targetPageIndex)
         if (!link) return null
         return {
@@ -750,25 +863,30 @@ class ViewerPage {
 
 
 
-    _getLinkByIndex(index) {
+    _getLinkByIndex(index)
+    {
         var link = this._getLinkByIndexInLinks(index, this.links)
         if (link != null) return link
-        for (var panel of this.fixedPanels) {
+        for (var panel of this.fixedPanels)
+        {
             link = this._getLinkByIndexInLinks(index, panel.links)
             if (link != null) return link
         }
         return null
     }
 
-    _getLinkByIndexInLinks(index, links) {
-        var found = links.find(function (el) {
+    _getLinkByIndexInLinks(index, links)
+    {
+        var found = links.find(function (el)
+        {
             return el.index == index
         })
         return found != undefined ? found : null
     }
 
 
-    _loadSingleImage(sizeSrc, idPrefix) {
+    _loadSingleImage(sizeSrc, idPrefix)
+    {
         var hasRetinaImages = story.hasRetina
         var imageURI = hasRetinaImages && viewer.isHighDensityDisplay() ? sizeSrc.image2x : sizeSrc.image;
         var unCachePostfix = "V_V_V" == story.docVersion ? "" : ("?" + story.docVersion)
@@ -779,17 +897,20 @@ class ViewerPage {
             src: encodeURIComponent(viewer.files) + '/' + encodeURIComponent(imageURI) + unCachePostfix,
         }).attr('width', sizeSrc.width).attr('height', sizeSrc.height);
 
-        img.preload(function (perc, done) {
+        img.preload(function (perc, done)
+        {
             //console.log(perc, done);
         });
         return img;
     }
 
     // panel: ref to panel or this
-    _createLinks(panel) {
+    _createLinks(panel)
+    {
         var linksDiv = panel.linksDiv
 
-        for (var link of panel.links) {
+        for (var link of panel.links)
+        {
             let x = link.rect.x + (link.isParentFixed ? panel.x : 0)
             let y = link.rect.y + (link.isParentFixed ? panel.y : 0)
 
@@ -803,29 +924,37 @@ class ViewerPage {
 
             var eventType = Constants.TRIGGER_ON_CLICK
 
-            if ('page' in link) {
+            if ('page' in link)
+            {
                 var destPageIndex = viewer.getPageIndex(parseInt(link.page))
                 var destPage = story.pages[destPageIndex];
                 //
-                if (link.triggerOnHover) {
+                if (link.triggerOnHover)
+                {
                     eventType = Constants.TRIGGER_ON_HOVER
-                } else if ('overlay' == destPage.type) {
+                } else if ('overlay' == destPage.type)
+                {
                     eventType = destPage.overlayByEvent
                 }
             }
 
-            if (EVENT_HOVER == eventType) { // for Mouse over event
+            if (EVENT_HOVER == eventType)
+            { // for Mouse over event
                 a.mouseenter(handleLinkEvent)
                 if (
                     0 == destPage.overlayPin // ARTBOARD_OVERLAY_PIN_HOTSPOT
                     && 3 == destPage.overlayPinHotspot // ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_LEFT
-                ) {
-                } else {
+                )
+                {
+                } else
+                {
                     // need to pass click event to overlayed layers
-                    a.click(function (e) {
+                    a.click(function (e)
+                    {
                         if (undefined == e.originalEvent) return
                         var nextObjects = document.elementsFromPoint(e.originalEvent.x, e.originalEvent.y);
-                        for (var i = 0; i < nextObjects.length; i++) {
+                        for (var i = 0; i < nextObjects.length; i++)
+                        {
                             var obj = nextObjects[i].parentElement
                             if (!obj || obj.nodeName != 'A' || obj == this) continue
                             $(obj).trigger('click', e);
@@ -833,7 +962,8 @@ class ViewerPage {
                         }
                     })
                 }
-            } else { // for On click event
+            } else
+            { // for On click event
                 a.click(handleLinkEvent)
             }
 
@@ -856,7 +986,8 @@ class ViewerPage {
 //
 // customData:
 //  x,y,pageIndex
-function handleLinkEvent(event) {
+function handleLinkEvent(event)
+{
     var customData = viewer["customEvent"]
 
     if (viewer.linksDisabled) return false
@@ -867,7 +998,8 @@ function handleLinkEvent(event) {
     const linkIndex = customData ? customData.linkIndex : $(this).attr("li")
     const link = orgPage._getLinkByIndex(linkIndex)
 
-    if (link.page != undefined) {
+    if (link.page != undefined)
+    {
         var destPageIndex = parseInt(link.page)
         var linkParentFixed = "overlay" != orgPage.type ? link.isParentFixed : orgPage.inFixedPanel
 
@@ -877,7 +1009,8 @@ function handleLinkEvent(event) {
         if (!destPage) return
 
 
-        if (('overlay' == destPage.type || 'modal' == destPage.type) && destPage.overlayRedirectTargetPage != undefined) {
+        if (('overlay' == destPage.type || 'modal' == destPage.type) && destPage.overlayRedirectTargetPage != undefined)
+        {
 
             // Change base page
             viewer.goTo(destPage.overlayRedirectTargetPage, false, link)
@@ -885,7 +1018,8 @@ function handleLinkEvent(event) {
             orgPage = viewer.currentPage
         }
 
-        if ('overlay' == destPage.type) {
+        if ('overlay' == destPage.type)
+        {
 
             var orgLink = {
                 orgPage: orgPage,
@@ -899,19 +1033,23 @@ function handleLinkEvent(event) {
             }
 
             // check if link in fixed panel aligned to bottom
-            if (linkParentFixed && destPage.overlayAlsoFixed && orgLink.fixedPanelIndex >= 0 && currentPage.fixedPanels[orgLink.fixedPanelIndex].constrains.bottom) {
+            if (linkParentFixed && destPage.overlayAlsoFixed && orgLink.fixedPanelIndex >= 0 && currentPage.fixedPanels[orgLink.fixedPanelIndex].constrains.bottom)
+            {
                 orgLink.fixedBottomPanel = currentPage.fixedPanels[orgLink.fixedPanelIndex]
-            } else { // clicked not from fixed panel           
+            } else
+            { // clicked not from fixed panel           
                 const pinHotspot = Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT == destPage.overlayPin
                 const pinPage = Constants.ARTBOARD_OVERLAY_PIN_PAGE == destPage.overlayPin
 
                 var pageX = 0
                 var pageY = 0
 
-                if (pinHotspot) {
+                if (pinHotspot)
+                {
                     //////////////////////////////// PIN TO HOTSPOT ////////////////////////////////
                     // clicked from some other overlay
-                    if ('overlay' == orgPage.type) {
+                    if ('overlay' == orgPage.type)
+                    {
                         orgLink.x += orgPage.currentX
                         orgLink.y += orgPage.currentY
                     }
@@ -926,33 +1064,43 @@ function handleLinkEvent(event) {
                         )
                         ? 5 : 0
 
-                    if (destPage.overlayClosePrevOverlay && ('overlay' == orgPage.type)) {
+                    if (destPage.overlayClosePrevOverlay && ('overlay' == orgPage.type))
+                    {
                         pageX = orgPage.currentX
                         pageY = orgPage.currentY
-                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_LEFT == destPage.overlayPinHotspot) {
+                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_LEFT == destPage.overlayPinHotspot)
+                    {
                         pageY += link.rect.height
-                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_CENTER == destPage.overlayPinHotspot) {
+                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_CENTER == destPage.overlayPinHotspot)
+                    {
                         pageX += parseInt(orgLink.width / 2) - parseInt(destPage.width / 2)
                         pageY += link.rect.height
-                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_RIGHT == destPage.overlayPinHotspot) {
+                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_RIGHT == destPage.overlayPinHotspot)
+                    {
                         pageX += orgLink.width - destPage.width
                         pageY += link.rect.height
-                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_LEFT == destPage.overlayPinHotspot) {
-                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_CENTER == destPage.overlayPinHotspot) {
+                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_LEFT == destPage.overlayPinHotspot)
+                    {
+                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_CENTER == destPage.overlayPinHotspot)
+                    {
                         pageX += parseInt(orgLink.width / 2) - parseInt(destPage.width / 2)
                         //pageY -= destPage.height                            
-                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_RIGHT == destPage.overlayPinHotspot) {
+                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_RIGHT == destPage.overlayPinHotspot)
+                    {
                         pageX += orgLink.width - destPage.width
                         //pageY = pageY - destPage.height                            
-                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_BOTTOM_RIGHT == destPage.overlayPinHotspot) {
+                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_BOTTOM_RIGHT == destPage.overlayPinHotspot)
+                    {
                         pageX += orgLink.width
-                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UP_CENTER == destPage.overlayPinHotspot) {
+                    } else if (pinHotspot && Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UP_CENTER == destPage.overlayPinHotspot)
+                    {
                         pageX += parseInt(orgLink.width / 2) - parseInt(destPage.width / 2)
                         pageY -= destPage.height
                     }
 
                     // check page right side
-                    if (!pinHotspot || (Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_LEFT != destPage.overlayPinHotspot)) {
+                    if (!pinHotspot || (Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_LEFT != destPage.overlayPinHotspot))
+                    {
                         const fullWidth = destPage.width + offsetX // + (('overlayShadowX' in destPage)?destPage.overlayShadowX:0)
                         if ((pageX + fullWidth) > currentPage.width)
                             pageX = currentPage.width - fullWidth
@@ -961,28 +1109,36 @@ function handleLinkEvent(event) {
                             linkPosX = offsetX + (('overlayShadowX' in destPage)?destPage.overlayShadowX:0)
                         }*/
                     }
-                } else {
+                } else
+                {
                     //////////////////////////////// PIN TO PAGE ////////////////////////////////
 
-                    if (pinPage && Constants.ARTBOARD_OVERLAY_PIN_PAGE_TOP_LEFT == destPage.overlayPinPage) {
+                    if (pinPage && Constants.ARTBOARD_OVERLAY_PIN_PAGE_TOP_LEFT == destPage.overlayPinPage)
+                    {
                         pageX = 0
                         pageY = 0
-                    } else if (pinPage && Constants.ARTBOARD_OVERLAY_PIN_PAGE_TOP_CENTER == destPage.overlayPinPage) {
+                    } else if (pinPage && Constants.ARTBOARD_OVERLAY_PIN_PAGE_TOP_CENTER == destPage.overlayPinPage)
+                    {
                         pageX = parseInt(currentPage.width / 2) - parseInt(destPage.width / 2)
                         pageY = 0
-                    } else if (pinPage && Constants.ARTBOARD_OVERLAY_PIN_PAGE_TOP_RIGHT == destPage.overlayPinPage) {
+                    } else if (pinPage && Constants.ARTBOARD_OVERLAY_PIN_PAGE_TOP_RIGHT == destPage.overlayPinPage)
+                    {
                         pageX = currentPage.width - destPage.width
                         pageY = 0
-                    } else if (pinPage && Constants.ARTBOARD_OVERLAY_PIN_PAGE_CENTER == destPage.overlayPinPage) {
+                    } else if (pinPage && Constants.ARTBOARD_OVERLAY_PIN_PAGE_CENTER == destPage.overlayPinPage)
+                    {
                         pageX = parseInt(currentPage.width / 2) - parseInt(destPage.width / 2)
                         pageY = parseInt(currentPage.height / 2) - parseInt(destPage.height / 2)
-                    } else if (pinPage && Constants.ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_LEFT == destPage.overlayPinPage) {
+                    } else if (pinPage && Constants.ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_LEFT == destPage.overlayPinPage)
+                    {
                         pageX = 0
                         pageY = currentPage.height - destPage.height
-                    } else if (pinPage && Constants.ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_CENTER == destPage.overlayPinPage) {
+                    } else if (pinPage && Constants.ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_CENTER == destPage.overlayPinPage)
+                    {
                         pageX = parseInt(currentPage.width / 2) - parseInt(destPage.width / 2)
                         pageY = currentPage.height - destPage.height
-                    } else if (pinPage && Constants.ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_RIGHT == destPage.overlayPinPage) {
+                    } else if (pinPage && Constants.ARTBOARD_OVERLAY_PIN_PAGE_BOTTOM_RIGHT == destPage.overlayPinPage)
+                    {
                         pageX = currentPage.width - destPage.width
                         pageY = currentPage.height - destPage.height
                     }
@@ -993,11 +1149,14 @@ function handleLinkEvent(event) {
                 if (pageY < 0) pageY = 0
             }
 
-            if (destPage.visible) {
+            if (destPage.visible)
+            {
                 const sameLink = destPage.currentLink.index == orgLink.index
-                if (sameLink) {
+                if (sameLink)
+                {
                     destPage.hide()
-                } else {
+                } else
+                {
                     destPage.hide(false, true) // hide without transition animation
                     if (orgPage != destPage)
                         destPage.showAsOverlayInCurrentPage(orgPage, orgLink, pageX, pageY, linkParentFixed, true)
@@ -1006,9 +1165,11 @@ function handleLinkEvent(event) {
             }
             destPage.showAsOverlayInCurrentPage(orgPage, orgLink, pageX, pageY, linkParentFixed)
             return false
-        } else {
+        } else
+        {
             // close modal if some link inside a modal opens the same modal
-            if (destPageIndex == currentPage.index && currentPage.isModal) {
+            if (destPageIndex == currentPage.index && currentPage.isModal)
+            {
                 viewer.closeModal()
                 return false
             }
@@ -1019,12 +1180,14 @@ function handleLinkEvent(event) {
             viewer.goTo(parseInt(destPageIndex), true, link)
             return false
         }
-    } else if (link.action != null && link.action == 'back') {
+    } else if (link.action != null && link.action == 'back')
+    {
         //title = "Go Back";
         viewer.currentPage.hideCurrentOverlays()
         viewer.goBack()
         return false
-    } else if (link.url != null) {
+    } else if (link.url != null)
+    {
         //title = link.url;
         viewer.currentPage.hideCurrentOverlays()
         var target = event.metaKey ? "_blank" : link.target
@@ -1035,7 +1198,8 @@ function handleLinkEvent(event) {
     }
 
     // close last current overlay if it still has parent
-    if ('overlay' == orgPage.type && undefined != orgPage.parentPage) {
+    if ('overlay' == orgPage.type && undefined != orgPage.parentPage)
+    {
         orgPage.hide()
     }
 
