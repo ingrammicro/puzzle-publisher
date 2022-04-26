@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 17.4.0 (25 Apr 2022)
+Custom artboard size function fixed
+
 ##  Version 17.3.3 (15 Apr 2022)
 Improved Handoff
 
