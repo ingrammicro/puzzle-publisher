@@ -45,7 +45,7 @@ function inViewport($el)
     var elH = $el.outerHeight(),
         H = $(window).height(),
         r = $el[0].getBoundingClientRect(), t = r.top, b = r.bottom;
-    return [r.top,Math.max(0, t > 0 ? Math.min(elH, H - t) : Math.min(b, H))]
+    return [r.top, Math.max(0, t > 0 ? Math.min(elH, H - t) : Math.min(b, H))]
 }
 
 function handleAnimationEndOnHide(el)
@@ -427,7 +427,7 @@ class ViewerPage
             var regPage = viewer.lastRegularPage
 
             this.currentLeft += Math.round(regPage.width / 2) - Math.round(this.width / 2)
-            const [y,visibleHeight] = inViewport(regPage.imageDiv)
+            const [y, visibleHeight] = inViewport(regPage.imageDiv)
             this.currentTop += Math.round(visibleHeight / 2) - Math.round(this.height / 2 * viewer.currentZoom)
             if (this.currentTop < 0) this.currentTop = 0
             if (this.currentLeft < 0) this.currentLeft = 0
@@ -700,7 +700,7 @@ class ViewerPage
         }
 
         const enableLinks = true
-        var isModal = this.type === "modal";        
+        var isModal = this.type === "modal";
 
         var content = $('#content')
         var cssStyle = "height: " + this.height + "px; width: " + this.width + "px;"
@@ -714,7 +714,7 @@ class ViewerPage
             style: cssStyle
         });
         this.imageDiv = imageDiv
-        
+
 
         // create fixed panel images        
         for (var panel of this.fixedPanels)
@@ -754,9 +754,10 @@ class ViewerPage
                     style += "box-shadow:" + panel.shadow + ";"
 
                 // create Div for fixed panel            
-                if(isBottomFloat){
+                if (isBottomFloat)
+                {
                     cssClass = 'fixedBottomPanelFloat'
-                }else if (panel.isFloat)
+                } else if (panel.isFloat)
                 {
                     cssClass = 'fixedPanelFloat'
                 } else if (panel.isVertScroll)
@@ -778,17 +779,19 @@ class ViewerPage
                 class: cssClass,
                 style: style
             })
-            if(isBottomFloat){
-                const wrap1 = $("<div>", {                    
+            if (isBottomFloat)
+            {
+                const wrap1 = $("<div>", {
                     style: `position: absolute; z-index:13;`
                 })
-                const wrap2 = $("<div>", {                    
+                const wrap2 = $("<div>", {
                     style: `position: fixed; height:100vh; max-height: ${this.height}px; top:0px;`
                 })
                 panelDiv.appendTo(wrap2);
                 wrap2.appendTo(wrap1)
                 wrap1.appendTo(imageDiv)
-            }else{
+            } else
+            {
                 panelDiv.appendTo(imageDiv);
             }
             panel.imageDiv = panelDiv
