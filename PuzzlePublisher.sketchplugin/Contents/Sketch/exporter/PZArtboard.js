@@ -351,7 +351,7 @@ class PZArtboard extends PZLayer
                 }
                 foundPanels[type] = l
 
-                const fileNamePostfix = !(l.isFloat || l.isFixedDiv) ? "" : ('-' + l.fixedIndex)
+                const fileNamePostfix = !(l.isFloat || l.isVertScroll) ? "" : ('-' + l.fixedIndex)
 
 
                 const rec = {
@@ -363,11 +363,18 @@ class PZArtboard extends PZLayer
                     type: type,
                     index: l.fixedIndex,
                     isFloat: l.isFloat,
-                    isFixedDiv: l.isFixedDiv,
+                    isVertScroll: l.isVertScroll,
                     divID: l.layerDivID != undefined ? l.layerDivID : "",
                     links: this._buildHotspots(l.hotspots, true),
                     image: Utils.quoteString(Utils.toFilename(mainName, false) + fileNamePostfix + '.' + exporter.fileType)
                 }
+
+                if (l.isVertScroll)
+                {
+                    const maskLayer = l.findMaskLayer()
+                    rec.mskH = maskLayer.frame.height - (l.frame.y - maskLayer.frame.y)
+                }
+
                 if (exporter.retinaImages)
                     rec.image2x = Utils.quoteString(Utils.toFilename(mainName, false) + fileNamePostfix + '@2x.' + exporter.fileType, false)
 
@@ -620,22 +627,37 @@ class PZArtboard extends PZLayer
                 shadowInfo.layer.slayer.style.shadows = []
             }
 
-            let maskLayer = undefined
+            let orgHeight = undefined, maskLayer = undefined, orgResizesContent = undefined
+
             if (layer.overlayType === Constants.LAYER_OVERLAY_VSCROLL)
             {
                 const layerIndex = layer.parent.childs.indexOf(layer)
                 maskLayer = layer.parent.childs[layerIndex - 1]
                 maskLayer.nlayer.hasClippingMask = false
-                log("isVertScroll = " + maskLayer.nlayer.hasClippingMask())
+                //
+                // check artboard height
+                if ((layer.frame.y + layer.frame.height) > this.frame.height)
+                {
+                    orgHeight = this.frame.height
+                    orgResizesContent = this.nlayer.resizesContent
+                    this.nlayer.resizesContent = false
+                    this.slayer.frame.height = layer.frame.y + layer.frame.height + 10
+                }
             }
 
-
             // for div and  float fixed layer we need to generate its own image files
-            if (layer.isFloat || layer.isFixedDiv || layer.overlayType === Constants.LAYER_OVERLAY_VSCROLL)
+            if (layer.isFloat || layer.isVertScroll)
             {
                 //this._exportImage2('1, 2',layer.parent.slayer)         
                 const l = layer.parent.isSymbolInstance ? layer : layer
                 this._exportImage("layer", l.nlayer, "-" + layer.fixedIndex, true)
+            }
+
+            // restore original artboard height
+            if (orgHeight !== undefined)
+            {
+                this.slayer.frame.height = orgHeight
+                this.nlayer.resizesContent = orgResizesContent
             }
 
             // restore original fixed panel shadows
@@ -655,7 +677,7 @@ class PZArtboard extends PZLayer
         {
             // we need to hide/show only div and  float panels
             if (undefined == layer.slayer.style) continue
-            if (layer.isFloat || layer.isFixedDiv || layer.overlayType === Constants.LAYER_OVERLAY_VSCROLL)
+            if (layer.isFloat || layer.isVertScroll)
             {
                 layer.slayer.hidden = hide
             }

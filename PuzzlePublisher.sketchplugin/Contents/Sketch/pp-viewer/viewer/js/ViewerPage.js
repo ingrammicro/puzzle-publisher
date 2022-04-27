@@ -708,40 +708,52 @@ class ViewerPage
         // create fixed panel images        
         for (var panel of this.fixedPanels)
         {
-            let style = "height: " + panel.height + "px; width: " + panel.width + "px; "
-            if (panel.constrains.top || panel.isFixedDiv || (!panel.constrains.top && !panel.constrains.bottom))
+            let style = "'"
+            let cssClass = ""
+
+            if (panel.isVertScroll)
             {
+                cssClass = "panelVSCroll divPanel"
+                style = `height: ${panel.mskH}px; width: ${panel.width}px; `
+                style += "margin-left:" + panel.x + "px;"
                 style += "top:" + panel.y + "px;"
-            } else if (panel.constrains.bottom)
+            } else
             {
-                style += "bottom:" + (this.height - panel.y - panel.height) + "px;"
-            }
-            if (panel.constrains.left || panel.isFixedDiv || (!panel.constrains.left && !panel.constrains.right))
-            {
-                style += "margin-left:" + panel.x + "px;"
-            } else if (panel.constrains.right)
-            {
-                style += "margin-left:" + panel.x + "px;"
-            }
-            //
+                style = "height: " + panel.height + "px; width: " + panel.width + "px; "
 
-            if (panel.shadow != undefined)
-                style += "box-shadow:" + panel.shadow + ";"
+                if (panel.constrains.top || panel.isFixedisVertScrollDiv || (!panel.constrains.top && !panel.constrains.bottom))
+                {
+                    style += "top:" + panel.y + "px;"
+                } else if (panel.constrains.bottom)
+                {
+                    style += "bottom:" + (this.height - panel.y - panel.height) + "px;"
+                }
+                if (panel.constrains.left || panel.isVertScroll || (!panel.constrains.left && !panel.constrains.right))
+                {
+                    style += "margin-left:" + panel.x + "px;"
+                } else if (panel.constrains.right)
+                {
+                    style += "margin-left:" + panel.x + "px;"
+                }
+                //
 
-            // create Div for fixed panel
-            var cssClass = ""
-            if (panel.isFloat)
-            {
-                cssClass = 'fixedPanelFloat'
-            } else if (panel.isFixedDiv)
-            {
-                cssClass = 'divPanel'
-            } else if ("top" == panel.type)
-            {
-                cssClass = 'fixedPanel fixedPanelTop'
-            } else if ("left" == panel.type)
-            {
-                cssClass = 'fixedPanel'
+                if (panel.shadow != undefined)
+                    style += "box-shadow:" + panel.shadow + ";"
+
+                // create Div for fixed panel            
+                if (panel.isFloat)
+                {
+                    cssClass = 'fixedPanelFloat'
+                } else if (panel.isVertScroll)
+                {
+                    cssClass = 'divPanel'
+                } else if ("top" == panel.type)
+                {
+                    cssClass = 'fixedPanel fixedPanelTop'
+                } else if ("left" == panel.type)
+                {
+                    cssClass = 'fixedPanel'
+                }
             }
 
             var divID = panel.divID != '' ? panel.divID : ("fixed_" + this.index + "_" + panel.index)
@@ -751,7 +763,6 @@ class ViewerPage
                 class: cssClass,
                 style: style
             });
-            //panelDiv.css("box-shadow",panel.shadow!=undefined?panel.shadow:"none")     
             panelDiv.appendTo(imageDiv);
             panel.imageDiv = panelDiv
 
@@ -764,7 +775,7 @@ class ViewerPage
             this._createLinks(panel)
 
             // add image itself
-            panel.imageObj = this._loadSingleImage(panel.isFloat || panel.isFixedDiv ? panel : this, 'img_' + panel.index + "_")
+            panel.imageObj = this._loadSingleImage(panel.isFloat || panel.isVertScroll ? panel : this, 'img_' + panel.index + "_")
             panel.imageObj.appendTo(panelDiv);
             if (!this.isDefault) panel.imageObj.css("webkit-transform", "translate3d(0,0,0)")
         }

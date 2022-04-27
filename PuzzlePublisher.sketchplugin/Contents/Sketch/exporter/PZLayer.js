@@ -239,9 +239,6 @@ class PZLayer
         if (this.name.includes("scroll"))
         {
             this.addSelfAsFixedLayerToArtboad(Constants.LAYER_OVERLAY_VSCROLL)
-            //this.isVertScroll = true
-            //this.artboard.addLayerAsExportableImage(this)
-
         }
         //////////////////////////////////////////////////////// OVERLAY & FIXED
         if (!this.isArtboard && !this.artboard.disableFixedLayers && !this.isParentFixed)
@@ -357,6 +354,8 @@ class PZLayer
         if (Constants.LAYER_OVERLAY_VSCROLL == this.overlayType)
         {
             type = 'vscroll'
+
+
         } else if (Constants.LAYER_OVERLAY_TRANSP_TOP == this.overlayType)
         {
             type = "top";
@@ -368,8 +367,13 @@ class PZLayer
 
         this.fixedType = type
         this.isFloat = type == 'float'
-        this.isVertScroll = type == 'vscroll'
+        if (type == 'vscroll') this.isVertScroll = type === 'vscroll'
+    }
 
+    findMaskLayer()
+    {
+        const layerIndex = this.parent.childs.indexOf(this)
+        return this.parent.childs[layerIndex - 1]
     }
 
 
@@ -631,7 +635,6 @@ class PZLayer
         this.imageIndex = undefined
         this.icpn = undefined
         this.icpi = undefined
-
     }
 
     _buildImageURL()
