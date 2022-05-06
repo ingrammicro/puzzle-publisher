@@ -10,7 +10,7 @@ Sketch = require('sketch/dom')
 class PZArtboard extends PZLayer {
 
     constructor(slayer) {
-        if (DEBUG) exporter.logMsg("PZArtboard.create id=" + slayer.name)
+        if (DEBUG) exporter.logMsg("PZArtboard.create name=" + slayer.name)
 
         // init Artboard own things !!! before object construction !!!
         let artboardType = exporter.Settings.layerSettingForKey(slayer, SettingKeys.ARTBOARD_TYPE)

@@ -167,14 +167,16 @@ class PZLayer {
             }
 
             // Check if this layer shadow will be used as artboard overlay shadow            
-            if (this.slayer && this.slayer.style
-                && (
-                    (this.slayer.style.shadows && this.slayer.style.shadows.length)
-                    ||
-                    (this.slayer.style.innerShadows && this.slayer.style.innerShadows.length)
-                )
-            ) {
-                this.artboard.shadowLayer = this
+            if(Constants.ARTBOARD_TYPE_OVERLAY == this.artboard.artboardType){        
+                if(this.slayer && this.slayer.style
+                    && (
+                        (this.slayer.style.shadows && this.slayer.style.shadows.length)
+                        ||
+                        (this.slayer.style.innerShadows && this.slayer.style.innerShadows.length)
+                    )
+                ) {
+                    this.artboard.shadowLayer = this
+                }
             }
 
         }
