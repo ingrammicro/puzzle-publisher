@@ -500,7 +500,7 @@ class ViewerPage
 
         // handle mouse hover if this page is overlay
         var _hideSelf = false
-        while (Constants.TRIGGER_ON_CLICK == this.overlayByEvent)
+        while (true)//Constants.TRIGGER_ON_CLICK == this.overlayByEvent)
         {
             var localX = Math.round(x / viewer.currentZoom) - this.currentLeft
             var localY = Math.round(y / viewer.currentZoom) - this.currentTop
