@@ -145,6 +145,7 @@ class ViewerPage
             if (hideChilds) this.hideChildOverlays()
 
             const parent = this.parentPage
+            viewer.stateChangeIgnore = true
             viewer.refresh_url(parent)
             // remove this from parent overlay
             const index = parent.currentOverlays.indexOf(this)
@@ -1045,7 +1046,7 @@ function handleLinkEvent(event)
             }
 
             // check if link in fixed panel aligned to bottom
-            if (linkParentFixed && destPage.overlayAlsoFixed && orgLink.fixedPanelIndex >= 0 && currentPage.fixedPanels[orgLink.fixedPanelIndex].constrains.bottom)
+            if (linkParentFixed && destPage.overlayAlsoFixed && orgLink.fixedPanelIndex >= 0 && currentPage.fixedPanels[orgLink.fixedPanelIndex].constrains.bottom && !currentPage.fixedPanels[orgLink.fixedPanelIndex].constrains.top)
             {
                 orgLink.fixedBottomPanel = currentPage.fixedPanels[orgLink.fixedPanelIndex]
             } else
