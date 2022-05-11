@@ -1,6 +1,10 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 17.4.1 (11 May 2022)
+Fixed overlay inside a fixed panel issue resolved
+Wrong overlay transition behaviour fixed
+
 ##  Version 17.4.0 (25 Apr 2022)
 Custom artboard size function fixed
 
