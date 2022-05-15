@@ -945,6 +945,7 @@ class ViewerPage
                 if (link.triggerOnHover)
                 {
                     eventType = Constants.TRIGGER_ON_HOVER
+                    destPage.overlayByEvent = Constants.TRIGGER_ON_HOVER
                 } else if ('overlay' == destPage.type)
                 {
                     eventType = destPage.overlayByEvent
