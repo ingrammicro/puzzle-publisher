@@ -438,13 +438,26 @@ class ViewerPage
                 contentModal.css("overflow-y", "scroll")
             else
                 contentModal.css("overflow-y", "")
-
-
         } else if ("overlay" == this.type)
         {
             this.currentLeft = viewer.currentPage ? viewer.currentPage.currentLeft : 0
             this.currentTop = viewer.currentPage ? viewer.currentPage.currentTop : 0
         }
+        // Update fixed layers position
+        let py = null, ph = null
+        this.fixedPanels.filter(p => !p.constrains.top && p.constrains.bottom).forEach(p =>
+        {
+            function calcParentYH(el)
+            {
+                // source: https://stackoverflow.com/questions/24768795/get-the-visible-height-of-a-div-with-jquery
+                var elH = el.outerHeight(),
+                    H = $(window).height(),
+                    r = el[0].getBoundingClientRect(), t = r.top, b = r.bottom;
+                return [r.top, Math.max(0, t > 0 ? Math.min(elH, H - t) : Math.min(b, H))]
+            }
+            if (py === null) [py, ph] = calcParentYH(this.imageDiv)
+            p.imageDiv.css("top", (py + ph - p.height) + "px")
+        }, this)
     }
 
     showOverlayByLinkIndex(linkIndex)
