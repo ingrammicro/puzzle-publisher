@@ -49,13 +49,11 @@ const weights = [
     { label: 'solid', sketch: 14, css: 900, title: "Solid" },
 ]
 
-class PZLayer
-{
+class PZLayer {
 
     // nlayer: ref to native MSLayer Layer
     // myParent: ref to parent MyLayer
-    constructor(sLayer, myParent)
-    {
+    constructor(sLayer, myParent) {
         this.nlayer = sLayer.sketchObject
         this.name = sLayer.name
         this.parent = myParent
@@ -80,13 +78,10 @@ class PZLayer
         let targetID = null
 
 
-        //////////////////////////////////////////////////////// RESTORE SYMBOL INFO
         // find a symbol and flow information saved by sketchtool during --detach (see export.sh)
-        if (this.isGroup && exporter.enabledJSON)
-        {
+        if (this.isGroup && exporter.enabledJSON) {
             const info = this.nlayer.userInfo()
-            if (null != info)
-            {
+            if (null != info) {
                 const detach = info['com.sketch.detach']
                 if (detach && detach['symbolMaster']) symbolID = detach['symbolMaster']['symbolID']
             }
@@ -95,17 +90,14 @@ class PZLayer
 
         // save found symbol information
         const sSymbolMaster = symbolID ? pzDoc.getSymbolMasterByID(symbolID) : undefined
-        if (sSymbolMaster)
-        {
+        if (sSymbolMaster) {
             // This layer is Symbol instance
             const smName = sSymbolMaster.name + ""
 
-            if (smName.indexOf(ICON_TAG) > 0)
-            {
+            if (smName.indexOf(ICON_TAG) > 0) {
                 // Found Icon symbol instance
                 this.tp = "Icon"
-                function getLayerStyleName(layer)
-                {
+                function getLayerStyleName(layer) {
                     return layer && layer.isGroup && layer.styleName !== "" ? layer.styleName : undefined
                 }
                 this.styleName = getLayerStyleName(myParent) || getLayerStyleName(myParent.parent)
@@ -113,12 +105,10 @@ class PZLayer
                 this.smName = smName
                 this.isGroup = false
                 //
-                if (exporter.enabledJSON)
-                {
+                if (exporter.enabledJSON) {
                     this.pr = this._buildIconsPropsForJSON()
                 }
-            } else
-            {
+            } else {
                 // Regular symbol instance
                 this.isSymbolInstance = true
                 this.targetId = targetID
@@ -126,97 +116,92 @@ class PZLayer
                 // prepare data for Element Inspector
                 const lib = sSymbolMaster.getLibrary()
                 this.smName = smName
-                if (lib)
-                {
+                if (lib) {
                     this.sharedLib = lib.name
                     pzDoc.usedLibs[lib.name] = true
-                } else
-                {
+                } else {
 
                 }
             }
 
-        } else
-        {
+        } else {
             // Check layer shared styles
             this.smName = undefined
 
             // prepare data for Element Inspector            
             var sharedStyle = this.slayer.sharedStyle
-            if (sharedStyle)
-            {
+            if (sharedStyle) {
                 this.styleName = sharedStyle.name
                 const lib = sharedStyle.getLibrary()
-                if (lib)
-                {
+                if (lib) {
                     this.sharedLib = lib.name
                     pzDoc.usedLibs[lib.name] = true
                 }
             }
-            if ("Text" == sLayer.type)
-            {
+            if ("Text" == sLayer.type) {
                 this.text = this.slayer.text + ""
             }
             this.cv = this._getColorVariable()
         }
         this.targetId = this.slayer.flow ? this.slayer.flow.targetId : null
 
-        //////////////////////////////////////////////////////// Process artboard-special things
         if ("Artboard" == sLayer.type) this.isArtboard = true
-        if (!this.isArtboard)
-        {
+
+        if (!this.isArtboard) {
             pzDoc.mAllLayers.push(this)
 
 
             // Check if this layer has a link
-            if (this.targetId)
-            {
+            if (this.targetId) {
                 this.isLink = true
-            } else
-            {
+            } else {
                 const externalLinkHref = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.LAYER_EXTERNAL_LINK)
-                if (externalLinkHref != null && externalLinkHref != "" && externalLinkHref != "http://")
-                {
+                if (externalLinkHref != null && externalLinkHref != "" && externalLinkHref != "http://") {
                     this.externalLinkHref = externalLinkHref
                     this.isLink = true
                 }
             }
-            if (this.isLink)
-            {
+            if (this.isLink) {
                 pzDoc.mLinkedLayers.push(this)
 
             }
 
             // Check if this layer shadow will be used as artboard overlay shadow            
-            if (this.slayer && this.slayer.style
-                && (
-                    (this.slayer.style.shadows && this.slayer.style.shadows.length)
-                    ||
-                    (this.slayer.style.innerShadows && this.slayer.style.innerShadows.length)
-                )
-            )
-            {
-                this.artboard.shadowLayer = this
+            if(Constants.ARTBOARD_TYPE_OVERLAY == this.artboard.artboardType){        
+                if(this.slayer && this.slayer.style
+                    && (
+                        (this.slayer.style.shadows && this.slayer.style.shadows.length)
+                        ||
+                        (this.slayer.style.innerShadows && this.slayer.style.innerShadows.length)
+                    )
+                ) {
+                    this.artboard.shadowLayer = this
+                }
             }
 
         }
 
-        //////////////////////////////////////////////////////// COMMENT
         var comment = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.LAYER_COMMENT)
-        if (undefined != comment && '' != comment)
-        {
+        if (undefined != comment && '' != comment) {
             this.comment = comment
         }
 
-        //////////////////////////////////////////////////////// IMAGE MASKED
-        if ("Image" == sLayer.type && this.nlayer.isMasked())
-        {
+        /*
+        // If the object is mask when we need to setup a parent group as exportable
+        if (this.nlayer.hasClippingMask()) {
+            if (this.parent && undefined == this.parent.imageIndex) {
+                this.parent.slayer.exportFormats = [{
+                    fileFormat: "png",
+                    size: "1x"
+                }]
+                this.artboard.addLayerAsExportableImage(this.parent)
+            }
+            sLayer.hidden = false
+            this.hasClippingMask = true
+        } else */if ("Image" == sLayer.type && this.nlayer.isMasked()) {
             // sLayer.hidden = true
             this.isMasked = true
-        }
-        //////////////////////////////////////////////////////// EXPORTABLE LAYER
-        else if ("Image" == sLayer.type || (("Group" == sLayer.type || "ShapePath" == sLayer.type) && undefined != sLayer.exportFormats && sLayer.exportFormats.length > 0))
-        {
+        } else if ("Image" == sLayer.type || (("Group" == sLayer.type || "ShapePath" == sLayer.type) && undefined != sLayer.exportFormats && sLayer.exportFormats.length > 0)) {
             this.artboard.addLayerAsExportableImage(this)
         }
 
@@ -224,41 +209,30 @@ class PZLayer
         this.childs = []
         this.hotspots = []
 
-        //////////////////////////////////////////////////////// RECALCULTE COORDS FROM ABS TO LOCAL
+        // Recalculate frame
         this.frame = Utils.copyRectToRectangle(this.nlayer.absoluteRect())
-        if (!this.isArtboard)
-        {
+        if (!this.isArtboard) {
             this.frame.x -= this.artboard.frame.x
             this.frame.y -= this.artboard.frame.y
         }
 
-        //////////////////////////////////////////////////////// SAVE CONSTRAINS
         if (myParent != undefined) this.constrains = this._calculateConstrains()
 
-        //////////////////////////////////////////////////////// LAYER IS SCROLLABLE CONTAINER        
-        if (this.name.includes("scroll"))
-        {
-            this.addSelfAsFixedLayerToArtboad(Constants.LAYER_OVERLAY_VSCROLL)
-        }
-        //////////////////////////////////////////////////////// OVERLAY & FIXED
-        if (!this.isArtboard && !this.artboard.disableFixedLayers && !this.isParentFixed)
-        {
+        if (!this.isArtboard && !this.artboard.disableFixedLayers && !this.isParentFixed) {
             var overlayType = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.LAYER_OVERLAY_TYPE)
             if (undefined == overlayType || '' == overlayType)
                 overlayType = Constants.LAYER_OVERLAY_DEFAULT
 
-            if (this.nlayer.isFixedToViewport() || overlayType != Constants.LAYER_OVERLAY_DEFAULT)
-            {
+            if (this.nlayer.isFixedToViewport() || overlayType != Constants.LAYER_OVERLAY_DEFAULT) {
                 this.addSelfAsFixedLayerToArtboad(overlayType)
             }
         }
-        //////////////////////////////////////////////////////// LAYER PROVIDES PAGE BACKGROUND
+
         // check special internal properties
         // check: if this layer provides browser window background color
-        if ("" == exporter.backColor)
-        {
-            while (this.name.includes(Constants.INT_LAYER_NAME_BACKCOLOR))
-            {
+        if ("" == exporter.backColor) {
+            while (true) {
+                if (this.name.indexOf(Constants.INT_LAYER_NAME_BACKCOLOR) < 0) break
                 let fills = this.slayer.style.fills
                 if (undefined == fills) break
                 fills = fills.filter(function (el) { return el.enabled })
@@ -267,43 +241,35 @@ class PZLayer
                 break
             }
         }
-        //////////////////////////////////////////////////////// LAYER PROVIDES FAVICON
         // check: if this layer provides browser favicon
-        if (this.name.includes(Constants.INT_LAYER_NAME_SITEICON))
-        {
+        if (this.name.indexOf(Constants.INT_LAYER_NAME_SITEICON) >= 0) {
             exporter.siteIconLayer = this
         }
-        //////////////////////////////////////////////////////// LAYER IS SPACER
         // check: if this layer should be hiddden during export
         if (this.name.includes(Constants.INT_LAYER_NAME_SPACER_PART)
             && (
                 this.name.includes(Constants.INT_LAYER_NAME_SPACER)
                 || this.name.includes(Constants.INT_LAYER_NAME_XSPACER)
                 || this.name.includes(Constants.INT_LAYER_NAME_YSPACER)
-            ))
-        {
+            )) {
             this.isSpacer = true
             this.slayer.hidden = true
         }
 
-        //////////////////////////////////////////////////////// OVERLAY REDIRECT
         // check: if this layer contains special overlay
-        if (!this.isArtboard && this.name.indexOf(Constants.INT_LAYER_NAME_REDIRECT) >= 0)
-        {
+        if (!this.isArtboard && this.name.indexOf(Constants.INT_LAYER_NAME_REDIRECT) >= 0) {
             this.overlayRedirect = true
         }
 
-        //////////////////////////////////////////////////////// ICON OR IMAAGE
+
         // checl if the layer is an image symbol name and we don't want to show the child parts
-        if (this.isSymbolInstance && this.smName.startsWith("images/"))
-        {
+        if (this.isSymbolInstance && this.smName.startsWith("images/")) {
             this.isImageSymbol = true
         }
 
     }
 
-    _calculateConstrains()
-    {
+    _calculateConstrains() {
         const resizingConstraint = 63 ^ this.nlayer.resizingConstraint()
         const res = {
             top: (resizingConstraint & ResizingConstraint.TOP) === ResizingConstraint.TOP,
@@ -316,16 +282,13 @@ class PZLayer
         return res
     }
 
-    collectAChilds(sLayers, space)
-    {
+    collectAChilds(sLayers, space) {
 
         var aLayers = []
-        if (undefined == sLayers)
-        {
+        if (undefined == sLayers) {
             exporter.logMsg("PZLayer:collectAChilds() empty sLayers. this.name=" + this.name)
         }
-        for (const sl of sLayers.filter(l => !l.hidden || l.sketchObject.hasClippingMask()))
-        {
+        for (const sl of sLayers.filter(l => !l.hidden || l.sketchObject.hasClippingMask())) {
             //            
             const al = new PZLayer(sl, this)
             if (al.isGroup && !this.isImageSymbol) al.childs = al.collectAChilds(sl.layers, space + " ")
@@ -334,9 +297,17 @@ class PZLayer
         return aLayers
     }
 
+    addSelfAsFixedLayerToArtboad(overlayType) {
 
-    addSelfAsFixedLayerToArtboad(overlayType)
-    {
+        if (Constants.LAYER_OVERLAY_DIV == overlayType) {
+            var layerDivID = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.LAYER_DIV_ID)
+            if (layerDivID != undefined && layerDivID != '') {
+                this.layerDivID = layerDivID
+            } else {
+                // No Div ID = No div overlay
+                return
+            }
+        }
         {
             const shadowType = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.LAYER_FIXED_SHADOW_TYPE)
             this.keepFixedShadow = shadowType != undefined && shadowType == 1
@@ -347,43 +318,30 @@ class PZLayer
         this.artboard.fixedLayers.push(this)
     }
 
-    calculateFixedType()
-    {
+    calculateFixedType() {
         let type = "";
 
-        if (Constants.LAYER_OVERLAY_VSCROLL == this.overlayType)
-        {
-            type = 'vscroll'
-
-
-        } else if (Constants.LAYER_OVERLAY_TRANSP_TOP == this.overlayType)
-        {
+        if (Constants.LAYER_OVERLAY_DIV == this.overlayType) {
+            type = 'div'
+        } else if (Constants.LAYER_OVERLAY_TRANSP_TOP == this.overlayType) {
             type = "top";
-        } else if (Constants.LAYER_OVERLAY_TRANSP_LEFT == this.overlayType)
-        {
+        } else if (Constants.LAYER_OVERLAY_TRANSP_LEFT == this.overlayType) {
             type = "left";
         } else
             type = "float"
 
         this.fixedType = type
         this.isFloat = type == 'float'
-        if (type == 'vscroll') this.isVertScroll = type === 'vscroll'
-    }
+        this.isFixedDiv = type == 'div'
 
-    findMaskLayer()
-    {
-        const layerIndex = this.parent.childs.indexOf(this)
-        return this.parent.childs[layerIndex - 1]
     }
 
 
-    buildLinks(space)
-    {
+    buildLinks(space) {
         this._processHotspots(space)
     }
 
-    getShadowInfo()
-    {
+    getShadowInfo() {
         if (this.slayer.style == undefined || (this.slayer.style.shadows == undefined && this.slayer.style.innerShadows == undefined)) return undefined
 
         let shadowInfo = this.getShadowSetInfo(this.slayer.style.shadows, false) || this.getShadowSetInfo(this.slayer.style.innerShadows, true)
@@ -391,37 +349,30 @@ class PZLayer
     }
 
 
-    getShadowSetInfo(shadows, inset)
-    {
+    getShadowSetInfo(shadows, inset) {
         if (!shadows) return
 
         let shadowInfo = undefined
-        for (var shadow of shadows.filter(s => s.enabled))
-        {
+        for (var shadow of shadows.filter(s => s.enabled)) {
             let res = ""
             //if (res != "") res += ","
             if (inset) res += "inset "
             res += shadow.x + "px "
 
-            if (null != shadow.y)
-            {
+            if (null != shadow.y) {
                 res += " " + shadow.y + "px"
-                if (null != shadow.blur)
-                {
+                if (null != shadow.blur) {
                     res += " " + shadow.blur + "px"
-                    if (null != shadow.spread)
-                    {
+                    if (null != shadow.spread) {
                         res += " " + shadow.spread
                     }
                 }
             }
             res += " " + shadow.color
 
-            if (shadowInfo)
-            {
+            if (shadowInfo) {
                 shadowInfo.style += ", " + res
-            } else
-            {
+            } else {
                 shadowInfo = {
                     style: res,
                     x: shadow.x + shadow.blur ? shadow.blur : 0,
@@ -432,8 +383,7 @@ class PZLayer
         return shadowInfo
     }
 
-    _processHotspots(prefix)
-    {
+    _processHotspots(prefix) {
         const l = this
         const hotspots = []
 
@@ -446,22 +396,18 @@ class PZLayer
             ancestorFixed: null
         }
         let p = this
-        while (!p.isArtboard)
-        {
-            if (p.nlayer.isFixedToViewport())
-            {
+        while (!p.isArtboard) {
+            if (p.nlayer.isFixedToViewport()) {
                 finalHotspot.fixedAncestorID = p.objectID
                 break
             }
             p = p.parent
         }
 
-        while (true)
-        {
+        while (true) {
 
             // check link to external URL
-            if (this.externalLinkHref != null)
-            {
+            if (this.externalLinkHref != null) {
                 const externalLink = {
                     'href': this.externalLinkHref,
                     'openNewWindow': exporter.Settings.layerSettingForKey(l.slayer, SettingKeys.LAYER_EXTERNAL_LINK_BLANKWIN) == 1
@@ -472,8 +418,7 @@ class PZLayer
             }
 
             // check native link
-            if (null != l.targetId)
-            {
+            if (null != l.targetId) {
                 if (!this._specifyHotspot(prefix + " ", l, finalHotspot)) return
                 break
             }
@@ -490,50 +435,42 @@ class PZLayer
     }
 
 
-    _specifyHotspot(prefix, l, finalHotspot)
-    {
+    _specifyHotspot(prefix, l, finalHotspot) {
         const targetArtboardID = l.targetId;
 
-        if (targetArtboardID == 'back')
-        {
+        if (targetArtboardID == 'back') {
             // hande Back action
             finalHotspot.linkType = "back";
             if (DEBUG) exporter.logMsg(prefix + "hotspot: back")
-        } else if (targetArtboardID != null && targetArtboardID != "" && targetArtboardID != "null")
-        {
+        } else if (targetArtboardID != null && targetArtboardID != "" && targetArtboardID != "null") {
             // hande direct link
             let targetArtboard = pzDoc.findArtboardByID(targetArtboardID)
 
-            if (!targetArtboard)
-            {
+            if (!targetArtboard) {
                 exporter.logWarning("Broken link to missed artboard on layer '" + l.name + "' on artboard '" + l.artboard.name + "' target=")
                 return false
             }
 
-            if (targetArtboard.externalArtboardURL != undefined)
-            {
+            if (targetArtboard.externalArtboardURL != undefined) {
                 const externalLink = {
                     'href': targetArtboard.externalArtboardURL,
                     'openNewWindow': exporter.Settings.layerSettingForKey(targetArtboard.slayer, SettingKeys.LAYER_EXTERNAL_LINK_BLANKWIN) == 1
                 }
                 finalHotspot.artboardID = targetArtboard.objectID
                 this._specifyExternalURLHotspot(prefix + " ", finalHotspot, externalLink)
-            } else
-            {
+            } else {
                 finalHotspot.linkType = "artboard";
                 finalHotspot.artboardID = targetArtboardID;
                 finalHotspot.href = Utils.toFilename(targetArtboard.name) + ".html";
             }
 
-        } else
-        {
+        } else {
             return false
         }
         return true
     }
 
-    _specifyExternalURLHotspot(prefix, finalHotspot, externalLink)
-    {
+    _specifyExternalURLHotspot(prefix, finalHotspot, externalLink) {
         if (DEBUG) exporter.logMsg(prefix + "_specifyExternalURLHotspothotspot: href")
         // found external link        
         var href = externalLink.href
@@ -552,8 +489,7 @@ class PZLayer
 
 
 
-    clearRefsBeforeJSON()
-    {
+    clearRefsBeforeJSON() {
         // need to cleanup temp object to allow dump it into JSON
         // but keep nlayer because Exporter.exportImage() needs it
         // 
@@ -571,39 +507,32 @@ class PZLayer
         if (!this.isSymbolInstance) this.n = this.name
         if (this.slayer.hidden) this.hd = true
         //
-        if (this.tp == "Icon")
-        {
+        if (this.tp == "Icon") {
             // this.pr is already enabled
-        } else if ("Text" == this.slayer.type)
-        {
+        } else if ("Text" == this.slayer.type) {
             this.pr = this._buildTextPropsForJSON()
-        } else if ("ShapePath" == this.slayer.type || "Shape" == this.slayer.type)
-        {
+        } else if ("ShapePath" == this.slayer.type || "Shape" == this.slayer.type) {
             this.pr = this._buildShapePropsForJSON()
             this.tp = "ShapePath"
-        } else if (this.isImageSymbol)
-        {
+        } else if (this.isImageSymbol) {
             this.tp = "ImageSymbol"
             this.isImageSymbol = undefined
-        } else if ("Image" == this.slayer.type)
-        {
-            if (this.isMasked)
-            {
+        } else if ("Image" == this.slayer.type) {
+            if (this.isMasked) {
                 this.hd = true
                 this.isMasked = undefined
-            } else
-            {
+            } else {
                 this.iu = this._buildImageURL()
             }
-        } else if (this.isVertScroll !== undefined)
-        {
-            //this.tp = "Image"
-            this.iu = this._buildImageURL()
-        } else if (undefined != this.imageIndex)
-        {
+        } else if (undefined != this.imageIndex) {
             this.tp = "Image"
             this.iu = this._buildImageURL()
         }
+        if (this.hasClippingMask) {
+            this.ms = true
+            this.hasClippingMask = undefined
+        }
+
         //
         this.name = undefined
         this.frame = undefined
@@ -635,37 +564,33 @@ class PZLayer
         this.imageIndex = undefined
         this.icpn = undefined
         this.icpi = undefined
+
     }
 
-    _buildImageURL()
-    {
+    _buildImageURL() {
         return Constants.IMAGES_DIRECTORY + Utils.toFilename(this.artboard.name, false) + "--" + this.imageIndex + "." + exporter.fileType;
     }
 
-    _buildTextPropsForJSON()
-    {
+    _buildTextPropsForJSON() {
         this.tx = this.text
         //
         const pte = exporter.getTokensExporter()
         return pte._getTextStylePropsAsText(this.slayer.style)
     }
 
-    _buildShapePropsForJSON()
-    {
+    _buildShapePropsForJSON() {
         const pte = exporter.getTokensExporter()
         return pte._getLayerStylePropsAsText(null, this.slayer, this.slayer.style)
     }
 
-    _buildIconsPropsForJSON()
-    {
+    _buildIconsPropsForJSON() {
         const pte = exporter.getTokensExporter()
         if (this.parent && this.parent.slayer && this.parent.slayer.style)
             return pte._getLayerStylePropsAsText(null, this.slayer, this.parent.slayer.style)
         else
             return undefined
     }
-    _getColorVariable()
-    {
+    _getColorVariable() {
 
         const style = this.slayer.style
         if (!style || !style.sketchObject.primitiveTextStyle()) return undefined
@@ -680,18 +605,15 @@ class PZLayer
         return swatchInfo
     }
 
-    _clearColor(color)
-    {
+    _clearColor(color) {
         // drop FF transparency as default
-        if (color.length == 9 && color.substring(7).toUpperCase() == "FF")
-        {
+        if (color.length == 9 && color.substring(7).toUpperCase() == "FF") {
             color = color.substring(0, 7)
         }
         return color.toUpperCase()
     }
 
-    exportSiteIcon()
-    {
+    exportSiteIcon() {
         const nlayer = this.nlayer
         const layer = this
 
