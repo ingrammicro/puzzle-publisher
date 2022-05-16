@@ -140,7 +140,6 @@ class Viewer {
         this.backStack = []
         this.urlLastIndex = -1
         this.urlLocked = false
-        this.stateChangeIgnore = false
         this.files = files
         this.userStoryPages = []
         this.visStoryPages = []
@@ -1107,11 +1106,6 @@ class Viewer {
     }
 
     handleStateChanges(e) {
-        if(this.stateChangeIgnore){
-            this.stateChangeIgnore = false
-            return
-        }
-
         viewer.urlLocked = true
         viewer.currentPage.hide(true, true)
         viewer.currentPage = null
@@ -1179,7 +1173,7 @@ function addRemoveClass(mode, el, cls) {
     }
 }
 
-function handleStateChanges(e) {   
+function handleStateChanges(e) {
     viewer.handleStateChanges(e)
 }
 

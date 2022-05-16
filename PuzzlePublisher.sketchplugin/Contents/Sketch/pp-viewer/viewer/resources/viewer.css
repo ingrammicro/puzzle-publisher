@@ -1169,13 +1169,6 @@ area {
     text-align: center;
 }
 
-.fixedBottomPanelFloat {
-    position: absolute;
-    z-index: 13;
-    overflow: hidden;
-    text-align: center;
-}
-
 .fixed_back {
     z-index: 6;
     background: rgba(100, 100, 100, 255);
