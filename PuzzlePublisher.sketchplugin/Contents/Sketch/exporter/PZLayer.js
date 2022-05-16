@@ -80,6 +80,7 @@ class PZLayer
         let targetID = null
 
 
+        //////////////////////////////////////////////////////// RESTORE SYMBOL INFO
         // find a symbol and flow information saved by sketchtool during --detach (see export.sh)
         if (this.isGroup && exporter.enabledJSON)
         {
@@ -160,8 +161,8 @@ class PZLayer
         }
         this.targetId = this.slayer.flow ? this.slayer.flow.targetId : null
 
+        //////////////////////////////////////////////////////// Process artboard-special things
         if ("Artboard" == sLayer.type) this.isArtboard = true
-
         if (!this.isArtboard)
         {
             pzDoc.mAllLayers.push(this)
@@ -203,29 +204,21 @@ class PZLayer
 
         }
 
+        //////////////////////////////////////////////////////// COMMENT
         var comment = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.LAYER_COMMENT)
         if (undefined != comment && '' != comment)
         {
             this.comment = comment
         }
 
-        /*
-        // If the object is mask when we need to setup a parent group as exportable
-        if (this.nlayer.hasClippingMask()) {
-            if (this.parent && undefined == this.parent.imageIndex) {
-                this.parent.slayer.exportFormats = [{
-                    fileFormat: "png",
-                    size: "1x"
-                }]
-                this.artboard.addLayerAsExportableImage(this.parent)
-            }
-            sLayer.hidden = false
-            this.hasClippingMask = true
-        } else */if ("Image" == sLayer.type && this.nlayer.isMasked())
+        //////////////////////////////////////////////////////// IMAGE MASKED
+        if ("Image" == sLayer.type && this.nlayer.isMasked())
         {
             // sLayer.hidden = true
             this.isMasked = true
-        } else if ("Image" == sLayer.type || (("Group" == sLayer.type || "ShapePath" == sLayer.type) && undefined != sLayer.exportFormats && sLayer.exportFormats.length > 0))
+        }
+        //////////////////////////////////////////////////////// EXPORTABLE LAYER
+        else if ("Image" == sLayer.type || (("Group" == sLayer.type || "ShapePath" == sLayer.type) && undefined != sLayer.exportFormats && sLayer.exportFormats.length > 0))
         {
             this.artboard.addLayerAsExportableImage(this)
         }
@@ -234,7 +227,7 @@ class PZLayer
         this.childs = []
         this.hotspots = []
 
-        // Recalculate frame
+        //////////////////////////////////////////////////////// RECALCULTE COORDS FROM ABS TO LOCAL
         this.frame = Utils.copyRectToRectangle(this.nlayer.absoluteRect())
         if (!this.isArtboard)
         {
@@ -242,8 +235,15 @@ class PZLayer
             this.frame.y -= this.artboard.frame.y
         }
 
+        //////////////////////////////////////////////////////// SAVE CONSTRAINS
         if (myParent != undefined) this.constrains = this._calculateConstrains()
 
+        //////////////////////////////////////////////////////// LAYER IS SCROLLABLE CONTAINER        
+        if (this.name.includes("scroll"))
+        {
+            this.addSelfAsFixedLayerToArtboad(Constants.LAYER_OVERLAY_VSCROLL)
+        }
+        //////////////////////////////////////////////////////// OVERLAY & FIXED
         if (!this.isArtboard && !this.artboard.disableFixedLayers && !this.isParentFixed)
         {
             var overlayType = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.LAYER_OVERLAY_TYPE)
@@ -255,7 +255,7 @@ class PZLayer
                 this.addSelfAsFixedLayerToArtboad(overlayType)
             }
         }
-
+        //////////////////////////////////////////////////////// LAYER PROVIDES PAGE BACKGROUND
         // check special internal properties
         // check: if this layer provides browser window background color
         if ("" == exporter.backColor)
@@ -271,11 +271,13 @@ class PZLayer
                 break
             }
         }
+        //////////////////////////////////////////////////////// LAYER PROVIDES FAVICON
         // check: if this layer provides browser favicon
-        if (this.name.indexOf(Constants.INT_LAYER_NAME_SITEICON) >= 0)
+        if (this.name.includes(Constants.INT_LAYER_NAME_SITEICON))
         {
             exporter.siteIconLayer = this
         }
+        //////////////////////////////////////////////////////// LAYER IS SPACER
         // check: if this layer should be hiddden during export
         if (this.name.includes(Constants.INT_LAYER_NAME_SPACER_PART)
             && (
@@ -288,13 +290,14 @@ class PZLayer
             this.slayer.hidden = true
         }
 
+        //////////////////////////////////////////////////////// OVERLAY REDIRECT
         // check: if this layer contains special overlay
         if (!this.isArtboard && this.name.indexOf(Constants.INT_LAYER_NAME_REDIRECT) >= 0)
         {
             this.overlayRedirect = true
         }
 
-
+        //////////////////////////////////////////////////////// ICON OR IMAAGE
         // checl if the layer is an image symbol name and we don't want to show the child parts
         if (this.isSymbolInstance && this.smName.startsWith("images/"))
         {
@@ -335,21 +338,9 @@ class PZLayer
         return aLayers
     }
 
+
     addSelfAsFixedLayerToArtboad(overlayType)
     {
-
-        if (Constants.LAYER_OVERLAY_DIV == overlayType)
-        {
-            var layerDivID = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.LAYER_DIV_ID)
-            if (layerDivID != undefined && layerDivID != '')
-            {
-                this.layerDivID = layerDivID
-            } else
-            {
-                // No Div ID = No div overlay
-                return
-            }
-        }
         {
             const shadowType = exporter.Settings.layerSettingForKey(this.slayer, SettingKeys.LAYER_FIXED_SHADOW_TYPE)
             this.keepFixedShadow = shadowType != undefined && shadowType == 1
@@ -364,9 +355,11 @@ class PZLayer
     {
         let type = "";
 
-        if (Constants.LAYER_OVERLAY_DIV == this.overlayType)
+        if (Constants.LAYER_OVERLAY_VSCROLL == this.overlayType)
         {
-            type = 'div'
+            type = 'vscroll'
+
+
         } else if (Constants.LAYER_OVERLAY_TRANSP_TOP == this.overlayType)
         {
             type = "top";
@@ -378,8 +371,13 @@ class PZLayer
 
         this.fixedType = type
         this.isFloat = type == 'float'
-        this.isFixedDiv = type == 'div'
+        if (type == 'vscroll') this.isVertScroll = type === 'vscroll'
+    }
 
+    findMaskLayer()
+    {
+        const layerIndex = this.parent.childs.indexOf(this)
+        return this.parent.childs[layerIndex - 1]
     }
 
 
@@ -601,17 +599,15 @@ class PZLayer
             {
                 this.iu = this._buildImageURL()
             }
+        } else if (this.isVertScroll !== undefined)
+        {
+            //this.tp = "Image"
+            this.iu = this._buildImageURL()
         } else if (undefined != this.imageIndex)
         {
             this.tp = "Image"
             this.iu = this._buildImageURL()
         }
-        if (this.hasClippingMask)
-        {
-            this.ms = true
-            this.hasClippingMask = undefined
-        }
-
         //
         this.name = undefined
         this.frame = undefined
@@ -643,7 +639,6 @@ class PZLayer
         this.imageIndex = undefined
         this.icpn = undefined
         this.icpi = undefined
-
     }
 
     _buildImageURL()
