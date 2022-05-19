@@ -373,6 +373,7 @@ class PZArtboard extends PZLayer
                 {
                     const maskLayer = l.findMaskLayer()
                     rec.mskH = maskLayer.frame.height - (l.frame.y - maskLayer.frame.y)
+                    rec.vst = l.vScrollType
                 }
 
                 if (exporter.retinaImages)
