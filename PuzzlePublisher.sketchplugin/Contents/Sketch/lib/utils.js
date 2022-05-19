@@ -5,37 +5,52 @@ var DEBUG = Constants.LOGGING || require('sketch/settings').settingForKey(Settin
 const Rectangle = require('sketch/dom').Rectangle
 
 
-Rectangle.prototype.round = function () {
+Rectangle.prototype.round = function ()
+{
     this.x = Math.round(this.x)
     this.y = Math.round(this.y)
     this.height = Math.round(this.height)
     this.width = Math.round(this.width)
 }
 
-Rectangle.prototype.insideRectangle = function (r) {
+Rectangle.prototype.insideRectangle = function (r)
+{
     return this.x >= r.x && this.y >= r.y
         && ((this.x + this.width) <= (r.x + r.width))
         && ((this.y + this.height) <= (r.y + r.height))
 }
 
-Rectangle.prototype.copy = function () {
+Rectangle.prototype.copy = function ()
+{
     return new Rectangle(this.x, this.y, this.width, this.height)
 }
-Rectangle.prototype.copyToRect = function () {
+Rectangle.prototype.copyToRect = function ()
+{
     return NSMakeRect(this.x, this.y, this.width, this.height)
 }
 
-class Utils {
+class Utils
+{
 
 
-    static getDocSetting(doc, key, defaultValue = '') {
+    static getDocSetting(doc, key, defaultValue = '')
+    {
         const Settings = require('sketch/settings')
         let value = Settings.documentSettingForKey(doc, key)
         if (undefined == value || null == value) value = defaultValue
         return value
     }
 
-    static getPluginSetting(key, defaultValue = '') {
+    static getLayerSetting(layer, key, defaultValue = '')
+    {
+        const Settings = require('sketch/settings')
+        let value = Settings.layerSettingForKey(layer, key)
+        if (undefined == value || null == value) value = defaultValue
+        return value
+    }
+
+    static getPluginSetting(key, defaultValue = '')
+    {
         const Settings = require('sketch/settings')
         let value = Settings.settingForKey(key)
         if (undefined == value || null == value) value = defaultValue
@@ -43,7 +58,8 @@ class Utils {
     }
 
 
-    static upgradeArtboardOverlayPosition(oldValue) {
+    static upgradeArtboardOverlayPosition(oldValue)
+    {
         const newValues = {
             pinTo: 0,
             hotspotTo: 0,
@@ -51,7 +67,8 @@ class Utils {
         }
         if (undefined == oldValue) return newValues
         //
-        switch (oldValue) {
+        switch (oldValue)
+        {
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_LEFT:
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_CENTER:
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_RIGHT:
@@ -72,7 +89,8 @@ class Utils {
                 break
             ///
         }
-        switch (oldValue) {
+        switch (oldValue)
+        {
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_LEFT:
                 newValues.hotspotTo = Constants.ARTBOARD_OVERLAY_PIN_HOTSPOT_UNDER_LEFT; break;
             case Constants.OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_CENTER:
@@ -112,7 +130,8 @@ class Utils {
 
 
 
-    static askPath(currentPath = null, buttonName = "Select") {
+    static askPath(currentPath = null, buttonName = "Select")
+    {
         let panel = NSOpenPanel.openPanel()
         panel.setTitle("Choose a location...")
         panel.setPrompt(buttonName)
@@ -121,7 +140,8 @@ class Utils {
         panel.setAllowsMultipleSelection(false)
         panel.setShowsHiddenFiles(false)
         panel.setExtensionHidden(false)
-        if (currentPath != null && currentPath != undefined) {
+        if (currentPath != null && currentPath != undefined)
+        {
             let url = [NSURL fileURLWithPath: currentPath]
             panel.setDirectoryURL(url)
         }
@@ -129,20 +149,24 @@ class Utils {
         const newURL = panel.URL()
         panel.close()
         panel = null
-        if (buttonPressed == NSFileHandlingPanelOKButton) {
+        if (buttonPressed == NSFileHandlingPanelOKButton)
+        {
             return newURL.path() + ''
         }
         return null
     }
 
-    static writeToFile(str, filePath) {
+    static writeToFile(str, filePath)
+    {
         const objcStr = NSString.stringWithFormat("%@", str);
         return objcStr.writeToFile_atomically_encoding_error(filePath, true, NSUTF8StringEncoding, null);
     }
 
-    static readFile(path) {
+    static readFile(path)
+    {
         const fileManager = NSFileManager.defaultManager();
-        if (!fileManager.fileExistsAtPath(path)) {
+        if (!fileManager.fileExistsAtPath(path))
+        {
             return undefined
         }
 
@@ -150,65 +174,79 @@ class Utils {
     }
 
 
-    static cutLastPathFolder(path) {
+    static cutLastPathFolder(path)
+    {
         return path.substring(0, path.lastIndexOf("/"))
     }
 
 
-    static deleteFile(filePath) {
+    static deleteFile(filePath)
+    {
         const fileManager = NSFileManager.defaultManager();
 
         let error = MOPointer.alloc().init();
-        if (fileManager.fileExistsAtPath(filePath)) {
-            if (!fileManager.removeItemAtPath_error(filePath, error)) {
+        if (fileManager.fileExistsAtPath(filePath))
+        {
+            if (!fileManager.removeItemAtPath_error(filePath, error))
+            {
                 log(error.value().localizedDescription());
             }
         }
     }
 
-    static cloneDict(dict) {
+    static cloneDict(dict)
+    {
         return Object.assign({}, dict);
     }
 
 
-    static escapeSpaces(path) {
+    static escapeSpaces(path)
+    {
         const regex = / /gi;
         return path.replace(regex, "\\ ")
     }
-    static escapeDoudleQuote(path) {
+    static escapeDoudleQuote(path)
+    {
         return path.replace(/[\""]/g, '__')
     }
 
 
-    static copyRect(rect) {
+    static copyRect(rect)
+    {
         return NSMakeRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height)
     }
 
 
     // rect: GRect instnct
-    static copyRectToRectangle(rect) {
+    static copyRectToRectangle(rect)
+    {
         return new Rectangle(rect.x(), rect.y(), rect.width(), rect.height())
     }
 
     // rect: Rectangle instance
-    static transformRect(rect, cw, ch) {
+    static transformRect(rect, cw, ch)
+    {
         rect.x = rect.x * cw
         rect.y = rect.y * ch
         rect.width = rect.width * cw
         rect.width = rect.height * ch
     }
 
-    static quoteString(str) {
+    static quoteString(str)
+    {
         return str.split('"').join('\\"')
     }
 
-    static getPathToTempFolder() {
+    static getPathToTempFolder()
+    {
         const fileManager = NSFileManager.defaultManager()
         return fileManager.temporaryDirectory().path() + ""
     }
 
-    static toFilename(name, dasherize = true) {
-        if (dasherize == null) {
+    static toFilename(name, dasherize = true)
+    {
+        if (dasherize == null)
+        {
             dasherize = true;
         }
         const dividerCharacter = dasherize ? "-" : "_"
@@ -217,17 +255,22 @@ class Utils {
 
 
 
-    static isSymbolsPage(page) {
+    static isSymbolsPage(page)
+    {
         return page.artboards()[0].isKindOfClass(MSSymbolMaster);
     }
 
-    static removeFilesWithExtension(path, extension, extension2 = null) {
+    static removeFilesWithExtension(path, extension, extension2 = null)
+    {
         const error = MOPointer.alloc().init();
         const fileManager = NSFileManager.defaultManager();
         const files = fileManager.contentsOfDirectoryAtPath_error(path, null);
-        files.forEach(function (file) {
-            if (file.pathExtension() == extension || (extension2 != null && file.pathExtension() == extension2)) {
-                if (!fileManager.removeItemAtPath_error(path + "/" + file, error)) {
+        files.forEach(function (file)
+        {
+            if (file.pathExtension() == extension || (extension2 != null && file.pathExtension() == extension2))
+            {
+                if (!fileManager.removeItemAtPath_error(path + "/" + file, error))
+                {
                     log(error.value().localizedDescription());
                 }
             }
@@ -235,7 +278,8 @@ class Utils {
     }
 
 
-    static runCommand(command, args, sync = true) {
+    static runCommand(command, args, sync = true)
+    {
         var task = NSTask.alloc().init();
         var pipe = NSPipe.alloc().init()
         task.setStandardOutput_(pipe);
@@ -256,19 +300,24 @@ class Utils {
         }
     }
 
-    static actionWithType(nDoc, type) {
+    static actionWithType(nDoc, type)
+    {
         var controller = nDoc.actionsController();
 
-        if (controller.actionWithName) {
+        if (controller.actionWithName)
+        {
             return controller.actionWithName(type);
-        } else if (controller.actionWithID) {
+        } else if (controller.actionWithID)
+        {
             return controller.actionWithID(type);
-        } else {
+        } else
+        {
             return controller.actionForID(type);
         }
     }
 
-    static getMiroBoardsGroupedByProject(context) {
+    static getMiroBoardsGroupedByProject(context)
+    {
         //  Get token
         var token = api.getToken();
         if (!token) return null
@@ -281,27 +330,33 @@ class Utils {
         log("publishToMiro: established connect")
 
         const boards = api.getBoards()
-        let projects = boards.map(el => el["project"]).filter(function (x, i, a) {
+        let projects = boards.map(el => el["project"]).filter(function (x, i, a)
+        {
             return x != undefined && a.indexOf(x) === i;
         });
         projects.sort()
         let groupedBoards = []
         let indexIdsMap = []
-        projects.forEach(function (project) {
+        projects.forEach(function (project)
+        {
             groupedBoards.push("--- " + project + " ----")
             indexIdsMap.push("")
-            boards.filter(el => el["project"] == project).forEach(function (el) {
+            boards.filter(el => el["project"] == project).forEach(function (el)
+            {
                 groupedBoards.push(el['title'])
                 indexIdsMap.push(el['boardId'])
             })
         })
         const boardsWithouProject = boards.filter(el => !("project" in el))
-        if (boardsWithouProject.length) {
-            if (projects.length) {
+        if (boardsWithouProject.length)
+        {
+            if (projects.length)
+            {
                 groupedBoards.push("--- " + "Out of projects" + " ----")
                 indexIdsMap.push("")
             }
-            boardsWithouProject.forEach(function (el) {
+            boardsWithouProject.forEach(function (el)
+            {
                 groupedBoards.push(el['title'])
                 indexIdsMap.push(el['boardId'])
             })
@@ -313,11 +368,13 @@ class Utils {
         }
     }
 
-    static testMiro(context, email, password, board) {
+    static testMiro(context, email, password, board)
+    {
         const UI = require('sketch/ui')
 
         // Drop old token
-        if (api.getToken()) {
+        if (api.getToken())
+        {
             api.logoutRequest(context);
             api.setToken(nil);
         }
@@ -333,23 +390,29 @@ class Utils {
         var data = [[NSDictionary alloc] initWithObjects: values forKeys: keys]
 
         var response = api.authRequest(context, data);
-        if (response) {
-            if (response.error) {
+        if (response)
+        {
+            if (response.error)
+            {
                 var messages = getMessagesByError(response.error);
 
-                if (messages.alert) {
+                if (messages.alert)
+                {
                     UI.alert("Can't connect to Miro", messages.alert)
-                } else if (messages.label) {
+                } else if (messages.label)
+                {
                     UI.alert("Can't connect to Miro", messages.label)
                 }
-            } else {
+            } else
+            {
                 // Set new token
                 var token = response.token;
                 api.setToken(token);
                 api.setFromRetina(true)
                 return true
             }
-        } else {
+        } else
+        {
             UI.alert("Can't connect to Miro", "No response")
         }
         return false

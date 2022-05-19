@@ -36,7 +36,6 @@ var onRun = function (context)
     if (overlayType == undefined || overlayType == "")
         overlayType = SettingKeys.LAYER_OVERLAY_DEFAULT
 
-
     const isFixed = layer.sketchObject.isFixedToViewport()
     let fixedShadowType = undefined
     if (isFixed)
@@ -45,17 +44,21 @@ var onRun = function (context)
         if (fixedShadowType == undefined) fixedShadowType = 0
     }
 
+    let isVScroll = Utils.getLayerSetting(layer, SettingKeys.LAYER_VSCROLL_ON, false)
+
     // create dialog
     const dialog = new UIDialog("Layer Settings", NSMakeRect(0, 0, 400, 320), "Save", "Configure selected layer options ")
     dialog.removeLeftColumn()
 
-    dialog.addSelect("overlayType", "Overlay Mode", overlayType, ["Default (using \"Fix position\" setting)", "Trasparent overlay with fixed position (TOP)", "Trasparent overlay with fixed position (LEFT)", "Standalone DIV inside a page"], 300)
+    dialog.addSelect("overlayType", "Overlay Mode", overlayType, ["Default (using \"Fix position\" setting)", "Trasparent overlay with fixed position (TOP)", "Trasparent overlay with fixed position (LEFT)"], 300)
     if (isFixed)
     {
         dialog.addSelect("fixedShadowType", "Fixed Layer Shadow Mode", fixedShadowType, ["Viewer shows a CSS-based shadow around the layer", "Sketch renders the layer shadow during export"], 300)
     }
 
-    dialog.addHint("", "This layer will be presented by standalone <div> with specified ID")
+    const isVScrollControl = dialog.addCheckbox("isVScroll", "Enable vertical scrolling", isVScroll)
+    dialog.addHint("isVScrollHint", "The layer needs to be masked")
+
 
     dialog.addTextBox("layerComment", "Comments", layerComment, '')
 
@@ -84,6 +87,10 @@ var onRun = function (context)
         Settings.setLayerSettingForKey(layer, SettingKeys.LAYER_OVERLAY_TYPE, overlayType)
         if (isFixed) Settings.setLayerSettingForKey(layer, SettingKeys.LAYER_FIXED_SHADOW_TYPE, fixedShadowType)
         Settings.setLayerSettingForKey(layer, SettingKeys.LAYER_COMMENT, layerComment)
+
+        log(dialog.views['isVScroll'])
+        Settings.setLayerSettingForKey(layer, SettingKeys.LAYER_VSCROLL_ON, dialog.views['isVScroll'].state() == 1)
+
 
         break
 
