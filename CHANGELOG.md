@@ -1,6 +1,10 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 17.5.0 (16 May 2022)
+New layer settings: Vertical scrollbar
+Example: https://github.com/ingrammicro/puzzle-publisher/tree/master/examples/VScrollbar
+
 ##  Version 17.4.2 (16 May 2022)
 Fixed bottom-pined panel
 
