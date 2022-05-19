@@ -239,9 +239,14 @@ class PZLayer
         if (myParent != undefined) this.constrains = this._calculateConstrains()
 
         //////////////////////////////////////////////////////// LAYER IS SCROLLABLE CONTAINER        
-        if (this.name.includes("scroll"))
+        if (sLayer.type === "Group")
         {
-            this.addSelfAsFixedLayerToArtboad(Constants.LAYER_OVERLAY_VSCROLL)
+            const vScrollType = Utils.getLayerSetting(sLayer, SettingKeys.LAYER_VSCROLL_TYPE, Constants.LAYER_VSCROLL_NONE)
+            if (vScrollType !== Constants.LAYER_VSCROLL_NONE)
+            {
+                this.addSelfAsFixedLayerToArtboad(Constants.LAYER_OVERLAY_VSCROLL)
+                this.vScrollType = vScrollType
+            }
         }
         //////////////////////////////////////////////////////// OVERLAY & FIXED
         if (!this.isArtboard && !this.artboard.disableFixedLayers && !this.isParentFixed)
@@ -603,6 +608,8 @@ class PZLayer
         {
             //this.tp = "Image"
             this.iu = this._buildImageURL()
+            this.vst = this.vScrollType
+            this.vScrollType = undefined
         } else if (undefined != this.imageIndex)
         {
             this.tp = "Image"
