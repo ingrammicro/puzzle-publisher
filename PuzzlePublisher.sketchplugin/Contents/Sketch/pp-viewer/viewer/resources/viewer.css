@@ -1307,7 +1307,7 @@ area {
     border-radius: 8px;
     border: 2px solid #d6dee1;
     background-clip: content-box;
-    min-height: 80px;
+    min-height: 20px;
 }
 
 .panelVSCroll.always::-webkit-scrollbar-thumb:hover {
