@@ -157,7 +157,8 @@ class PZArtboard extends PZLayer
             {
                 let hotspot = this.hotspots[hIndex]
                 // move hotspot from artboard hotspots to fixed layer hotspots
-                if (hotspot.r.insideRectangle(l.frame))
+                const frame = l.isVertScroll ? l.findMaskLayer().frame : l.frame
+                if (hotspot.r.insideRectangle(frame))
                 {
                     if (!hotspot.fixedAncestorID || hotspot.fixedAncestorID == l.objectID)
                     {
