@@ -1,7 +1,10 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
-##  Version 17.5.0 (16 May 2022)
+##  Version 17.5.1 (21 May 2022)
+Fixed hotpots
+
+##  Version 17.5.0 (19 May 2022)
 New layer settings: Vertical scrollbar
 Example: https://github.com/ingrammicro/puzzle-publisher/tree/master/examples/VScrollbar
 
