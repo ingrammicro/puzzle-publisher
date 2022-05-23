@@ -28,6 +28,7 @@ const Constants = {
     LAYER_VSCROLL_NONE: 0,
     LAYER_VSCROLL_DEFAULT: 1,
     LAYER_VSCROLL_ALWAYS: 2,
+    LAYER_VSCROLL_NEVER: 3,
 }
 
 const EVENT_HOVER = 1
@@ -731,7 +732,13 @@ class ViewerPage
             if (panel.isVertScroll)
             {
                 cssClass = "panelVSCroll divPanel"
-                if (panel.vst === Constants.LAYER_VSCROLL_ALWAYS) cssClass += " always"
+                switch (panel.vst)
+                {
+                    case Constants.LAYER_VSCROLL_ALWAYS:
+                        cssClass += " always"; break
+                    case Constants.LAYER_VSCROLL_NEVER:
+                        cssClass += " never"; break
+                }
                 style = `height: ${panel.mskH}px; width: ${panel.width}px; `
                 style += "margin-left:" + panel.x + "px;"
                 style += "top:" + panel.y + "px;"

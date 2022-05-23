@@ -1307,9 +1307,14 @@ area {
     border-radius: 8px;
     border: 2px solid #d6dee1;
     background-clip: content-box;
-    min-height: 20px;
+    min-height: 80px;
 }
 
 .panelVSCroll.always::-webkit-scrollbar-thumb:hover {
     background-color: #a8bbbf;
+}
+
+/* */
+.panelVSCroll.never::-webkit-scrollbar {
+    width: 0px;
 }

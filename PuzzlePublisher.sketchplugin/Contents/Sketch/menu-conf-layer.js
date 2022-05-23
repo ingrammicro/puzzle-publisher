@@ -56,7 +56,7 @@ var onRun = function (context)
         dialog.addSelect("fixedShadowType", "Fixed Layer Shadow Mode", fixedShadowType, ["Viewer shows a CSS-based shadow around the layer", "Sketch renders the layer shadow during export"], 300)
     }
 
-    dialog.addSelect("vScrollType", "Vertical scrolling", vScrollType, ["None", "Enabled with default scrollbar behaviour", "Enabled with always visible scrollbar"], 300)
+    dialog.addSelect("vScrollType", "Vertical scrolling", vScrollType, ["None", "Enabled with default scrollbar behaviour", "Enabled with always visible scrollbar", "Enabled with always hidden scrollbar"], 300)
     if (layer.type === "Group")
     {
         dialog.addHint("vScrollTypeHint", "The layer needs to be masked")

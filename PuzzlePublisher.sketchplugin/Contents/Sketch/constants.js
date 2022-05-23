@@ -98,6 +98,7 @@ const Constants = {
     LAYER_VSCROLL_NONE: 0,
     LAYER_VSCROLL_DEFAULT: 1,
     LAYER_VSCROLL_ALWAYS: 2,
+    LAYER_VSCROLL_NEVER: 3,
     //
     GA_ID: "UA-84277242-5"
 };
