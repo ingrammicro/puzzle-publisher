@@ -407,7 +407,9 @@ function buildMainHTML(options)
                 s += `<svg class ="svgIcon"><use xlink: href="#${group.icon}"></use></svg>`
             s += `
                 <span>${group.label}</span>
-                    <div class ="tips"></div>
+                    <div class ="tips">
+                        <svg class ='svgIcon'><use xlink: href="#icArrwRight"></use></svg>
+                    </div>
                     <div class="submenu">
                         <div class="groupe">
             `
