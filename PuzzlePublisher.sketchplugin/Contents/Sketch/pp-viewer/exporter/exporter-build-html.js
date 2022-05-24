@@ -330,8 +330,18 @@ function buildMainHTML(options) {
     //////////////////////////////////////////// GENERATE MENU //////////////////////////////////////
     // init menu content
     const menu = []
-    menu.push(
+    menu.push(        
         {
+            ID: "", items: [                
+                { ID: "symbols", label: "Handoff", icon: "icElementInspector", key: "M", onclick: "viewer.symbolViewer.toggle();", on: options.loadLayers },
+                { ID: "embed", label: "Embed code", icon: "icEmbed", key: "E", onclick: "viewer.share();" },
+                { ID: "img", label: "Full page image", icon: "icImage", key: "I", onclick: "viewer.openFulImage();" },
+                { ID: "menu_comments_viewer", label: "Comments", icon: "icAnnotation", key: "C", onclick: "viewer.commentsViewer.toggle();", hidden: true },
+            ]
+        },        
+        {
+            label:"Settings",
+            icon:"icArrwRight",
             ID: "", items: [
                 { ID: "links", label: "Hot spots", icon: "icPointer", key: "Shift", onclick: "viewer.toggleLinks(undefined,false);" },
                 { ID: "zoom", label: "Autoscale", icon: "icResize", key: "Z", onclick: "viewer.toggleZoom(undefined,false);" },
@@ -342,14 +352,8 @@ function buildMainHTML(options) {
             switchers: true,
         },
         {
-            ID: "", items: [
-                { ID: "menu_comments_viewer", label: "Comments", icon: "icAnnotation", key: "C", onclick: "viewer.commentsViewer.toggle();", hidden: true },
-                { ID: "symbols", label: "Handoff", icon: "icElementInspector", key: "M", onclick: "viewer.symbolViewer.toggle();", on: options.loadLayers },
-                { ID: "embed", label: "Embed code", icon: "icEmbed", key: "E", onclick: "viewer.share();" },
-                { ID: "img", label: "Full page image", icon: "icImage", key: "I", onclick: "viewer.openFulImage();" },
-            ]
-        },
-        {
+            label:"Versions",
+            icon:"icArrwRight",
             ID: "", items: [
                 { ID: "menu_info_viewer", label: "Changes history", icon: "icList", key: "V", onclick: "viewer.infoViewer.toggle();", on: options.serverTools != null && options.serverTools != "" },
                 { ID: "", label: "Up version", icon: "icIncreaseVersion", key: "⇧ ↑", onclick: "viewer.increaseVersion();", on: options.serverTools !== "" },
@@ -374,10 +378,21 @@ function buildMainHTML(options) {
         const liveItems = group.items.filter(i => i.on == null || i.on)
         if (!liveItems.length) return
         //
-        if (index++) s += "<hr>\n"
-        s += `
-            <div class="groupe" ID="${group.ID}">
-        `
+        if (index++) s += "<hr>\n"        
+        if(group.label!==undefined){
+            s += `
+            <div class="groupe">
+                <div ID="${group.ID}" class="item sub">
+                    <span>${group.label}</span>
+                    <div class ="tips">
+                        <svg class ='svgIcon'><use xlink: href="#${group.icon}"></use></svg>
+                    </div>
+                    <div class="submenu">
+                        <div class="groupe">
+            `
+        }else{
+            s += `<div class="groupe" ID="${group.ID}">`
+        }
         liveItems.forEach(function (item) {
             if (item.on != null && !item.on) return
             if (group.switchers) {
@@ -401,9 +416,15 @@ function buildMainHTML(options) {
                 `
             }
         })
-        s += `
+        if(group.label!==undefined){
+            s += `
+                    </div>
+                  </div>
+              </div>
             </div>
             `
+        }else
+            s += `</div>`
     })
     s += `
         </div>
