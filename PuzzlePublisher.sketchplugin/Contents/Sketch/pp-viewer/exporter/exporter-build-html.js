@@ -358,9 +358,9 @@ function buildMainHTML(options) {
             label:"Versions",
             icon:"icArrwRight",
             ID: "", items: [
-                { ID: "menu_info_viewer", label: "Changes history", icon: "icList", key: "V", onclick: "viewer.infoViewer.toggle();", on: options.serverTools != null && options.serverTools != "" },
                 { ID: "", label: "Up version", icon: "icIncreaseVersion", key: "⇧ ↑", onclick: "viewer.increaseVersion();", on: options.serverTools !== "" },
                 { ID: "", label: "Down version", icon: "icDecreaseVersion", key: "⇧ ↓", onclick: "viewer.decreaseVersion();", on: options.serverTools !== "" },
+                { ID: "menu_info_viewer", label: "Changes history", key: "V", onclick: "viewer.infoViewer.toggle();", on: options.serverTools != null && options.serverTools != "" },
             ]
         },
         {
@@ -400,7 +400,7 @@ function buildMainHTML(options) {
             if (item.on != null && !item.on) return
             if (group.switchers) {
                 s += `
-                <div ID="${item.ID}-div" class ="item-switcher${item.hidden ? ' hidden' : ''}">
+                <div ID="${item.ID}-div" class ="item item-switcher${item.hidden ? ' hidden' : ''}">
                     <div class="checkbox-container">
                         <input type="checkbox" ID="${item.ID}" onclick="${item.onclick}; return true;" ${item.checked ? "checked" : ""}/>
                         <label for="${item.ID}"></label>

@@ -1054,7 +1054,7 @@ body {
     display: flex;
     flex-direction: column;
     width: 240px;
-    padding: 16px 0;
+    padding: 12px 0;
     background: var(--color-background);
     border: var(--border);
     box-shadow: var(--shadow2);
@@ -1140,6 +1140,12 @@ body {
     padding-left: 12px;
 }
 
+.menu .tips svg {
+  margin-right: -6px;
+  /* fill: var(--color-secondary); */
+  width: 18px;
+}
+
 hr {
     display: block;
     height: 1px;
@@ -1185,6 +1191,7 @@ area {
 }
 
 .panelVSCroll {
+    overflow-x: hidden;
     overflow-y: auto
 }
 
@@ -1319,3 +1326,28 @@ area {
     /* Light styles go here! */
 }
 
+/* custom scrollbar */
+.panelVSCroll.always::-webkit-scrollbar {
+    width: 8px;
+}
+
+.panelVSCroll.always::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+.panelVSCroll.always::-webkit-scrollbar-thumb {
+    background-color: white;
+    border-radius: 8px;
+    border: 2px solid #d6dee1;
+    background-clip: content-box;
+    min-height: 80px;
+}
+
+.panelVSCroll.always::-webkit-scrollbar-thumb:hover {
+    background-color: #a8bbbf;
+}
+
+/* */
+.panelVSCroll.never::-webkit-scrollbar {
+    width: 0px;
+}
