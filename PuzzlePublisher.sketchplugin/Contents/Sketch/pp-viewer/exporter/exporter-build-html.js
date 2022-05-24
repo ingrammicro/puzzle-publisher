@@ -6,7 +6,8 @@ const ExporterConstants = {
     DOCUMENT_COMMENTS_URL_PLACEHOLDER: "V_V_C"
 }
 
-function buildMainHTML_NavigationIcons(options) {
+function buildMainHTML_NavigationIcons(options)
+{
     return `<div class="containerSVG"> <svg class="svgIcon">
     <symbol ID="icMenu" viewBox="0 0 24 24">
         <path d="M4,14 C2.8954305,14 2,13.1045695 2,12 C2,10.8954305 2.8954305,10 4,10 C5.1045695,10 6,10.8954305 6,12 C6,13.1045695 5.1045695,14 4,14 Z M12,14 C10.8954305,14 10,13.1045695 10,12 C10,10.8954305 10.8954305,10 12,10 C13.1045695,10 14,10.8954305 14,12 C14,13.1045695 13.1045695,14 12,14 Z M20,14 C18.8954305,14 18,13.1045695 18,12 C18,10.8954305 18.8954305,10 20,10 C21.1045695,10 22,10.8954305 22,12 C22,13.1045695 21.1045695,14 20,14 Z" />
@@ -89,7 +90,8 @@ function buildMainHTML_NavigationIcons(options) {
 //      generatorText: ""
 //      figma: true|undefined - Enable customization for Figma users
 // }
-function buildMainHTML(options) {
+function buildMainHTML(options)
+{
 
     const verPostfix = "?" + ExporterConstants.DOCUMENT_VERSION_PLACEHOLDER
     const srcPath = "srcPath" in options ? options.srcPath : ""
@@ -105,12 +107,15 @@ function buildMainHTML(options) {
         <link rel="shortcut icon"  type="image/png?" href="${srcPath}resources/icon.png${verPostfix}">
         <link rel="stylesheet" type="text/css" href="${srcPath}resources/viewer.css${verPostfix}">
     `
-    if (options.enableAnimations) {
+    if (options.enableAnimations)
+    {
         s += `
         <link rel="stylesheet" type="text/css" href="${srcPath}resources/animations.css${verPostfix}">`
     }
-    if (undefined != options.cssFileNames) {
-        options.cssFileNames.forEach(function (cssFile) {
+    if (undefined != options.cssFileNames)
+    {
+        options.cssFileNames.forEach(function (cssFile)
+        {
             s += `
         <link rel="stylesheet" type="text/css" href="${srcPath}resources/${cssFile}${verPostfix}">`
         })
@@ -128,12 +133,14 @@ function buildMainHTML(options) {
         <script type="text/javascript" src="${srcPath}js/GalleryViewer.js${verPostfix}" charset="UTF-8"></script>
         <script type="text/javascript" src="${srcPath}js/PresenterViewer.js${verPostfix}" charset="UTF-8"></script>
 	`
-    if (options.loadLayers) {
+    if (options.loadLayers)
+    {
         s += `
         <script type="text/javascript" src="data/handoff.js${verPostfix}" charset="UTF-8"></script>
         <script type="text/javascript" src="${srcPath}js/SymbolViewer.js${verPostfix}" charset="UTF-8"></script>
 		`
-        if (options.enableExpViewer) {
+        if (options.enableExpViewer)
+        {
             s += `
               <script type="text/javascript" src="${srcPath}js/ExpViewer.js${verPostfix}" charset="UTF-8"></script>
             `
@@ -143,7 +150,8 @@ function buildMainHTML(options) {
         <script type="text/javascript" src="${srcPath}js/InfoViewer.js${verPostfix}" charset="UTF-8"></script>
         <script type="text/javascript">
     `
-    if (options.jsCode && options.jsCode != '') {
+    if (options.jsCode && options.jsCode != '')
+    {
         s += `
         function runJSCode(){${options.jsCode}}
         `
@@ -151,13 +159,16 @@ function buildMainHTML(options) {
     s += `
         var viewer = new Viewer(story, "images")
         `
-    if (options.figma) {
+    if (options.figma)
+    {
         s += `viewer.figma = true`
     }
     s += '</script>'
 
-    if (options.googleCode != '') {
-        if (options.googleCode.startsWith("GTM")) {
+    if (options.googleCode != '')
+    {
+        if (options.googleCode.startsWith("GTM"))
+        {
             s += `
         <!--Google Tag Manager-->
             <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -166,7 +177,8 @@ function buildMainHTML(options) {
             'https://www.googletagmanager.com/gtm.js?ID='+i+dl;f.parentNode.insertBefore(j,f);
             })(window,document,'script','dataLayer','${options.googleCode}');</script>
             <!--End Google Tag Manager--> `
-        } else {
+        } else
+        {
             s += `
         <!--Global site tag(gtag.js) - Google Analytics-->
             <script async src="https://www.googletagmanager.com/gtag/js?ID=${options.googleCode}"></script>
@@ -213,8 +225,10 @@ function buildMainHTML(options) {
     </style>
     <body class="screen" style="background:${options.backColor}" onload="${options.jsCode && options.jsCode != "" ? "runJSCode()" : ""}">
             `
-    if (options.googleCode != '') {
-        if (options.googleCode.startsWith("GTM")) {
+    if (options.googleCode != '')
+    {
+        if (options.googleCode.startsWith("GTM"))
+        {
             s += `
             <!--Google Tag Manager(noscript)-->
         <noscript><iframe src="https://www.googletagmanager.com/ns.html?ID=${options.googleCode}"
@@ -343,8 +357,8 @@ function buildMainHTML(options) {
             ]
         },
         {
-            label:"Settings",
-            icon:"icArrwRight",
+            label: "Settings",
+            icon: "icArrwRight",
             ID: "", items: [
                 { ID: "links", label: "Hot spots", icon: "icPointer", key: "Shift", onclick: "viewer.toggleLinks(undefined,false);" },
                 { ID: "zoom", label: "Autoscale", icon: "icResize", key: "Z", onclick: "viewer.toggleZoom(undefined,false);" },
@@ -355,8 +369,8 @@ function buildMainHTML(options) {
             switchers: true,
         },
         {
-            label:"Versions",
-            icon:"icArrwRight",
+            label: "Versions",
+            icon: "icArrwRight",
             ID: "", items: [
                 { ID: "", label: "Up version", icon: "icIncreaseVersion", key: "⇧ ↑", onclick: "viewer.increaseVersion();", on: options.serverTools !== "" },
                 { ID: "", label: "Down version", icon: "icDecreaseVersion", key: "⇧ ↓", onclick: "viewer.decreaseVersion();", on: options.serverTools !== "" },
@@ -375,33 +389,40 @@ function buildMainHTML(options) {
     s += `
             <div ID="menu" class="menu">
                 `
-    let index = 0
-    menu.forEach(function (group) {
+    menu.forEach(function (group, index)
+    {
+        //
         if (group.on != null && !group.on) return
         const liveItems = group.items.filter(i => i.on == null || i.on)
         if (!liveItems.length) return
         //
-        if (index++) s += "<hr>\n"
-        if(group.label!==undefined){
+        if (index > 0 && (menu[index - 1].label === undefined || group.label === undefined)) s += "<hr>\n"
+        if (group.label !== undefined)
+        {
             s += `
             <div class="groupe">
                 <div ID="${group.ID}" class="item sub">
-                    <span>${group.label}</span>
-                    <div class ="tips">
-                        <svg class ='svgIcon'><use xlink: href="#${group.icon}"></use></svg>
-                    </div>
+            `
+            if (group.icon !== undefined && group.icon !== "")
+                s += `<svg class ="svgIcon"><use xlink: href="#${group.icon}"></use></svg>`
+            s += `
+                <span>${group.label}</span>
+                    <div class ="tips"></div>
                     <div class="submenu">
                         <div class="groupe">
             `
-        }else{
+        } else
+        {
             s += `<div class="groupe" ID="${group.ID}">`
         }
-        liveItems.forEach(function (item) {
+        liveItems.forEach(function (item)
+        {
             if (item.on != null && !item.on) return
-            if (group.switchers) {
+            if (group.switchers)
+            {
                 s += `
                 <div ID="${item.ID}-div" class ="item item-switcher${item.hidden ? ' hidden' : ''}">
-                    <div class="checkbox-container">
+                    <div class="checkbox-container" onclick="document.getElementById('${item.ID}').checked=!document.getElementById('${item.ID}').checked;">
                         <input type="checkbox" ID="${item.ID}" onclick="${item.onclick}; return true;" ${item.checked ? "checked" : ""}/>
                         <label for="${item.ID}"></label>
                         <span class="checkbox-label">${item.label}</span>
@@ -409,7 +430,8 @@ function buildMainHTML(options) {
                     <div class ="tips">${item.key}</div>
                 </div>
                 `
-            } else {
+            } else
+            {
                 s += `
                 <div ID="${item.ID}" class ="item${item.hidden ? ' hidden' : ''}" onclick="viewer.hideMenu(); ${item.onclick}; return false; ">
                     <svg class ='svgIcon'><use xlink: href="#${item.icon}"></use></svg>
@@ -419,64 +441,65 @@ function buildMainHTML(options) {
                 `
             }
         })
-        if(group.label!==undefined){
+        if (group.label !== undefined)
+        {
             s += `
                     </div>
                   </div>
               </div>
             </div>
             `
-        }else
+        } else
             s += `</div>`
     })
     s += `
         </div>
-    `
+            `
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     s += `
-        <div ID = "btnMenu" class="btnMenu" onclick = "viewer.showMenu()">
-            <svg class='svgIcon'><use xlink:href="#icMenu"></use></svg>
+                <div ID = "btnMenu" class="btnMenu" onclick = "viewer.showMenu()">
+                    <svg class='svgIcon'><use xlink:href="#icMenu"></use></svg>
         </div>
-        <!-- Button to embed mode -->
+        <!--Button to embed mode-->
         <div ID="btnOpenNew" style='display:none' class="btnMenu" onclick="viewer.openNewWindow();return false;">
             <svg class='svgIcon'><use xlink:href="#icResize"></use></svg>
         </div>
-        <!-- Next/Back button -->
-        <div class="navPreviewNext">
-            <div ID="nav-left-prev" class="btnPreview" onclick="viewer.previous(); return false;" title="Previous screen">
-                <svg class='svgIcon'><use xlink:href="#icArrwLeft"></use></svg>
-            </div>
-            <div ID="nav-left-next" class="btnNext" onclick="viewer.next(); return false;" title="Next screen"><svg class='svgIcon'><use xlink:href="#icArrwRight"></use></svg></div>
+        <!--Next / Back button-->
+                <div class="navPreviewNext">
+                    <div ID="nav-left-prev" class="btnPreview" onclick="viewer.previous(); return false;" title="Previous screen">
+                        <svg class='svgIcon'><use xlink:href="#icArrwLeft"></use></svg>
+                    </div>
+                    <div ID="nav-left-next" class="btnNext" onclick="viewer.next(); return false;" title="Next screen"><svg class='svgIcon'><use xlink:href="#icArrwRight"></use></svg></div>
+                </div>
         </div>
-        </div>
-            <div class="navCenter">
-                <div class="pageName title">Default button</div>
-                <div ID="info_viewer_options" class="infoViewerMode hidden">
-                    <input type="radio" name="info_viewer_mode" ID="info_viewer_mode_diff" value="diff" checked onclick="viewer.infoViewer.pageChanged()" disabled /><label for="info_viewer_mode_diff">Differences</label>
-                    <input type="radio" name="info_viewer_mode" ID="info_viewer_mode_prev" value="prev" onclick="viewer.infoViewer.pageChanged()" disabled><label for="info_viewer_mode_prev">Prev version</label>
-                    <input type ="radio" name="info_viewer_mode" ID="info_viewer_mode_new" value="new " onclick="viewer.infoViewer.pageChanged()" disabled><label for="info_viewer_mode_new">New version</label>
+                <div class="navCenter">
+                    <div class="pageName title">Default button</div>
+                    <div ID="info_viewer_options" class="infoViewerMode hidden">
+                        <input type="radio" name="info_viewer_mode" ID="info_viewer_mode_diff" value="diff" checked onclick="viewer.infoViewer.pageChanged()" disabled /><label for="info_viewer_mode_diff">Differences</label>
+                        <input type="radio" name="info_viewer_mode" ID="info_viewer_mode_prev" value="prev" onclick="viewer.infoViewer.pageChanged()" disabled><label for="info_viewer_mode_prev">Prev version</label>
+                            <input type="radio" name="info_viewer_mode" ID="info_viewer_mode_new" value="new " onclick="viewer.infoViewer.pageChanged()" disabled><label for="info_viewer_mode_new">New version</label>
+                            </div>
+                    </div>
+                    <div class="navRight">
+                        <div ID="loading" class="hidden">
+                            <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+                        </div>
+                        <div ID="pageComments" onclick="commentsViewer.toggle(); return false;" class="hidden">
+                            <svg class="svgIcon"> <use xlink:href="#icAddComment"></use></svg>
+                            <div ID="counter"></div>
+                        </div>
+                        <div ID="experimental" onclick="viewer.expViewer.toggle();return false;" class="hidden">
+                            <svg class="svgIcon"> <use xlink:href="#icExperimental"></use></svg>
+                        </div>
                     </div>
                 </div>
-                <div class="navRight">
-                    <div ID="loading" class="hidden">
-                        <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
-                    </div>
-                    <div ID="pageComments" onclick="commentsViewer.toggle(); return false;" class="hidden">
-                        <svg class="svgIcon"> <use xlink:href="#icAddComment"></use></svg>
-                        <div ID="counter"></div>
-                    </div>
-                    <div ID="experimental" onclick="viewer.expViewer.toggle();return false;" class="hidden">
-                        <svg class="svgIcon"> <use xlink:href="#icExperimental"></use></svg>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
-        `
+                `
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     s += `
     </body>
-</html>
-        `
+</htm>
+                `
     return s
 }
