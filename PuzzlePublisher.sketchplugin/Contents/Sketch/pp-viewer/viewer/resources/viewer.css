@@ -873,7 +873,7 @@ a:focus {
     --border: 1px solid rgba(73, 84, 96, 0.06);
 
     /* border radius */
-    --border-radius: 3px;
+    --border-radius: 5px;
     --border-radius-circle: 100%;
 
 }
@@ -1054,7 +1054,7 @@ body {
     display: flex;
     flex-direction: column;
     width: 240px;
-    padding: 16px 0;
+    padding: 12px 0;
     background: var(--color-background);
     border: var(--border);
     box-shadow: var(--shadow2);
@@ -1100,6 +1100,18 @@ body {
     transition: background .12s;
 }
 
+.item.sub:active {
+  background: var(--color-hover);
+}
+
+.item.sub:hover + div {
+  display: flex;
+}
+
+.item.sub:hover .submenu {
+  display: flex;
+}
+
 .item svg {
     margin-right: 16px;
 }
@@ -1109,9 +1121,29 @@ body {
     text-align: start;
 }
 
+.submenu {
+  align-self: flex-start;
+  position: absolute;
+  transform: translateX(212px);
+  margin-top: -12px;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  padding: 12px 0;
+  background: var(--color-background);
+  display: none;
+  box-shadow: var(--shadow1);
+}
+
 .menu .tips {
     font-size: var(--font-small);
     color: var(--color-secondary);
+    padding-left: 12px;
+}
+
+.menu .tips svg {
+  margin-right: -6px;
+  /* fill: var(--color-secondary); */
+  width: 18px;
 }
 
 hr {
@@ -1119,7 +1151,7 @@ hr {
     height: 1px;
     border: 0;
     border-top: 1px solid var(--color-border);
-    margin: 16px 0 16px 20px;
+    margin: 12px 0 12px 20px;
     padding: 0;
 }
 
@@ -1159,8 +1191,8 @@ area {
 }
 
 .panelVSCroll {
-    overflow-y: auto;
     overflow-x: hidden;
+    overflow-y: auto
 }
 
 .fixedPanelFloat {
@@ -1285,6 +1317,7 @@ area {
         --color-background: #35363A;
         --color-background-gallery: var(--color-background);
         --color-background-gallery-90: rgba(53, 54, 58, 0.90);
+        --shadow1: 0 2px 6px 0 rgba(0, 0, 0, 0.24);
     }
 
 }
