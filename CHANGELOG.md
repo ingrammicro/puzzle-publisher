@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 17.6.0 (25 May 2022)
+Fixed hotpots
+
 ##  Version 17.5.1 (21 May 2022)
 Fixed hotpots
 
