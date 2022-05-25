@@ -430,7 +430,7 @@ function buildMainHTML(options)
             {
                 s += `
                 <div ID="${item.ID}-div" class ="item item-switcher${item.hidden ? ' hidden' : ''}">
-                    <div class="checkbox-container" onclick="document.getElementById('${item.ID}').checked=!document.getElementById('${item.ID}').checked;">
+                    <div class="checkbox-container" onclick="document.getElementById('${item.ID}').checked=!document.getElementById('${item.ID}').checked;${item.onclick};">
                         <input type="checkbox" ID="${item.ID}" onclick="${item.onclick}; return true;" ${item.checked ? "checked" : ""}/>
                         <label for="${item.ID}"></label>
                         <span class="checkbox-label">${item.label}</span>
