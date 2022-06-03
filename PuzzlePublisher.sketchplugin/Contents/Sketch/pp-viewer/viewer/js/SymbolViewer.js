@@ -460,7 +460,8 @@ class SymbolViewer extends AbstractViewer {
         let categoryName = viewer.figma ? "Figma component" : "Sketch Symbol"
         // Drop path to icon, leave only name
         const iconTagPos = symName.indexOf(ICON_TAG)
-        if (iconTagPos >= 0) {
+        this.currLayerIsIcon = iconTagPos >= 0
+        if (this.currLayerIsIcon) {
             symName = symName.substring(iconTagPos).replace(ICON_TAG, ICON_TAG2) + "-" + symName.substring(0, 2)
             categoryName = "Icon"
         }
@@ -890,7 +891,10 @@ class SymbolViewer extends AbstractViewer {
 
     _decorateCSSOneStyle (tokens, layer, siLayer, styleName, styleValue) {
         let result = ""
-        result += "" + styleName + ": "
+        // Decorate style name
+        let styleNameTxt = styleName
+        if(this.currLayerIsIcon && styleName==="background-color")  styleNameTxt = "color"
+        result += "" + styleNameTxt + ": "
         result += "<span class='tokenName'>"
         //
         let cvTokens = null
