@@ -27,6 +27,7 @@ function printError($error){
     print($error."<br/>");
 }
 
+
 class Worker{
     public $ref = "";
     public $base_url = "";
@@ -167,6 +168,8 @@ class Worker{
             }
 
             if(NULL==$file_info) continue;
+            // Skip internal system artboards
+		   if(strpos($file_info['filename'],"__")===0) continue;
 
             $image_name = $file_info['basename'];
             $screen_name = $file_info['filename'];
