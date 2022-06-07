@@ -250,7 +250,7 @@ class Utils
             dasherize = true;
         }
         const dividerCharacter = dasherize ? "-" : "_"
-        return name.replace(/[\\/,&:]/g, "_").replace(/[\s_-]+/g, dividerCharacter).toLowerCase()
+        return name.replace(/[\\/,&:]/g, "_").replace(/[\s-]+/g, dividerCharacter).toLowerCase()
     }
 
 
