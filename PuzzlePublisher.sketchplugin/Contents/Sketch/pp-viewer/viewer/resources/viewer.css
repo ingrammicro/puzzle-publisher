@@ -1327,6 +1327,10 @@ area {
 }
 
 /* custom scrollbar */
+.panelVSCroll{
+    padding-right: 8px;
+}
+
 .panelVSCroll.always::-webkit-scrollbar {
     width: 8px;
 }
@@ -1340,7 +1344,7 @@ area {
     border-radius: 8px;
     border: 2px solid #d6dee1;
     background-clip: content-box;
-    min-height: 80px;
+    min-height: 80px;    
 }
 
 .panelVSCroll.always::-webkit-scrollbar-thumb:hover {

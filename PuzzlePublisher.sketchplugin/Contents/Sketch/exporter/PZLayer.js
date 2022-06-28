@@ -452,7 +452,8 @@ class PZLayer
             artboardID: null,
             target: null,
             overlayRedirect: this.overlayRedirect,
-            ancestorFixed: null
+            ancestorFixed: null,
+            owner:this
         }
         let p = this
         while (!p.isArtboard)

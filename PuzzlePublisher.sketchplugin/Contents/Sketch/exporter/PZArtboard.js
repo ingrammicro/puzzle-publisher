@@ -146,18 +146,31 @@ class PZArtboard extends PZLayer
         //this._exportOverlayLayers()
         this._pushIntoStoryData(this.index)
     }
-
+    
     //------------------- FIND HOTSPOTS WHICH LOCATE OVER FIXED HOTPOSTS ----------------------------
     //------------------- AND MOVE THEM INTO FIXED LAYER SPECIAL HOTSPOTS ---------------------------
     _findFixedPanelHotspots()
     {
+        function isChild(parent,child){
+            if(!child.parent) return false
+            if(child.parent==parent) return true
+            return isChild(parent,child.parent)
+        }
         for (var l of this.fixedLayers)
         {
             for (let hIndex = 0; hIndex < this.hotspots.length; hIndex++)
             {
+                // move hotspot from artboard hotspots to fixed layer hotspots                
                 let hotspot = this.hotspots[hIndex]
-                // move hotspot from artboard hotspots to fixed layer hotspots
-                const frame = l.isVertScroll ? l.findMaskLayer().frame : l.frame
+                let frame = l.frame
+
+                if(l.isVertScroll){
+                    if(!isChild(l,hotspot.owner)) continue
+                    //const maskedLayer = l.isVertScroll ? l.findMaskLayer():null 
+                    //frame = maskedLayer ? maskedLayer.frame : l.frame
+                }else{
+
+                }
                 if (hotspot.r.insideRectangle(frame))
                 {
                     if (!hotspot.fixedAncestorID || hotspot.fixedAncestorID == l.objectID)
@@ -172,6 +185,7 @@ class PZArtboard extends PZLayer
 
         }
     }
+
 
     //------------------ GENERATE STORY.JS FILE  ------------------
     _pushIntoStoryData(pageIndex)
