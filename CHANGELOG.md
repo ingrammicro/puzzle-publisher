@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 17.6.3 (28 Jun 2022)
+Improved scollable containers
+
 ##  Version 17.6.1 (03 Jun 2022)
 show color: instead of background-color: for icons
 
