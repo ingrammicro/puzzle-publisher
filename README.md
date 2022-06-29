@@ -23,7 +23,6 @@ Viewer features:
 - Auto-scale of large pages to fit into small browser window
 - Ability to get <iframe> code to embed you prototypes into external web pages (with special UI) or get lightweight code with just <a href...><img...></a/>
 - Page layout viewer (if it was enabled for a page)
-- [NEW] Element Inspector to see symbols, styles and design tokens(requires integration with Design System plugin) ([Picture](https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/examples/Link-ModalArtboard/Screenshot.png))
 
 Publisher features:
 - Increasing of version counter and injecting it into HTML
@@ -46,10 +45,6 @@ Commands:
 Settings: 
 
 <img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/examples/Pictures/Layer-Dialog.png"/><img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/examples/Pictures/Artboard-Dialog1.png"/><img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/examples/Pictures/Artboard-Dialog2.png"/><img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/examples/Pictures/Document-Dialog.png"/><img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/examples/Pictures/Plugin-Dialog.png"/>
-
-Viewer - Show symbols (and design tokens):
-
-<img width="40%" src="https://raw.githubusercontent.com/ingrammicro/puzzle-publisher/master/examples/Show Symbols/screenshot.png"/>
 
 ## Installation
 
