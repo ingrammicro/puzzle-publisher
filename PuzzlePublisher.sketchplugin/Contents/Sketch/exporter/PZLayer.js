@@ -198,7 +198,7 @@ class PZLayer
                     )
                 )
                 {
-                    this.artboard.shadowLayer = this
+                    this.artboard.addShadowLayer(this)
                 }
             }
 

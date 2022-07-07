@@ -46,6 +46,7 @@ class PZArtboard extends PZLayer
         this.fixedLayers = [] // list of layers which are configured as fixed
         this.nextLinkIndex = 0 // we need it to generate uniq id of the every link
         this.imageLayers = [] // list of all Image childs        
+        this.shadowLayers = undefined // list of layer with shaows (needs to show overlay shadow)
 
         // check if the page name is unique in document
         if (this.name in pzDoc.artboardsDict)
@@ -296,13 +297,15 @@ class PZArtboard extends PZLayer
 
     _getShadowLayerShadowInfo()
     {
-        if (!this.shadowLayer) return undefined
-        return this.shadowLayer.getShadowInfo()
+        if (!this.shadowLayers) return undefined
+        // sort layers to find largest
+        const resorted = this.shadowLayers.sort((l1,l2)=>l1.frame.height<l2.frame.height)
+        //
+        return resorted[0].getShadowInfo()
     }
 
     _findLayersShadowInfo(layers = undefined, checkKeepFixedShadow = false)
     {
-
         if (layers === undefined) layers = this.childs
         //
         let shadowInfo = undefined
@@ -310,7 +313,7 @@ class PZArtboard extends PZLayer
         {
             if (checkKeepFixedShadow && l.keepFixedShadow) continue
             shadowInfo = l.getShadowInfo()
-            if (shadowInfo)
+            if (shadowInfo && shadowInfo.style.fills!==undefined && shadowInfo.style.fills.length)
             {
                 break
             }
@@ -328,6 +331,11 @@ class PZArtboard extends PZLayer
         this.imageLayers = undefined
     }
 
+
+    addShadowLayer(layer){
+        if(this.shadowLayers===undefined) this.shadowLayers = []
+        this.shadowLayers.push(layer)
+    }
 
     addLayerAsExportableImage(layer)
     {
