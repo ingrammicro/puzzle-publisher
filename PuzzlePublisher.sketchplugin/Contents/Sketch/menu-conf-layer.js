@@ -57,12 +57,12 @@ var onRun = function (context)
     }
 
     dialog.addSelect("vScrollType", "Vertical scrolling", vScrollType, ["None", "Enabled with default scrollbar behaviour", "Enabled with always visible scrollbar", "Enabled with always hidden scrollbar"], 300)
-    if (layer.type === "Group")
+    if (layer.type === "Group"|| layer.type === "SymbolInstance") 
     {
         dialog.addHint("vScrollTypeHint", "The layer needs to be masked")
     } else
     {
-        dialog.addHint("vScrollTypeHint", "The layer should be group")
+        dialog.addHint("vScrollTypeHint", "The layer should be a group or a symbol instance")
         dialog.enableControlByID('vScrollType', false)
     }
 
