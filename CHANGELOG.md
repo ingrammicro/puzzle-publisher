@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 17.6.5 (13 Jul 2022)
+Show overlays inside scrollable container
+
 ##  Version 17.6.4 (7 Jul 2022)
 To find a layer with shadow for overlay a layer with bigger height will be used
 
