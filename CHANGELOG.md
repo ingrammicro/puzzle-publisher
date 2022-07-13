@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 17.7.0 (13 Jul 2022)
+Symbol instance also can be scrollable (without a parent group)
+
 ##  Version 17.6.5 (13 Jul 2022)
 Show overlays inside scrollable container
 
