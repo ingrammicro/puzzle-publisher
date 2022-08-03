@@ -570,10 +570,8 @@ class ViewerPage
     {
         const newParentPage = viewer.currentPage
 
-        if (!this.imageDiv)
-        {
-            this.loadImages(true)
-        }
+        if (!this.imageDiv) this.loadImages(true)
+        if(link.panel===undefined) link.panel = this
 
         // check if we need to hide any other already visible overlay
         var positionCloned = false
