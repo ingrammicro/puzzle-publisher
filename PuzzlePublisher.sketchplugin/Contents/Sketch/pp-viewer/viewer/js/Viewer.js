@@ -1030,7 +1030,11 @@ class Viewer {
     }
 
     previous() {
+        // Get previous page
         var page = this.getPreviousUserPage(this.currentPage)
+        // Go from the first to the latest page
+        if(!page) page =  this.userStoryPages[ this.userStoryPages.length-1]
+        // oops
         if (!page) return
         this.goToPage(page.index);
     }
