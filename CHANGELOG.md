@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 17.8.0 (4 Aug 2022)
+Switch to prev page work in loop
+
 ##  Version 17.7.1 (3 Aug 2022)
 Scrolling in overlay fixed
 
