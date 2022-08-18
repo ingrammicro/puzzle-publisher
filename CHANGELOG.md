@@ -1,6 +1,10 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 17.8.1 (18 Aug 2022)
+Show comment for symbol instance
+Workaround for Sketch bug (thanks to cargeo@ for report)
+
 ##  Version 17.8.0 (4 Aug 2022)
 Switch to prev page work in loop
 
