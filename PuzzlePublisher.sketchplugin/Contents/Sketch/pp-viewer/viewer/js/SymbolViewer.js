@@ -354,7 +354,7 @@ class SymbolViewer extends AbstractViewer {
 
             info += sv._showLayerDimensions(layer)
             info += sv._showLayerSymbol(layer, symName, siLayer)
-            info += sv._showLayerComment(layer)
+            info += sv._showLayerComment(layer,siLayer)
             info += sv._showLayerStyle(layer, siLayer)
 
             // if layer has CSS classes described
@@ -516,9 +516,10 @@ class SymbolViewer extends AbstractViewer {
                 </div>`
     }
 
-    _showLayerComment (layer) {
+    _showLayerComment (layer,siLayer) {
         var comment = layer.comment
-        if (undefined == comment) return ""
+        if (comment===undefined && siLayer!=undefined) comment = siLayer.comment
+        if (comment===undefined) return ""
 
         return `
                 <hr>
