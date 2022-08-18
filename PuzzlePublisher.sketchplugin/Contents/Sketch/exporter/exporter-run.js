@@ -177,8 +177,8 @@ function runExporter(context, exportOptions = null)
 
     const isCmdExportToHTML = exportOptions['cmd'] == "exportHTML"
     var dontOpenBrowser = Settings.settingForKey(SettingKeys.PLUGIN_DONT_OPEN_BROWSER) == 1
-    var customWidth = Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_CUSTOM_WIDTH) + ""
-    var customHeight = Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_CUSTOM_HEIGHT) + ""
+    var customWidth = Utils.getPluginSetting(SettingKeys.PLUGIN_EXPORT_CUSTOM_WIDTH) 
+    var customHeight =Utils.getPluginSetting(SettingKeys.PLUGIN_EXPORT_CUSTOM_HEIGHT)
     var askSize = Settings.settingForKey(SettingKeys.PLUGIN_ASK_CUSTOM_SIZE) == 1
     var compress = Settings.settingForKey(SettingKeys.PLUGIN_COMPRESS) == 1
 
@@ -210,8 +210,8 @@ function runExporter(context, exportOptions = null)
         dialog.addCheckbox("open", "Open HTML in browser", !dontOpenBrowser)
         if (askSize)
         {
-            dialog.addTextInput("customWidth", "Artboard custom width (px)", customWidth + "", 'e.g. 1920')
-            dialog.addTextInput("customHeight", "Artboard custom height (px)", customHeight + "", 'e.g. 1080')
+            dialog.addTextInput("customWidth", "Artboard custom width (px)", customWidth, 'e.g. 1920')
+            dialog.addTextInput("customHeight", "Artboard custom height (px)", customHeight, 'e.g. 1080')
         }
 
         track(TRACK_EXPORT_DIALOG_SHOWN)
@@ -262,8 +262,10 @@ function runExporter(context, exportOptions = null)
 
         exportOptions.dontOpenBrowser = dontOpenBrowser
         exportOptions.compress = compress
-        if (customHeight !== "") exportOptions.customArtboardHeight = customHeight
-        if (customWidth !== "") exportOptions.customArtboardWidth = customWidth
+        if(askSize){
+            if (customHeight !== "") exportOptions.customArtboardHeight = customHeight
+            if (customWidth !== "") exportOptions.customArtboardWidth = customWidth
+        }
 
         // Export in background        
         var enabledJSON = Settings.settingForKey(SettingKeys.PLUGIN_EXPORT_DISABLE_INSPECTOR) != 1
