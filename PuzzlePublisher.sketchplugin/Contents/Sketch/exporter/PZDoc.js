@@ -229,7 +229,15 @@ class PZDoc {
             // load library colors
             var libs = require('sketch/dom').getLibraries()
             libs.filter(l => l.valid && l.enabled).forEach(function (lib) {
-                var stylesReferences = lib.getImportableSwatchReferencesForDocument(this.sDoc)
+                var stylesReferences = null
+                try{
+                    stylesReferences = lib.getImportableSwatchReferencesForDocument(this.sDoc)
+                }
+                catch (error)
+                {
+                    stylesReferences = null
+                }
+                if(!stylesReferences) return                
                 stylesReferences.forEach(function (s) {
                     this.swatchesMap[s.id] = {
                         sn: s.name,
