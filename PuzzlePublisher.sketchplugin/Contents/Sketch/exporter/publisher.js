@@ -101,7 +101,11 @@ class Publisher {
     }
 
     publish() {
-        this.readOptions()
+        this.readOptions() 
+
+        if(!this.checkMockupExists(this.allMockupsdDir, this.docFolder)){            
+            return false
+        }
 
         // Show this.UI
         if (!this.context.fromCmd) {
@@ -116,6 +120,7 @@ class Publisher {
         if ('' == destFolder) return true
         // drop trailed /
         destFolder = destFolder.replace(/(\/)$/, "")
+        
 
         // copy publish script
         if (!this.copyScript("publish.sh")) {
@@ -497,6 +502,13 @@ class Publisher {
                 return false
             }
         })
+    }
+
+    checkMockupExists(allMockupsdDir, docFolder){
+        const fullPath = allMockupsdDir+"/"+docFolder        
+        if(Utils.isFolderExists(fullPath)) return true
+        this.UI.alert('Error', `Local HTML is not found on \n${fullPath}\n\nYou need to run Export to HTML before publishing`)
+        return false
     }
 
     runPublishScript(version, allMockupsdDir, docFolder, remoteFolder, commentsID) {

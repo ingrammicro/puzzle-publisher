@@ -162,6 +162,13 @@ class Utils
         return objcStr.writeToFile_atomically_encoding_error(filePath, true, NSUTF8StringEncoding, null);
     }
 
+    static isFolderExists(path)
+    {
+        const fileManager = NSFileManager.defaultManager();
+        return fileManager.fileExistsAtPath(path)
+    }
+      
+
     static readFile(path)
     {
         const fileManager = NSFileManager.defaultManager();
