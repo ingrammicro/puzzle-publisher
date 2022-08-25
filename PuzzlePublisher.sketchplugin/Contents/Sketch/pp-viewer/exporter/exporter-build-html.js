@@ -136,7 +136,14 @@ function buildMainHTML(options)
         <script type="text/javascript" src="${srcPath}js/Viewer.js${verPostfix}" charset="UTF-8"></script>
         <script type="text/javascript" src="${srcPath}js/AbstractViewer.js${verPostfix}" charset="UTF-8"></script>
         <script type="text/javascript" src="${srcPath}js/CommentsViewer.js${verPostfix}" charset="UTF-8"></script>
-        <script type="text/javascript" src="${srcPath}js/GalleryViewer.js${verPostfix}" charset="UTF-8"></script>
+    `
+    if (!options.hideGallery)
+    {
+        s += `
+            <script type="text/javascript" src="${srcPath}js/GalleryViewer.js${verPostfix}" charset="UTF-8"></script>
+            `
+    }
+    s += `
         <script type="text/javascript" src="${srcPath}js/PresenterViewer.js${verPostfix}" charset="UTF-8"></script>
 	`
     if (options.loadLayers)
@@ -385,7 +392,7 @@ function buildMainHTML(options)
         },
         {
             ID: "", items: [
-                { ID: "", label: "View all screens", icon: "icGrid", key: "G", onclick: "viewer.galleryViewer.show()" },
+                { ID: "", label: "View all screens", icon: "icGrid", key: "G", onclick: "viewer.galleryViewer.show()", on: !options.hideGallery },
                 { ID: "start", label: "Go to start", icon: "icBack", key: "S", onclick: "viewer.goToPage(0)" },
                 { ID: "play", label: "Play", icon: "icPlay", key: "P", onclick: "viewer.presenterViewer.play()" },
             ]
