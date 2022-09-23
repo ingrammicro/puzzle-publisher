@@ -50,6 +50,9 @@ class Publisher
 
         this.miroExportInfoList = []
         this.miroEnabled = null
+
+        this.curlPath = "/usr/local/opt/curl/bin/curl"
+        this.userID = Utils.getUserID()
     }
 
 
@@ -352,12 +355,7 @@ class Publisher
         {
             this.UI.alert('Error', 'Version should be specified')
             return false
-        }
-        if (this.login == '')
-        {
-            this.UI.alert('Error', 'SFTP login should be specified')
-            return false
-        }
+        }     
         if (this.remoteFolder == '')
         {
             this.UI.alert('Error', 'Remote site folder should be specified')
@@ -371,14 +369,17 @@ class Publisher
     {
         let Settings = this.Settings
 
-        let askLogin = '' == this.login
-        let askSiteRoot = '' == this.siteRoot
         let askMessage = '' != this.serverToolsPath
         let askMiro = this.miroEnabled
 
+        if(this.login==="" &&  this.siteRoot===""){
+            publisher.UI.alert("Error", "Configure SFTP login ot HTTPS Site URL")
+            return false
+        }        
+
         // show dialod        
         const dialog = new UIDialog("Publish HTML", NSMakeRect(0, 0, 400,
-            180 + (askMessage ? 65 : 0) + (askLogin ? 60 : 0) + (askSiteRoot ? 60 : 0) + (askMiro ? 60 : 0)),
+            180 + (askMessage ? 65 : 0) + (askMiro ? 60 : 0)),
             "Publish", "Generated HTML will be uploaded to external site by SFTP.")
         dialog.removeLeftColumn()
 
@@ -393,18 +394,6 @@ class Publisher
 
         dialog.addTextInput("remoteFolder", "Remote Site Folder", this.remoteFolder, 'myprojects/project1', 350)
         dialog.addHint("remoteFolderHint", "Relative path on server")
-
-        if (askLogin)
-        {
-            dialog.addTextInput("login", "SFTP Login", this.login, 'html@mysite.com:/var/www/html/', 350)
-            dialog.addHint("loginHint", "SSH key should be uploaded to the site already")
-        }
-
-        if (askSiteRoot)
-        {
-            dialog.addTextInput("siteRoot", "Site Root URL (Optional)", this.siteRoot, 'http://mysite.com', 350)
-            dialog.addHint("siteRootHint", "Specify to open uploaded HTML in web browser automatically")
-        }
 
         if (askMiro)
         {
@@ -423,16 +412,6 @@ class Publisher
             }
 
             // Read data
-
-            if (askLogin)
-            {
-                this.login = dialog.views['login'].stringValue() + ""
-            }
-
-            if (askSiteRoot)
-            {
-                this.siteRoot = dialog.views['siteRoot'].stringValue() + ""
-            }
             if (askMiro)
             {
                 this.miroBoardName = dialog.views['miroBoard'].stringValue() + ""
@@ -480,10 +459,6 @@ class Publisher
             dialog.finish()
             track(TRACK_PUBLISH_DIALOG_CLOSED, { "cmd": "ok" })
             // save new version into document settings         
-            if (askSiteRoot)
-            {
-                Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_SITEROOT, this.siteRoot)
-            }
             if (askMiro)
             {
                 Settings.setDocumentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_MIRO_BOARDID, this.miroBoardID)
@@ -643,12 +618,13 @@ class Publisher
         let args = ["--no-progress-meter"]
         const cmd = "cms"
         let url = this.siteRoot + this.serverToolsPath + "/upload.php?cmd=" + cmd
-        url += `&tid=${this.secret}`
-        url += `&ver=${this.ver}`
+        url += `&tid=${encodeURI(this.secret)}`
+        url += `&uid=${encodeURI(this.userID)}`
+        url += `&ver=${encodeURI(this.ver)}`
         url += `&docid=${encodeURI(this.remoteFolder)}`
         args.push(url)
 
-        return Utils.runCommand('/usr/bin/curl', args)
+        return Utils.runCommand(this.curlPath, args)
     }
 
     publishImagesInFolderByHTTPS(localPath, defaultImageType)
@@ -712,16 +688,16 @@ class Publisher
         const escapedPath = fullPath
         let args = ["--no-progress-meter", "-T", escapedPath]
         let url = this.siteRoot + this.serverToolsPath + "/upload.php?cmd=" + cmd
-        url += `&tid=${this.secret}`
-        url += `&docid=${encodeURI(this.remoteFolder)}`
-        //url += `&docid=123`
+        url += `&tid=${encodeURI(this.secret)}`
+        url += `&uid=${encodeURI(this.userID)}`
         url += `&s=${isStart ? 1 : 0}`
         if (imageType != "") url += `&t=${imageType}`
         if (dirType != "") url += `&dt=${dirType}`
         url += `&n=${fileName}`
+        log(url)
         args.push(url)
 
-        return Utils.runCommand('/usr/bin/curl', args)
+        return Utils.runCommand(this.curlPath, args)
     }
 
     runScriptWithArgs(scriptName, args)

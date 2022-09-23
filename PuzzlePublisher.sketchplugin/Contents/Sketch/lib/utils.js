@@ -31,7 +31,15 @@ Rectangle.prototype.copyToRect = function ()
 
 class Utils
 {
-
+    static getUserID(){
+        let userID = Utils.getPluginSetting(SettingKeys.PLUGIN_USER_ID)
+        if(userID===""){
+            userID = NSUUID.UUID().UUIDString().substr(0,8)
+            const Settings = require('sketch/settings')
+            Settings.setSettingForKey(SettingKeys.PLUGIN_USER_ID,userID)
+        }
+        return userID
+    }
 
     static getDocSetting(doc, key, defaultValue = '')
     {

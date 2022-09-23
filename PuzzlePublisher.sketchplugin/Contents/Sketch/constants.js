@@ -159,6 +159,8 @@ const SettingKeys = {
     PLUGIN_INSTALLED: "pluginInstalled",
     PLUGIN_GA_DISABLED: "pluginGADisabled",
     PLUGIN_LOGDEBUG_ENABLED: "pluginLogDebugEnabled",
+    
+    PLUGIN_USER_ID:"PLUGIN_USER_ID",
 
     ARTBOARD_TYPE: "artboardType",
     ARTBOARD_DISABLE_FIXED: "ARTBOARD_DISABLE_FIXED",
