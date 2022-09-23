@@ -9,9 +9,11 @@ const replaceValidKeys = [
     "l", //styleName
     "text", "comment", "sharedLib"]
 // smName: symbol master Name
-function replacer(key, value) {
+function replacer(key, value)
+{
     // Pass known keys and array indexes
-    if (value != undefined && (replaceValidKeys.indexOf(key) >= 0 || !isNaN(key))) {
+    if (value != undefined && (replaceValidKeys.indexOf(key) >= 0 || !isNaN(key)))
+    {
         return value
     }
     return undefined
@@ -19,8 +21,10 @@ function replacer(key, value) {
 
 var pzDoc = null
 
-class PZDoc {
-    constructor() {
+class PZDoc
+{
+    constructor()
+    {
         pzDoc = this
         var Document = require('sketch/dom').Document
         this.sDoc = Document.getSelectedDocument()
@@ -40,7 +44,8 @@ class PZDoc {
 
     }
 
-    collectData() {
+    collectData()
+    {
         // init required data
         this._buildSymbolDict()
 
@@ -48,20 +53,24 @@ class PZDoc {
         const mPages = []
 
 
-        if (Constants.EXPORT_MODE_CURRENT_PAGE == exporter.exportOptions.mode) {
+        if (Constants.EXPORT_MODE_CURRENT_PAGE == exporter.exportOptions.mode)
+        {
             // build only current page 
             const mPage = new PZPage(Sketch.fromNative(exporter.exportOptions.currentPage))
             mPage.collectData()
             mPages.push(mPage)
-        } else if (Constants.EXPORT_MODE_SELECTED_ARTBOARDS == exporter.exportOptions.mode) {
+        } else if (Constants.EXPORT_MODE_SELECTED_ARTBOARDS == exporter.exportOptions.mode)
+        {
             // build only selected artboards on current page         
             const mPage = new PZPage(Sketch.fromNative(exporter.exportOptions.currentPage))
             mPage.collectData(exporter.exportOptions.selectedArtboards)
             mPages.push(mPage)
 
-        } else {
+        } else
+        {
             // build all pages and artboards
-            for (var sPage of this.sDoc.pages) {
+            for (var sPage of this.sDoc.pages)
+            {
                 if (DEBUG) exporter.logMsg("PZDoc:collectData() process page=" + sPage.name)
 
                 if (exporter.filterAster && sPage.name.indexOf("*") == 0) continue
@@ -79,21 +88,25 @@ class PZDoc {
     }
 
 
-    buildLinks() {
+    buildLinks()
+    {
         exporter.logMsg('PZDoc.buildLinks: running')
-        for (var mLayer of this.mLinkedLayers) {
+        for (var mLayer of this.mLinkedLayers)
+        {
             mLayer.buildLinks(' ');
         }
         exporter.logMsg('PZDoc.buildLinks: stop')
     }
 
 
-    export() {
+    export()
+    {
         exporter.logMsg(" PZDoc:run running...")
 
         /// Export pages
         this.totalImages = 0
-        for (var page of this.mPages) {
+        for (var page of this.mPages)
+        {
             page.export();
         }
 
@@ -101,17 +114,20 @@ class PZDoc {
     }
 
 
-    _getLibAssetsPath(lib) {
+    _getLibAssetsPath(lib)
+    {
         return Utils.cutLastPathFolder(lib.sDoc.path) + "/" + Constants.ASSETS_FOLDER_PREFIX + "/" + lib.jsLib.name
     }
 
-    getSymbolData() {
+    getSymbolData()
+    {
         // load library inspector file
         let inspectors = ""
         let vars = ""
         const libs = this._getLibraries()
 
-        for (const lib of libs) {
+        for (const lib of libs)
+        {
             if (!this.usedLibs[lib.jsLib.name]) continue
             const libAssetsPath = this._getLibAssetsPath(lib)
             //Utils.cutLastPathFolder(lib.sDoc.path) + "/" + lib.jsLib.name
@@ -119,22 +135,24 @@ class PZDoc {
             exporter.logMsg('pathToSymbolTokens = ' + pathToSymbolTokens + " name=" + lib.jsLib.name)
             const inspectorData = Utils.readFile(pathToSymbolTokens)
             if (inspectors != "") inspectors += ","
-            inspectors += '"' + Utils.toFilename(lib.jsLib.name) + '":' + (inspectorData ? inspectorData : "{}")
+            inspectors += '"' + Utils.toFilename(lib.jsLib.name, true, false) + '":' + (inspectorData ? inspectorData : "{}")
             //
             const pathToVars = libAssetsPath + "/" + Constants.VARSFILE_POSTFIX
             const varsData = Utils.readFile(pathToVars)
             if (vars != "") vars += ","
-            vars += "'" + Utils.toFilename(lib.jsLib.name) + "':" + (varsData ? varsData : "{}")
+            vars += "'" + Utils.toFilename(lib.jsLib.name, true, false) + "':" + (varsData ? varsData : "{}")
         }
         return "const SYMBOLS_DICT = {" + inspectors + "};\n" +
             "const TOKENS_DICT = {" + vars + "};"
     }
 
 
-    getCSSIncludes() {
+    getCSSIncludes()
+    {
         const cssIncludes = []
         const libs = this._getLibraries()
-        for (const lib of libs) {
+        for (const lib of libs)
+        {
             const libAssetsPath = this._getLibAssetsPath(lib)
             //const libPath = Utils.cutLastPathFolder(lib.sDoc.path) + "/" + lib.jsLib.name
             // Copy library CSS to Resources folder
@@ -142,9 +160,11 @@ class PZDoc {
                 const pathSrcCSS = libAssetsPath + "/" + Constants.CSSFILE_POSTFIX
                 const cssFileName = Utils.toFilename(lib.jsLib.name + ".css")
                 const css = Utils.readFile(pathSrcCSS)
-                if (undefined != css) {
+                if (undefined != css)
+                {
                     const pathResultCSS = exporter.createDestFile(cssFileName, Constants.DEST_RESOURCES_DIRECTORY)
-                    if (!Utils.writeToFile(css, pathResultCSS)) {
+                    if (!Utils.writeToFile(css, pathResultCSS))
+                    {
                         exporter.logError("getSymbolData: can't library save CSS to " + pathResultCSS)
                     }
                     cssIncludes.push(cssFileName)
@@ -156,14 +176,17 @@ class PZDoc {
     }
 
 
-    getJSON() {
+    getJSON()
+    {
 
         exporter.logMsg(" getJSON: cleanup before saving...")
-        this.mAllLayers.forEach(l => {
+        this.mAllLayers.forEach(l =>
+        {
             l.clearRefsBeforeJSON()
         });
 
-        this.mAllArtboards.forEach(l => {
+        this.mAllArtboards.forEach(l =>
+        {
             l.clearRefsBeforeJSON()
         });
 
@@ -174,7 +197,8 @@ class PZDoc {
         return json
     }
 
-    undoChanges() {
+    undoChanges()
+    {
         if (!exporter.enabledJSON) Utils.actionWithType(this.sDoc.sketchObject, "MSUndoAction").doPerformAction(nil);
 
         this.jsLibs = []
@@ -188,12 +212,14 @@ class PZDoc {
 
 
     // return index of new artboard
-    addArtboard(mArtboard) {
+    addArtboard(mArtboard)
+    {
         this.artboardsDict[mArtboard.name] = mArtboard
         this.artboardIDsDict[mArtboard.objectID] = mArtboard
         this.mAllArtboards.push(mArtboard)
 
-        if (mArtboard.nlayer.isFlowHome()) {
+        if (mArtboard.nlayer.isFlowHome())
+        {
             this.startArtboardIndex = this.artboardCount
         }
 
@@ -203,18 +229,22 @@ class PZDoc {
 
 
     // return Sketch native object
-    findArtboardByID(artboardID) {
+    findArtboardByID(artboardID)
+    {
         let artboard = this.artboardIDsDict[artboardID]
         if (artboard) return artboard
         return this._findLibraryArtboardByID(artboardID)
     }
 
-    getLayerWithID(id) {
+    getLayerWithID(id)
+    {
         return this.sDoc.getLayerWithID(id)
     }
 
-    getSymbolMasterByID(id) {
-        if (!(id in this.sSymbols)) {
+    getSymbolMasterByID(id)
+    {
+        if (!(id in this.sSymbols))
+        {
             exporter.logMsg('getSymbolMasterByID can not find symbol by ID=' + id)
             return undefined
         }
@@ -222,23 +252,28 @@ class PZDoc {
     }
 
     // result: array [{sn: swatch name,ln: library name},..] OR null
-    getSwatchInfoByID(swatchID) {
+    getSwatchInfoByID(swatchID)
+    {
         // load all swatched initially
-        if (undefined == this.swatchesMap) {
+        if (undefined == this.swatchesMap)
+        {
             this.swatchesMap = {}
             // load library colors
             var libs = require('sketch/dom').getLibraries()
-            libs.filter(l => l.valid && l.enabled).forEach(function (lib) {
+            libs.filter(l => l.valid && l.enabled).forEach(function (lib)
+            {
                 var stylesReferences = null
-                try{
+                try
+                {
                     stylesReferences = lib.getImportableSwatchReferencesForDocument(this.sDoc)
                 }
                 catch (error)
                 {
                     stylesReferences = null
                 }
-                if(!stylesReferences) return                
-                stylesReferences.forEach(function (s) {
+                if (!stylesReferences) return
+                stylesReferences.forEach(function (s)
+                {
                     this.swatchesMap[s.id] = {
                         sn: s.name,
                         ln: lib.name
@@ -261,37 +296,45 @@ class PZDoc {
     //////////////////////////// PRIVATE ///////////////////////
 
 
-    _collectLibArtboards() {
-        for (const mLayer of this.mLinkedLayers) {
-            if (mLayer.flow && mLayer.flow.targetID && !(mLayer.flow.targetID in this.artboardIDsDict)) {
+    _collectLibArtboards()
+    {
+        for (const mLayer of this.mLinkedLayers)
+        {
+            if (mLayer.flow && mLayer.flow.targetID && !(mLayer.flow.targetID in this.artboardIDsDict))
+            {
                 const mArtboard = this._findLibraryArtboardByID(artboardID)
             }
         }
     }
 
-    _sortArboards() {
+    _sortArboards()
+    {
         const exportOptions = exporter.exportOptions
 
-        for (const mPage of this.mPages) {
+        for (const mPage of this.mPages)
+        {
             mPage.sortArboards()
         }
 
     }
 
     // return Sketch native object
-    _findLibraryArtboardByID(artboardID) {
+    _findLibraryArtboardByID(artboardID)
+    {
         if (exporter.ignoreLibArtboards) return false
         if (DEBUG) exporter.logMsg("findLibraryArtboardByID running...  artboardID:" + artboardID)
         // find Sketch Artboard
         var sArtboard = undefined
         var lib = undefined
-        for (lib of this._getLibraries()) {
+        for (lib of this._getLibraries())
+        {
             if (DEBUG) exporter.logMsg("findLibraryArtboardByID getLayerWithID for lib " + lib.jsLib.name)
             sArtboard = lib.sDoc.getLayerWithID(artboardID)
             if (sArtboard) break
         }
         // check artboard existing
-        if (!sArtboard) {
+        if (!sArtboard)
+        {
             if (DEBUG) exporter.logMsg("findLibraryArtboardByID FAILED")
             return false
         }
@@ -305,19 +348,22 @@ class PZDoc {
         return this.artboardIDsDict[artboardID]
     }
 
-    _getLibraries() {
+    _getLibraries()
+    {
         if (undefined != this.jsLibs) return this.jsLibs
 
         exporter.logMsg("_getLibraries: start")
         this.jsLibs = []
 
         var libraries = require('sketch/dom').getLibraries()
-        for (const jsLib of libraries) {
+        for (const jsLib of libraries)
+        {
             if (!jsLib.valid || !jsLib.enabled) continue
             exporter.logMsg("_getLibraries: try to load document for library " + jsLib.name + "")
 
             const sDoc = jsLib.getDocument()
-            if (!sDoc) {
+            if (!sDoc)
+            {
                 exporter.logMsg("_getLibraries: can't load document for library " + sDoc.path + "")
                 continue
             }
@@ -331,10 +377,12 @@ class PZDoc {
     }
 
 
-    _buildSymbolDict(sDoc = null) {
+    _buildSymbolDict(sDoc = null)
+    {
         if (!sDoc) sDoc = this.sDoc
 
-        for (const sSymbol of sDoc.getSymbols()) {
+        for (const sSymbol of sDoc.getSymbols())
+        {
             const sid = sSymbol.symbolId
             if (sid in this.sSymbols) continue
             this.sSymbols[sid] = sSymbol

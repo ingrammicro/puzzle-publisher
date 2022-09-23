@@ -571,7 +571,7 @@ class ViewerPage
         const newParentPage = viewer.currentPage
 
         if (!this.imageDiv) this.loadImages(true)
-        if (link.panel === undefined) link.panel = this
+        if(link.panel===undefined) link.panel = this
 
         // check if we need to hide any other already visible overlay
         var positionCloned = false
@@ -601,11 +601,10 @@ class ViewerPage
         const div = this.imageDiv
 
         this.inFixedPanel = linkParentFixed && (this.overlayAlsoFixed || link.panel.isVertScroll)
-        if (!this.garentPage || this.parentPage.id != newParentPage.id || div.hasClass('hidden'))
+        if (!this.parentPage || this.parentPage.id != newParentPage.id || div.hasClass('hidden'))
         {
-            if (link.panel.isVertScroll)
-            {
-                div.removeClass('fixedPanelFloat')
+            if(link.panel.isVertScroll){
+                div.removeClass('fixedPanelFloat') 
                 div.addClass('divPanel')
             }
             else if (this.inFixedPanel)
@@ -658,23 +657,20 @@ class ViewerPage
                         (0 == this.overlayPin) // ARTBOARD_OVERLAY_PIN_HOTSPOT
                         && (3 == this.overlayPinHotspot) //ARTBOARD_OVERLAY_PIN_HOTSPOT_TOP_LEFT
                     )
-                )
-                {// OLD_ARTBOARD_OVERLAY_ALIGN_HOTSPOT_TOP_LEFT
+                ){
                     posX -= this.overlayShadowX
                 }
-                if (link.panel.isVertScroll)
-                {
-                    posY -= link.panel.y
+                if(link.panel.isVertScroll){
+                    posY-=link.panel.y
                     //if(orgPage.type==="modal") posY+=orgPage.
                 }
 
                 this.currentX = posX
                 this.currentY = posY
-
-                if (link.panel.isVertScroll)
-                {
+                
+                if (link.panel.isVertScroll){
                     link.panel.imageDiv.append(div)
-                } else if ("modal" == orgPage.type)
+                }else if ("modal" == orgPage.type) 
                     newParentPage.imageDiv.append(div)
                 div.css('top', posY + "px")
                 div.css('margin-left', posX + "px")
@@ -976,6 +972,7 @@ class ViewerPage
         for (var link of panel.links)
         {
             link.panel = panel
+            //
             let x = link.rect.x + (link.isParentFixed ? panel.x : 0)
             let y = link.rect.y + (link.isParentFixed ? panel.y : 0)
 
@@ -1097,8 +1094,7 @@ function handleLinkEvent(event)
                 width: link.rect.width,
                 height: link.rect.height,
             }
-            if (orgLink.fixedPanelIndex >= 0)
-            {
+            if(orgLink.fixedPanelIndex >= 0){
                 orgLink.panel = currentPage.fixedPanels[orgLink.fixedPanelIndex]
             }
 

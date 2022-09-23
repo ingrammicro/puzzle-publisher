@@ -8,12 +8,15 @@
 
 let publisher = null
 
-Api.prototype.artboardsToPNG = function (context, exportAll, scale) {
+Api.prototype.artboardsToPNG = function (context, exportAll, scale)
+{
     return publisher.miroExportInfoList
 }
 
-class Publisher {
-    constructor(context, doc) {
+class Publisher
+{
+    constructor(context, doc)
+    {
         this.doc = doc;
         this.UI = require('sketch/ui')
         this.context = context;
@@ -33,7 +36,8 @@ class Publisher {
 
         this.docFolder = this.doc.cloudName();
         let posSketch = this.docFolder.indexOf(".sketch")
-        if (posSketch > 0) {
+        if (posSketch > 0)
+        {
             this.docFolder = this.docFolder.slice(0, posSketch)
         }
 
@@ -49,7 +53,8 @@ class Publisher {
     }
 
 
-    readOptions() {
+    readOptions()
+    {
         // read current version from document settings
         let Settings = this.Settings
 
@@ -73,11 +78,13 @@ class Publisher {
 
         this.miroEnabled = null == this.miroEnabled ? Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_MIRO_ENABLED) == 1 : this.miroEnabled
         this.miroBoards = null
-        if (this.miroEnabled) {
+        if (this.miroEnabled)
+        {
             this.miroBoardName = Utils.getDocSetting(this.doc, SettingKeys.DOC_PUBLISH_MIRO_BOARD)
             this.oldMiroBoardName = this.miroBoardName
             this.miroBoardID = Utils.getDocSetting(this.doc, SettingKeys.DOC_PUBLISH_MIRO_BOARDID)
-            if (("" == this.miroBoardID || "" == this.miroBoardName) && (this.miroBoardID + this.miroBoardName) != '') {
+            if (("" == this.miroBoardID || "" == this.miroBoardName) && (this.miroBoardID + this.miroBoardName) != '')
+            {
                 this._initMiro()
                 this._validateMiroParams()
             }
@@ -96,39 +103,46 @@ class Publisher {
         return true
     }
 
-    log(msg) {
+    log(msg)
+    {
         //log(msg)
     }
 
-    publish() {
-        this.readOptions() 
+    publish()
+    {
+        this.readOptions()
 
-        if(!this.checkMockupExists(this.allMockupsdDir, this.docFolder)){            
+        if (!this.checkMockupExists(this.allMockupsdDir, this.docFolder))
+        {
             return false
         }
 
         // Show this.UI
-        if (!this.context.fromCmd) {
-            while (true) {
+        if (!this.context.fromCmd)
+        {
+            while (true)
+            {
                 if (!this.askOptions()) return false
                 if (this.checkOptions()) break
             }
         }
 
-        let version = this.ver
+        const version = this.ver
         let destFolder = this.remoteFolder
         if ('' == destFolder) return true
         // drop trailed /
         destFolder = destFolder.replace(/(\/)$/, "")
-        
+
 
         // copy publish script
-        if (!this.copyScript("publish.sh")) {
+        if (!this.copyScript("publish.sh"))
+        {
             return false
         }
 
         // 
-        if (this.miroEnabled && this.miroBoardID != "") {
+        if (this.miroEnabled && this.miroBoardID != "")
+        {
             this.publishToMiro()
         }
 
@@ -137,11 +151,13 @@ class Publisher {
         // run publish script
         let commentsID = destFolder
         commentsID = Utils.toFilename(commentsID)
-        const runResult = this.runPublishScript(version, this.allMockupsdDir, this.docFolder, destFolder, commentsID)
+        //const runResult = this.runPublishScript(version, this.allMockupsdDir, this.docFolder, destFolder, commentsID)
+        const runResult = this.publishMockupsByHTTPS(destFolder, commentsID)
 
         track(TRACK_PUBLISH_COMPLETED)
         // success
-        if (runResult.result) {
+        if (runResult.result)
+        {
             const openURL = this.siteRoot + destFolder + (version == "-1" ? "" : ("/" + version)) + "/index.html"
             const announceFolder = destFolder + (version == "-1" ? "" : ("/" + version))
 
@@ -149,14 +165,18 @@ class Publisher {
             log(" SAVING DOCUMENT...")
             const Dom = require('sketch/dom')
             const jDoc = Dom.fromNative(this.doc)
-            jDoc.save(err => {
-                if (err) {
+            jDoc.save(err =>
+            {
+                if (err)
+                {
                     log(" Failed to save a document. Error: " + err)
                 }
             })
             // inform server about new version
-            if (this.message != "--" && this.serverToolsPath != "") {
-                try {
+            if (this.message != "--" && this.serverToolsPath != "")
+            {
+                try
+                {
                     var url = this.siteRoot + this.serverToolsPath + Constants.SERVER_ANNOUNCE_SCRIPT
                     url += "?author=" + encodeURI(this.authorName).replace(/[#]/g, '')
                     if ("" != this.authorEmail) url += "&email=" + encodeURI(this.authorEmail).replace(/[#]/g, '')
@@ -164,10 +184,12 @@ class Publisher {
                     url += "&msg=" + encodeURI(this.message).replace(/[#]/g, '')
                     url += "&ver=" + encodeURI(this.ver).replace(/[#]/g, '')
                     url += "&dir=" + encodeURI(announceFolder).replace(/[#]/g, '')
-                    if (this.message.includes('--NOTELE')) {
+                    if (this.message.includes('--NOTELE'))
+                    {
                         url += "&NOTELE=1"
                     }
-                    if (DEBUG) {
+                    if (DEBUG)
+                    {
                         log(url)
                     }
                     var nURL = NSURL.URLWithString(url);
@@ -176,24 +198,30 @@ class Publisher {
                     //var json = NSJSONSerialization.JSONObjectWithData_options_error(data, 0, nil)
                     //log(json)
 
-                } catch (e) {
+                } catch (e)
+                {
                     log("Exception: " + e);
                 }
             }
-            if (!this.context.fromCmd) {
+            if (!this.context.fromCmd)
+            {
                 // open browser                
-                if (this.siteRoot != '') {
+                if (this.siteRoot != '')
+                {
                     const openResult = Utils.runCommand('/usr/bin/open', [openURL])
                     log(" OPENING PUBLISHED PAGE...")
-                    if (openResult.result) {
-                    } else {
+                    if (openResult.result)
+                    {
+                    } else
+                    {
                         this.UI.alert('Can not open HTML in browser', openResult.output)
                     }
                 }
                 this.Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_LAST_MSG, "")
                 this.showMessage(runResult)
             }
-        } else {
+        } else
+        {
             this.showMessage(runResult)
             return false
         }
@@ -201,25 +229,30 @@ class Publisher {
         return true
     }
 
-    publishToMiro(standalone = false) {
-        if (standalone) {
+    publishToMiro(standalone = false)
+    {
+        if (standalone)
+        {
             this.miroEnabled = true
             this.readOptions()
         }
         if (standalone && !this.askMiroOptions()) return false
 
 
-        try {
+        try
+        {
             log("publishToMiro: start")
 
             // Load story.js file and eval it
             const storyPath = this.mockupsPath + "/data/story.js"
             let storyJS = Utils.readFile(storyPath)
-            if (undefined == storyJS) {
+            if (undefined == storyJS)
+            {
                 this.UI.alert('Error', "Can't find mockups on path: " + this.mockupsPath)
                 return false
             }
-            String.prototype.replaceAllMe = function (search, replacement) {
+            String.prototype.replaceAllMe = function (search, replacement)
+            {
                 return this.split(search).join(replacement)
             }
             storyJS = Utils.readFile(storyPath).replace("var story = {", "this.story = {")
@@ -232,31 +265,38 @@ class Publisher {
             // Publish        
             log("publishToMiro: start publishing")
             const result = api.uploadArtboardsToRTB(this.context, this.miroBoardID, true)
-            if (result != api.UploadEnum.SUCCESS) {
+            if (result != api.UploadEnum.SUCCESS)
+            {
                 throw "Failed to publish"
             }
 
             // Show in browser
-            if (standalone) {
+            if (standalone)
+            {
                 var fullBoardURL = boardURL + this.miroBoardID;
                 const openResult = Utils.runCommand('/usr/bin/open', [fullBoardURL])
-                if (openResult.result) {
-                } else {
+                if (openResult.result)
+                {
+                } else
+                {
                     this.UI.alert('Can not open HTML in browser', openResult.output)
                 }
                 require('sketch/ui').alert('Success', 'Published successfully')
             }
         }
-        catch (error) {
+        catch (error)
+        {
             this.UI.alert('Publishing to Miro failed', error)
         }
-        finally {
+        finally
+        {
             log("publishToMiro: done")
         }
     }
 
 
-    getArtboardsListForMiro() {
+    getArtboardsListForMiro()
+    {
         var imagePath = this.fullImagesPath
         var exportInfoList = [];
         const Dom = require('sketch/dom')
@@ -265,9 +305,11 @@ class Publisher {
         let errors = ""
 
         log("Miro: build page list: start")
-        for (var page of this.story.pages.filter(el => "external" != el.type)) {
+        for (var page of this.story.pages.filter(el => "external" != el.type))
+        {
             const artboard = jDoc.getLayerWithID(page["id"])
-            if (!artboard) {
+            if (!artboard)
+            {
                 //if ("" != errors) errors += "\n"
                 //errors += page['title']
                 continue
@@ -276,7 +318,8 @@ class Publisher {
             exportInfoList.push(exportInfo);
         }
         log("Miro: build page list: done")
-        if ("" != errors) {
+        if ("" != errors)
+        {
             this.UI.alert('Can not find by ID the following artboards', errors)
             return null
         }
@@ -285,30 +328,38 @@ class Publisher {
 
 
 
-    showMessage(result) {
-        if (result.result) {
+    showMessage(result)
+    {
+        if (result.result)
+        {
             this.UI.alert('Success', PublishKeys.SHOW_OUTPUT ? result.output : 'Mockups published!')
-        } else {
+        } else
+        {
             this.showOutput(result)
         }
     }
 
-    showOutput(result) {
+    showOutput(result)
+    {
         if (result.result && !PublishKeys.SHOW_OUTPUT) return true
         this.UI.alert(result.result ? 'Output' : 'Error', result.output)
     }
 
-    checkOptions() {
+    checkOptions()
+    {
 
-        if (this.ver == '') {
+        if (this.ver == '')
+        {
             this.UI.alert('Error', 'Version should be specified')
             return false
         }
-        if (this.login == '') {
+        if (this.login == '')
+        {
             this.UI.alert('Error', 'SFTP login should be specified')
             return false
         }
-        if (this.remoteFolder == '') {
+        if (this.remoteFolder == '')
+        {
             this.UI.alert('Error', 'Remote site folder should be specified')
             return false
         }
@@ -316,7 +367,8 @@ class Publisher {
     }
 
 
-    askOptions() {
+    askOptions()
+    {
         let Settings = this.Settings
 
         let askLogin = '' == this.login
@@ -330,7 +382,8 @@ class Publisher {
             "Publish", "Generated HTML will be uploaded to external site by SFTP.")
         dialog.removeLeftColumn()
 
-        if (askMessage) {
+        if (askMessage)
+        {
             dialog.addTextBox("message", "Change Description", this.message, 'Added Remove button', 40)
             dialog.addHint("messageHint", "Describe briefly was changed")
         }
@@ -341,45 +394,54 @@ class Publisher {
         dialog.addTextInput("remoteFolder", "Remote Site Folder", this.remoteFolder, 'myprojects/project1', 350)
         dialog.addHint("remoteFolderHint", "Relative path on server")
 
-        if (askLogin) {
+        if (askLogin)
+        {
             dialog.addTextInput("login", "SFTP Login", this.login, 'html@mysite.com:/var/www/html/', 350)
             dialog.addHint("loginHint", "SSH key should be uploaded to the site already")
         }
 
-        if (askSiteRoot) {
+        if (askSiteRoot)
+        {
             dialog.addTextInput("siteRoot", "Site Root URL (Optional)", this.siteRoot, 'http://mysite.com', 350)
             dialog.addHint("siteRootHint", "Specify to open uploaded HTML in web browser automatically")
         }
 
-        if (askMiro) {
+        if (askMiro)
+        {
             this.addMiroBoardSelector(dialog, 350, " (optional)")
         }
 
 
         track(TRACK_PUBLISH_DIALOG_SHOWN)
-        while (true) {
+        while (true)
+        {
             const result = dialog.run()
-            if (!result) {
+            if (!result)
+            {
                 track(TRACK_PUBLISH_DIALOG_CLOSED, { "cmd": "cancel" })
                 return false
             }
 
             // Read data
 
-            if (askLogin) {
+            if (askLogin)
+            {
                 this.login = dialog.views['login'].stringValue() + ""
             }
 
-            if (askSiteRoot) {
+            if (askSiteRoot)
+            {
                 this.siteRoot = dialog.views['siteRoot'].stringValue() + ""
             }
-            if (askMiro) {
+            if (askMiro)
+            {
                 this.miroBoardName = dialog.views['miroBoard'].stringValue() + ""
             }
 
             this.remoteFolder = dialog.views['remoteFolder'].stringValue() + ""
 
-            if (askMessage) {
+            if (askMessage)
+            {
                 this.message = dialog.views['message'].stringValue() + ""
             }
 
@@ -388,12 +450,15 @@ class Publisher {
             this.ver = ver
 
             // check data
-            if (askMiro) {
-                if ("" == this.miroBoardName) {
+            if (askMiro)
+            {
+                if ("" == this.miroBoardName)
+                {
                     // Set empty board
                     this.miroBoardID = ""
                     this.miroBoardIndex = -1
-                } else if (this.oldMiroBoardName != this.miroBoardName) {
+                } else if (this.oldMiroBoardName != this.miroBoardName)
+                {
                     // Change name
 
                     // load Miro boards to find the new ID
@@ -401,7 +466,8 @@ class Publisher {
                     this.miroBoardIndex = this.miroBoards.boards.indexOf(this.miroBoardName)
                     this.miroBoardID = this.miroBoardIndex >= 0 ? this.miroBoards.indexIdsMap[this.miroBoardIndex] : ""
                 }
-                if ("" != this.miroBoardName && "" == this.miroBoardID) {
+                if ("" != this.miroBoardName && "" == this.miroBoardID)
+                {
                     this.UI.alert("Error", "No such board in Miro")
                     continue
                 }
@@ -414,10 +480,12 @@ class Publisher {
             dialog.finish()
             track(TRACK_PUBLISH_DIALOG_CLOSED, { "cmd": "ok" })
             // save new version into document settings         
-            if (askSiteRoot) {
+            if (askSiteRoot)
+            {
                 Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_SITEROOT, this.siteRoot)
             }
-            if (askMiro) {
+            if (askMiro)
+            {
                 Settings.setDocumentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_MIRO_BOARDID, this.miroBoardID)
                 Settings.setDocumentSettingForKey(this.doc, SettingKeys.DOC_PUBLISH_MIRO_BOARD, this.miroBoardName)
             }
@@ -429,25 +497,30 @@ class Publisher {
         return false
     }
 
-    askMiroOptions() {
+    askMiroOptions()
+    {
         if (!this._initMiro() || !this._validateMiroParams()) return false
 
         const dialog = new UIDialog("Select Miro Board ", NSMakeRect(0, 0, 350, 60), "Select", "Previously exported pages will be uploaded to Miro whiteboard as images")
         dialog.removeLeftColumn()
         dialog.addSelect("miroBoard", "", this.miroBoardIndex, this.miroBoards.boards, 350)
 
-        while (true) {
+        while (true)
+        {
             const result = dialog.run()
-            if (!result) {
+            if (!result)
+            {
                 return false
             }
             const miroBoardIndex = dialog.views['miroBoard'].indexOfSelectedItem()
-            if (0 > miroBoardIndex) {
+            if (0 > miroBoardIndex)
+            {
                 publisher.UI.alert("Error", "Miro board should be specified")
                 continue
             }
             let miroBoardID = this.miroBoards.indexIdsMap[miroBoardIndex]
-            if ("" == miroBoardID) {
+            if ("" == miroBoardID)
+            {
                 publisher.UI.alert("Error", "Miro board should be specified")
                 continue
             }
@@ -463,7 +536,8 @@ class Publisher {
         return false
     }
 
-    addMiroBoardSelector(dialog, width = 520, inlineHintPostfix = "") {
+    addMiroBoardSelector(dialog, width = 520, inlineHintPostfix = "")
+    {
 
         //dialog.addTextInput("miroBoard", "Miro board", this.miroBoard, 'Board name', 350)
 
@@ -471,7 +545,8 @@ class Publisher {
             id: "miroBoard", label: "Miro board", labelSelect: "Select",
             textValue: this.miroBoardName,
             inlineHint: 'Board name' + inlineHintPostfix, width,
-            customHandler: function () {
+            customHandler: function ()
+            {
                 if (!publisher._initMiro()) return false
 
                 const dialog = new UIDialog("Select Miro Board ", NSMakeRect(0, 0, 350, 60), "Select")
@@ -483,13 +558,16 @@ class Publisher {
 
                 dialog.addSelect("miroBoard", "", currentBoardIndex, publisher.miroBoards.boards, 350)
 
-                while (true) {
+                while (true)
+                {
                     const result = dialog.run()
-                    if (!result) {
+                    if (!result)
+                    {
                         return false
                     }
                     const miroBoardIndex = dialog.views['miroBoard'].indexOfSelectedItem()
-                    if (0 > miroBoardIndex) {
+                    if (0 > miroBoardIndex)
+                    {
                         publisher.UI.alert("Error", "Miro board should be specified")
                         continue
                     }
@@ -504,25 +582,150 @@ class Publisher {
         })
     }
 
-    checkMockupExists(allMockupsdDir, docFolder){
-        const fullPath = allMockupsdDir+"/"+docFolder        
-        if(Utils.isFolderExists(fullPath)) return true
+    checkMockupExists(allMockupsdDir, docFolder)
+    {
+        const fullPath = allMockupsdDir + "/" + docFolder
+        if (Utils.isFolderExists(fullPath)) return true
         this.UI.alert('Error', `Local HTML is not found on \n${fullPath}\n\nYou need to run Export to HTML before publishing`)
         return false
     }
 
-    runPublishScript(version, allMockupsdDir, docFolder, remoteFolder, commentsID) {
+
+    runPublishScript(version, allMockupsdDir, docFolder, remoteFolder, commentsID)
+    {
         let args = [version, allMockupsdDir, docFolder, remoteFolder, commentsID]
         args.push(this.login)
         args.push(this.sshPort)
         args.push(this.authorName)
         args.push(this.authorEmail)
         args.push(this.commentsURL.replace(/(\/)/g, '\\/'))
-        //args.push(Constants.MIRROR2)        
-        return this.runScriptWithArgs("publish.sh", args)
+
+        return this.runToolWithArgs("curl", args)
     }
 
-    runScriptWithArgs(scriptName, args) {
+    publishMockupsByHTTPS(remoteFolder)
+    {
+        const fullPath = this.allMockupsdDir + "/" + this.docFolder
+        const localImagesPath = fullPath + "/images"
+
+        //////////// PUBLISH IMAGES /////////
+        this.publishedImages = 0
+        // Publish images im /images folder
+        let res = this.publishImagesInFolderByHTTPS(localImagesPath, "regular")
+        if (res && !res.result) return res
+        // Publish images im /images/full folder
+        res = this.publishImagesInFolderByHTTPS(localImagesPath + "/full", "full")
+        if (res && !res.result) return res
+        // Publish images im /images/full folder
+        res = this.publishImagesInFolderByHTTPS(localImagesPath + "/previews", "preview")
+        if (res && !res.result) return res
+
+        //////////// PUBLISH OTHJER /////////
+        res = this.publishFileByHTTPS(fullPath, "index.html")
+        if (res && !res.result) return res
+        const folders = ["data", "resources", "js", "js/other"]
+        folders.forEach(function (folderName)
+        {
+            res = this.publishFilesInFolderByHTTPS(fullPath, folderName)
+            if (res && !res.result) return res
+        }, this)
+
+        // COMPLETE
+        res = this.publishCompleteByHTTPS(fullPath)
+        if (res && !res.result) return res
+
+        return res
+    }
+
+
+    publishCompleteByHTTPS(fullPath)
+    {
+        let args = ["--no-progress-meter"]
+        const cmd = "cms"
+        let url = this.siteRoot + this.serverToolsPath + "/upload.php?cmd=" + cmd
+        url += `&tid=${this.secret}`
+        url += `&ver=${this.ver}`
+        url += `&docid=${encodeURI(this.remoteFolder)}`
+        args.push(url)
+
+        return Utils.runCommand('/usr/bin/curl', args)
+    }
+
+    publishImagesInFolderByHTTPS(localPath, defaultImageType)
+    {
+        if (!Utils.isFolderExists(localPath)) return {
+            result: 0,
+            output: "No folder on path " + localPath
+        }
+
+
+        const allImages = Utils.listFiles(localPath)
+        let result = null
+
+        // process images
+        allImages.forEach(function (file)
+        {
+            if (result && !result.result) return
+            const fileName = file + ""
+            if (!(fileName.endsWith(".png") || fileName.endsWith(".jpg"))) return
+            //        
+            const imageType = fileName.includes("@2x.") ? "2x" : defaultImageType
+            //
+            if (DEBUG) log(`Upload #${this.publishedImages} ${fileName}`)
+            result = this.publishFileByHTTPS(localPath, fileName, !this.publishedImages++, imageType)
+            if (!result.result) log(result.output)
+        }, this);
+        //       
+        return result
+    }
+
+    publishFilesInFolderByHTTPS(localPath, folderName)
+    {
+        const fullPath = localPath + "/" + folderName
+        const allFiles = Utils.listFiles(fullPath)
+        let result = null
+
+        // process files
+        allFiles.forEach(function (file)
+        {
+            if (result && !result.result) return
+            const fileName = file + ""
+            if (fileName === "other") return
+            //
+            if (DEBUG) log(`Upload ${fileName}`)
+            result = this.publishFileByHTTPS(fullPath, fileName, false, "", folderName)
+            if (!result.result) log(result.output)
+        }, this);
+        //       
+        return result
+    }
+
+    publishFileByHTTPS(filePath, fileName, isStart = false, imageType = "", dirType = "")
+    {
+        const fullPath = filePath + "/" + fileName
+        if (!Utils.isFolderExists(fullPath)) return {
+            result: 0,
+            output: "No file on path " + fullPath
+        }
+
+        const cmd = imageType != "" ? "uploadFrame" : "uploadFile"
+        const escapedPath = fullPath
+        let args = ["--no-progress-meter", "-T", escapedPath]
+        let url = this.siteRoot + this.serverToolsPath + "/upload.php?cmd=" + cmd
+        url += `&tid=${this.secret}`
+        url += `&docid=${encodeURI(this.remoteFolder)}`
+        //url += `&docid=123`
+        url += `&s=${isStart ? 1 : 0}`
+        if (imageType != "") url += `&t=${imageType}`
+        if (dirType != "") url += `&dt=${dirType}`
+        url += `&n=${fileName}`
+        args.push(url)
+
+        return Utils.runCommand('/usr/bin/curl', args)
+    }
+
+    runScriptWithArgs(scriptName, args)
+    {
         const scriptPath = this.allMockupsdDir + "/" + scriptName
         args.unshift(scriptPath) // add script itself as a first argument
         const res = Utils.runCommand('/bin/bash', args)
@@ -533,7 +736,8 @@ class Publisher {
         return res
     }
 
-    runToolInResourcesWithArgs(toolName, args) {
+    runToolInResourcesWithArgs(toolName, args)
+    {
         var url = this.context.plugin.urlForResourceNamed(toolName).path()
         //args.unshift(toolName)
         //const regex = / /gi;
@@ -542,13 +746,15 @@ class Publisher {
         return res
     }
 
-    runToolWithArgs(toolName, args) {
+    runToolWithArgs(toolName, args)
+    {
         const res = Utils.runCommand(toolName, args)
         return res
     }
 
 
-    copyScript(scriptName) {
+    copyScript(scriptName)
+    {
 
         const scriptPath = this.allMockupsdDir + "/" + scriptName
 
@@ -561,7 +767,8 @@ class Publisher {
         let sourcePath = this._getFileURLInResourceFolder(scriptName)
         let error = MOPointer.alloc().init()
 
-        if (!fileManager.copyItemAtPath_toPath_error(sourcePath, targetPath, error)) {
+        if (!fileManager.copyItemAtPath_toPath_error(sourcePath, targetPath, error))
+        {
             log("copyScript(): Can't copy '" + sourcePath + "' to '" + targetPath + "'. Error: " + error.value().localizedDescription());
 
             this.UI.alert('Can`t copy script', error.value().localizedDescription())
@@ -571,55 +778,68 @@ class Publisher {
         return true
     }
 
-    _initMiro() {
+    _initMiro()
+    {
         log("_initMiro")
         if (null != this.miroBoards) return true
         // Get request
         log("_initMiro start")
         var response = api.authCheckRequest(this.context);
-        if (response) {
-            if (response.success == 1) {
-            } else if (response.error && response.error.code == 401) {
+        if (response)
+        {
+            if (response.success == 1)
+            {
+            } else if (response.error && response.error.code == 401)
+            {
                 api.setToken(nil);
                 log(response.error)
                 response = null
-            } else {
+            } else
+            {
                 response = null
             }
         }
-        if (!response) {
+        if (!response)
+        {
             this.UI.alert("Error", "You need to log into Miro using Miro plugin\n\nhttps://github.com/miroapp/sketch_plugin")
             return false
-        } else {
+        } else
+        {
 
             this.miroBoards = Utils.getMiroBoardsGroupedByProject()
         }
         return true
     }
 
-    _validateMiroParams() {
+    _validateMiroParams()
+    {
         if (null == this.miroBoards) return true
 
         // Find board ID for name
-        if ("" == this.miroBoardID && "" != this.miroBoardName) {
+        if ("" == this.miroBoardID && "" != this.miroBoardName)
+        {
             let index = this.miroBoards.boards.indexOf(this.miroBoardName)
-            if (index >= 0) {
+            if (index >= 0)
+            {
                 let miroBoardID = this.miroBoards.indexIdsMap[index]
                 if (undefined == miroBoardID) miroBoardID = ""
                 this.miroBoardID = miroBoardID
             }
         }
         // Find board name for ID
-        if ("" != this.miroBoardID && "" == this.miroBoardName) {
+        if ("" != this.miroBoardID && "" == this.miroBoardName)
+        {
             let index = this.miroBoards.indexIdsMap.indexOf(this.miroBoardID)
-            if (index >= 0) {
+            if (index >= 0)
+            {
                 let miroBoardName = this.miroBoards.boards[index]
                 if (undefined == miroBoardName) miroBoardName = ""
                 this.miroBoardName = miroBoardName
             }
         }
         // Reset if something is wrong
-        if ("" == this.miroBoardID || "" == this.miroBoardName) {
+        if ("" == this.miroBoardID || "" == this.miroBoardName)
+        {
             this.miroBoardID = ""
             this.miroBoardName = ""
         }
@@ -631,7 +851,8 @@ class Publisher {
         return true
     }
 
-    _getFileURLInResourceFolder(file) {
+    _getFileURLInResourceFolder(file)
+    {
         return this.context.plugin.url().URLByAppendingPathComponent("Contents").URLByAppendingPathComponent("Sketch").URLByAppendingPathComponent(PublishKeys.RESOURCES_FOLDER).URLByAppendingPathComponent(file)
     }
 }

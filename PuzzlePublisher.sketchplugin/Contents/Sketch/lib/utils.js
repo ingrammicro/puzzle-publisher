@@ -167,7 +167,6 @@ class Utils
         const fileManager = NSFileManager.defaultManager();
         return fileManager.fileExistsAtPath(path)
     }
-      
 
     static readFile(path)
     {
@@ -206,6 +205,11 @@ class Utils
         return Object.assign({}, dict);
     }
 
+    static escapeFileNameAsArgument(path)
+    {
+        const regex = / /gi;
+        return path.replace(regex, "\\ ")
+    }
 
     static escapeSpaces(path)
     {
@@ -250,14 +254,15 @@ class Utils
         return fileManager.temporaryDirectory().path() + ""
     }
 
-    static toFilename(name, dasherize = true)
+    static toFilename(name, dasherize = true, lowercase = true)
     {
         if (dasherize == null)
         {
             dasherize = true;
         }
         const dividerCharacter = dasherize ? "-" : "_"
-        return name.replace(/[\\/,&:]/g, "_").replace(/[\s-]+/g, dividerCharacter).toLowerCase()
+        const resName = name.replace(/[\\/,&:]/g, "_").replace(/[\s-]+/g, dividerCharacter)
+        return lowercase ? resName.toLowerCase() : resName
     }
 
 
@@ -265,6 +270,19 @@ class Utils
     static isSymbolsPage(page)
     {
         return page.artboards()[0].isKindOfClass(MSSymbolMaster);
+    }
+
+    static listFiles(path)
+    {
+        const error = MOPointer.alloc().init();
+        const fileManager = NSFileManager.defaultManager();
+        const files = fileManager.contentsOfDirectoryAtPath_error(path, error);
+        if (files === null)
+        {
+            log(error.value().localizedDescription());
+            return null
+        }
+        return files
     }
 
     static removeFilesWithExtension(path, extension, extension2 = null)

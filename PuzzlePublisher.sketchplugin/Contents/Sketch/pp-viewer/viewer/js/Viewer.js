@@ -1,27 +1,21 @@
 // =============================== PRELOAD IMAGES =========================
 var pagerLoadingTotal = 0
 
-function getQuery(uri, q)
-{
+function getQuery(uri, q) {
     return (uri.match(new RegExp('[?&]' + q + '=([^&]+)')) || [, null])[1];
 }
 
-function showError(error)
-{
+function showError(error) {
     alert(error)
 }
 
-function showMessage(message)
-{
+function showMessage(message) {
     alert(message)
 }
 
-function checkFolderInfoRequest(resp)
-{
-    if (resp.readyState == resp.DONE)
-    {
-        if (resp.status == 200 && resp.responseText != null)
-        {
+function checkFolderInfoRequest(resp) {
+    if (resp.readyState == resp.DONE) {
+        if (resp.status == 200 && resp.responseText != null) {
             const data = JSON.parse(resp.responseText)
             if (undefined != data['project_url'] && '' != data['project_url']) return data
         }
@@ -30,38 +24,32 @@ function checkFolderInfoRequest(resp)
     return undefined
 }
 
-function handleDecreaseVersion()
-{
+function handleDecreaseVersion() {
     var data = checkFolderInfoRequest(this)
     if (undefined == data) return
     if ('' == data.link_down) return showMessage('This is the oldest version.')
     window.open(data.link_down + '?' + encodeURIComponent(viewer.currentPage.getHash()), "_self");
 }
 
-function handleIncreaseVersion()
-{
+function handleIncreaseVersion() {
     var data = checkFolderInfoRequest(this)
     if (undefined == data) return
     let link = data.link_up
-    if ('' == link)
-    {
+    if ('' == link) {
         if (!window.confirm('This is the newest version. Go to live version?')) return
         link = data.link_live
     }
     window.open(link + '?' + encodeURIComponent(viewer.currentPage.getHash()), "_self");
 }
 
-function doTransNext()
-{
+function doTransNext() {
     // get oldest transition
     const trans = viewer.transQueue[0]
     // if it still active then run it
-    if (trans.active)
-    {
+    if (trans.active) {
         viewer.next()
         console.log("RUN transition")
-    } else
-    {
+    } else {
         console.log("skip transition")
     }
 
@@ -69,18 +57,15 @@ function doTransNext()
     viewer.transQueue.shift()
 }
 
-$.fn.preload = function (callback)
-{
+$.fn.preload = function (callback) {
     var length = this.length;
     var iterator = 0;
 
-    return this.each(function ()
-    {
+    return this.each(function () {
         var self = this;
         var tmp = new Image();
 
-        if (callback) tmp.onload = function ()
-        {
+        if (callback) tmp.onload = function () {
             callback.call(self, 100 * ++iterator / length, iterator === length);
             pagerMarkImageAsLoaded()
         };
@@ -88,38 +73,30 @@ $.fn.preload = function (callback)
     });
 };
 
-function pagerMarkImageAsLoaded()
-{
+function pagerMarkImageAsLoaded() {
     console.log(pagerLoadingTotal);
-    if (--pagerLoadingTotal == 0)
-    {
+    if (--pagerLoadingTotal == 0) {
         $("#nav #loading").addClass("hidden")
     }
 }
 
-async function preloadAllPageImages()
-{
+async function preloadAllPageImages() {
     $("#nav #loading").removeClass("hidden")
     pagerLoadingTotal = story.totalImages
     var pages = story.pages;
-    for (var page of story.pages)
-    {
-        if (page.imageObj == undefined)
-        {
+    for (var page of story.pages) {
+        if (page.imageObj == undefined) {
             page.loadImages()
             page.imageDiv.addClass("hidden")
         }
     }
 }
 
-function reloadAllPageImages()
-{
-    for (var page of story.pages)
-    {
+function reloadAllPageImages() {
+    for (var page of story.pages) {
         page.imageObj.parent().remove();
         page.imageObj = undefined
-        for (var p of page.fixedPanels)
-        {
+        for (var p of page.fixedPanels) {
             p.imageObj.parent().remove();
             p.imageObj = undefined
         }
@@ -127,24 +104,20 @@ function reloadAllPageImages()
     preloadAllPageImages()
 }
 
-function doBlinkHotspots()
-{
+function doBlinkHotspots() {
     viewer.toggleLinks()
 }
 
 
 // str: .transit .slideInDown"
-function splitStylesStr(str)
-{
+function splitStylesStr(str) {
     return str.split(" ").map(s => s.replace(".", ""))
 }
 
 // ============================ VIEWER ====================================
 
-class Viewer
-{
-    constructor(story, files)
-    {
+class Viewer {
+    constructor(story, files) {
         this.highlightLinks = story.highlightLinks
         this.showLayout = false
         this.showUI = true
@@ -189,8 +162,7 @@ class Viewer
         this.transQueue = []
     }
 
-    initialize()
-    {
+    initialize() {
         this.initParseGetParams()
         this.buildUserStory();
         this.initializeHighDensitySupport();
@@ -200,56 +172,44 @@ class Viewer
         $("#menu #zoom").prop('checked', this.zoomEnabled);
 
         /// Init Viewers
-        if (!story.hideGallery)
-        {
-            this.galleryViewer = new GalleryViewer()
-        }
+        this.galleryViewer = new GalleryViewer()
 
-        if (story.layersExist)
-        {
+        if (story.layersExist) {
             this.symbolViewer = new SymbolViewer()
             if (story.experimentalExisting) this.expViewer = new ExpViewer()
         }
         this.infoViewer = new infoViewer()
         this.presenterViewer = new PresenterViewer()
 
-        if (story.commentsURL != 'V_V_C' && story.commentsURL != "")
-        {
+        if (story.commentsURL != 'V_V_C' && story.commentsURL != "") {
             this.commentsViewer = new CommentsViewer()
             $("#nav #pageComments").removeClass("hidden")
         }
 
-        if (story.experimentalExisting)
-        {
+        if (story.experimentalExisting) {
             $("#nav #experimental").removeClass("hidden")
         }
 
     }
 
-    initAnimations()
-    {
-        if (story.layersExist)
-        {
+    initAnimations() {
+        if (story.layersExist) {
             // TODO
         }
         // transform ".transit .slideInDown" strings into class name arrays
-        TRANS_ANIMATIONS.forEach(function (t, index)
-        {
+        TRANS_ANIMATIONS.forEach(function (t, index) {
             if (0 == index) return
             t.in_classes = splitStylesStr(t.in_str_classes)
             t.out_classes = splitStylesStr(t.out_str_classes)
         }, this)
     }
 
-    initializeLast()
-    {
+    initializeLast() {
 
-        $("body").keydown(function (event)
-        {
+        $("body").keydown(function (event) {
             viewer.handleKeyDown(event)
         })
-        window.addEventListener('mousemove', function (e)
-        {
+        window.addEventListener('mousemove', function (e) {
             viewer.onMouseMove(e.pageX, e.pageY)
         });
         jQuery(window).resize(function () { viewer.zoomContent() });
@@ -257,20 +217,16 @@ class Viewer
         // Activate galleryViewer
         const gParam = this.urlParams.get('g')
         const av = this.urlParams.get('av')
-        if (gParam != null && this.galleryViewer)
-        {
+        if (gParam != null && this.galleryViewer) {
             this.galleryViewer.handleURLParam(gParam)
             this.galleryViewer.show()
-        } else if (this.urlParams.get('v') != null && this.infoViewer)
-        {
+        } else if (this.urlParams.get('v') != null && this.infoViewer) {
             // Activate Changes Inspector
             this.infoViewer.toggle()
-        } else if (this.urlParams.get('c') != null && this.commentsViewer)
-        {
+        } else if (this.urlParams.get('c') != null && this.commentsViewer) {
             // Activate Comment Viewer
             this.commentsViewer.toggle()
-        } else if (av != null && av === "exp" && this.expViewer)
-        {
+        } else if (av != null && av === "exp" && this.expViewer) {
             const widgetName = this.urlParams.get('expn')
             if (widgetName !== null) this.expViewer.highlightWidget(decodeURIComponent(widgetName))
             // Activate Experimental Viewer widget
@@ -278,15 +234,13 @@ class Viewer
         }
     }
 
-    initParseGetParams()
-    {
+    initParseGetParams() {
         const loc = document.location
         this.fullBaseURL = loc.protocol + "//" + loc.hostname + loc.pathname
         this.urlParams = new URLSearchParams(loc.search.substring(1));
         this.urlSearch = loc.search
 
-        if (this.urlParams.get('e') != null)
-        {
+        if (this.urlParams.get('e') != null) {
             this.isEmbed = true
             // hide image preload indicator
             $('#nav loading').hide()
@@ -297,59 +251,47 @@ class Viewer
             $('#btnOpenNew').show()
         }
     }
-    initializeHighDensitySupport()
-    {
-        if (window.matchMedia)
-        {
+    initializeHighDensitySupport() {
+        if (window.matchMedia) {
             this.hdMediaQuery = window
                 .matchMedia("only screen and (min--moz-device-pixel-ratio: 1.1), only screen and (-o-min-device-pixel-ratio: 2.2/2), only screen and (-webkit-min-device-pixel-ratio: 1.1), only screen and (min-device-pixel-ratio: 1.1), only screen and (min-resolution: 1.1dppx)");
             var v = this;
-            this.hdMediaQuery.addListener(function (e)
-            {
+            this.hdMediaQuery.addListener(function (e) {
                 v.refresh();
             });
         }
     }
-    isHighDensityDisplay()
-    {
+    isHighDensityDisplay() {
         return (this.hdMediaQuery && this.hdMediaQuery.matches || (window.devicePixelRatio && window.devicePixelRatio > 1));
     }
-    buildUserStory()
-    {
+    buildUserStory() {
         //
         let opages = []
-        story.pages.forEach(function (page)
-        {
+        story.pages.forEach(function (page) {
             opages.push($.extend(new ViewerPage(), page))
         })
         story.pages = opages
         //
         this.userStoryPages = []
         this.visStoryPages = []
-        for (var page of story.pages)
-        {
-            if ('regular' == page.type || 'modal' == page.type)
-            {
+        for (var page of story.pages) {
+            if ('regular' == page.type || 'modal' == page.type) {
                 page.userIndex = this.userStoryPages.length
                 this.userStoryPages.push(page)
-            } else
-            {
+            } else {
                 page.userIndex = -1
             }
             //
-            if ('regular' == page.type || 'modal' == page.type || 'overlay' == page.type)
-            {
+            if ('regular' == page.type || 'modal' == page.type || 'overlay' == page.type) {
                 page.visIndex = this.visStoryPages.length
                 this.visStoryPages.push(page)
-            } else
-            {
+            } else {
                 page.visIndex = -1
             }
         }
     }
 
-    handleKeyDown(jevent)
-    {
+    handleKeyDown(jevent) {
         const v = viewer
         const event = jevent.originalEvent
 
@@ -357,10 +299,8 @@ class Viewer
         const enableTopNavigation = !this.child || this.child.enableTopNavigation
 
         // allow all childs to handle global keys
-        if (!this.child)
-        {
-            for (const child of this.allChilds)
-            {
+        if (!this.child) {
+            for (const child of this.allChilds) {
                 if (child.handleKeyDownWhileInactive(jevent)) return true
             }
         }
@@ -368,101 +308,76 @@ class Viewer
         // allow currently active childs to handle global keys
         if (this.child && this.child.handleKeyDown(jevent)) return true
 
-        if (allowNavigation && 91 == event.which)
-        { // cmd
+        if (allowNavigation && 91 == event.which) { // cmd
             if (this.highlightLinks) v.toggleLinks(false) // hide hightlights to allow user to make a screenshot on macOS
         }
 
-        if (allowNavigation && (13 == event.which || 39 == event.which))
-        { // enter OR right
+        if (allowNavigation && (13 == event.which || 39 == event.which)) { // enter OR right
             v.next()
-        } else if (allowNavigation && (8 == event.which || 37 == event.which))
-        { // backspace OR left
+        } else if (allowNavigation && (8 == event.which || 37 == event.which)) { // backspace OR left
             v.previous()
-        } else if (allowNavigation && story.layersExist && event.metaKey && (70 == event.which) && (!this.child || !this.child.customTextSearchPrevented()))
-        { // Cmd+F
+        } else if (allowNavigation && story.layersExist && event.metaKey && (70 == event.which) && (!this.child || !this.child.customTextSearchPrevented())) { // Cmd+F
             this.showTextSearch()
-        } else if (allowNavigation && story.layersExist && event.metaKey && (71 == event.which) && (!this.child || !this.child.customTextSearchPrevented()))
-        { // Cmd+G -> Next search
+        } else if (allowNavigation && story.layersExist && event.metaKey && (71 == event.which) && (!this.child || !this.child.customTextSearchPrevented())) { // Cmd+G -> Next search
             this.currentPage.findTextNext()
-        } else if (allowNavigation && (16 == event.which))
-        { // shift
-            if (!jevent.metaKey)
-            {  // no cmd to allow user to make a screenshot on macOS
+        } else if (allowNavigation && (16 == event.which)) { // shift
+            if (!jevent.metaKey) {  // no cmd to allow user to make a screenshot on macOS
                 v.toggleLinks()
             }
-        } else if (event.metaKey || event.altKey || event.ctrlKey)
-        { // skip any modificator active to allow a browser to handle its own shortkeys
+        } else if (event.metaKey || event.altKey || event.ctrlKey) { // skip any modificator active to allow a browser to handle its own shortkeys
             return false
-        } else if (allowNavigation && 90 == event.which)
-        { // z
+        } else if (allowNavigation && 90 == event.which) { // z
             v.toggleZoom()
-        } else if (allowNavigation && 69 == event.which)
-        { // e
+        } else if (allowNavigation && 69 == event.which) { // e
             v.share()
-        } else if (73 == event.which)
-        { // i
+        } else if (73 == event.which) { // i
             v.openFulImage()
-        } else if (allowNavigation && 76 == event.which)
-        { // l
+        } else if (allowNavigation && 76 == event.which) { // l
             v.toogleLayout();
-        } else if (allowNavigation && 78 == event.which)
-        { // n
+        } else if (allowNavigation && 78 == event.which) { // n
             v.toogleUI();
-        } else if (70 == event.which)
-        { // f
+        } else if (70 == event.which) { // f
             v.toogleFullScreen()
-        } else if (enableTopNavigation && 83 == event.which)
-        { // s
+        } else if (enableTopNavigation && 83 == event.which) { // s
             var first = null != story.startPageIndex ? story.pages[story.startPageIndex] : v.getFirstUserPage()
-            if (first && (first.index != v.currentPage.index || this.child))
-            {
+            if (first && (first.index != v.currentPage.index || this.child)) {
                 this.hideChild()
                 v.goToPage(first.index)
             }
-        } else if (allowNavigation && 27 == event.which)
-        { // esc
+        } else if (allowNavigation && 27 == event.which) { // esc
             v.onKeyEscape()
-        } else
-        {
+        } else {
             return false
         }
         jevent.preventDefault()
         return true
     }
 
-    showTextSearch()
-    {
+    showTextSearch() {
         const search = prompt("Type text to find:", this.searchText)
-        if (null != search)
-        {
+        if (null != search) {
             this.searchText = search
-            if (this.currentPage.findText(this.searchText))
-            {
+            if (this.currentPage.findText(this.searchText)) {
             }
         }
     }
 
-    blinkHotspots()
-    {
+    blinkHotspots() {
         if (this.symbolViewer && this.symbolViewer.visible) return
         this.toggleLinks()
         setTimeout(doBlinkHotspots, 500)
     }
 
-    setMouseMoveHandler(obj)
-    {
+    setMouseMoveHandler(obj) {
         this.mouseMoveHandler = obj
     }
 
-    onMouseMove(x, y)
-    {
+    onMouseMove(x, y) {
         if (this.mouseMoveHandler && this.mouseMoveHandler.onMouseMove(x, y)) return
         if (this.currentPage) this.currentPage.onMouseMove(x, y)
     }
 
-    onContentClick()
-    {
+    onContentClick() {
         // Do we need to close a menu?
         if (this.menuVisible) this.hideMenu()
 
@@ -473,27 +388,23 @@ class Viewer
         if (this.onKeyEscape()) return
         this.blinkHotspots()
     }
-    onModalClick()
-    {
+    onModalClick() {
         this.blinkHotspots()
     }
 
 
-    showMenu()
-    {
+    showMenu() {
         addRemoveClass('class', 'menu', 'active')
         this.menuVisible = true
         return true
     }
-    hideMenu()
-    {
+    hideMenu() {
         addRemoveClass('class', 'menu', 'active')
         this.menuVisible = false
         return true
     }
 
-    _setupFolderinfoRequest(func)
-    {
+    _setupFolderinfoRequest(func) {
         var xhr = new XMLHttpRequest();
         xhr.open("GET", story.serverToolsPath + "folder_info.php", true);
         xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
@@ -501,52 +412,43 @@ class Viewer
         xhr.send(null);
     }
 
-    decreaseVersion()
-    {
+    decreaseVersion() {
         this._setupFolderinfoRequest(handleDecreaseVersion)
     }
 
-    increaseVersion()
-    {
+    increaseVersion() {
         this._setupFolderinfoRequest(handleIncreaseVersion)
     }
 
-    showChild(child)
-    {
+    showChild(child) {
         // Hide currently visible child
-        if (this.child)
-        {
+        if (this.child) {
             this.hideChild(this.child)
         }
 
         // Show new child
         this.child = child;
-        if (child.isSidebarChild)
-        {
+        if (child.isSidebarChild) {
             this._showSidebar()
         }
         child._showSelf()
     }
 
-    _showSidebar()
-    {
+    _showSidebar() {
         this.sidebarVisible = true
         $('#sidebar').removeClass("hidden")
         viewer.zoomContent()
     }
 
-    _hideSidebar()
-    {
+    _hideSidebar() {
         this.sidebarVisible = false
         $('#sidebar').addClass("hidden")
         this.zoomContent()
     }
 
-    hideChild()
-    {
+    hideChild() {
         if (!this.child) return;
-        if (this.child.isSidebarChild)
-        {
+        if (this.child.isSidebarChild) {
             this._hideSidebar()
         }
         this.child._hideSelf()
@@ -554,8 +456,7 @@ class Viewer
 
     }
 
-    share()
-    {
+    share() {
         var page = this.currentPage
         let url = this._getPageFullURL()
         url += '&e=1'
@@ -580,8 +481,7 @@ class Viewer
     }
 
 
-    openFulImage()
-    {
+    openFulImage() {
         let page = this.currentPage
         let url = this._getPageFullURL(page)
         url = url.substring(0, url.lastIndexOf("/")) + "/images/full/" + page['image']
@@ -591,28 +491,24 @@ class Viewer
 
 
 
-    toggleZoom(newState = undefined, updateToogler = true)
-    {
+    toggleZoom(newState = undefined, updateToogler = true) {
         this.zoomEnabled = newState !== undefined ? newState : !this.zoomEnabled
         if (updateToogler) $("#menu #zoom").prop('checked', this.zoomEnabled)
         this.zoomContent()
     }
 
-    openNewWindow()
-    {
+    openNewWindow() {
         let url = this.fullCurrentPageURL
         // ok, now open it in the new browse window
         window.open(url, "_blank")
     }
 
-    zoomContent()
-    {
+    zoomContent() {
         var page = this.lastRegularPage
         if (undefined == page) return
 
 
-        if (undefined == this.marker)
-        {
+        if (undefined == this.marker) {
             this.marker = $('#marker')
         }
         var marker = this.marker
@@ -629,8 +525,7 @@ class Viewer
 
         // check sidebar
         var sidebarWidth = 0
-        if (this.sidebarVisible)
-        {
+        if (this.sidebarVisible) {
             var sidebar = $("#sidebar")
 
             sidebarWidth = this.defSidebarWidth
@@ -641,8 +536,7 @@ class Viewer
                 sidebarWidth = defSidebarWidth
                 availableWidth = fullWidth - sidebarWidth
             }*/
-            if (((fullWidth - page.width) / 2) < sidebarWidth)
-            {
+            if (((fullWidth - page.width) / 2) < sidebarWidth) {
                 availableWidth = fullWidth - sidebarWidth
             }
 
@@ -653,18 +547,15 @@ class Viewer
         }
 
 
-        if (this.zoomEnabled && ((availableWidth < page.width) || screen.width <= 800))
-        {
+        if (this.zoomEnabled && ((availableWidth < page.width) || screen.width <= 800)) {
             zoom = availableWidth / page.width
             scale = "scale(" + zoom + ")"
         }
 
         var newZoom = zoom != '' ? (zoom + 0) : 1
 
-        if (undefined == this.currentZoom || this.currentZoom != newZoom)
-        {
-            for (var el of elems)
-            {
+        if (undefined == this.currentZoom || this.currentZoom != newZoom) {
+            for (var el of elems) {
                 el.css("zoom", zoom)
                 el.css("-moz-transform", scale)
             }
@@ -688,19 +579,15 @@ class Viewer
         this.currentPage.updatePosition()
 
         //
-        if (this.child)
-        {
+        if (this.child) {
             this.child.viewerResized()
         }
     }
 
-    getPageHashes()
-    {
-        if (this.pageHashes == null)
-        {
+    getPageHashes() {
+        if (this.pageHashes == null) {
             var hashes = {};
-            for (var page of story.pages)
-            {
+            for (var page of story.pages) {
                 hashes[page.getHash()] = page.index;
             }
             this.pageHashes = hashes;
@@ -708,15 +595,12 @@ class Viewer
         return this.pageHashes;
     }
 
-    getModalFirstParentPageIndex(modalIndex)
-    {
+    getModalFirstParentPageIndex(modalIndex) {
         var foundPageIndex = null
         // scan all regular pages
-        story.pages.filter(page => "regular" == page.type).some(function (page)
-        {
+        story.pages.filter(page => "regular" == page.type).some(function (page) {
             const foundLinks = page.links.filter(link => link.page != null && link.page == modalIndex)
-            if (foundLinks.length != 0)
-            {
+            if (foundLinks.length != 0) {
                 // return the page index which has link to modal
                 foundPageIndex = page.index
                 return true
@@ -731,66 +615,52 @@ class Viewer
         return foundPageIndex
     }
 
-    getPageIndex(page, defIndex = 0)
-    {
+    getPageIndex(page, defIndex = 0) {
         var index;
 
-        if (typeof page === "number")
-        {
+        if (typeof page === "number") {
             index = page;
-        } else if (page === "")
-        {
+        } else if (page === "") {
             index = defIndex;
-        } else
-        {
+        } else {
             index = this.getPageHashes()[page];
-            if (index == undefined)
-            {
+            if (index == undefined) {
                 index = defIndex;
             }
         }
         return index;
     }
 
-    goBack()
-    {
-        if (this.backStack.length > 0)
-        {
+    goBack() {
+        if (this.backStack.length > 0) {
             this.goTo(this.backStack[this.backStack.length - 1], true, undefined, false);
             this.backStack.pop();
-        } else if (this.currentPage.isModal && this.lastRegularPage)
-        {
+        } else if (this.currentPage.isModal && this.lastRegularPage) {
             this.goTo(this.lastRegularPage.index, true, undefined, false);
-        } else
-        {
+        } else {
             window.history.back();
         }
     }
-    closeModal()
-    {
+    closeModal() {
         return this.goBack()
     }
-    goToPage(page, searchText)
-    {
+    goToPage(page, searchText) {
         this.clear_context();
         this.goTo(page);
         //
-        if (undefined != searchText)
-        {
+        if (undefined != searchText) {
             this.searchText = searchText
             this.currentPage.findText(this.searchText)
         }
     }
 
-    goTo(page, refreshURL = true, link = undefined, incBackStack = true)
-    {
+    goTo(page, refreshURL = true, link = undefined, incBackStack = true) {
 
         var index = this.getPageIndex(page);
         var newPage = story.pages[index];
 
         // Need to build a context for overlay
-        if (newPage.type === "overlay")
-        {
+        if (newPage.type === "overlay") {
             if (newPage.showOverlayOverParent()) return
         }
 
@@ -800,8 +670,7 @@ class Viewer
         //if(this.symbolViewer) this.symbolViewer.hide()
         var currentPage = this.currentPage
 
-        if (incBackStack && currentPage && !currentPage.isModal)
-        {
+        if (incBackStack && currentPage && !currentPage.isModal) {
             this.backStack.push(currentPage.index);
         }
 
@@ -810,14 +679,12 @@ class Viewer
         if (index < 0 || (currentPage && index == currentPage.index) || index >= story.pages.length) return;
 
 
-        if (newPage.type === "modal")
-        {
+        if (newPage.type === "modal") {
             // hide parent page links hightlighting
             this._updateLinksState(false, $('#content'))
 
             // no any page visible now, need to find something
-            if (undefined == currentPage)
-            {
+            if (undefined == currentPage) {
                 var parentIndex = this.getModalFirstParentPageIndex(index);
                 this.goTo(parentIndex, false);
                 this.zoomContent()
@@ -825,10 +692,8 @@ class Viewer
 
             // redraw modal links hightlighting
             this._updateLinksState()
-        } else
-        {
-            if (oldcurrentPageModal)
-            {
+        } else {
+            if (oldcurrentPageModal) {
                 // hide modal page links hightlighting
                 this._updateLinksState(false, $('#content-modal'))
                 this._updateLinksState(undefined, $('#content'))
@@ -842,53 +707,43 @@ class Viewer
         this.refresh_adjust_content_layer(newPage);
         this.refresh_hide_last_image(newPage)
         this.refresh_switch_modal_layer(newPage);
-        if (refreshURL)
-        {
+        if (refreshURL) {
             this.refresh_url(newPage)
-        } else
-        {
+        } else {
             this._calcCurrentPageURL(newPage)
         }
         this.refresh_update_navbar(newPage);
 
         this.currentPage = newPage;
-        if (!newPage.isModal)
-        {
+        if (!newPage.isModal) {
             this.lastRegularPage = newPage
         }
 
         // zoom content if the new page dimensions differ from the previous
-        if (!newPage.isModal)
-        {
-            if (!prevRegularPage || newPage.width != prevRegularPage.width || newPage.height != prevRegularPage.height)
-            {
+        if (!newPage.isModal) {
+            if (!prevRegularPage || newPage.width != prevRegularPage.width || newPage.height != prevRegularPage.height) {
                 this.zoomContent()
             }
         }
 
 
-        if (newPage.transNextMsecs != undefined)
-        {
+        if (newPage.transNextMsecs != undefined) {
             this._setupTransNext(newPage.transNextMsecs)
         }
 
-        if (!newPage.disableAutoScroll && (!link || !link.disableAutoScroll))
-        {
+        if (!newPage.disableAutoScroll && (!link || !link.disableAutoScroll)) {
             window.scrollTo(0, 0)
         }
 
         if (this.child) this.child.pageChanged()
-        this.allChilds.filter(c => c.alwaysHandlePageChanged).forEach(function (c)
-        {
+        this.allChilds.filter(c => c.alwaysHandlePageChanged).forEach(function (c) {
             c.pageChanged()
         })
     }
 
-    _setupTransNext(msecs)
-    {
+    _setupTransNext(msecs) {
         // deactivate all waiting transitions
-        for (var trans of this.transQueue)
-        {
+        for (var trans of this.transQueue) {
             trans.active = false
         }
         // place new active transition over the top of stack
@@ -900,15 +755,12 @@ class Viewer
         setTimeout(doTransNext, msecs)
     }
     // Deactivate all waiting transitions
-    _resetTransQueue()
-    {
-        for (var trans of this.transQueue)
-        {
+    _resetTransQueue() {
+        for (var trans of this.transQueue) {
             trans.active = false
         }
     }
-    refresh_update_navbar(page)
-    {
+    refresh_update_navbar(page) {
         var VERSION_INJECT = story.docVersion != 'V_V_V' ? (" (v" + story.docVersion + ")") : "";
 
         var prevPage = this.getPreviousUserPage(page)
@@ -918,19 +770,15 @@ class Viewer
         $('#nav-left-prev').toggleClass('disabled', !prevPage)
         $('#nav-left-next').toggleClass('disabled', !nextPage)
 
-        if (prevPage)
-        {
+        if (prevPage) {
             $('#nav-left-prev a').attr('title', prevPage.title);
-        } else
-        {
+        } else {
             $('#nav-left-prev a').removeAttr('title');
         }
 
-        if (nextPage)
-        {
+        if (nextPage) {
             $('#nav-left-next a').attr('title', nextPage.title);
-        } else
-        {
+        } else {
             $('#nav-left-next a').removeAttr('title');
         }
 
@@ -938,40 +786,33 @@ class Viewer
 
         this.refresh_update_links_toggler(page);
     }
-    refresh_update_links_toggler(page)
-    {
+    refresh_update_links_toggler(page) {
         $("#menu #links").prop('checked', this.highlightLinks);
     }
-    refresh_hide_last_image(page)
-    {
+    refresh_hide_last_image(page) {
         var content = $('#content');
         var contentModal = $('#content-modal');
         var isModal = page.isModal
 
         // hide last regular page to show a new regular after modal
-        if (!isModal && this.lastRegularPage && this.lastRegularPage.index != page.index)
-        {
+        if (!isModal && this.lastRegularPage && this.lastRegularPage.index != page.index) {
             var lastPageImg = $('#img_' + this.lastRegularPage.index);
-            if (lastPageImg.length)
-            {
+            if (lastPageImg.length) {
                 this.lastRegularPage.hide()
             }
         }
 
         // hide last modal
         var prevPageWasModal = this.prevPage != null && this.prevPage.type === "modal"
-        if (prevPageWasModal)
-        {
+        if (prevPageWasModal) {
             var prevImg = $('#img_' + this.prevPage.index);
-            if (prevImg.length)
-            {
+            if (prevImg.length) {
                 this.prevPage.hide()
                 //pagerHideImg(prevImg)
             }
         }
     }
-    refresh_adjust_content_layer(page)
-    {
+    refresh_adjust_content_layer(page) {
         if (page.isModal) return;
 
         var contentShadow = $('#content-shadow');
@@ -979,49 +820,42 @@ class Viewer
         var content = $('#content');
 
         var prevPageWasModal = this.prevPage && this.prevPage.isModal
-        if (prevPageWasModal)
-        {
+        if (prevPageWasModal) {
             contentShadow.addClass('hidden');
             contentModal.addClass('hidden');
         }
     }
 
-    refresh_switch_modal_layer(page)
-    {
+    refresh_switch_modal_layer(page) {
         if (!page.isModal) return;
 
         var showShadow = page.showShadow == 1;
         var contentModal = $('#content-modal');
         var contentShadow = $('#content-shadow');
 
-        if (showShadow)
-        {
+        if (showShadow) {
             contentShadow.removeClass('no-shadow');
             contentShadow.addClass('shadow');
             contentShadow.removeClass('hidden');
-        } else
-        {
+        } else {
             contentModal.addClass('hidden');
         }
         contentModal.removeClass('hidden');
     }
 
-    _getSearchPath(page = null, extURL = null)
-    {
+    _getSearchPath(page = null, extURL = null) {
         if (!page) page = this.currentPage
         let search = '?' + encodeURIComponent(page.getHash())
         if (extURL != null && extURL != "") search += "&" + extURL
         return search
     }
 
-    _getPageFullURL(page = null, extURL = null)
-    {
+    _getPageFullURL(page = null, extURL = null) {
         if (!page) page = this.currentPage
         return this.fullBaseURL + this._getSearchPath(page, extURL)
     }
 
-    _calcCurrentPageURL(page = null, extURL = null)
-    {
+    _calcCurrentPageURL(page = null, extURL = null) {
         if (!page) page = this.currentPage
         this.urlLastIndex = page.index
         $(document).attr('title', story.title + ': ' + page.title)
@@ -1030,38 +864,31 @@ class Viewer
         this.fullCurrentPageURL = newPath
     }
 
-    refresh_url(page, extURL = "", pushHistory = true)
-    {
+    refresh_url(page, extURL = "", pushHistory = true) {
         if (this.urlLocked) return
 
         this._calcCurrentPageURL(page, extURL)
         let newPath = this.fullCurrentPageURL
         this.fullCurrentPageURL = newPath
 
-        if (this.isEmbed)
-        {
+        if (this.isEmbed) {
             newPath += "&e=1"
         }
-        if (this.galleryViewer && this.galleryViewer.isVisible())
-        {
+        if (this.galleryViewer && this.galleryViewer.isVisible()) {
             newPath += "&g=" + (this.galleryViewer.isMapMode ? "m" : "g")
         }
-        if (this.commentsViewer && this.commentsViewer.isVisible())
-        {
+        if (this.commentsViewer && this.commentsViewer.isVisible()) {
             newPath += "&c=1"
         }
 
-        if (pushHistory)
-        {
+        if (pushHistory) {
             window.history.pushState(newPath, page.title, newPath);
-        } else
-        {
+        } else {
             window.history.replaceState({}, page.title, newPath);
         }
     }
 
-    _parseLocationSearch()
-    {
+    _parseLocationSearch() {
         //if (document.location.hash != null && document.location.hash != "")
         //  return this._parseLocationHash()
 
@@ -1071,36 +898,30 @@ class Viewer
             overlayLinkIndex: undefined,
             redirectOverlayLinkIndex: undefined,
         }
-        this.urlParams.forEach(function (value, key)
-        {
+        this.urlParams.forEach(function (value, key) {
             if ("" == value) result.page_name = key
         }, this);
 
-        if (null == result.page_name || "" == result.page_name || this.urlParams.get(result.page_name) != "")
-        {
+        if (null == result.page_name || "" == result.page_name || this.urlParams.get(result.page_name) != "") {
             result.page_name = ""
             result.reset_url = true
-        } else
-        {
+        } else {
             result.overlayLinkIndex = this.urlParams.get("o")
         }
         return result
     }
 
-    handleNewLocation(initial)
-    {
+    handleNewLocation(initial) {
         var locInfo = this._parseLocationSearch()
         var pageIndex = locInfo.page_name != null ? this.getPageIndex(locInfo.page_name, null) : null
-        if (null == pageIndex)
-        {
+        if (null == pageIndex) {
             if (locInfo.page_name != "") alert("The requested page is not found. You will be redirected to the default page.")
             // get the default page
             pageIndex = story.startPageIndex
             locInfo.reset_url = true
         }
 
-        if (!initial && this.urlLastIndex == pageIndex)
-        {
+        if (!initial && this.urlLastIndex == pageIndex) {
             return
         }
 
@@ -1108,11 +929,9 @@ class Viewer
 
         // check if this redirect overlay
         let overlayRedirectInfo = null
-        if (undefined != page.overlayRedirectTargetPage)
-        {
+        if (undefined != page.overlayRedirectTargetPage) {
             overlayRedirectInfo = page._getSrcPageAndLink()
-            if (overlayRedirectInfo)
-            {
+            if (overlayRedirectInfo) {
                 pageIndex = overlayRedirectInfo.page.index
                 page = overlayRedirectInfo.page
             }
@@ -1128,22 +947,19 @@ class Viewer
         // check if this redirect overlay
         this.goTo(pageIndex, locInfo.reset_url);
 
-        if (locInfo.overlayLinkIndex != null)
-        {
+        if (locInfo.overlayLinkIndex != null) {
             page.showOverlayByLinkIndex(locInfo.overlayLinkIndex)
         }
 
         if (!initial) this.urlLastIndex = pageIndex
 
         // Open redirect overlay over the overlay source page
-        if (overlayRedirectInfo)
-        {
+        if (overlayRedirectInfo) {
             overlayRedirectInfo.link.a.click()
         }
     }
 
-    clear_context_hide_all_images()
-    {
+    clear_context_hide_all_images() {
         var page = this.currentPage;
         var content = $('#content');
         var contentModal = $('#content-modal');
@@ -1154,28 +970,23 @@ class Viewer
         contentModal.addClass('hidden');
 
         // hide last regular page
-        if (this.lastRegularPage)
-        {
+        if (this.lastRegularPage) {
             var lastPageImg = $('#img_' + this.lastRegularPage.index);
-            if (lastPageImg.length)
-            {
+            if (lastPageImg.length) {
                 this.lastRegularPage.hide()
             }
         }
 
         // hide current modal
-        if (isModal)
-        {
+        if (isModal) {
             var modalImg = $('#img_' + this.currentPage.index);
-            if (modalImg.length)
-            {
+            if (modalImg.length) {
                 this.currentPage.hide()
             }
         }
     }
 
-    clear_context()
-    {
+    clear_context() {
         this.clear_context_hide_all_images()
 
         this.prevPage = undefined
@@ -1185,124 +996,104 @@ class Viewer
         this.backStack = []
     }
 
-    refresh()
-    {
+    refresh() {
         reloadAllPageImages()
         this.currentPage.show()
     }
 
-    onKeyEscape()
-    {
+    onKeyEscape() {
         // Close menu
         if (this.menuVisible) return this.hideMenu()
 
 
         const page = this.currentPage
         // If the current page has search visible then hide it
-        if (undefined != page.actualSearchText)
-        {
+        if (undefined != page.actualSearchText) {
             page.stopTextSearch()
             return true
         }
         // If the current page has some overlay open then close it
-        if (page.hideCurrentOverlays())
-        {
+        if (page.hideCurrentOverlays()) {
             return true
         }
         // If the current page is modal then close it and go to the last non-modal page
-        if (this.currentPage.isModal)
-        {
+        if (this.currentPage.isModal) {
             viewer.closeModal()
             return true
         }
         return false
     }
-    next()
-    {
+    next() {
         var page = this.getNextUserPage(this.currentPage)
         if (!page) return
         this.goToPage(page.index);
     }
 
-    previous()
-    {
+    previous() {
         // Get previous page
         var page = this.getPreviousUserPage(this.currentPage)
         // Go from the first to the latest page
-        if (!page) page = this.userStoryPages[this.userStoryPages.length - 1]
+        if(!page) page =  this.userStoryPages[ this.userStoryPages.length-1]
         // oops
         if (!page) return
         this.goToPage(page.index);
     }
 
-    getFirstUserPage()
-    {
+    getFirstUserPage() {
         var first = this.userStoryPages[0]
         return first ? first : null
     }
-    getNextUserPage(page = null)
-    {
+    getNextUserPage(page = null) {
         let nextUserIndex = 0
         if (!page) page = this.currentPage
         if (page) nextUserIndex = page.userIndex + 1
         if (nextUserIndex >= this.userStoryPages.length) nextUserIndex = 0
         return this.userStoryPages[nextUserIndex]
     }
-    getNextVisPage(page, loopSearch = true)
-    {
+    getNextVisPage(page, loopSearch = true) {
         let nexVisIndex = page ? page.visIndex + 1 : 0
         if (nexVisIndex >= this.visStoryPages.length)
             if (loopSearch) nexVisIndex = 0; else return null
         return this.visStoryPages[nexVisIndex]
     }
-    getPreviousUserPage(page)
-    {
+    getPreviousUserPage(page) {
         var prevUserIndex = page ? page.userIndex - 1 : -1
         if (prevUserIndex < 0) return null
         return this.userStoryPages[prevUserIndex]
     }
-    toggleLinks(newState = undefined, updateToogler = true)
-    {
+    toggleLinks(newState = undefined, updateToogler = true) {
         this.highlightLinks = newState != undefined ? newState : !this.highlightLinks
         if (updateToogler) this.refresh_update_links_toggler(this.currentPage)
         this._updateLinksState()
     }
-    toogleLayout(newState = undefined, updateToogler = true)
-    {
+    toogleLayout(newState = undefined, updateToogler = true) {
         this.showLayout = newState != undefined ? newState : !this.showLayout
         if (updateToogler) $("#menu #pagegrid").prop('checked', this.showLayout);
         const div = $('#content')
 
-        if (this.showLayout)
-        {
+        if (this.showLayout) {
             this.currentPage.showLayout()
             div.addClass("contentLayoutVisible")
         } else
             div.removeClass("contentLayoutVisible")
     }
-    toogleFullScreen(newState = undefined, updateToogler = true)
-    {
+    toogleFullScreen(newState = undefined, updateToogler = true) {
         this.isFullScreen = newState != undefined ? newState : !this.isFullScreen
         if (updateToogler) $("#menu #fullScreen").prop('checked', this.isFullScreen);
         //
         return this.isFullScreen ? this._enableFullScreen() : this._disableFullScreen()
     }
     //
-    toogleUI(newState = undefined, updateToogler = true)
-    {
+    toogleUI(newState = undefined, updateToogler = true) {
         this.showUI = newState != undefined ? newState : !this.showUI
         if (updateToogler) $("#menu #ui").prop('checked', this.showUI);
         $('#nav').slideToggle('fast')
     }
-    _updateLinksState(showLinks = undefined, div = undefined)
-    {
-        if (undefined == div)
-        {
-            if (this.currentPage.isModal)
-            {
+    _updateLinksState(showLinks = undefined, div = undefined) {
+        if (undefined == div) {
+            if (this.currentPage.isModal) {
                 div = $('#content-modal')
-            } else
-            {
+            } else {
                 div = $('#content')
             }
         }
@@ -1313,17 +1104,14 @@ class Viewer
             div.removeClass("contentLinksVisible")
     }
 
-    showHints()
-    {
+    showHints() {
         var text = this.currentPage.annotations;
         if (text == undefined) return;
         alert(text);
     }
 
-    handleStateChanges(e)
-    {
-        if (this.stateChangeIgnore)
-        {
+    handleStateChanges(e) {
+        if(this.stateChangeIgnore){
             this.stateChangeIgnore = false
             return
         }
@@ -1337,26 +1125,20 @@ class Viewer
         viewer.urlLocked = false
     }
 
-    _enableFullScreen()
-    {
+    _enableFullScreen() {
         ///
         const elem = document.documentElement
-        if (elem.requestFullscreen)
-        {
+        if (elem.requestFullscreen) {
             elem.requestFullscreen();
-        } else if (elem.webkitRequestFullscreen)
-        { /* Safari */
+        } else if (elem.webkitRequestFullscreen) { /* Safari */
             elem.webkitRequestFullscreen();
-        } else if (elem.msRequestFullscreen)
-        { /* IE11 */
+        } else if (elem.msRequestFullscreen) { /* IE11 */
             elem.msRequestFullscreen();
 
         }
         //
-        const changeHandler = function (event)
-        {
-            if (document.webkitIsFullScreen === false || document.mozFullScreen === false || document.msFullscreenElement === false)
-            {
+        const changeHandler = function (event) {
+            if (document.webkitIsFullScreen === false || document.mozFullScreen === false || document.msFullscreenElement === false) {
                 presenterViewer.stop(false)
             }
         }
@@ -1365,16 +1147,12 @@ class Viewer
         document.addEventListener("mozfullscreenchange", changeHandler, false);
     }
 
-    _disableFullScreen()
-    {
-        if (document.exitFullscreen)
-        {
+    _disableFullScreen() {
+        if (document.exitFullscreen) {
             document.exitFullscreen();
-        } else if (document.webkitExitFullscreen)
-        { /* Safari */
+        } else if (document.webkitExitFullscreen) { /* Safari */
             document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen)
-        { /* IE11 */
+        } else if (document.msExitFullscreen) { /* IE11 */
             document.msExitFullscreen();
         }
     }
@@ -1384,13 +1162,11 @@ class Viewer
 // mode ID - getELementByID
 // mode CLASS - getELementByClassName
 
-function addRemoveClass(mode, el, cls)
-{
+function addRemoveClass(mode, el, cls) {
 
     var el;
 
-    switch (mode)
-    {
+    switch (mode) {
         case 'class':
             el = document.getElementsByClassName(el)[0];
             break;
@@ -1400,25 +1176,20 @@ function addRemoveClass(mode, el, cls)
             break;
     }
 
-    if (el.classList.contains(cls))
-    {
+    if (el.classList.contains(cls)) {
         el.classList.remove(cls)
-    } else
-    {
+    } else {
         el.classList.add(cls);
     }
 }
 
-function handleStateChanges(e)
-{
+function handleStateChanges(e) {   
     viewer.handleStateChanges(e)
 }
 
-$(document).ready(function ()
-{
+$(document).ready(function () {
     viewer.initialize();
-    if (!!('ontouchstart' in window) || !!('onmsgesturechange' in window))
-    {
+    if (!!('ontouchstart' in window) || !!('onmsgesturechange' in window)) {
         $('body').removeClass('screen');
     }
 
