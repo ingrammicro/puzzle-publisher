@@ -259,7 +259,7 @@ class Utils
     static getPathToTempFolder()
     {
         const fileManager = NSFileManager.defaultManager()
-        return fileManager.temporaryDirectory().path() + "/puzzle-publisher"
+        return fileManager.temporaryDirectory().path() + ""
     }
 
     static toFilename(name, dasherize = true, lowercase = true)

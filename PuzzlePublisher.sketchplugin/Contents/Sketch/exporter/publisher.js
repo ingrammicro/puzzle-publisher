@@ -151,7 +151,7 @@ class Publisher
         this.Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_LAST_MSG, this.message)
 
         // run publish script
-        this.tempFolder = Utils.getPathToTempFolder()+"/"+this.docFolder
+        this.tempFolder = Utils.getPathToTempFolder()+ "/puzzle-publisher"+"/"+this.docFolder
         log("tempFolder="+this.tempFolder)
 
         let commentsID = destFolder
