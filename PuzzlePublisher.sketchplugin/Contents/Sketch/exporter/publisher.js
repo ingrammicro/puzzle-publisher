@@ -138,10 +138,9 @@ class Publisher
 
 
         // copy publish script
-        if (!this.copyScript("publish.sh"))
-        {
-            return false
-        }
+        if (!this.copyScript("publish.sh")) return false
+        if (!this.copyScript("preparePublish.sh")) return false
+        
 
         // 
         if (this.miroEnabled && this.miroBoardID != "")
@@ -152,10 +151,20 @@ class Publisher
         this.Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_LAST_MSG, this.message)
 
         // run publish script
+        this.tempFolder = Utils.getPathToTempFolder()+"/"+this.docFolder
+        log("tempFolder="+this.tempFolder)
+
         let commentsID = destFolder
         commentsID = Utils.toFilename(commentsID)
-        //const runResult = this.runPublishScript(version, this.allMockupsdDir, this.docFolder, destFolder, commentsID)
-        const runResult = this.publishMockupsByHTTPS(destFolder, commentsID)
+        let runResult = this.runPreparationScript(version, this.allMockupsdDir, this.docFolder, destFolder, commentsID)
+        if (!runResult.result){
+            this.showMessage(runResult)
+            return false
+        }
+        if(this.login!=="")
+            runResult = this.runPublishScript(version, this.allMockupsdDir, this.docFolder, destFolder, commentsID)
+        else
+            runResult = this.publishMockupsByHTTPS(destFolder, commentsID)
 
         track(TRACK_PUBLISH_COMPLETED)
         // success
@@ -566,21 +575,34 @@ class Publisher
     }
 
 
-    runPublishScript(version, allMockupsdDir, docFolder, remoteFolder, commentsID)
-    {
+    runPreparationScript(version, allMockupsdDir, docFolder,remoteFolder,commentsID) {
         let args = [version, allMockupsdDir, docFolder, remoteFolder, commentsID]
         args.push(this.login)
         args.push(this.sshPort)
         args.push(this.authorName)
         args.push(this.authorEmail)
         args.push(this.commentsURL.replace(/(\/)/g, '\\/'))
+        args.push(this.tempFolder)
+        //args.push(Constants.MIRROR2)        
+        return this.runScriptWithArgs("preparePublish.sh", args)
+    }
 
-        return this.runToolWithArgs("curl", args)
+
+    runPublishScript(version, allMockupsdDir, docFolder, remoteFolder, commentsID) {
+        let args = [version, allMockupsdDir, docFolder, remoteFolder, commentsID]
+        args.push(this.login)
+        args.push(this.sshPort)
+        args.push(this.authorName)
+        args.push(this.authorEmail)
+        args.push(this.commentsURL.replace(/(\/)/g, '\\/'))
+        args.push(this.tempFolder)
+        //args.push(Constants.MIRROR2)        
+        return this.runScriptWithArgs("publish.sh", args)
     }
 
     publishMockupsByHTTPS(remoteFolder)
     {
-        const fullPath = this.allMockupsdDir + "/" + this.docFolder
+        const fullPath = this.tempFolder
         const localImagesPath = fullPath + "/images"
 
         //////////// PUBLISH IMAGES /////////
