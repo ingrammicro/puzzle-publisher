@@ -1,6 +1,9 @@
 # Change Log
 See discussion on https://github.com/ingrammicro/puzzle-publisher/discussions site
 
+##  Version 17.9.0 (25 Sep 2022)
+Addded publishing by HTTPS
+
 ##  Version 17.8.3 (18 Aug 2022)
 Check local mockup existing before publishing
 
