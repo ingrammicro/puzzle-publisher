@@ -36,6 +36,7 @@ class Publisher
 
         this.curlPath = Utils.getPluginSetting(SettingKeys.PLUGIN_PUBLISH_CURL_PATH)
         if(this.curlPath==="") this.curlPath = Constants.CURL_PATH
+        this.filesChunkLimit = 50
 
         this.docFolder = this.doc.cloudName();
         let posSketch = this.docFolder.indexOf(".sketch")
@@ -610,8 +611,9 @@ class Publisher
         //////////// PUBLISH IMAGES /////////
         this.publishedImages = 0
         // Publish images im /images folder
-        let res = this.publishImagesInFolderByHTTPS(localImagesPath, "regular")
+        let res = this.publishImagesInFolderByHTTPS(localImagesPath, "2x")
         if (res && !res.result) return res
+
         // Publish images im /images/full folder
         res = this.publishImagesInFolderByHTTPS(localImagesPath + "/full", "full")
         if (res && !res.result) return res
@@ -620,7 +622,7 @@ class Publisher
         if (res && !res.result) return res
 
         //////////// PUBLISH OTHJER /////////
-        res = this.publishFileByHTTPS(fullPath, "index.html")
+        res = this.publishFilesByHTTPS(fullPath, ["index.html"])
         if (res && !res.result) return res
         const folders = ["data", "resources", "js", "js/other"]
         folders.forEach(function (folderName)
@@ -663,6 +665,7 @@ class Publisher
         let result = null
 
         // process images
+        let fileNames = []
         allImages.forEach(function (file)
         {
             if (result && !result.result) return
@@ -672,53 +675,77 @@ class Publisher
             const imageType = fileName.includes("@2x.") ? "2x" : defaultImageType
             //
             if (DEBUG) log(`Upload #${this.publishedImages} ${fileName}`)
-            result = this.publishFileByHTTPS(localPath, fileName, !this.publishedImages++, imageType)
-            if (!result.result) log(result.output)
+            fileNames.push(fileName)
         }, this);
-        //       
-        return result
+        //  
+        return this.publishFilesByHTTPS(localPath, fileNames, defaultImageType)             
     }
 
     publishFilesInFolderByHTTPS(localPath, folderName)
     {
-        const fullPath = localPath + "/" + folderName
-        const allFiles = Utils.listFiles(fullPath)
+        const fullLocalPath = localPath + "/" + folderName
+        const allFiles = Utils.listFiles(fullLocalPath)
         let result = null
 
         // process files
+        let fileNames = []
         allFiles.forEach(function (file)
         {
             if (result && !result.result) return
             const fileName = file + ""
             if (fileName === "other") return
             //
-            if (DEBUG) log(`Upload ${fileName}`)
-            result = this.publishFileByHTTPS(fullPath, fileName, false, "", folderName)
-            if (!result.result) log(result.output)
+            if (DEBUG) log(`Upload ${fileName}`)          
+            fileNames.push(fileName)  
         }, this);
         //       
+        result = this.publishFilesByHTTPS(fullLocalPath, fileNames, "", folderName)
+        if (!result.result) log(result.output)
         return result
     }
 
-    publishFileByHTTPS(filePath, fileName, isStart = false, imageType = "", dirType = "")
-    {
-        const fullPath = filePath + "/" + fileName
-        if (!Utils.isFolderExists(fullPath)) return {
-            result: 0,
-            output: "No file on path " + fullPath
-        }
 
+    publishFilesByHTTPS(filePath, fileNames, imageType = "", dirType = "")
+    {                
+        let result = null
+        let chunk = []        
+        fileNames.forEach(function(fileName){
+            chunk.push(fileName)
+            if(chunk.length===this.filesChunkLimit){
+                result = this.publishFilesChunkByHTTPS(filePath, chunk, imageType, dirType)
+                //
+                chunk = []                
+            }
+        },this)        
+        if(chunk.length) result = this.publishFilesChunkByHTTPS(filePath, chunk, imageType, dirType)
+        return result
+    }
+
+    publishFilesChunkByHTTPS(filePath, fileNames, imageType, dirType)
+    {       
+        if(DEBUG) log(filePath)
+        if(DEBUG) log(fileNames)
+        let isStart = this.publishedImages++==0
         const cmd = imageType != "" ? "uploadFrame" : "uploadFile"
-        const escapedPath = fullPath
-        let args = ["--no-progress-meter", "-T", escapedPath]
+        let args = ["--no-progress-meter","-X","POST","-H","Content-Type: multipart/form-data"]
         let url = this.siteRoot + this.serverToolsPath + "/upload.php?cmd=" + cmd
         url += `&tid=${encodeURI(this.secret)}`
         url += `&uid=${encodeURI(this.userID)}`
         url += `&s=${isStart ? 1 : 0}`
         if (imageType != "") url += `&t=${imageType}`
         if (dirType != "") url += `&dt=${dirType}`
-        url += `&n=${fileName}`
-        log(url)
+        fileNames.forEach(function(fileName){
+            const fullPath = filePath + "/" + fileName
+            if (!Utils.isFolderExists(fullPath)) return {
+                result: 0,
+                output: "No file on path " + fullPath
+            }
+            //
+            args.push("-F")
+            const fileStr = `${fileName}=@${fullPath}`
+            args.push(fileStr)
+            if(DEBUG) log(fileStr)
+        },this)          
         args.push(url)
 
         return Utils.runCommand(this.curlPath, args)

@@ -497,7 +497,7 @@ class PZArtboard extends PZLayer
 
         if ('artboard' == exportType || 'layer' == exportType)
         {
-            scales = exporter.retinaImages ? [1, 2] : [1]
+            scales = exporter.retinaImages ? [2] : [1]
         } else if ('full' == exportType)
         {
             scales = [2]
@@ -549,7 +549,7 @@ class PZArtboard extends PZLayer
 
     _exportImages()
     {
-
+        if(this.artboardType===Constants.ARTBOARD_TYPE_EXTERNAL_URL) return
         //this._getAllLayersMatchingPredicate(Sketch.getSelectedDocument().sketchObject)
 
         if (DEBUG) exporter.logMsg("PZArtboard._exportImages: running... " + this.name)
@@ -574,14 +574,14 @@ class PZArtboard extends PZLayer
         // ! temporary disabled because an exported image still shows hidden layers
         this._hideFixedLayers(false)
 
-        if (exporter.exportFullImages)
+        if (exporter.exportFullImages &&  (this.artboardType===Constants.ARTBOARD_TYPE_REGULAR || this.artboardType===Constants.ARTBOARD_TYPE_OVERLAY))
         {
             // export full image        
             if (DEBUG) exporter.logMsg("PZArtboard._exportImages: export full image")
             this._exportImage("full")
         }
 
-        // export preview images (to use by Gallery and Inspector Viewer)        
+        // export preview images (to use by Gallery and Inspector Viewer)      
         this._exportImage("preview")
 
         if (DEBUG) exporter.logMsg("PZArtboard._exportImages: done!")
