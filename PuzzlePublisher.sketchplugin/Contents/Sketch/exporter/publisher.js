@@ -34,6 +34,9 @@ class Publisher
         this.authorEmail = Utils.getPluginSetting(SettingKeys.PLUGIN_AUTHOR_EMAIL)
         this.commentsURL = Utils.getPluginSetting(SettingKeys.PLUGIN_COMMENTS_URL)
 
+        this.curlPath = Utils.getPluginSetting(SettingKeys.PLUGIN_PUBLISH_CURL_PATH)
+        if(this.curlPath==="") this.curlPath = Constants.CURL_PATH
+
         this.docFolder = this.doc.cloudName();
         let posSketch = this.docFolder.indexOf(".sketch")
         if (posSketch > 0)
@@ -51,7 +54,6 @@ class Publisher
         this.miroExportInfoList = []
         this.miroEnabled = null
 
-        this.curlPath = "/usr/local/opt/curl/bin/curl"
         this.userID = Utils.getUserID()
     }
 

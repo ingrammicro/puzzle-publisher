@@ -25,6 +25,8 @@ var onRun = function (context) {
     if (commentsURL == undefined) commentsURL = ''
     let serverToolsPath = Settings.settingForKey(SettingKeys.PLUGIN_SERVERTOOLS_PATH)
     if (serverToolsPath == undefined) serverToolsPath = ''
+    let curlPath = Settings.settingForKey(SettingKeys.PLUGIN_PUBLISH_CURL_PATH)
+    if (curlPath == undefined) curlPath = ''
     let authorName = Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_NAME)
     if (authorName == undefined) authorName = ''
     let authorEmail = Settings.settingForKey(SettingKeys.PLUGIN_AUTHOR_EMAIL)
@@ -63,6 +65,9 @@ var onRun = function (context) {
     dialog.addTextInput("authorName", "Name", authorName, 'John Smith')
     dialog.addTextInput("authorEmail", "Email", authorEmail, 'johns@company.com')
 
+    dialog.addDivider()
+    dialog.addLeftLabel("", "Other", 40)
+    dialog.addTextInput("curlPath", "Path to curl", curlPath, Constants.CURL_PATH)
 
 
     let resultOk = false
@@ -85,6 +90,7 @@ var onRun = function (context) {
         Settings.setSettingForKey(SettingKeys.PLUGIN_SERVERTOOLS_PATH, dialog.views['serverToolsPath'].stringValue() + "")
         Settings.setSettingForKey(SettingKeys.PLUGIN_AUTHOR_NAME, dialog.views['authorName'].stringValue() + "")
         Settings.setSettingForKey(SettingKeys.PLUGIN_AUTHOR_EMAIL, dialog.views['authorEmail'].stringValue() + "")
+        Settings.setSettingForKey(SettingKeys.PLUGIN_PUBLISH_CURL_PATH, dialog.views['curlPath'].stringValue() + "")
         resultOk = true
         break
     }
