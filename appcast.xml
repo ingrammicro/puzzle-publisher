@@ -6,9 +6,9 @@
         <description>Generates and publish HTML clickable prototype</description>
         <language>en</language>
          <item>
-            <title>Version 17.9.0</title>
-            <date>25 Sep 2022</date>
-            <enclosure url="https://github.com/ingrammicro/puzzle-publisher/raw/master/PuzzlePublisher.sketchplugin.zip" sparkle:version="17.9.0"/>
+            <title>Version 17.9.1</title>
+            <date>26 Sep 2022</date>
+            <enclosure url="https://github.com/ingrammicro/puzzle-publisher/raw/master/PuzzlePublisher.sketchplugin.zip" sparkle:version="17.9.1"/>
         </item>         
     </channel>
 </rss>
