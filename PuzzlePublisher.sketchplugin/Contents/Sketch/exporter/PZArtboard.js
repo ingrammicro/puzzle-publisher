@@ -497,7 +497,7 @@ class PZArtboard extends PZLayer
 
         if ('artboard' == exportType || 'layer' == exportType)
         {
-            scales = exporter.retinaImages ? [2] : [1]
+            scales = exporter.retinaImages ? [1,2] : [1]
         } else if ('full' == exportType)
         {
             scales = [2]
