@@ -35,7 +35,7 @@ Run from command line:
 
 [Change Log](https://github.com/ingrammicro/puzzle-publisher/blob/master/CHANGELOG.md)
 
-Please send your feedback and requests to max@bazarov.ru
+Please send your feedback to max@bazarov.ru
 
 ## Screenshots
 Commands:
